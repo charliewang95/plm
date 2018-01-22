@@ -1,4 +1,4 @@
-var Vendor = require('mongoose').model('Vendor');
+var Storage = require('mongoose').model('Storage');
 
 var getErrorMessage = function(err) {
     var message = '';
@@ -6,7 +6,7 @@ var getErrorMessage = function(err) {
         switch (err.code) {
             case 11000:
             case 11001:
-                message = 'Vendor name already exists';
+                message = 'Storage name already exists';
                 break;
             default:
                 message = 'Something went wrong';
@@ -23,42 +23,42 @@ var getErrorMessage = function(err) {
 };
 
 exports.create = function(req, res, next) {
-	var vendor = new Vendor(req.body);
-	vendor.save(function(err) {
+	var storage = new Storage(req.body);
+	storage.save(function(err) {
 		if (err) {
 			return next(err);
 		}
 		else {
-			res.json(vendor);
+			res.json(storage);
 		}
 	});
 };
 
 exports.list = function(req, res, next) {
-	Vendor.find({}, function(err, vendors) {
+	Storage.find({}, function(err, storages) {
 		if (err) {
 			return next(err);
 		}
 		else {
-			res.json(vendors);
+			res.json(storages);
 		}
 	});
 };
 
 exports.read = function(req, res) {
-	res.json(req.vendor);
+	res.json(req.storage);
 };
 
-exports.vendorByID = function(req, res, next, id) {
-	Vendor.findOne({
+exports.storageByID = function(req, res, next, id) {
+	Storage.findOne({
 			_id: id
 		},
-		function(err, vendor) {
+		function(err, storage) {
 			if (err) {
 				return next(err);
 			}
 			else {
-				req.vendor = vendor;
+				req.storage = storage;
 				next();
 			}
 		}
@@ -66,23 +66,23 @@ exports.vendorByID = function(req, res, next, id) {
 };
 
 exports.update = function(req, res, next) {
-	Vendor.findByIdAndUpdate(req.vendor.id, req.body, function(err, vendor) {
+	Storage.findByIdAndUpdate(req.storage.id, req.body, function(err, storage) {
 		if (err) {
 			return next(err);
 		}
 		else {
-			res.json(vendor);
+			res.json(storage);
 		}
 	});
 };
 
 exports.delete = function(req, res, next) {
-	req.vendor.remove(function(err) {
+	req.storage.remove(function(err) {
 		if (err) {
 			return next(err);
 		}
 		else {
-			res.json(req.vendor);
+			res.json(req.storage);
 		}
 	})
 };

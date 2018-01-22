@@ -4,6 +4,7 @@ var config = require('./config'),
 	passport = require('passport'),
 	flash = require('connect-flash'),
 	session = require('express-session');
+	axios = require('axios');
 
 module.exports = function() {
 	var app = express();
@@ -30,6 +31,11 @@ module.exports = function() {
 	require('../app/routes/index.server.routes.js')(app);
 	require('../app/routes/users.server.routes.js')(app);
 	require('../app/routes/vendors.server.routes.js')(app);
+	require('../app/routes/ingredients.server.routes.js')(app);
+	require('../app/routes/storages.server.routes.js')(app);
+	require('../app/routes/orders.server.routes.js')(app);
+	require('../app/routes/inventories.server.routes.js')(app);
+
 
 	app.use(express.static('./public'));
 

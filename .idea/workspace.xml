@@ -2,12 +2,93 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9b541a38-fe3f-447b-94e3-f97419a1f16c" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/app/controllers/vendors.server.controller.js" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/app/models/vendor.server.model.js" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/app/routes/vendors.server.routes.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries/charliewang95.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/app/controllers/ingredients.server.controller.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/app/controllers/inventories.server.controller.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/app/controllers/orders.server.controller.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/app/controllers/storages.server.controller.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/app/models/ingredient.server.model.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/app/models/inventory.server.model.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/app/models/order.server.model.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/app/models/storage.server.model.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/app/routes/ingredients.server.routes.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/app/routes/inventories.server.routes.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/app/routes/orders.server.routes.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/app/routes/storages.server.routes.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/CHANGELOG.md" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/LICENSE" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/README.md" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/UPGRADE_GUIDE.md" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/dist/axios.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/dist/axios.map" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/dist/axios.min.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/dist/axios.min.map" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/index.d.ts" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/index.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/adapters/README.md" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/adapters/http.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/adapters/xhr.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/axios.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/cancel/Cancel.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/cancel/CancelToken.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/cancel/isCancel.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/core/Axios.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/core/InterceptorManager.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/core/README.md" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/core/createError.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/core/dispatchRequest.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/core/enhanceError.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/core/settle.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/core/transformData.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/defaults.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/helpers/README.md" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/helpers/bind.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/helpers/btoa.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/helpers/buildURL.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/helpers/combineURLs.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/helpers/cookies.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/helpers/deprecatedMethod.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/helpers/isAbsoluteURL.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/helpers/isURLSameOrigin.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/helpers/normalizeHeaderName.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/helpers/parseHeaders.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/helpers/spread.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/lib/utils.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/axios/package.json" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/LICENSE" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/README.md" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/http.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/https.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/index.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/node_modules/debug/.coveralls.yml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/node_modules/debug/.eslintrc" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/node_modules/debug/.npmignore" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/node_modules/debug/.travis.yml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/node_modules/debug/CHANGELOG.md" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/node_modules/debug/LICENSE" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/node_modules/debug/Makefile" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/node_modules/debug/README.md" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/node_modules/debug/karma.conf.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/node_modules/debug/node.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/node_modules/debug/package.json" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/node_modules/debug/src/browser.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/node_modules/debug/src/debug.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/node_modules/debug/src/index.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/node_modules/debug/src/node.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/follow-redirects/package.json" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/is-buffer/LICENSE" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/is-buffer/README.md" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/is-buffer/index.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/is-buffer/package.json" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/is-buffer/test/basic.js" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/vendors.server.controller.js" afterPath="$PROJECT_DIR$/app/controllers/vendors.server.controller.js" />
       <change beforePath="$PROJECT_DIR$/app/models/user.server.model.js" afterPath="$PROJECT_DIR$/app/models/user.server.model.js" />
+      <change beforePath="$PROJECT_DIR$/app/models/vendor.server.model.js" afterPath="$PROJECT_DIR$/app/models/vendor.server.model.js" />
       <change beforePath="$PROJECT_DIR$/config/express.js" afterPath="$PROJECT_DIR$/config/express.js" />
       <change beforePath="$PROJECT_DIR$/config/mongoose.js" afterPath="$PROJECT_DIR$/config/mongoose.js" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" afterPath="$PROJECT_DIR$/package-lock.json" />
+      <change beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,61 +100,61 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="users.server.controller.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/users.server.controller.js">
+      <file leaf-file-name="storage.server.model.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/storage.server.model.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2685">
-              <caret line="179" column="2" lean-forward="true" selection-start-line="139" selection-start-column="0" selection-end-line="179" selection-end-column="2" />
+            <state relative-caret-position="225">
+              <caret line="15" column="6" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="22" selection-end-column="41" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="vendors.server.controller.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/controllers/vendors.server.controller.js">
+      <file leaf-file-name="order.server.model.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/order.server.model.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="211">
-              <caret line="26" column="10" lean-forward="false" selection-start-line="26" selection-start-column="10" selection-end-line="26" selection-end-column="10" />
+            <state relative-caret-position="375">
+              <caret line="25" column="6" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="development.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/env/development.js">
+      <file leaf-file-name="inventory.server.model.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/models/inventory.server.model.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="34" lean-forward="true" selection-start-line="4" selection-start-column="34" selection-end-line="4" selection-end-column="34" />
+            <state relative-caret-position="195">
+              <caret line="13" column="18" lean-forward="false" selection-start-line="13" selection-start-column="18" selection-end-line="13" selection-end-column="18" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="vendor.server.model.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/vendor.server.model.js">
+      <file leaf-file-name="inventories.server.routes.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/routes/inventories.server.routes.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" column="19" lean-forward="true" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
+            <state relative-caret-position="90">
+              <caret line="6" column="52" lean-forward="true" selection-start-line="6" selection-start-column="52" selection-end-line="6" selection-end-column="52" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="users.server.routes.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/routes/users.server.routes.js">
+      <file leaf-file-name="inventories.server.controller.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/inventories.server.controller.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="10" column="14" lean-forward="true" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="14" />
+            <state relative-caret-position="-573">
+              <caret line="0" column="50" lean-forward="false" selection-start-line="0" selection-start-column="50" selection-end-line="0" selection-end-column="50" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="vendors.server.routes.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/routes/vendors.server.routes.js">
+      <file leaf-file-name="ingredients.server.routes.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/routes/ingredients.server.routes.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="3" column="26" lean-forward="false" selection-start-line="3" selection-start-column="26" selection-end-line="3" selection-end-column="26" />
+            <state relative-caret-position="90">
+              <caret line="6" column="60" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="8" selection-end-column="2" />
               <folding />
             </state>
           </provider>
@@ -82,8 +163,8 @@
       <file leaf-file-name="express.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/express.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="32" column="0" lean-forward="true" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+            <state relative-caret-position="555">
+              <caret line="37" column="0" lean-forward="true" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -94,7 +175,30 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>provider</find>
+      <find>igredients</find>
+      <find>users</find>
+      <find>user</find>
+      <find>User</find>
+      <find>vendor</find>
+      <find>Vendor</find>
+      <find>storage</find>
+      <find>Ingredient</find>
+      <find>order</find>
+      <find>ingredient</find>
     </findStrings>
+    <replaceStrings>
+      <replace>igredients</replace>
+      <replace>ingredients</replace>
+      <replace>ingredient</replace>
+      <replace>Ingredient</replace>
+      <replace>Vendor</replace>
+      <replace>storage</replace>
+      <replace>Storage</replace>
+      <replace>Order</replace>
+      <replace>order</replace>
+      <replace>inventories</replace>
+      <replace>inventory</replace>
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -107,13 +211,26 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/models/user.server.model.js" />
-        <option value="$PROJECT_DIR$/config/mongoose.js" />
-        <option value="$PROJECT_DIR$/app/models/vendor.server.model.js" />
         <option value="$PROJECT_DIR$/app/routes/users.server.routes.js" />
+        <option value="$PROJECT_DIR$/server.js" />
         <option value="$PROJECT_DIR$/app/routes/vendors.server.routes.js" />
-        <option value="$PROJECT_DIR$/config/express.js" />
+        <option value="$PROJECT_DIR$/app/routes/ingredients.server.routes.js" />
+        <option value="$PROJECT_DIR$/app/models/user.server.model.js" />
+        <option value="$PROJECT_DIR$/app/controllers/ingredients.server.controller.js" />
         <option value="$PROJECT_DIR$/app/controllers/vendors.server.controller.js" />
+        <option value="$PROJECT_DIR$/app/models/vendor.server.model.js" />
+        <option value="$PROJECT_DIR$/app/models/ingredient.server.model.js" />
+        <option value="$PROJECT_DIR$/app/controllers/storages.server.controller.js" />
+        <option value="$PROJECT_DIR$/app/routes/storages.server.routes.js" />
+        <option value="$PROJECT_DIR$/app/models/storage.server.model.js" />
+        <option value="$PROJECT_DIR$/app/controllers/orders.server.controller.js" />
+        <option value="$PROJECT_DIR$/app/routes/orders.server.routes.js" />
+        <option value="$PROJECT_DIR$/app/models/order.server.model.js" />
+        <option value="$PROJECT_DIR$/app/controllers/inventories.server.controller.js" />
+        <option value="$PROJECT_DIR$/app/routes/inventories.server.routes.js" />
+        <option value="$PROJECT_DIR$/config/mongoose.js" />
+        <option value="$PROJECT_DIR$/config/express.js" />
+        <option value="$PROJECT_DIR$/app/models/inventory.server.model.js" />
       </list>
     </option>
   </component>
@@ -412,14 +529,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/config.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/strategies/local.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -436,46 +545,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/index.server.controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/mongoose.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="2" lean-forward="true" selection-start-line="10" selection-start-column="2" selection-end-line="10" selection-end-column="2" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/user.server.model.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/routes/users.server.routes.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="14" lean-forward="true" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/users.server.controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2685">
-          <caret line="179" column="2" lean-forward="true" selection-start-line="139" selection-start-column="0" selection-end-line="179" selection-end-column="2" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/routes/index.server.routes.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -484,42 +553,202 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/users.server.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1935">
+          <caret line="129" column="28" lean-forward="false" selection-start-line="129" selection-start-column="28" selection-end-line="129" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/ingredient.server.routes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/config/env/development.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
-          <caret line="4" column="34" lean-forward="true" selection-start-line="4" selection-start-column="34" selection-end-line="4" selection-end-column="34" />
+          <caret line="4" column="34" lean-forward="false" selection-start-line="4" selection-start-column="34" selection-end-line="4" selection-end-column="34" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/routes/vendors.server.routes.js">
+    <entry file="file://$PROJECT_DIR$/app/controllers/index.server.controller.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="26" lean-forward="false" selection-start-line="3" selection-start-column="26" selection-end-line="3" selection-end-column="26" />
+        <state relative-caret-position="60">
+          <caret line="4" column="7" lean-forward="false" selection-start-line="4" selection-start-column="7" selection-end-line="4" selection-end-column="7" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/express.js">
+    <entry file="file://$PROJECT_DIR$/app/routes/users.server.routes.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="0" lean-forward="true" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+        <state relative-caret-position="150">
+          <caret line="10" column="14" lean-forward="false" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/user.server.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="22" column="6" lean-forward="false" selection-start-line="22" selection-start-column="6" selection-end-line="22" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/vendor.server.model.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="19" lean-forward="true" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
+        <state relative-caret-position="90">
+          <caret line="6" column="21" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="23" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/ingredient.server.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="13" lean-forward="false" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/vendors.server.controller.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
-          <caret line="26" column="10" lean-forward="false" selection-start-line="26" selection-start-column="10" selection-end-line="26" selection-end-column="10" />
+        <state relative-caret-position="690">
+          <caret line="46" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="87" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/storages.server.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="885">
+          <caret line="59" column="18" lean-forward="true" selection-start-line="59" selection-start-column="18" selection-end-line="59" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/routes/vendors.server.routes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="8" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/config.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/routes/storages.server.routes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="8" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/storage.server.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="6" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="22" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/ingredients.server.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="19" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="87" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/routes/orders.server.routes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="45" lean-forward="true" selection-start-line="6" selection-start-column="45" selection-end-line="6" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/order.server.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="6" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/orders.server.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="54" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="87" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/routes/ingredients.server.routes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="60" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="8" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/routes/inventories.server.routes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="52" lean-forward="true" selection-start-line="6" selection-start-column="52" selection-end-line="6" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/mongoose.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="36" lean-forward="false" selection-start-line="11" selection-start-column="36" selection-end-line="11" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/inventories.server.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-573">
+          <caret line="0" column="50" lean-forward="false" selection-start-line="0" selection-start-column="50" selection-end-line="0" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/express.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="555">
+          <caret line="37" column="0" lean-forward="true" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/inventory.server.model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="18" lean-forward="false" selection-start-line="13" selection-start-column="18" selection-end-line="13" selection-end-column="18" />
           <folding />
         </state>
       </provider>

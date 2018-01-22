@@ -1,4 +1,4 @@
-var Vendor = require('mongoose').model('Vendor');
+var Inventory = require('mongoose').model('Inventory');
 
 var getErrorMessage = function(err) {
     var message = '';
@@ -6,7 +6,7 @@ var getErrorMessage = function(err) {
         switch (err.code) {
             case 11000:
             case 11001:
-                message = 'Vendor name already exists';
+                message = 'Inventory already exists';
                 break;
             default:
                 message = 'Something went wrong';
@@ -23,42 +23,42 @@ var getErrorMessage = function(err) {
 };
 
 exports.create = function(req, res, next) {
-	var vendor = new Vendor(req.body);
-	vendor.save(function(err) {
+	var inventory = new Inventory(req.body);
+	inventory.save(function(err) {
 		if (err) {
 			return next(err);
 		}
 		else {
-			res.json(vendor);
+			res.json(inventory);
 		}
 	});
 };
 
 exports.list = function(req, res, next) {
-	Vendor.find({}, function(err, vendors) {
+	Inventory.find({}, function(err, inventorys) {
 		if (err) {
 			return next(err);
 		}
 		else {
-			res.json(vendors);
+			res.json(inventorys);
 		}
 	});
 };
 
 exports.read = function(req, res) {
-	res.json(req.vendor);
+	res.json(req.inventory);
 };
 
-exports.vendorByID = function(req, res, next, id) {
-	Vendor.findOne({
+exports.inventoryByID = function(req, res, next, id) {
+	Inventory.findOne({
 			_id: id
 		},
-		function(err, vendor) {
+		function(err, inventory) {
 			if (err) {
 				return next(err);
 			}
 			else {
-				req.vendor = vendor;
+				req.inventory = inventory;
 				next();
 			}
 		}
@@ -66,23 +66,23 @@ exports.vendorByID = function(req, res, next, id) {
 };
 
 exports.update = function(req, res, next) {
-	Vendor.findByIdAndUpdate(req.vendor.id, req.body, function(err, vendor) {
+	Inventory.findByIdAndUpdate(req.inventory.id, req.body, function(err, inventory) {
 		if (err) {
 			return next(err);
 		}
 		else {
-			res.json(vendor);
+			res.json(inventory);
 		}
 	});
 };
 
 exports.delete = function(req, res, next) {
-	req.vendor.remove(function(err) {
+	req.inventory.remove(function(err) {
 		if (err) {
 			return next(err);
 		}
 		else {
-			res.json(req.vendor);
+			res.json(req.inventory);
 		}
 	})
 };

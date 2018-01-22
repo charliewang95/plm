@@ -3,14 +3,24 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
-	email: String,
+	email: {
+	    type: String,
+	    required: true
+	},
 	username: {
 		type: String,
 		trim: true,
-		unique: true
+		unique: true,
+		required: true
 	},
-	password: String,
-	isAdmin: Boolean,
+	password: {
+	    type: String,
+	    required: true
+	},
+	isAdmin: {
+	    type: Boolean,
+	    required: true
+	},
 	//provider: String,
 	//providerId: String,
 	//providerData: {},

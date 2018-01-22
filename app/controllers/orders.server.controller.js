@@ -1,4 +1,4 @@
-var Vendor = require('mongoose').model('Vendor');
+var Order = require('mongoose').model('Order');
 
 var getErrorMessage = function(err) {
     var message = '';
@@ -6,7 +6,7 @@ var getErrorMessage = function(err) {
         switch (err.code) {
             case 11000:
             case 11001:
-                message = 'Vendor name already exists';
+                message = 'Order already exists';
                 break;
             default:
                 message = 'Something went wrong';
@@ -23,42 +23,42 @@ var getErrorMessage = function(err) {
 };
 
 exports.create = function(req, res, next) {
-	var vendor = new Vendor(req.body);
-	vendor.save(function(err) {
+	var order = new Order(req.body);
+	order.save(function(err) {
 		if (err) {
 			return next(err);
 		}
 		else {
-			res.json(vendor);
+			res.json(order);
 		}
 	});
 };
 
 exports.list = function(req, res, next) {
-	Vendor.find({}, function(err, vendors) {
+	Order.find({}, function(err, orders) {
 		if (err) {
 			return next(err);
 		}
 		else {
-			res.json(vendors);
+			res.json(orders);
 		}
 	});
 };
 
 exports.read = function(req, res) {
-	res.json(req.vendor);
+	res.json(req.order);
 };
 
-exports.vendorByID = function(req, res, next, id) {
-	Vendor.findOne({
+exports.orderByID = function(req, res, next, id) {
+	Order.findOne({
 			_id: id
 		},
-		function(err, vendor) {
+		function(err, order) {
 			if (err) {
 				return next(err);
 			}
 			else {
-				req.vendor = vendor;
+				req.order = order;
 				next();
 			}
 		}
@@ -66,23 +66,23 @@ exports.vendorByID = function(req, res, next, id) {
 };
 
 exports.update = function(req, res, next) {
-	Vendor.findByIdAndUpdate(req.vendor.id, req.body, function(err, vendor) {
+	Order.findByIdAndUpdate(req.order.id, req.body, function(err, order) {
 		if (err) {
 			return next(err);
 		}
 		else {
-			res.json(vendor);
+			res.json(order);
 		}
 	});
 };
 
 exports.delete = function(req, res, next) {
-	req.vendor.remove(function(err) {
+	req.order.remove(function(err) {
 		if (err) {
 			return next(err);
 		}
 		else {
-			res.json(req.vendor);
+			res.json(req.order);
 		}
 	})
 };
