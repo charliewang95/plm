@@ -40,9 +40,11 @@
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-engine": "^4.5.0",
     "react-redux": "^5.0.6",
     "react-router": "^4.2.0",
     "react-scripts": "1.1.0",
+    "react-view-engine": "0.0.1",
     "redux": "^3.7.2",
     "redux-form": "^7.2.1"
   }

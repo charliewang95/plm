@@ -1,27 +1,6 @@
 var User = require('mongoose').model('User');
 var Vendor = require('mongoose').model('Vendor');
-
-var getErrorMessage = function(err) {
-    var message = '';
-    if (err.code) {
-        switch (err.code) {
-            case 11000:
-            case 11001:
-                message = 'Vendor name already exists';
-                break;
-            default:
-                message = 'Something went wrong';
-        }
-    }
-    else {
-        for (var errName in err.errors) {
-            if (err.errors[errName].message)
-                message = err.errors[errName].message;
-        }
-    }
-
-    return message;
-};
+var utils = require('../utils/utils');
 
 exports.create = function(req, res, next) {
     User.findById(req.params.userName, function(err, user) {

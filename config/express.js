@@ -3,8 +3,9 @@ var config = require('./config'),
 	bodyParser = require('body-parser'),
 	passport = require('passport'),
 	flash = require('connect-flash'),
-	session = require('express-session');
-	axios = require('axios');
+	session = require('express-session'),
+	axios = require('axios'),
+	ReactEngine = require('react-engine');
 
 module.exports = function() {
 	var app = express();
@@ -20,9 +21,12 @@ module.exports = function() {
 		resave: true,
 		secret: 'OurSuperSecretCookieSecret'
 	}));
+//
+//    var engine = ReactEngine.server.create();
+//    app.engine('.js', engine);
 
-	app.set('views', './app/views');
-	app.set('view engine', 'ejs');
+    app.set('views', './src');
+    app.set('view engine', 'js');
 
 	app.use(flash());
 	app.use(passport.initialize());

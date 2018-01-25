@@ -1,37 +1,28 @@
 var Storage = require('mongoose').model('Storage');
-
-var getErrorMessage = function(err) {
-    var message = '';
-    if (err.code) {
-        switch (err.code) {
-            case 11000:
-            case 11001:
-                message = 'Storage name already exists';
-                break;
-            default:
-                message = 'Something went wrong';
-        }
-    }
-    else {
-        for (var errName in err.errors) {
-            if (err.errors[errName].message)
-                message = err.errors[errName].message;
-        }
-    }
-
-    return message;
-};
+var User = require('mongoose').model('User');
+var utils = require('../utils/utils');
 
 exports.create = function(req, res, next) {
-	var storage = new Storage(req.body);
-	storage.save(function(err) {
-		if (err) {
-			return next(err);
-		}
-		else {
-			res.json(storage);
-		}
-	});
+    User.findById(req.params.userName, function(err, user) {
+        if (err) next(err);
+        else if (!user) {
+            res.send('403');
+        }
+        else if (!user.isAdmin) {
+            res.send('403');
+        }
+        else {
+            var storage = new Storage(req.body);
+            storage.save(function(err) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    res.json(storage);
+                }
+            });
+        }
+    });
 };
 
 exports.list = function(req, res, next) {
@@ -66,23 +57,52 @@ exports.storageByID = function(req, res, next, id) {
 };
 
 exports.update = function(req, res, next) {
-	Storage.findByIdAndUpdate(req.storage.id, req.body, function(err, storage) {
-		if (err) {
-			return next(err);
-		}
-		else {
-			res.json(storage);
-		}
-	});
+	User.findById(req.params.userName, function(err, user) {
+        if (err) next(err);
+        else if (!user) {
+            res.send('403');
+        }
+        else if (!user.isAdmin) {
+            res.send('403');
+        }
+        else {
+            Storage.findByIdAndUpdate(req.params.storageName, req.body, function(err, storage) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    res.json(storage);
+                }
+            });
+        }
+    });
 };
 
 exports.delete = function(req, res, next) {
-	req.storage.remove(function(err) {
-		if (err) {
-			return next(err);
-		}
-		else {
-			res.json(req.storage);
-		}
-	})
+	User.findById(req.params.userName, function(err, user) {
+        if (err) next(err);
+        else if (!user) {
+            res.send('403');
+        }
+        else if (!user.isAdmin) {
+            res.send('403');
+        }
+        else {
+            Storage.findById(req.params.storageName, req.body, function(err, storage) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    storage.remove(function(err) {
+                        if (err) {
+                            return next(err);
+                        }
+                        else {
+                            res.json(storage);
+                        }
+                    })
+                }
+            });
+        }
+    });
 };

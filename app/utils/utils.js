@@ -1,20 +1,25 @@
 var mongoose = require('mongoose');
 var User = require('mongoose').model('Vendor');
 
-exports.checkAdmin = function(req, res, next, id) {
-    User.find({_id: id}, function(err, user) {
-        if (err) { next(err); }
-
-        else if (!user) {
-            res.status(403).send(user);
+exports.getErrorMessage = function(err) {
+    var message = '';
+    if (err.code) {
+        switch (err.code) {
+            case 11000:
+            case 11001:
+                message = 'Ingredient already exists';
+                break;
+            default:
+                message = 'Something went wrong';
         }
-
-        else if (!user.isAdmin) {
-            res.status(403).send();
+    }
+    else {
+        for (var errName in err.errors) {
+            if (err.errors[errName].message)
+                message = err.errors[errName].message;
         }
+    }
 
-        else {
-            next();
-        }
-    });
-}
+    return message;
+};
+
