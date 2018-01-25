@@ -1,4 +1,5 @@
 var Ingredient = require('mongoose').model('Ingredient');
+var User = require('mongoose').model('User');
 
 var getErrorMessage = function(err) {
     var message = '';
@@ -23,15 +24,26 @@ var getErrorMessage = function(err) {
 };
 
 exports.create = function(req, res, next) {
-	var ingredient = new Ingredient(req.body);
-	ingredient.save(function(err) {
-		if (err) {
-			return next(err);
-		}
-		else {
-			res.json(ingredient);
-		}
-	});
+    User.findById(req.params.userName, function(err, user) {
+        if (err) next(err);
+        else if (!user) {
+            res.send('403');
+        }
+        else if (!user.isAdmin) {
+            res.send('403');
+        }
+        else {
+            var ingredient = new Ingredient(req.body);
+            ingredient.save(function(err) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    res.json(ingredient);
+                }
+            });
+        }
+    });
 };
 
 exports.list = function(req, res, next) {
@@ -49,40 +61,53 @@ exports.read = function(req, res) {
 	res.json(req.ingredient);
 };
 
-exports.ingredientByID = function(req, res, next, id) {
-	Ingredient.findOne({
-			_id: id
-		},
-		function(err, ingredient) {
-			if (err) {
-				return next(err);
-			}
-			else {
-				req.ingredient = ingredient;
-				next();
-			}
-		}
-	);
-};
-
 exports.update = function(req, res, next) {
-	Ingredient.findByIdAndUpdate(req.ingredient.id, req.body, function(err, ingredient) {
-		if (err) {
-			return next(err);
-		}
-		else {
-			res.json(ingredient);
-		}
-	});
+	User.findById(req.params.userName, function(err, user) {
+        if (err) next(err);
+        else if (!user) {
+            res.send('403');
+        }
+        else if (!user.isAdmin) {
+            res.send('403');
+        }
+        else {
+            Ingredient.findByIdAndUpdate(req.params.ingredientName, req.body, function(err, ingredient) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    res.json(ingredient);
+                }
+            });
+        }
+    });
 };
 
 exports.delete = function(req, res, next) {
-	req.ingredient.remove(function(err) {
-		if (err) {
-			return next(err);
-		}
-		else {
-			res.json(req.ingredient);
-		}
-	})
+	User.findById(req.params.userName, function(err, user) {
+        if (err) next(err);
+        else if (!user) {
+            res.send('403');
+        }
+        else if (!user.isAdmin) {
+            res.send('403');
+        }
+        else {
+            Ingredient.findById(req.params.ingredientName, req.body, function(err, ingredient) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    ingredient.remove(function(err) {
+                        if (err) {
+                            return next(err);
+                        }
+                        else {
+                            res.json(ingredient);
+                        }
+                    })
+                }
+            });
+        }
+    });
 };
