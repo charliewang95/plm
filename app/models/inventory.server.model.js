@@ -9,11 +9,21 @@ var InventorySchema = new Schema({
         ref: 'User',
         required: true
 	},
-	ingredientName: {
+	ingredientId: {
 	    type: mongoose.Schema.Types.ObjectId,
 	    ref: 'Ingredient',
         required: true
 	},
+	ingredientName: {
+	    type: String,
+	    required: true
+	},
+	temperatureZone: {
+        type: String,
+        enum: ['freezer', 'refrigerator', 'warehouse',
+               'Freezer', 'Refrigerator', 'Warehouse'],
+        required: true
+    },
     quantity: { //in pounds
         type: Number,
         required: true

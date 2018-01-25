@@ -45,8 +45,26 @@ exports.list = function(req, res, next) {
 	});
 };
 
+exports.listPartial = function(req, res, next) {
+	Order.find({userName: req.params.userName}, function(err, orders) {
+		if (err) {
+			return next(err);
+		}
+		else {
+			res.json(orders);
+		}
+	});
+};
+
 exports.read = function(req, res) {
-	res.json(req.order);
+    Order.findOne({_id: req.params.orderName, userName: req.params.userName}, function(err, order) {
+		if (err) {
+			return next(err);
+		}
+		else {
+			res.json(order);
+		}
+	});
 };
 
 exports.orderByID = function(req, res, next, id) {
@@ -66,23 +84,37 @@ exports.orderByID = function(req, res, next, id) {
 };
 
 exports.update = function(req, res, next) {
-	Order.findByIdAndUpdate(req.order.id, req.body, function(err, order) {
+    Order.findOne({_id: req.params.orderName, userName: req.params.userName}, function(err, order1) {
 		if (err) {
 			return next(err);
 		}
 		else {
-			res.json(order);
+			Order.findByIdAndUpdate(req.params.orderName, req.body, function(err, order2) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    res.json(order2);
+                }
+            });
 		}
 	});
 };
 
 exports.delete = function(req, res, next) {
-	req.order.remove(function(err) {
+    Order.findOne({_id: req.params.orderName, userName: req.params.userName}, function(err, order) {
 		if (err) {
 			return next(err);
 		}
 		else {
-			res.json(req.order);
+		    order.remove(order, function(err) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    res.json(order);
+                }
+            })
 		}
-	})
+	});
 };

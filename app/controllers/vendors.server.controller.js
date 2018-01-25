@@ -1,3 +1,4 @@
+var User = require('mongoose').model('Vendor');
 var Vendor = require('mongoose').model('Vendor');
 
 var getErrorMessage = function(err) {
@@ -23,26 +24,26 @@ var getErrorMessage = function(err) {
 };
 
 exports.create = function(req, res, next) {
-	var vendor = new Vendor(req.body);
-	vendor.save(function(err) {
-		if (err) {
-			return next(err);
-		}
-		else {
-			res.json(vendor);
-		}
-	});
+    var vendor = new Vendor(req.body);
+    vendor.save(function(err) {
+        if (err) {
+            return next(err);
+        }
+        else {
+            res.json(vendor);
+        }
+    });
 };
 
 exports.list = function(req, res, next) {
-	Vendor.find({}, function(err, vendors) {
-		if (err) {
-			return next(err);
-		}
-		else {
-			res.json(vendors);
-		}
-	});
+    Vendor.find({}, function(err, vendors) {
+        if (err) {
+            return next(err);
+        }
+        else {
+            res.json(vendors);
+        }
+    });
 };
 
 exports.read = function(req, res) {
@@ -50,8 +51,9 @@ exports.read = function(req, res) {
 };
 
 exports.vendorByID = function(req, res, next, id) {
-	Vendor.findOne({
-			_id: id
+	Vendor.find({
+			_id: id,
+			userName: req.params.userName
 		},
 		function(err, vendor) {
 			if (err) {
@@ -84,5 +86,15 @@ exports.delete = function(req, res, next) {
 		else {
 			res.json(req.vendor);
 		}
-	})
+	});
+};
+
+exports.checkAdmin = function(req, res, next, userId) {
+    User.findById(userId, function(err, user) {
+        if (err) {
+            next(err);
+        }
+
+        return true;
+    });
 };
