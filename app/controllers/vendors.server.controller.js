@@ -1,4 +1,4 @@
-var User = require('mongoose').model('Vendor');
+var User = require('mongoose').model('User');
 var Vendor = require('mongoose').model('Vendor');
 
 var getErrorMessage = function(err) {
@@ -24,13 +24,21 @@ var getErrorMessage = function(err) {
 };
 
 exports.create = function(req, res, next) {
-    var vendor = new Vendor(req.body);
-    vendor.save(function(err) {
-        if (err) {
-            return next(err);
+    User.findById(req.params.userName, function(err, user) {
+        if (err) next(err);
+        else if (!user.isAdmin) {
+            res.status('403');
         }
         else {
-            res.json(vendor);
+            var vendor = new Vendor(req.body);
+            vendor.save(function(err) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    res.json(vendor);
+                }
+            });
         }
     });
 };
@@ -52,8 +60,7 @@ exports.read = function(req, res) {
 
 exports.vendorByID = function(req, res, next, id) {
 	Vendor.find({
-			_id: id,
-			userName: req.params.userName
+			_id: id
 		},
 		function(err, vendor) {
 			if (err) {
@@ -87,14 +94,4 @@ exports.delete = function(req, res, next) {
 			res.json(req.vendor);
 		}
 	});
-};
-
-exports.checkAdmin = function(req, res, next, userId) {
-    User.findById(userId, function(err, user) {
-        if (err) {
-            next(err);
-        }
-
-        return true;
-    });
 };

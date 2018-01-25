@@ -21,6 +21,10 @@ var UserSchema = new Schema({
 	    type: Boolean,
 	    required: true
 	},
+	loggedIn: {
+	    type: Boolean,
+        required: true
+	}
 	//provider: String,
 	//providerId: String,
 	//providerData: {},

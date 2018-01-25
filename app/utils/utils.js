@@ -1,15 +1,16 @@
 var mongoose = require('mongoose');
+var User = require('mongoose').model('Vendor');
 
 exports.checkAdmin = function(req, res, next, id) {
-    User.findOne({_id: id}, function(err, user) {
+    User.find({_id: id}, function(err, user) {
         if (err) { next(err); }
 
         else if (!user) {
-            res.send("Admin required");
+            res.status(403).send(user);
         }
 
         else if (!user.isAdmin) {
-            res.send("Admin required");
+            res.status(403).send();
         }
 
         else {
