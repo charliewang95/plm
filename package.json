@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "ECE458 project",
   "main": "server.js",
+  "proxy": "http://localhost:1337",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -32,7 +33,7 @@
     "material-ui": "^0.20.0",
     "material-ui-icons": "^1.0.0-beta.17",
     "material-ui-search-bar": "^0.4.1",
-    "mongoose": "^3.8.21",
+    "mongoose": "^5.0.1",
     "nodemon": "^1.14.11",
     "passport": "^0.2.2",
     "passport-facebook": "^1.0.3",
