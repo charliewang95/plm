@@ -1,25 +1,24 @@
 {
-  "name": "MEAN_MVC_3rdTutorial",
+  "name": "real-producers",
   "version": "1.0.0",
-  "description": "Code acompanying the [third blog post](not yet published)",
+  "description": "ECE458 project",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Hitman666/MEAN_MVC_3rdTutorial.git"
+    "url": "https://github.com/charliewang95/plm"
   },
   "keywords": [
     "MEAN",
     "MVC"
   ],
-  "author": "Nikola Brežnjak <nikola.breznjak@gmail.com> (http://www.nikola-breznjak.com/)",
+  "author": "YAY",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Hitman666/MEAN_MVC_3rdTutorial/issues"
-  },
-  "homepage": "https://github.com/Hitman666/MEAN_MVC_3rdTutorial",
   "dependencies": {
     "axios": "^0.17.1",
     "body-parser": "^1.10.1",
@@ -29,11 +28,22 @@
     "express": "^4.10.7",
     "express-session": "^1.15.6",
     "foreman": "^2.0.0",
+    "material-ui": "^0.20.0",
+    "material-ui-icons": "^1.0.0-beta.17",
+    "material-ui-search-bar": "^0.4.1",
     "mongoose": "^3.8.21",
     "nodemon": "^1.14.11",
     "passport": "^0.2.2",
     "passport-facebook": "^1.0.3",
     "passport-local": "^1.0.0",
-    "passport-twitter": "^1.0.4"
+    "passport-twitter": "^1.0.4",
+    "prop-types": "^15.6.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-redux": "^5.0.6",
+    "react-router": "^4.2.0",
+    "react-scripts": "1.1.0",
+    "redux": "^3.7.2",
+    "redux-form": "^7.2.1"
   }
 }
