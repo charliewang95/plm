@@ -32,13 +32,13 @@ module.exports = function() {
 	app.use(passport.initialize());
 	app.use(passport.session());
 
-	require('../app/routes/index.server.routes.js')(app);
-	require('../app/routes/users.server.routes.js')(app);
-	require('../app/routes/vendors.server.routes.js')(app);
-	require('../app/routes/ingredients.server.routes.js')(app);
-	require('../app/routes/storages.server.routes.js')(app);
-	require('../app/routes/orders.server.routes.js')(app);
-	require('../app/routes/inventories.server.routes.js')(app);
+	require('../server/routes/index.server.routes.js')(app);
+	require('../server/routes/users.server.routes.js')(app);
+	require('../server/routes/vendors.server.routes.js')(app);
+	require('../server/routes/ingredients.server.routes.js')(app);
+	require('../server/routes/storages.server.routes.js')(app);
+	require('../server/routes/orders.server.routes.js')(app);
+	require('../server/routes/inventories.server.routes.js')(app);
 
 
 	app.use(express.static('./public'));

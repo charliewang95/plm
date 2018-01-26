@@ -3,7 +3,7 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 var StorageSchema = new Schema({
-	ingredientName: {
+	ingredientId: {
 		type: mongoose.Schema.Types.ObjectId,
         ref: 'Ingredient',
         required: true
