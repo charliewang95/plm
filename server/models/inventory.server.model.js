@@ -1,32 +1,34 @@
 var mongoose = require('mongoose'),
     User = require('mongoose').model('User'),
     Ingredient = require('mongoose').model('Ingredient'),
-    Vendor = require('mongoose').model('Vendor'),
 	Schema = mongoose.Schema;
 
-var OrderSchema = new Schema({
-	userName: {
+var InventorySchema = new Schema({
+	userId: {
 		type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
 	},
-	ingredientName: {
+	ingredientId: {
 	    type: mongoose.Schema.Types.ObjectId,
 	    ref: 'Ingredient',
-        required: true
+        required: true,
+        unique: true
 	},
-	vendorName: {
-    	type: mongoose.Schema.Types.ObjectId,
-    	ref: 'Vendor',
+	ingredientName: {
+	    type: String,
+	    required: true
+	},
+	temperatureZone: {
+        type: String,
+        enum: ['freezer', 'refrigerator', 'warehouse',
+               'Freezer', 'Refrigerator', 'Warehouse'],
         required: true
     },
-    package: {
+    quantity: { //in pounds
         type: Number,
         required: true
-    },
-    price: {
-        type: Number
     }
 });
 
-mongoose.model('Order', OrderSchema);
+mongoose.model('Inventory', InventorySchema);

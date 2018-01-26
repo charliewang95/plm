@@ -92,68 +92,22 @@ exports.saveOAuthUserProfile = function(req, profile, done) {
 };
 
 
-
 exports.create = function(req, res, next) {	
-	var user = new User(req.body);
-	user.save(function(err) {
-		if (err) {
-			return next(err);
-		}
-		else {
-			res.json(user);
-		}
-	});
+	utils.doWithAccess(req, res, next, User, 'create', req.params.userId, '', true);
 };
 
 exports.list = function(req, res, next) {
-	User.find({}, function(err, users) {
-		if (err) {
-			return next(err);
-		}
-		else {
-			res.json(users);
-		}
-	});
+	utils.doWithAccess(req, res, next, User, 'list', req.params.userId, '', true);
 };
 
-exports.read = function(req, res) {
-	res.json(req.user);
-};
-
-exports.userByID = function(req, res, next, id) {
-	User.findOne({
-			_id: id
-		}, 
-		function(err, user) {
-			if (err) {
-				return next(err);
-			}
-			else {
-				req.user = user;
-				next();
-			}
-		}
-	);
+exports.read = function(req, res, next) {
+	utils.doWithAccess(req, res, next, User, 'read', req.params.userId, req.params.searchedUserId, true);
 };
 
 exports.update = function(req, res, next) {
-	User.findByIdAndUpdate(req.user.id, req.body, function(err, user) {
-		if (err) {
-			return next(err);
-		}
-		else {
-			res.json(user);
-		}
-	});
+	utils.doWithAccess(req, res, next, User, 'update', req.params.userId, req.params.searchedUserId, true);
 };
 
 exports.delete = function(req, res, next) {
-	req.user.remove(function(err) {
-		if (err) {
-			return next(err);
-		}
-		else {
-			res.json(req.user);
-		}
-	})
+	utils.doWithAccess(req, res, next, User, 'delete', req.params.userId, req.params.searchedUserId, true);
 };

@@ -1,12 +1,10 @@
-var users = require('../../app/controllers/users.server.controller'),
+var users = require('../controllers/users.server.controller'),
 	passport = require('passport');
 
 module.exports = function(app) {
-	app.route('/users').post(users.create).get(users.list);
+	app.route('/users/user/:userId').post(users.create).get(users.list);
 
-	app.route('/users/user/:userId').get(users.read).put(users.update).delete(users.delete);
-
-	app.param('userId', users.userByID);
+	app.route('/users/searchedUser/:searchedUserId/user/:userId').get(users.read).put(users.update).delete(users.delete);
 
 	app.route('/register')
 		.get(users.renderRegister)
