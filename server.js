@@ -26,4 +26,4 @@ app.use(function(req, res, next) {
 app.listen(config.port);
 
 module.exports = app;
-console.log(process.env.NODE_ENV + ' server running at http://localhost:' + config.port);
+console.log(process.env.NODE_ENV + ' Back-end running at http://localhost:' + config.port);
