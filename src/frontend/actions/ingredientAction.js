@@ -1,20 +1,15 @@
 //ingredientAction.js
 import axios from 'axios';
-
+import * as genericActions from './genericCrudActions'
 //All the methods return the response on successful completion
 
+const baseUrl = '/ingredients';
+const property = '/ingredient'; 
 /* add one ingredient
  * ingredient: JSON object
  */
 function addIngredient(ingredient) {
-	axios.post('/ingredients', ingredient)
-	.then(function (response) {
-		console.log(response);
-		return response;
-	})
-	.catch(function (error) {
-		console.log(error);
-	});
+	return genericActions.create(ingredient,baseUrl);
 };
 
 /* 
@@ -22,14 +17,7 @@ function addIngredient(ingredient) {
  * 
  */
 function getAllIngredients() {
-	axios.get('/ingredients')
-	.then(function (response) {
-		console.log(response);
-		return response;
-	})
-	.catch(function (error) {
-		console.log(error);
-	});
+	return genericActions.getAll(baseUrl);
 };
 
 /* 
@@ -37,14 +25,7 @@ function getAllIngredients() {
  * ingredientId: string, the id of the ingredient
  */
 function getIngredient(ingredientId) {
-	axios.get('/ingredients/ingredient/'.concat(ingredientId))
-	.then(function (response) {
-		console.log(response);
-		return response;
-	})
-	.catch(function (error) {
-		console.log(error);
-	});
+	return genericActions.getById(ingredientId, baseUrl.concat(property).concat('/') );
 };
 
 /* 
@@ -53,28 +34,14 @@ function getIngredient(ingredientId) {
  * ingredient: JSON object representing the updated info about the ingredient
  */
 function updateIngredient(ingredientId, ingredient) {
-	axios.put('/ingredients/ingredient/'.concat(ingredientId), ingredient)
-	.then(function (response) {
-		console.log(response);
-		return response;
-	})
-	.catch(function (error) {
-		console.log(error);
-	});
+	return genericActions.updateById(ingredientId, ingredient, baseUrl.concat(property).concat('/') );
 };
 
 /* 
  * delete one existing ingredient
  */
 function deleteIngredient(ingredientId) {
-	axios.delete('/ingredients/ingredient/'.concat(ingredientId))
-	.then(function (response) {
-		console.log(response);
-		return response;
-	})
-	.catch(function (error) {
-		console.log(error);
-	});
+	return genericActions.deleteById(ingredientId, baseUrl.concat(property).concat('/') );
 };
 
 //export functions above for use by other modules

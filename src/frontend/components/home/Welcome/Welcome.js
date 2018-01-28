@@ -9,6 +9,7 @@ import * as ingredientActions from '../../../actions/ingredientAction'
 //dummy data for testing
 import * as dummyIngredient from '../../../dummyDatas/ingredient'
 
+const ingredientId = '5a6e2b65d141d5472554fc51'
 const WelcomeCard = () => (
   <Card>
     <CardHeader
@@ -29,9 +30,9 @@ const WelcomeCard = () => (
       <FlatButton label="Alert" onClick={()=>alert("Button pressed!")} />
 
       <FlatButton label="All ingredients" onClick={()=>ingredientActions.getAllIngredients()} />
-      <FlatButton label="Get One Ingredient" onClick={()=>ingredientActions.getIngredient("5a6bc27327f9a32508ebfe8b")} />
-      <FlatButton label="Update Ingredient" onClick={()=>ingredientActions.updateIngredient("5a6bc27327f9a32508ebfe8b", dummyIngredient.updatedIngredient)} />
-      <FlatButton label="Delete Ingredient" onClick={()=>ingredientActions.deleteIngredient("5a6bc27327f9a32508ebfe8b")} />
+      <FlatButton label="Get One Ingredient" onClick={()=>ingredientActions.getIngredient(ingredientId)} />
+      <FlatButton label="Update Ingredient" onClick={()=>ingredientActions.updateIngredient(ingredientId, dummyIngredient.updatedIngredient)} />
+      <FlatButton label="Delete Ingredient" onClick={()=>ingredientActions.deleteIngredient(ingredientId)} />
     </CardActions>
   </Card>
 );
