@@ -1,6 +1,8 @@
 //ingredientAction.js
 import axios from 'axios';
 
+//All the methods return the response on successful completion
+
 /* add one ingredient
  * ingredient: JSON object
  */
@@ -8,6 +10,7 @@ function addIngredient(ingredient) {
 	axios.post('/ingredients', ingredient)
 	.then(function (response) {
 		console.log(response);
+		return response;
 	})
 	.catch(function (error) {
 		console.log(error);
@@ -16,11 +19,13 @@ function addIngredient(ingredient) {
 
 /* 
  * get all ingredients
+ * 
  */
-function getIngredients() {
+function getAllIngredients() {
 	axios.get('/ingredients')
 	.then(function (response) {
 		console.log(response);
+		return response;
 	})
 	.catch(function (error) {
 		console.log(error);
@@ -35,6 +40,7 @@ function getIngredient(ingredientId) {
 	axios.get('/ingredients/ingredient/'.concat(ingredientId))
 	.then(function (response) {
 		console.log(response);
+		return response;
 	})
 	.catch(function (error) {
 		console.log(error);
@@ -50,6 +56,7 @@ function updateIngredient(ingredientId, ingredient) {
 	axios.put('/ingredients/ingredient/'.concat(ingredientId), ingredient)
 	.then(function (response) {
 		console.log(response);
+		return response;
 	})
 	.catch(function (error) {
 		console.log(error);
@@ -63,10 +70,12 @@ function deleteIngredient(ingredientId) {
 	axios.delete('/ingredients/ingredient/'.concat(ingredientId))
 	.then(function (response) {
 		console.log(response);
+		return response;
 	})
 	.catch(function (error) {
 		console.log(error);
 	});
 };
 
-export { addIngredient, getIngredients, getIngredient, updateIngredient, deleteIngredient};
+//export functions above for use by other modules
+export { addIngredient, getAllIngredients, getIngredient, updateIngredient, deleteIngredient};

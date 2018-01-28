@@ -28,7 +28,7 @@ const WelcomeCard = () => (
       
       <FlatButton label="Alert" onClick={()=>alert("Button pressed!")} />
 
-      <FlatButton label="All ingredients" onClick={()=>ingredientActions.getIngredients()} />
+      <FlatButton label="All ingredients" onClick={()=>ingredientActions.getAllIngredients()} />
       <FlatButton label="Get One Ingredient" onClick={()=>ingredientActions.getIngredient("5a6bc27327f9a32508ebfe8b")} />
       <FlatButton label="Update Ingredient" onClick={()=>ingredientActions.updateIngredient("5a6bc27327f9a32508ebfe8b", dummyIngredient.updatedIngredient)} />
       <FlatButton label="Delete Ingredient" onClick={()=>ingredientActions.deleteIngredient("5a6bc27327f9a32508ebfe8b")} />
