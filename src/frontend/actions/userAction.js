@@ -6,7 +6,7 @@ import * as genericActions from './genericCrudAction'
 const baseUrl = '/users';
 const property = '/user';
 
-/* add one ingredient
+/* add one user
  * user: JSON object
  */
 function addUser(user) {
