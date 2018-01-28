@@ -25,4 +25,19 @@ var IngredientSchema = new Schema({
     }]
 });
 
+IngredientSchema.methods.getPackagePounds = function(packageName) {
+    if (packageName == 'Sack' || packageName == 'sack' || packageName == 'Pail' || packageName == 'pail')
+        return 50;
+    else if (packageName == 'Drum' || packageName == 'drum')
+        return 500;
+    else if (packageName == 'Supersack' || packageName == 'supersack')
+        return 2000;
+    else if (packageName == 'Truckload' || packageName == 'truckload')
+        return 50000;
+    else if (packageName == 'Railcar' || packageName == 'railcar')
+        return 280000;
+    else
+        return 0;
+};
+
 mongoose.model('Ingredient', IngredientSchema);
