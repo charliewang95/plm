@@ -1,6 +1,6 @@
 //ingredientAction.js
 import axios from 'axios';
-import * as genericActions from './genericCrudActions'
+import * as genericActions from './genericCrudAction'
 //All the methods return the response on successful completion
 
 const baseUrl = '/ingredients';
@@ -39,6 +39,7 @@ function updateIngredient(ingredientId, ingredient) {
 
 /* 
  * delete one existing ingredient
+ * ingredientId: string, the id of the ingredient
  */
 function deleteIngredient(ingredientId) {
 	return genericActions.deleteById(ingredientId, baseUrl.concat(property).concat('/') );
