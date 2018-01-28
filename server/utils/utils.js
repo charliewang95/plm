@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
+var validator = require('./validator');
+var modifier = require('./modifier');
 
 exports.getErrorMessage = function(err) {
     var message = '';
@@ -27,10 +29,12 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
     User.findById(userId, function(err, user) {
         if (err) next(err);
         else if (!user) {
-            res.send('403');
+            res.status(401);
+            res.send('User does not exist');
         }
         else if (AdminRequired && !user.isAdmin) {
-            res.send('403');
+            res.status(403);
+            res.send('Admin access required');
         }
         else {
             if (action == 'create') create(req, res, next, model);
@@ -42,7 +46,10 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             else if (action == 'deleteWithUserAccess') deleteWithUserAccess(req, res, next, model, userId, itemId);
             else if (action == 'read') read(req, res, next, model, itemId);
             else if (action == 'readWithUserAccess') readWithUserAccess(req, res, next, model, userId, itemId);
-            else res.send('403');
+            else {
+                res.status(400);
+                res.send('Something went wrong');
+            }
         }
     });
 }
@@ -71,14 +78,22 @@ var listPartial = function(req, res, next, model, itemId) {
 
 var create = function(req, res, next, model) {
 	var item = new model(req.body);
-	item.save(function(err) {
-		if (err) {
-			return next(err);
-		}
-		else {
-			res.json(item);
-		}
-	});
+    modifier.modify(model, item, next, function(err, obj){
+        if (err) {
+            next(err);
+        }
+        else if (obj) {
+            var modifiedItem = new model(obj);
+            modifiedItem.save(function(err) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    res.json(modifiedItem);
+                }
+            });
+        }
+    });
 };
 
 var read = function(req, res, next, model, itemId) {
@@ -104,17 +119,24 @@ var readWithUserAccess = function(req, res, next, model, userId, itemId) {
 };
 
 var update = function(req, res, next, model, itemId) {
-    model.findByIdAndUpdate(itemId, req.body, function(err, item) {
+    modifier.modify(model, req.body, next, function(err, obj){
         if (err) {
-            return next(err);
+            next(err);
         }
-        else {
-            res.json(item);
+        else if (obj) {
+            model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    res.json(obj2);
+                }
+            });
         }
     });
 };
 
-var updateWithUserAccess = function(req, res, next, model, userId, itemId) {
+var updateWithUserAccess = function(req, res, next, model, userId, itemId) { //no modifier
     model.findOne({_id: itemId, userId: userId}, function(err, item1) {
         if (err) {
             return next(err);
