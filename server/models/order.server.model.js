@@ -48,7 +48,6 @@ OrderSchema.statics.getNumPounds = function(ingredientId, package, next, callbac
 
 OrderSchema.methods.validateCapacity = function(ingredientId, package, next) {
 
-
 }
 
 mongoose.model('Order', OrderSchema);

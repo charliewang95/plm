@@ -78,20 +78,36 @@ var listPartial = function(req, res, next, model, itemId) {
 
 var create = function(req, res, next, model) {
 	var item = new model(req.body);
+	var modifiedItem;
     modifier.modify(model, item, next, function(err, obj){
         if (err) {
-            next(err);
+            return next(err);
         }
         else if (obj) {
-            var modifiedItem = new model(obj);
-            modifiedItem.save(function(err) {
+            modifiedItem = new model(obj);
+            validator.validate(model, modifiedItem, res, next, function(err, valid){
                 if (err) {
                     return next(err);
                 }
+                else if (valid) {
+                    modifiedItem.save(function(err) {
+                        if (err) {
+                            return next(err);
+                        }
+                        else {
+                            res.json(modifiedItem);
+                        }
+                    });
+                }
                 else {
-                    res.json(modifiedItem);
+                    res.status(400);
+                    res.send('Validation failed');
                 }
             });
+        }
+        else {
+            res.status(400);
+            res.send('Something went wrong');
         }
     });
 };
@@ -121,15 +137,26 @@ var readWithUserAccess = function(req, res, next, model, userId, itemId) {
 var update = function(req, res, next, model, itemId) {
     modifier.modify(model, req.body, next, function(err, obj){
         if (err) {
-            next(err);
+            return next(err);
         }
         else if (obj) {
-            model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
+            validator.validate(model, obj, res, next, function(err, valid){
                 if (err) {
                     return next(err);
                 }
+                else if (valid) {
+                    model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
+                        if (err) {
+                            return next(err);
+                        }
+                        else {
+                            res.json(obj2);
+                        }
+                    });
+                }
                 else {
-                    res.json(obj2);
+                    res.status(400);
+                    res.send('Validation failed');
                 }
             });
         }

@@ -14,10 +14,11 @@ var StorageSchema = new Schema({
 	           'Freezer', 'Refrigerator', 'Warehouse'],
 	    required: true
 	},
-	capacity: {
+	capacity: { // in pounds
 	    type: Number,
 	    required: true
 	}
 });
+StorageSchema.index({ ingredientId: 1, temperatureZone: 1}, { unique: true });
 
 mongoose.model('Storage', StorageSchema);
