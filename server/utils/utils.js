@@ -79,7 +79,7 @@ var listPartial = function(req, res, next, model, itemId) {
 var create = function(req, res, next, model) {
 	var item = new model(req.body);
 	var modifiedItem;
-    modifier.modify(model, item, next, function(err, obj){
+    modifier.modify(model, item, res, next, function(err, obj){
         if (err) {
             return next(err);
         }
@@ -135,7 +135,7 @@ var readWithUserAccess = function(req, res, next, model, userId, itemId) {
 };
 
 var update = function(req, res, next, model, itemId) {
-    modifier.modify(model, req.body, next, function(err, obj){
+    modifier.modify(model, req.body, res, next, function(err, obj){
         if (err) {
             return next(err);
         }

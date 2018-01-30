@@ -2,7 +2,7 @@ var Inventory = require('mongoose').model('Inventory');
 var utils = require('../utils/utils');
 
 exports.create = function(req, res, next) {
-    utils.doWithAccess(req, res, next, Inventory, 'create', req.params.userId, '', false);
+    utils.doWithAccess(req, res, next, Inventory, 'create', req.params.userId, '', true);
 }
 
 exports.list = function(req, res, next) {
@@ -19,7 +19,7 @@ exports.read = function(req, res, next) {
 };
 
 exports.update = function(req, res, next) {
-	utils.doWithAccess(req, res, next, Inventory, 'update', req.params.userId, req.params.inventoryId, false);
+	utils.doWithAccess(req, res, next, Inventory, 'update', req.params.userId, req.params.inventoryId, true);
 	//utils.doWithAccess(req, res, next, Inventory, 'updateWithUserAccess', req.params.userId, req.params.inventoryId, false);
 };
 

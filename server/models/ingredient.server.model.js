@@ -21,23 +21,24 @@ var IngredientSchema = new Schema({
         required: true
     },
     vendors : [{
-        type: String
+        name: String,
+        price: Number
     }]
 });
 
-IngredientSchema.methods.getPackagePounds = function(packageName) {
+IngredientSchema.methods.getPackagePounds = function(packageName, callback) {
     if (packageName == 'Sack' || packageName == 'sack' || packageName == 'Pail' || packageName == 'pail')
-        return 50;
+        callback(50);
     else if (packageName == 'Drum' || packageName == 'drum')
-        return 500;
+        callback(500);
     else if (packageName == 'Supersack' || packageName == 'supersack')
-        return 2000;
+        callback(2000);
     else if (packageName == 'Truckload' || packageName == 'truckload')
-        return 50000;
+        callback(50000);
     else if (packageName == 'Railcar' || packageName == 'railcar')
-        return 280000;
+        callback(280000);
     else
-        return 0;
+        callback(0);
 };
 
 mongoose.model('Ingredient', IngredientSchema);

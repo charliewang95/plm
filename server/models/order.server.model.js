@@ -33,15 +33,24 @@ var OrderSchema = new Schema({
     }
 });
 
-OrderSchema.statics.getNumPounds = function(ingredientId, package, next, callback) {
+OrderSchema.statics.getNumPounds = function(ingredientId, package, res, next, callback) {
     var pounds;
     Ingredient.findById(ingredientId, function(err, ingredient) {
         if (err) {
             next(err);
         }
+        else if (!ingredient) {
+            res.status(400);
+            res.send("Ingredient doesn't exist");
+        }
         else {
-            pounds = ingredient.getPackagePounds(ingredient.package);
-            callback(err, pounds*package);
+            pounds = ingredient.getPackagePounds(ingredient.package, function(pounds) {
+                if (pounds == 0) {
+                    res.status(400);
+                    res.send("Package name doesn't exist");
+                }
+                else callback(err, pounds*package);
+            });
         }
     });
 }

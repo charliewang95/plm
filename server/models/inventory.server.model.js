@@ -6,8 +6,7 @@ var mongoose = require('mongoose'),
 var InventorySchema = new Schema({
 	userId: {
 		type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+        ref: 'User'
 	},
 	ingredientId: {
 	    type: mongoose.Schema.Types.ObjectId,
@@ -21,8 +20,7 @@ var InventorySchema = new Schema({
 	},
 	temperatureZone: {
         type: String,
-        enum: ['freezer', 'refrigerator', 'warehouse',
-               'Freezer', 'Refrigerator', 'Warehouse'],
+        enum: ['freezer', 'refrigerator', 'warehouse'],
         required: true
     },
     quantity: { //in pounds
@@ -30,5 +28,7 @@ var InventorySchema = new Schema({
         required: true
     }
 });
+
+
 
 mongoose.model('Inventory', InventorySchema);
