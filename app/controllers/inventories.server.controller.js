@@ -35,18 +35,36 @@ exports.create = function(req, res, next) {
 };
 
 exports.list = function(req, res, next) {
-	Inventory.find({}, function(err, inventorys) {
+	Inventory.find({}, function(err, inventories) {
 		if (err) {
 			return next(err);
 		}
 		else {
-			res.json(inventorys);
+			res.json(inventories);
+		}
+	});
+};
+
+exports.listPartial = function(req, res, next) {
+	Inventory.find({userName: req.params.userName}, function(err, inventories) {
+		if (err) {
+			return next(err);
+		}
+		else {
+			res.json(inventories);
 		}
 	});
 };
 
 exports.read = function(req, res) {
-	res.json(req.inventory);
+	Inventory.findOne({_id: req.params.inventoryName, userName: req.params.userName}, function(err, inventory) {
+        if (err) {
+            return next(err);
+        }
+        else {
+            res.json(inventory);
+        }
+    });
 };
 
 exports.inventoryByID = function(req, res, next, id) {
@@ -66,23 +84,37 @@ exports.inventoryByID = function(req, res, next, id) {
 };
 
 exports.update = function(req, res, next) {
-	Inventory.findByIdAndUpdate(req.inventory.id, req.body, function(err, inventory) {
-		if (err) {
-			return next(err);
-		}
-		else {
-			res.json(inventory);
-		}
-	});
+	Inventory.findOne({_id: req.params.inventoryName, userName: req.params.userName}, function(err, inventory1) {
+        if (err) {
+            return next(err);
+        }
+        else {
+            Order.findByIdAndUpdate(req.params.inventoryName, req.body, function(err, inventory2) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    res.json(inventory2);
+                }
+            });
+        }
+    });
 };
 
 exports.delete = function(req, res, next) {
-	req.inventory.remove(function(err) {
-		if (err) {
-			return next(err);
-		}
-		else {
-			res.json(req.inventory);
-		}
-	})
+	Inventory.findOne({_id: req.params.inventoryName, userName: req.params.userName}, function(err, inventory) {
+        if (err) {
+            return next(err);
+        }
+        else {
+            inventory.remove(function(err) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    res.json(inventory);
+                }
+            })
+        }
+    });
 };

@@ -1,12 +1,10 @@
-MEAN_MVC_3rdTutorial
-====================
+# Real Producers
+## To get it running
 
-Code acompanying the [third blog post](https://hackhands.com/mongodb-crud-mvc-way-with-passport-authentication/) in a series of posts which will teach you how to take advantage of the MEAN stack in becoming a full-stack JavaScript developer.
+* run "npm install"
 
-**Extra extra, read all about it:** You can get the blog2book (all posts in one nice PDF file) [via LeanPub](https://leanpub.com/meantodo) (yes, you can choose zero as the amount and I promise I won't take it against you, though a coffee would be nice ;)).
+* run "npm start" to run the front-end
 
-[Fourth blog post](https://hackhands.com/finishing-Angular-TODO-application-deploying-production/) is all about Angular and deploying to production.
-[Second blog post](https://hackhands.com/delving-node-js-express-web-framework/) was all about Node.js and Express.
-[First blog post](https://hackhands.com/how-to-get-started-on-the-mean-stack/) was about getting started on the MEAN stack. 
+* run "node server.js" to run the back-end. __Note: Make sure Mongodb is running__
 
-![](http://www.nikola-breznjak.com/blog/wp-content/uploads/2014/12/batman.jpg)
+* run "npm run start-dev" to run both ends at the same time. The front end will be listening on port 3000, and the back-end on port 1337

@@ -14,8 +14,11 @@ var IngredientSchema = new Schema({
                'sack', 'pail', 'drum', 'supersack', 'truckload', 'railcar'],
         required: true
     },
-    temperature: {
-        type: Number
+    temperatureZone: {
+        type: String,
+        enum: ['freezer', 'refrigerator', 'warehouse',
+               'Freezer', 'Refrigerator', 'Warehouse'],
+        required: true
     },
     vendors : [{
         type: String

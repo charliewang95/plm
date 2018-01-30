@@ -13,8 +13,14 @@ var VendorSchema = new Schema({
 	code: {
 	    type: String,
 	    unique: true,
-	    required: true
+	    required: true,
 	},
+	codeUnique: {
+        type: String,
+        unique: true,
+        lowercase: true,
+        required: true
+    },
 	ingredients: [{
 	    type: mongoose.Schema.Types.ObjectId,
         ref: 'Ingredient'
