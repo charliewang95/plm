@@ -17,14 +17,21 @@ function addIngredient(ingredient) {
 /* 
  * get all ingredients
  */
-function getIngredients() {
-	axios.get('/ingredients')
-	.then(function (response) {
-		console.log(response);
-	})
-	.catch(function (error) {
-		console.log(error);
-	});
+// function getIngredients() {
+// 	axios.get('/ingredients')
+// 	.then(function (response) {
+// 		console.log(response);
+// 		console.log("getIngredients was called in ingredientAction");
+// 		return response;
+// 	})
+// 	.catch(function (error) {
+// 		console.log(error);
+// 	});
+// };
+
+async function getIngredients() {
+	const res = await axios.get('/ingredients');
+	return res;
 };
 
 /* 

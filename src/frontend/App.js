@@ -4,7 +4,10 @@ import AppBar from 'material-ui/AppBar'
 import Drawer from 'material-ui/Drawer'
 import MenuItem from 'material-ui/MenuItem'
 import RaisedButton from 'material-ui/RaisedButton'
+import Avatar from 'material-ui/Avatar';
 import Routes from './routes.js'
+import * as ingredientActions from './actions/ingredientAction.js'
+import * as dummyIngredient from './dummyDatas/ingredient.js'
 class App extends Component {
 
   constructor(props) {
@@ -25,7 +28,8 @@ class App extends Component {
       // </div>
       <div>
         <AppBar
-          title="Title"
+        //  title={<span><img src="https://www.svgrepo.com/show/21284/farm.svg" style={{marginTop: 10}} height="45" width = "45" />Real Producers</span>}
+          title="Real Producers"
           iconClassNameRight="muidocs-icon-navigation-expand-more"
           onLeftIconButtonClick ={this.toggleDrawer}
         />
@@ -62,7 +66,7 @@ class App extends Component {
 
           <RaisedButton
             label="Toggle Drawer"
-            onClick={this.toggleDrawer}
+            onClick={()=>ingredientActions.addIngredient(dummyIngredient.sampleIngredient)}
           />
         </div>
 
