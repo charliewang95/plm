@@ -59,6 +59,15 @@ class App extends Component {
               this.toggleDrawer()
             }}
           />
+          <MenuItem
+            primaryText="Welcome"
+            containerElement={<Link to="/default-welcome" />}
+            onClick={() => {
+              console.log('welcome!')
+              alert('going to default welcome page!')
+              this.toggleDrawer()
+            }}
+          />
         </Drawer>
 
         <div style={{ textAlign: 'center' }}>
