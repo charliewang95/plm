@@ -150,7 +150,7 @@ var update = function(req, res, next, model, itemId) {
                             return next(err);
                         }
                         else {
-                            res.json(obj2);
+                            res.json(obj);
                         }
                     });
                 }

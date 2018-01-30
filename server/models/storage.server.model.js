@@ -10,8 +10,7 @@ var StorageSchema = new Schema({
 	},
 	temperatureZone: {
 	    type: String,
-	    enum: ['freezer', 'refrigerator', 'warehouse',
-	           'Freezer', 'Refrigerator', 'Warehouse'],
+	    enum: ['freezer', 'refrigerator', 'warehouse'],
 	    required: true
 	},
 	capacity: { // in pounds
