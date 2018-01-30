@@ -66,7 +66,7 @@ class App extends Component {
 
           <RaisedButton
             label="Toggle Drawer"
-            onClick={()=>ingredientActions.addIngredient(dummyIngredient.sampleIngredient)}
+            onClick={()=>ingredientActions.addIngredient("corn","drum","freezer",'WholeFoods, HarrisTeeter, Krogers')}
           />
         </div>
 

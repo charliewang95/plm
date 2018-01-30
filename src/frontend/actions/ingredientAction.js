@@ -1,11 +1,20 @@
 //ingredientAction.js
 import axios from 'axios';
-
+import * as dummyIngredient from '../dummyDatas/ingredient.js'
 /* add one ingredient
  * ingredient: JSON object
  */
-function addIngredient(ingredient) {
-	axios.post('/ingredients', ingredient)
+function addIngredient(name, packageType, temperatureZone, vendors) {
+	var object = new Object();
+	object.name = name;
+	object.package = packageType;
+	object.temperatureZone = temperatureZone;
+	object.vendors = vendors;
+
+	console.log("JSON");
+	console.log(object);
+	console.log(dummyIngredient.sampleIngredient);
+	axios.post('/ingredients', object)
 	.then(function (response) {
 		console.log(response);
 	})
