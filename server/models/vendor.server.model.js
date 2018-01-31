@@ -2,6 +2,19 @@ var mongoose = require('mongoose'),
     Ingredient = require('mongoose').model('Ingredient'),
 	Schema = mongoose.Schema;
 
+var IngredientPriceSchema = new Schema({
+    ingredient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Ingredient',
+        required: true
+    },
+    price: {
+        type: Number,
+        required: true
+    }
+});
+mongoose.model('IngredientPrice', IngredientPriceSchema);
+
 var VendorSchema = new Schema({
 	name: {
 		type: String,
@@ -21,10 +34,7 @@ var VendorSchema = new Schema({
         lowercase: true,
         required: true
     },
-	ingredients: [{
-	    type: mongoose.Schema.Types.ObjectId,
-        ref: 'Ingredient'
-	}]
+	ingredients: [IngredientPriceSchema]
 });
 
 mongoose.model('Vendor', VendorSchema);

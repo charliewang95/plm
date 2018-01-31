@@ -2,6 +2,18 @@ var mongoose = require('mongoose'),
 //    Vendor = require('mongoose').model('Vendor'),
 	Schema = mongoose.Schema;
 
+var VendorPriceSchema = new Schema({
+    vendor: {
+        type: String,
+        required: true
+    },
+    price: {
+        type: Number,
+        required: true
+    }
+});
+mongoose.model('VendorPrice', VendorPriceSchema);
+
 var IngredientSchema = new Schema({
     name: {
         type: String,
@@ -16,14 +28,10 @@ var IngredientSchema = new Schema({
     },
     temperatureZone: {
         type: String,
-        enum: ['freezer', 'refrigerator', 'warehouse',
-               'Freezer', 'Refrigerator', 'Warehouse'],
+        enum: ['freezer', 'refrigerator', 'warehouse'],
         required: true
     },
-    vendors : [{
-        name: String,
-        price: Number
-    }]
+    vendors : [VendorPriceSchema]
 });
 
 IngredientSchema.methods.getPackagePounds = function(packageName, callback) {
