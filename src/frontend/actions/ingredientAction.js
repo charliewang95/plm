@@ -5,6 +5,7 @@ import * as genericActions from './genericCrudAction'
 
 const baseUrl = '/ingredients';
 const property = '/ingredient'; 
+
 /* add one ingredient
  * ingredient: JSON object
  */
@@ -14,18 +15,35 @@ function addIngredient(ingredient) {
 
 /* 
  * get all ingredients
- * 
+ * deprecated, use getAllIngredientsAsync instead
  */
 function getAllIngredients() {
 	return genericActions.getAll(baseUrl);
+	
+};
+
+/* 
+ * get all ingredients
+ * 
+ */
+function getAllIngredientsAsync(){
+	return genericActions.getAllAsync(baseUrl);
+};
+/* 
+ * get one ingredient
+ * deprecated, use getIngredientAsync instead
+ * ingredientId: string, the id of the ingredient
+ */
+function getIngredient(ingredientId) {
+	return genericActions.getById(ingredientId, baseUrl.concat(property).concat('/'));
 };
 
 /* 
  * get one ingredient
  * ingredientId: string, the id of the ingredient
  */
-function getIngredient(ingredientId) {
-	return genericActions.getById(ingredientId, baseUrl.concat(property).concat('/') );
+function getIngredientAsync(ingredientId){
+	return genericActions.getByIdAsync(ingredientId, baseUrl.concat(property).concat('/'));
 };
 
 /* 
@@ -46,4 +64,4 @@ function deleteIngredient(ingredientId) {
 };
 
 //export functions above for use by other modules
-export { addIngredient, getAllIngredients, getIngredient, updateIngredient, deleteIngredient};
+export { addIngredient, getAllIngredients, getAllIngredientsAsync, getIngredient, getIngredientAsync, updateIngredient, deleteIngredient};

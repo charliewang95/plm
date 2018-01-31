@@ -40,7 +40,7 @@ class Home extends Component {
   }
 
   async loadAllIngredients(){
-    const res = await ingredientActions.getIngredients();
+    const res = await ingredientActions.getAllIngredientsAsync();
     console.log("is this undefined" + res);
     this.setState({ingredients:res.data});
   }

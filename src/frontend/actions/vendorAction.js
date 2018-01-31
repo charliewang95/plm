@@ -15,18 +15,35 @@ function addVendor(vendor) {
 
 /* 
  * get all vendors
- * 
+ * deprecated, use getAllVendorsAsync() instead
  */
 function getAllVendors() {
 	return genericActions.getAll(baseUrl);
 };
 
 /* 
+ * get all vendors
+ * 
+ */
+function getAllVendorsAsync(){
+	return genericActions.getAllAsync(baseUrl);
+};
+
+/* 
  * get one vendor specified by an id
+ * deprecated, use getVendorAsync() instead
  * vendorId: string, the id of the vendor
  */
 function getVendor(vendorId) {
 	return genericActions.getById(vendorId, baseUrl.concat(property).concat('/') );
+};
+
+/* 
+ * get one vendor specified by an id
+ * vendorId: string, the id of the ingredient
+ */
+function getVendorAsync(vendorId){
+	return genericActions.getByIdAsync(vendorId, baseUrl.concat(property).concat('/'));
 };
 
 /* 
@@ -47,4 +64,4 @@ function deleteVendor(vendorId) {
 };
 
 //export functions above for use by other modules
-export { addVendor, getAllVendors, getVendor, updateVendor, deleteVendor};
+export { addVendor, getAllVendors, getAllVendorsAsync, getVendor, getVendorAsync, updateVendor, deleteVendor};

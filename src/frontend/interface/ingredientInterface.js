@@ -21,7 +21,7 @@ function packIntoJson(name, packageType, temperatureZone, vendors){
 	ingredientJson.temperatureZone = temperatureZone;
 	ingredientJson.vendors = vendors;
 	console.log("JSON");
-	console.log(object);
+	console.log(ingredientJson);
 	console.log(dummyIngredient.sampleIngredient);
 	return ingredientJson;
 }
@@ -34,7 +34,38 @@ function addIngredient(name, packageType, temperatureZone, vendors) {
 	ingredientActions.addIngredient(newIngredient);
 }
 
-async function getIngredients() {
-	const res = await axios.get('/ingredients');
-	return res;
+/**
+ * get all ingredients
+**/
+function getAllIngredientsAsync() {
+	return ingredientActions.getAllIngredientsAsync();
 }
+
+/* 
+ * get one ingredient
+ * ingredientId: string, the id of the ingredient
+ */
+function getIngredientAsync(ingredientId) {
+	return ingredientActions.getIngredientAsync(ingredientId));
+};
+
+/* 
+ * update one ingredient
+ * ingredientId: string, the id of the ingredient
+ * other arguments: see packIntoJson()
+ */
+function updateIngredient(ingredientId, name, packageType, temperatureZone, vendors) {
+	var updatedIngredient = packIntoJson(name, packageType, temperatureZone, vendors);
+	return ingredientActions.updateIngredient(ingredientId, updatedIngredient);
+};
+
+/* 
+ * delete one existing ingredient
+ * ingredientId: string, the id of the ingredient
+ */
+function deleteIngredient(ingredientId) {
+	return ingredientActions.deleteById(ingredientId);
+};
+
+//export functions above for use by other modules
+export { addIngredient, getAllIngredientsAsync, getIngredientAsync, updateIngredient, deleteIngredient};

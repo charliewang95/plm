@@ -24,7 +24,35 @@ function create(object,url) {
  * url: string, the url for the get request
  */
 function getAll(url) {
+	//deprecated because somehow front end does not work?
+	//use getAllAsync instead
 	axios.get(url)
+	.then(function (response) {
+		console.log(response);
+		return response;
+	})
+	.catch(function (error) {
+		console.log(error);
+	});
+};
+
+/* 
+ * get all objects of a kind
+ * url: string, the url for the get request
+ */
+async function getAllAsync(url) {
+	const res = await axios.get(url);
+	return res;
+}
+
+/* 
+ * get one object with a specfic id
+ * deprecated, use getByIdAsync instead
+ * objectId: string, the id of the ingredient
+ * url: string, the url for the get request
+ */
+function getById(objectId, url) {
+	axios.get(url.concat(objectId))
 	.then(function (response) {
 		console.log(response);
 		return response;
@@ -39,15 +67,9 @@ function getAll(url) {
  * objectId: string, the id of the ingredient
  * url: string, the url for the get request
  */
-function getById(objectId, url) {
-	axios.get(url.concat(objectId))
-	.then(function (response) {
-		console.log(response);
-		return response;
-	})
-	.catch(function (error) {
-		console.log(error);
-	});
+async function getByIdAsync(objectId, url) {
+	const res = await axios.get(url.concat(objectId));
+	return res;
 };
 
 /* 
@@ -84,4 +106,4 @@ function deleteById(objectId, url) {
 };
 
 //export functions above for use by other modules
-export { create, getAll, getById, updateById, deleteById};
+export { create, getAll, getAllAsync, getById, getByIdAsync, updateById, deleteById};

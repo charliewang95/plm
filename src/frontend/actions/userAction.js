@@ -15,19 +15,37 @@ function addUser(user) {
 
 /* 
  * get all users
- * 
+ * deprecated, use getAllUsersAsync() instead
  */
 function getAllUsers() {
 	return genericActions.getAll(baseUrl);
 };
 
 /* 
+ * get all users
+ * 
+ */
+function getAllUsersAsync(){
+	return genericActions.getAllAsync(baseUrl);
+};
+
+/* 
  * get one user specified by an id
+ * deprecatd, use getUserAsync() instead
  * userId: string, the id of the user
  */
 function getUser(userId) {
 	return genericActions.getById(userId, baseUrl.concat(property).concat('/') );
 };
+
+/* 
+ * get one user specified by an id
+ * ingredientId: string, the id of the ingredient
+ */
+function getUserAsync(userId){
+	return genericActions.getByIdAsync(userId, baseUrl.concat(property).concat('/'));
+};
+
 
 /* 
  * update one user information
@@ -47,4 +65,4 @@ function deleteUser(userId) {
 };
 
 //export functions above for use by other modules
-export { addUser, getAllUsers, getUser, updateUser, deleteUser};
+export { addUser, getAllUsers, getAllUsersAsync, getUser, getUserAsync, updateUser, deleteUser};
