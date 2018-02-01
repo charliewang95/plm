@@ -68,7 +68,6 @@ function updateIngredient(ingredientId, name, packageType, temperatureZone, vend
  * ingredientId: string, the id of the ingredient
  * sessionId: string, id of the current session
  */
-
 function deleteIngredient(ingredientId, sessionId) {
 	return ingredientActions.deleteIngredient(ingredientId, sessionId);
 };
