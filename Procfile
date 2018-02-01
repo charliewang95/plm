@@ -1,2 +1,2 @@
-web: react-scripts start
+web: PORT=443 react-scripts start
 api: nodemon server.js
