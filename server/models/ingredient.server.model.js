@@ -1,10 +1,11 @@
 var mongoose = require('mongoose'),
-//    Vendor = require('mongoose').model('Vendor'),
+    Vendor = require('mongoose').model('Vendor'),
 	Schema = mongoose.Schema;
 
 var VendorPriceSchema = new Schema({
     vendor: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Vendor',
         required: true
     },
     price: {
@@ -22,8 +23,8 @@ var IngredientSchema = new Schema({
     },
     package: {
         type: String,
-        enum: ['Sack', 'Pail', 'Drum', 'Supersack', 'Truckload', 'Railcar',
-               'sack', 'pail', 'drum', 'supersack', 'truckload', 'railcar'],
+        enum: ['sack', 'pail', 'drum', 'supersack', 'truckload', 'railcar'],
+        lowercase: true,
         required: true
     },
     temperatureZone: {
@@ -35,15 +36,15 @@ var IngredientSchema = new Schema({
 });
 
 IngredientSchema.methods.getPackagePounds = function(packageName, callback) {
-    if (packageName == 'Sack' || packageName == 'sack' || packageName == 'Pail' || packageName == 'pail')
+    if (packageName == 'sack' || packageName == 'pail')
         callback(50);
-    else if (packageName == 'Drum' || packageName == 'drum')
+    else if (packageName == 'drum')
         callback(500);
-    else if (packageName == 'Supersack' || packageName == 'supersack')
+    else if (packageName == 'supersack')
         callback(2000);
-    else if (packageName == 'Truckload' || packageName == 'truckload')
+    else if (packageName == 'truckload')
         callback(50000);
-    else if (packageName == 'Railcar' || packageName == 'railcar')
+    else if (packageName == 'railcar')
         callback(280000);
     else
         callback(0);

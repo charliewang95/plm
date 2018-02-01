@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
-var modifier = require('./modifier');
+var modifierCreateUpdate = require('./modifierCreateUpdate');
+//var modifierDelete = require('./modifierDelete');
 var validator = require('./validator');
 var postProcessor = require('./postProcessor');
 
@@ -81,7 +82,7 @@ var listPartial = function(req, res, next, model, itemId) {
 var create = function(req, res, next, model) {
 	var item = new model(req.body);
 	var modifiedItem;
-    modifier.modify(model, item, res, next, function(err, obj){
+    modifierCreateUpdate.modify('create', model, item, '', res, next, function(err, obj){
         if (err) {
             return next(err);
         }
@@ -92,14 +93,14 @@ var create = function(req, res, next, model) {
                     return next(err);
                 }
                 else if (valid) {
-//                    modifiedItem.save(function(err) {
-//                        if (err) {
-//                            return next(err);
-//                        }
-//                        else {
-//                            res.json(modifiedItem);
-//                        }
-//                    });
+                    modifiedItem.save(function(err) {
+                        if (err) {
+                            return next(err);
+                        }
+                        else {
+                            res.json(modifiedItem);
+                        }
+                    });
                 }
                 else {
                     res.status(400);
@@ -137,7 +138,7 @@ var readWithUserAccess = function(req, res, next, model, userId, itemId) {
 };
 
 var update = function(req, res, next, model, itemId) {
-    modifier.modify(model, req.body, res, next, function(err, obj){
+    modifierCreateUpdate.modify('update', model, req.body, itemId, res, next, function(err, obj){
         if (err) {
             return next(err);
         }

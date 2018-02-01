@@ -25,8 +25,8 @@ module.exports = function() {
 //    var engine = ReactEngine.server.create();
 //    app.engine('.js', engine);
 
-    app.set('views', './src');
-    app.set('view engine', 'js');
+    app.set('views', './server/views');
+    app.set('view engine', 'ejs');
 
 	app.use(flash());
 	app.use(passport.initialize());
