@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import TestingCard from './testing/TestingCard.js';
+//import TestingCard from './testing/TestingCard.js';
 
 class Dashboard extends Component {
   
@@ -12,7 +12,7 @@ class Dashboard extends Component {
   render() {
     return (
     	<div>
-        <TestingCard />
+        Hi This is a test.
       </div>
     );
   }
