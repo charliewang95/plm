@@ -27,3 +27,21 @@ exports.delete = function(req, res, next) {
 	utils.doWithAccess(req, res, next, Inventory, 'delete', req.params.userId, req.params.inventoryId, false);
 	//utils.doWithAccess(req, res, next, Inventory, 'deleteWithUserAccess', req.params.userId, req.params.inventoryId, false);
 };
+
+exports.getCertainPackage = function(req, res, next) {
+    Inventory.find({package: req.params.packageName}, function(err, inventories) {
+        if (err) return next(err);
+        else {
+            res.send(inventories);
+        }
+    });
+};
+
+exports.getCertainTemp = function(req, res, next) {
+    Inventory.find({temperatureZone: req.params.tempName}, function(err, inventories) {
+        if (err) return next(err);
+        else {
+            res.send(inventories);
+        }
+    });
+};

@@ -68,7 +68,7 @@ var validateOrder = function(item, res, next, callback) { //check if exceed capa
                         newQuantity = item.pounds + quantity;
                         if (newQuantity > capacity) {
                             res.status(400);
-                            res.send("Capacity will be exceeded");
+                            res.send("Capacity -- "+capacity+" pounds will be exceeded. Your current quantity is "+quantity+" pounds.");
                         }
                         else {
                             updateInventory(ingredientId, newQuantity, res, next, function(err4, obj4){
@@ -88,20 +88,30 @@ var validateOrder = function(item, res, next, callback) { //check if exceed capa
 var updateInventory = function(ingredientId, quantity, res, next, callback) {
     Inventory.findOneAndUpdate({ingredientId: ingredientId}, {quantity: quantity}, function(err, obj) {
         if (err) return next(err);
+        else if (!obj){
+            Ingredient.findById(ingredientId, function(err, ingredient){
+                if (err) return next(err);
+                else if (!ingredient) {
+                    res.status(400).send("Ingredient does not exist");
+                }
+                else {
+                    var item = new Inventory();
+                    item.ingredientId = ingredientId;
+                    item.ingredientName = ingredient.name;
+                    item.temperatureZone = ingredient.temperatureZone;
+                    item.quantity = quantity;
+                    item.save(function(err) {
+                        if (err) {
+                            return next(err);
+                        }
+                        else {
+                            callback(err, null);
+                        }
+                    });
+                }
+            });
+        }
         else {
-//            var item = new Inventory();
-//                item.ingredientId = ingredientId;
-//                item.ingredientName = ingredientName;
-//                item.temperatureZone = temperatureZone;
-//                item.quantity = quantity;
-//                item.save(function(err) {
-//                    if (err) {
-//                        return next(err);
-//                    }
-//                    else {
-//                        callback(err, null);
-//                    }
-//                });
             callback(err, null);
         }
     });
@@ -130,7 +140,7 @@ var validateStorage = function(item, res, next, callback) { //check if capacity 
                     }
                     if (item.capacity < quantity) {
                         res.status(400);
-                        res.send("Capacity will be exceeded");
+                        res.send("Capacity -- "+item.capacity+" will be exceeded by current quantity");
                     }
                     else {
                         callback(err2, true);
@@ -157,7 +167,7 @@ var validateCart = function(item, res, next, callback) { //check if checked out 
             quantity = obj.quantity;
             if (quantity < item.quantity) {
                 res.status(400);
-                res.send("Inventory limit exceeded: please decrease amount for "+obj.ingredientName);
+                res.send("Inventory limit -- "+quantity+" pounds is exceeded: please decrease amount of "+obj.ingredientName);
             }
             else callback(err, true);
         }

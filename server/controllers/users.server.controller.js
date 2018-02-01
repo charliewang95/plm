@@ -28,20 +28,19 @@ exports.renderRegister = function(req, res, next) {
 
 exports.register = function(req, res, next) {
 	if (!req.user) {
+	    console.log("here");
 		var user = new User(req.body);
-		var message = null;
-		user.provider = 'local';
+		console.log(user);
 		user.save(function(err) {
 			if (err) {
-				var message = getErrorMessage(err);
-				req.flash('error', message);
+				//var message = getErrorMessage(err);
+				//req.flash('error', message);
 				return res.redirect('/register');
 			}	
 
 			req.login(user, function(err) {
 				if (err) 
 					return next(err);
-				
 				return res.redirect('/');
 			});
 		});
