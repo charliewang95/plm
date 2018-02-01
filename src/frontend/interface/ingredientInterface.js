@@ -12,7 +12,7 @@ returns a Json object that encapsulates all properties
 name: string
 packageType: string 'Sack', 'Pail', 'Drum', 'Supersack', 'Truckload', 'Railcar', or lowercase
 temperatureZone: string 'freezer', 'refrigerator', 'warehouse', 'Freezer', 'Refrigerator', 'Warehouse'
-vendors: array of strings
+vendors: array of objects following the VendorPriceSchema
 **/
 function packIntoJson(name, packageType, temperatureZone, vendors){
 	var ingredientJson = new Object();
@@ -28,43 +28,48 @@ function packIntoJson(name, packageType, temperatureZone, vendors){
 
 /* add one ingredient
  * for arguments see packIntoJson
+ * sessionId: string, id of the current session
  */
-function addIngredient(name, packageType, temperatureZone, vendors) {
+function addIngredient(name, packageType, temperatureZone, vendors, sessionId) {
 	var newIngredient = packIntoJson(name, packageType, temperatureZone, vendors);
-	ingredientActions.addIngredient(newIngredient);
+	ingredientActions.addIngredient(newIngredient, sessionId);
 }
 
 /**
  * get all ingredients
+ * sessionId: string, id of the current session
 **/
-function getAllIngredientsAsync() {
-	return ingredientActions.getAllIngredientsAsync();
+function getAllIngredientsAsync(sessionId) {
+	return ingredientActions.getAllIngredientsAsync(sessionId);
 }
 
 /* 
  * get one ingredient
  * ingredientId: string, the id of the ingredient
+ * sessionId: string, id of the current session
  */
-function getIngredientAsync(ingredientId) {
-	return ingredientActions.getIngredientAsync(ingredientId);
+function getIngredientAsync(ingredientId, sessionId) {
+	return ingredientActions.getIngredientAsync(ingredientId, sessionId);
 };
 
 /* 
  * update one ingredient
  * ingredientId: string, the id of the ingredient
  * other arguments: see packIntoJson()
+ * sessionId: string, id of the current session
  */
-function updateIngredient(ingredientId, name, packageType, temperatureZone, vendors) {
+function updateIngredient(ingredientId, name, packageType, temperatureZone, vendors, sessionId) {
 	var updatedIngredient = packIntoJson(name, packageType, temperatureZone, vendors);
-	return ingredientActions.updateIngredient(ingredientId, updatedIngredient);
+	return ingredientActions.updateIngredient(ingredientId, sessionId, updatedIngredient);
 };
 
 /* 
  * delete one existing ingredient
  * ingredientId: string, the id of the ingredient
+ * sessionId: string, id of the current session
  */
-function deleteIngredient(ingredientId) {
-	return ingredientActions.deleteIngredient(ingredientId);
+function deleteIngredient(ingredientId, sessionId) {
+	return ingredientActions.deleteIngredient(ingredientId, sessionId);
 };
 
 //export functions above for use by other modules
