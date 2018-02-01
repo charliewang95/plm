@@ -19,7 +19,7 @@ import { withStyles } from 'material-ui/styles';
 const ingredientId = '5a6e2b65d141d5472554fc51';
 const userId = '5a6e2f9b1c2c30482e142ddf';
 const vendorId = '5a6e333f0c569f48f7d22242';
-const sessionId = '5a7281bb2bdd4d139fbf3407';
+const sessionId = '5a6a5977f5ce6b254fe2a91f';
 //
 
 const styles = theme => ({

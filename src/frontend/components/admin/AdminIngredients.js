@@ -32,6 +32,7 @@ import { withStyles } from 'material-ui/styles';
 import Styles from  'react-select/dist/react-select.css';
 import ReactSelect from 'react-select';
 import testData from './testIngredients';
+import * as ingredientInterface from '../../interface/ingredientInterface';
 
 const styles = theme => ({
   lookupEditCell: {
@@ -121,10 +122,13 @@ Command.propTypes = {
   onExecute: PropTypes.func.isRequired,
 };
 
+// options for the drop down 
 const availableValues = {
   pkg: testData.tablePage.package_options,
   temperature: testData.tablePage.temperature_options,
   // vendors: testData.tablePage.vendor_options,
+
+  // TODO: Get the data from the back end
   vendors: testData.tablePage.vendor_options2,
 
 };
@@ -238,6 +242,7 @@ EditCell.propTypes = {
 
 const getRowId = row => row.id;
 
+
 class AdminIngredients extends React.PureComponent {
 
   constructor(props) {
@@ -249,12 +254,14 @@ class AdminIngredients extends React.PureComponent {
         { name: 'name', title: 'Name' },
         { name: 'pkg', title: 'Package' },
         { name: 'temperature', title: 'Temperature' },
-        { name: 'vendors', title: 'Vendors' },
+        { name: 'vendors', title: 'Vendors/Price' },
       ],
 
       tableColumnExtensions: [
         { columnName: 'package', align: 'right' },
       ],
+
+      // TODO: get data to display from back end
       rows: testData.tablePage.items,
       sorting: [],
       editingRowIds: [],
@@ -382,6 +389,30 @@ class AdminIngredients extends React.PureComponent {
     this.setState ({rowChanges: rowChanges});
   }
 
+  loadAllIngredients(){
+    const sessionId = '5a6a5977f5ce6b254fe2a91f';
+    var rawData = ingredientInterface.getAllIngredientsAsync(sessionId);
+    var processedData = [];
+
+    //loop through ingredient
+    for (var i = 0; i < rawData.length; i++) { 
+      var vendorArrayString = "";
+      //loop through vendor
+      for (var j=0; j<rawData.vendors.length; j++){
+        vendorArrayString+=rawData.vendors[j].name + "/ $" + rawData.vendors[j].price + ", ";
+      }
+      var singleData = new Object ("id": i, "name": rawData.name, "pkg": "sack", "temperature": rawData.temperatureZone, "vendors" : vendorArrayString);
+      processedData.push(singleData);
+    }
+    this.setState({rows: processedData});
+  }
+
+  componentDidMount() {
+    this.loadAllIngredients();
+  }
+  // componentDidUpdate() {
+  //   this.loadAllIngredients();
+  // }
 
   render() {
     const {
