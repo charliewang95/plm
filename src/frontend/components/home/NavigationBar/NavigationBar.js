@@ -8,25 +8,13 @@ import navBarStyles from './index.css';
 import * as labels from './labels.js';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
-import axios from 'axios';
 
 /* DID NOT WORK - */
 // import FileUpload from 'material-ui/svg-icons/file/upload';
 import SocialPerson from 'material-ui/svg-icons/social/person';
 
 function handleClick() {
-  axios.post('/users', {
-    username: 'alexandertseng',
-    email: 'foo@duke.edu',
-    password: 'qwerty',
-    isAdmin: 'true'
-  })
-   .then(function (response) {
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
+  alert('onClick triggered on the title component');
 }
 
 const styles = {
