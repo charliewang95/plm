@@ -13,58 +13,65 @@ name: string
 username: string 
 password: string
 isAdmin: boolean
+loggedIn: boolean 
 **/
-function packIntoJson(email, username, password, isAdmin){
+function packIntoJson(email, username, password, isAdmin, loggedIn){
 	var userJson = new Object();
 	userJson.email = email;
 	userJson.username = username;
 	userJson.password = password;
 	userJson.isAdmin = isAdmin;
+	userJson.loggedIn = loggedIn;
 	console.log("JSON");
 	console.log(userJson);
 	console.log(dummyUser.sampleUser);
 	return userJson;
-}
+};
 
 /* add one user
  * for arguments see packIntoJson
+ * sessionId: string, id of the current session
  */
-function addUser(email, username, password, isAdmin) {
-	var newUser = packIntoJson(email, username, password, isAdmin);
-	userActions.addUser(newUser);
-}
+function addUser(email, username, password, isAdmin, loggedIn, sessionId) {
+	var newUser = packIntoJson(email, username, password, isAdmin, loggedIn);
+	userActions.addUser(newUser, sessionId);
+};
 
 /**
  * get all users
+ * sessionId: string, id of the current session
 **/
-function getAllUsersAsync() {
-	return userActions.getAllUsersAsync();
-}
+function getAllUsersAsync(sessionId) {
+	return userActions.getAllUsersAsync(sessionId);
+};
 
 /* 
  * get one user
  * userId: string, the id of the user
+ * sessionId: string, id of the current session
  */
-function getUserAsync(userId) {
-	return userActions.getUserAsync(userId));
+function getUserAsync(userId, sessionId) {
+	return userActions.getUserAsync(userId, sessionId);
 };
 
 /* 
  * update one user
  * userId: string, the id of the user
  * other arguments: see packIntoJson()
+ * sessionId: string, id of the current session
  */
-function updateUser(userId, email, username, password, isAdmin) {
-	var updatedUser = packIntoJson(email, username, password, isAdmin);
-	return userActions.updateUser(userId, updatedUser);
+function updateUser(userId, email, username, password, isAdmin, loggedIn, sessionId) {
+	var updatedUser = packIntoJson(email, username, password, isAdmin, loggedIn);
+	return userActions.updateUser(userId, sessionId, updatedUser);
 };
 
 /* 
  * delete one existing user
  * userId: string, the id of the user
+ * sessionId: string, id of the current session
  */
-function deleteUser(userId) {
-	return userActions.deleteById(userId);
+function deleteUser(userId, sessionId) {
+	return userActions.deleteUser(userId, sessionId);
 };
 
 //export functions above for use by other modules

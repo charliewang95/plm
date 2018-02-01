@@ -12,15 +12,14 @@ returns a Json object that encapsulates all properties
 name: string
 contact: string 
 code: string
-ingredients: an array of id of ingredients the vendor is selling
+ingredients: an array of objects following IngredientPriceSchema
 **/
-function packIntoJson(name, contact, code, ingredientIds){
+function packIntoJson(name, contact, code, ingredients){
 	var vendorJson = new Object();
 	vendorJson.name = name;
 	vendorJson.contact = contact;
 	vendorJson.code = code;
-	vendorJson.codeUnique = code.toLowerCase();
-	vendorJson.ingredients = ingredientIds;
+	vendorJson.ingredients = ingredients;
 	console.log("JSON");
 	console.log(vendorJson);
 	console.log(dummyVendor.sampleVendor);
@@ -29,43 +28,48 @@ function packIntoJson(name, contact, code, ingredientIds){
 
 /* add one vendor
  * for arguments see packIntoJson
+ * sessionId: string, id of the current session
  */
-function addVendor(name, contact, code, ingredientIds) {
-	var newVendor = packIntoJson(name, contact, code, ingredientIds);
-	vendorActions.addVendor(newVendor);
+function addVendor(name, contact, code, ingredients, sessionId) {
+	var newVendor = packIntoJson(name, contact, code, ingredients);
+	vendorActions.addVendor(newVendor, sessionId);
 }
 
 /**
  * get all vendors
+ * sessionId: string, id of the current session
 **/
-function getAllVendorsAsync() {
-	return vendorActions.getAllVendorsAsync();
+function getAllVendorsAsync(sessionId) {
+	return vendorActions.getAllVendorsAsync(sessionId);
 }
 
 /* 
  * get one vendor
  * vendorId: string, the id of the vendor
+ * sessionId: string, id of the current session
  */
-function getVendorAsync(vendorId) {
-	return vendorActions.getVendorAsync(vendorId));
+function getVendorAsync(vendorId, sessionId) {
+	return vendorActions.getVendorAsync(vendorId, sessionId);
 };
 
 /* 
  * update one vendor
  * vendorId: string, the id of the vendor
  * other arguments: see packIntoJson()
+ * sessionId: string, id of the current session
  */
-function updateVendor(vendorId, name, contact, code, ingredientIds) {
-	var updatedVendor = packIntoJson(name, contact, code, ingredientIds);
-	return vendorActions.updateVendor(vendorId, updatedVendor);
+function updateVendor(vendorId, name, contact, code, ingredients, sessionId) {
+	var updatedVendor = packIntoJson(name, contact, code, ingredients);
+	return vendorActions.updateVendor(vendorId, sessionId, updatedVendor);
 };
 
 /* 
  * delete one existing vendor
  * vendorId: string, the id of the vendor
+ * sessionId: string, id of the current session
  */
-function deleteVendor(vendorId) {
-	return vendorActions.deleteById(vendorId);
+function deleteVendor(vendorId, sessionId) {
+	return vendorActions.deleteVendor(vendorId);
 };
 
 //export functions above for use by other modules
