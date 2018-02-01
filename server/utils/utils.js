@@ -92,14 +92,14 @@ var create = function(req, res, next, model) {
                     return next(err);
                 }
                 else if (valid) {
-//                    modifiedItem.save(function(err) {
-//                        if (err) {
-//                            return next(err);
-//                        }
-//                        else {
-//                            res.json(modifiedItem);
-//                        }
-//                    });
+                   modifiedItem.save(function(err) {
+                       if (err) {
+                           return next(err);
+                       }
+                       else {
+                           res.json(modifiedItem);
+                       }
+                   });
                 }
                 else {
                     res.status(400);

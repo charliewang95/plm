@@ -3,14 +3,14 @@ const sampleIngredient = {
 		name: 'potato',
 		package: 'sack',
 		temperatureZone: 'warehouse',
-		vendors: ['WholeFoods', 'HarrisTeeter']
+		vendors: []
 	}
 
 const updatedIngredient = {
 		name: 'potato',
 		package: 'sack',
 		temperatureZone: 'warehouse',
-		vendors: ['WholeFoods', 'HarrisTeeter', 'Krogers']
+		vendors: []
 	}
 
 export {sampleIngredient, updatedIngredient}

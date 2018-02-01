@@ -4,29 +4,32 @@ import * as genericActions from './genericCrudAction'
 //All the methods return the response on successful completion
 
 const baseUrl = '/vendors';
-const property = '/vendor';
+const property = 'vendor';
 
 /* add one vendor
  * vendor: JSON object
+ * sessionId: string
  */
-function addVendor(vendor) {
-	return genericActions.create(vendor,baseUrl);
+function addVendor(vendor, sessionId) {
+	return genericActions.create(baseUrl, vendor, sessionId);
 };
 
 /* 
  * get all vendors
  * deprecated, use getAllVendorsAsync() instead
  */
+ /*
 function getAllVendors() {
 	return genericActions.getAll(baseUrl);
 };
+*/
 
 /* 
  * get all vendors
- * 
+ * sessionId: string, id of the current session
  */
-function getAllVendorsAsync(){
-	return genericActions.getAllAsync(baseUrl);
+function getAllVendorsAsync(sessionId){
+	return genericActions.getAllAsync(baseUrl, sessionId);
 };
 
 /* 
@@ -34,34 +37,39 @@ function getAllVendorsAsync(){
  * deprecated, use getVendorAsync() instead
  * vendorId: string, the id of the vendor
  */
+ /*
 function getVendor(vendorId) {
 	return genericActions.getById(vendorId, baseUrl.concat(property).concat('/') );
 };
+*/
 
 /* 
  * get one vendor specified by an id
  * vendorId: string, the id of the ingredient
+ * sessionId: string, id of the current session
  */
-function getVendorAsync(vendorId){
-	return genericActions.getByIdAsync(vendorId, baseUrl.concat(property).concat('/'));
+function getVendorAsync(vendorId, sessionId){
+	return genericActions.getByIdAsync(baseUrl, property, vendorId, sessionId);
 };
 
 /* 
  * update one vendor information
  * vendorId: string, the id of the vendor
+ * sessionId: string, id of the current session
  * vendor: JSON object representing the updated info about the vendor
  */
-function updateVendor(vendorId, vendor) {
-	return genericActions.updateById(vendorId, vendor, baseUrl.concat(property).concat('/') );
+function updateVendor(vendorId, sessionId, vendor) {
+	return genericActions.updateById(baseUrl, property, vendorId, sessionId, vendor);
 };
 
 /* 
  * delete one existing vendor
  * vendorId: string, the id of the vendor
+ * sessionId: string, id of the current session
  */
-function deleteVendor(vendorId) {
-	return genericActions.deleteById(vendorId, baseUrl.concat(property).concat('/') );
+function deleteVendor(vendorId, sessionId) {
+	return genericActions.deleteById(baseUrl, property, vendorId, sessionId);
 };
 
 //export functions above for use by other modules
-export { addVendor, getAllVendors, getAllVendorsAsync, getVendor, getVendorAsync, updateVendor, deleteVendor};
+export { addVendor, getAllVendorsAsync, getVendorAsync, updateVendor, deleteVendor};

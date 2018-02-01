@@ -16,6 +16,7 @@ import * as dummyVendor from '../../../dummyDatas/vendor'
 const ingredientId = '5a6e2b65d141d5472554fc51';
 const userId = '5a6e2f9b1c2c30482e142ddf';
 const vendorId = '5a6e333f0c569f48f7d22242';
+const sessionId = '5a7281bb2bdd4d139fbf3407';
 //
 const WelcomeCard = () => (
   <Card>
@@ -32,31 +33,34 @@ const WelcomeCard = () => (
     <CardActions>
       <FlatButton label={cardConstants.ADD_INGREDIENTS} onClick={()=>ingredientInterface.addIngredient(
         dummyIngredient.sampleIngredient.name, dummyIngredient.sampleIngredient.package, 
-        dummyIngredient.sampleIngredient.temperatureZone, dummyIngredient.sampleIngredient.vendors)} />
+        dummyIngredient.sampleIngredient.temperatureZone, dummyIngredient.sampleIngredient.vendors,
+        sessionId)} />
       <FlatButton label="Add User" onClick={()=>userInterface.addUser(
         dummyUser.sampleUser.email, dummyUser.sampleUser.username,
-        dummyUser.sampleUser.password, dummyUser.sampleUser.isAdmin
+        dummyUser.sampleUser.password, dummyUser.sampleUser.isAdmin,
+        dummyUser.sampleUser.loggedIn, sessionId
         )} />
       <FlatButton label={cardConstants.ADD_VENDORS} onClick={()=>vendorInterface.addVendor(
         dummyVendor.sampleVendor.name, dummyVendor.sampleVendor.contact,
-        dummyVendor.sampleVendor.code, null)} />
+        dummyVendor.sampleVendor.code, dummyVendor.sampleVendor.ingredients,
+        sessionId)} />
 
-      <FlatButton label="All vendors" onClick={()=>vendorInterface.getAllVendorsAsync()} />
-      <FlatButton label="Get One Vendor" onClick={()=>vendorInterface.getVendorAsync(vendorId)} />
-      <FlatButton label="Update Vendor" onClick={()=>vendorInterface.updateVendor(vendorId, dummyVendor.updatedVendor)} />
-      <FlatButton label="Delete Vendor" onClick={()=>vendorInterface.deleteVendor(vendorId)} />
+      <FlatButton label="All vendors" onClick={()=>vendorInterface.getAllVendorsAsync(sessionId)} />
+      <FlatButton label="Get One Vendor" onClick={()=>vendorInterface.getVendorAsync(vendorId, sessionId)} />
+      <FlatButton label="Update Vendor" onClick={()=>vendorInterface.updateVendor(vendorId, dummyVendor.updatedVendor, sessionId)} />
+      <FlatButton label="Delete Vendor" onClick={()=>vendorInterface.deleteVendor(vendorId, sessionId)} />
 
       <FlatButton label="Alert" onClick={()=>alert("Button pressed!")} />
 
-      <FlatButton label="All ingredients" onClick={()=>ingredientInterface.getAllIngredientsAsync()} />
-      <FlatButton label="Get One Ingredient" onClick={()=>ingredientInterface.getIngredientAsync(ingredientId)} />
-      <FlatButton label="Update Ingredient" onClick={()=>ingredientInterface.updateIngredient(ingredientId, dummyIngredient.updatedIngredient)} />
-      <FlatButton label="Delete Ingredient" onClick={()=>ingredientInterface.deleteIngredient(ingredientId)} />
+      <FlatButton label="All ingredients" onClick={()=>ingredientInterface.getAllIngredientsAsync(sessionId)} />
+      <FlatButton label="Get One Ingredient" onClick={()=>ingredientInterface.getIngredientAsync(ingredientId, sessionId)} />
+      <FlatButton label="Update Ingredient" onClick={()=>ingredientInterface.updateIngredient(ingredientId, dummyIngredient.updatedIngredient, sessionId)} />
+      <FlatButton label="Delete Ingredient" onClick={()=>ingredientInterface.deleteIngredient(ingredientId, sessionId)} />
 
-      <FlatButton label="All Users" onClick={()=>userInterface.getAllUsersAsync()} />
-      <FlatButton label="Get One User" onClick={()=>userInterface.getUserAsync(userId)} />
-      <FlatButton label="Update User" onClick={()=>userInterface.updateUser(userId, dummyUser.updatedUser)} />
-      <FlatButton label="Delete User" onClick={()=>userInterface.deleteUser(userId)} />
+      <FlatButton label="All Users" onClick={()=>userInterface.getAllUsersAsync(sessionId)} />
+      <FlatButton label="Get One User" onClick={()=>userInterface.getUserAsync(userId, sessionId)} />
+      <FlatButton label="Update User" onClick={()=>userInterface.updateUser(userId, dummyUser.updatedUser, sessionId)} />
+      <FlatButton label="Delete User" onClick={()=>userInterface.deleteUser(userId, sessionId)} />
 
     </CardActions>
   </Card>

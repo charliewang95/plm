@@ -42,23 +42,14 @@
     "passport-local": "^1.0.0",
     "passport-twitter": "^1.0.4",
     "prop-types": "^15.6.0",
-<<<<<<< HEAD
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "react-engine": "^4.5.0",
-=======
     "react": "^15.4.0",
     "react-dom": "^15.4.0",
->>>>>>> ce8fad88f9fbc6000e7421771d5bfee85593c6ab
     "react-redux": "^5.0.6",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.0",
-<<<<<<< HEAD
-    "react-view-engine": "0.0.1",
-=======
     "react-tap-event-plugin": "^2.0.1",
->>>>>>> ce8fad88f9fbc6000e7421771d5bfee85593c6ab
+    "react-view-engine": "0.0.1",
     "redux": "^3.7.2",
     "redux-form": "^7.2.1"
   }
