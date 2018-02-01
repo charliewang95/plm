@@ -25,11 +25,7 @@ module.exports = function() {
 //    var engine = ReactEngine.server.create();
 //    app.engine('.js', engine);
 
-<<<<<<< HEAD
     app.set('views', './server/views');
-=======
-    app.set('views', './server/view');
->>>>>>> 52241f4776e96ec447934d41159383a9ecb7cb8e
     app.set('view engine', 'ejs');
 
 	app.use(flash());
