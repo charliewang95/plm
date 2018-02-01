@@ -24,7 +24,7 @@ function packIntoJson(email, username, password, isAdmin){
 	console.log(userJson);
 	console.log(dummyUser.sampleUser);
 	return userJson;
-}
+};
 
 /* add one user
  * for arguments see packIntoJson
@@ -32,21 +32,21 @@ function packIntoJson(email, username, password, isAdmin){
 function addUser(email, username, password, isAdmin) {
 	var newUser = packIntoJson(email, username, password, isAdmin);
 	userActions.addUser(newUser);
-}
+};
 
 /**
  * get all users
 **/
 function getAllUsersAsync() {
 	return userActions.getAllUsersAsync();
-}
+};
 
 /* 
  * get one user
  * userId: string, the id of the user
  */
 function getUserAsync(userId) {
-	return userActions.getUserAsync(userId));
+	return userActions.getUserAsync(userId);
 };
 
 /* 
@@ -64,7 +64,7 @@ function updateUser(userId, email, username, password, isAdmin) {
  * userId: string, the id of the user
  */
 function deleteUser(userId) {
-	return userActions.deleteById(userId);
+	return userActions.deleteUser(userId);
 };
 
 //export functions above for use by other modules

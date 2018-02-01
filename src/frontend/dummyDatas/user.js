@@ -1,7 +1,7 @@
 //user.js
 const sampleUser = {
-	username: 'Dan Sun',
-	email: 'ds318@duke.edu',
+	username: 'DanS',
+	email: 'ds3178@duke.edu',
 	password: 'ECE458',
 	isAdmin: 'true'
 }
