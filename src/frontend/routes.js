@@ -1,24 +1,26 @@
-import React from 'react'
-import { Router, Route, IndexRoute } from 'react-router'
-import App from './App'
-import About from './components/About'
-import Home from './components/Home'
-import DefaultWelcome from './components/home/Welcome/Welcome'
-import { BrowserRouter } from 'react-router-dom';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import React from 'react';
+import { Switch, Route } from 'react-router-dom'
+//import App from './App';
+import DashBoard from './components/dashboard/DashBoard';
+import AdminIngredients from './components/admin/AdminIngredients';
+import UserIngredients from './components/ingredients/UserIngredients';
+import Inventory from './components/inventory/Inventory';
+import Orders from './components/orders/Orders';
+import Storage from './components/storage/Storage';
 
-const Routes = (props) => (
-
-<MuiThemeProvider>
-	<BrowserRouter>
+const Routes = () => (
       <div>
-	      <Route path="/" component={App} />
-	      <Route path="/home" component={Home} />
-	      <Route path="/about" component={About} />
-	      <Route path="/default-welcome" component={DefaultWelcome} />
+	      <Switch>
+		      <Route exact path="/" component={DashBoard} />
+		      <Route path="/dashboard" component={DashBoard} />
+		      <Route path="/admin-ingredients" component={AdminIngredients} />
+		      <Route path="/user-ingredients" component={UserIngredients} />
+		      <Route path="/inventory" component={Inventory} />
+		      <Route path="/orders" component={Orders} />
+		      <Route path="/storage" component={Storage} />
+		  </Switch>
       </div>
-    </BrowserRouter>
-</MuiThemeProvider>
+
 );
 
 export default Routes

@@ -1,5 +1,5 @@
 //ingredientAction.js
-import axios from 'axios';
+//import axios from 'axios';
 import * as genericActions from './genericCrudAction'
 //All the methods return the response on successful completion
 
