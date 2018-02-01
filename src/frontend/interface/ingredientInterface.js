@@ -46,7 +46,7 @@ function getAllIngredientsAsync() {
  * ingredientId: string, the id of the ingredient
  */
 function getIngredientAsync(ingredientId) {
-	return ingredientActions.getIngredientAsync(ingredientId));
+	return ingredientActions.getIngredientAsync(ingredientId);
 };
 
 /* 
@@ -64,7 +64,7 @@ function updateIngredient(ingredientId, name, packageType, temperatureZone, vend
  * ingredientId: string, the id of the ingredient
  */
 function deleteIngredient(ingredientId) {
-	return ingredientActions.deleteById(ingredientId);
+	return ingredientActions.deleteIngredient(ingredientId);
 };
 
 //export functions above for use by other modules

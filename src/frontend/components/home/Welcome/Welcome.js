@@ -4,10 +4,10 @@ import FlatButton from 'material-ui/FlatButton';
 import WelcomeImage from './box_of_veggie.jpg';
 import * as cardConstants from  './constants.js';
 import logo from '../NavigationBar/grain1.png';
-//axios actions
-import * as ingredientActions from '../../../actions/ingredientAction'
-import * as userActions from '../../../actions/userAction'
-import * as vendorActions from '../../../actions/vendorAction'
+//axios interface
+import * as ingredientInterface from '../../../interface/ingredientInterface'
+import * as userInterface from '../../../interface/userInterface'
+import * as vendorInterface from '../../../interface/vendorInterface'
 //dummy data for testing
 import * as dummyIngredient from '../../../dummyDatas/ingredient'
 import * as dummyUser from '../../../dummyDatas/user'
@@ -30,26 +30,33 @@ const WelcomeCard = () => (
     </CardMedia>
 
     <CardActions>
-      <FlatButton label={cardConstants.ADD_INGREDIENTS} onClick={()=>ingredientActions.addIngredient(dummyIngredient.sampleIngredient)} />
-      <FlatButton label="Add User" onClick={()=>userActions.addUser(dummyUser.sampleUser)} />
-      <FlatButton label={cardConstants.ADD_VENDORS} onClick={()=>vendorActions.addVendor(dummyVendor.sampleVendor)} />
+      <FlatButton label={cardConstants.ADD_INGREDIENTS} onClick={()=>ingredientInterface.addIngredient(
+        dummyIngredient.sampleIngredient.name, dummyIngredient.sampleIngredient.package, 
+        dummyIngredient.sampleIngredient.temperatureZone, dummyIngredient.sampleIngredient.vendors)} />
+      <FlatButton label="Add User" onClick={()=>userInterface.addUser(
+        dummyUser.sampleUser.email, dummyUser.sampleUser.username,
+        dummyUser.sampleUser.password, dummyUser.sampleUser.isAdmin
+        )} />
+      <FlatButton label={cardConstants.ADD_VENDORS} onClick={()=>vendorInterface.addVendor(
+        dummyVendor.sampleVendor.name, dummyVendor.sampleVendor.contact,
+        dummyVendor.sampleVendor.code, null)} />
 
-      <FlatButton label="All vendors" onClick={()=>vendorActions.getAllVendors()} />
-      <FlatButton label="Get One Vendor" onClick={()=>vendorActions.getVendor(vendorId)} />
-      <FlatButton label="Update Vendor" onClick={()=>vendorActions.updateVendor(vendorId, dummyVendor.updatedVendor)} />
-      <FlatButton label="Delete Vendor" onClick={()=>vendorActions.deleteVendor(vendorId)} />
+      <FlatButton label="All vendors" onClick={()=>vendorInterface.getAllVendorsAsync()} />
+      <FlatButton label="Get One Vendor" onClick={()=>vendorInterface.getVendorAsync(vendorId)} />
+      <FlatButton label="Update Vendor" onClick={()=>vendorInterface.updateVendor(vendorId, dummyVendor.updatedVendor)} />
+      <FlatButton label="Delete Vendor" onClick={()=>vendorInterface.deleteVendor(vendorId)} />
 
       <FlatButton label="Alert" onClick={()=>alert("Button pressed!")} />
 
-      <FlatButton label="All ingredients" onClick={()=>ingredientActions.getAllIngredients()} />
-      <FlatButton label="Get One Ingredient" onClick={()=>ingredientActions.getIngredient(ingredientId)} />
-      <FlatButton label="Update Ingredient" onClick={()=>ingredientActions.updateIngredient(ingredientId, dummyIngredient.updatedIngredient)} />
-      <FlatButton label="Delete Ingredient" onClick={()=>ingredientActions.deleteIngredient(ingredientId)} />
+      <FlatButton label="All ingredients" onClick={()=>ingredientInterface.getAllIngredientsAsync()} />
+      <FlatButton label="Get One Ingredient" onClick={()=>ingredientInterface.getIngredientAsync(ingredientId)} />
+      <FlatButton label="Update Ingredient" onClick={()=>ingredientInterface.updateIngredient(ingredientId, dummyIngredient.updatedIngredient)} />
+      <FlatButton label="Delete Ingredient" onClick={()=>ingredientInterface.deleteIngredient(ingredientId)} />
 
-      <FlatButton label="All Users" onClick={()=>userActions.getAllUsers()} />
-      <FlatButton label="Get One User" onClick={()=>userActions.getUser(userId)} />
-      <FlatButton label="Update User" onClick={()=>userActions.updateUser(userId, dummyUser.updatedUser)} />
-      <FlatButton label="Delete User" onClick={()=>userActions.deleteUser(userId)} />
+      <FlatButton label="All Users" onClick={()=>userInterface.getAllUsersAsync()} />
+      <FlatButton label="Get One User" onClick={()=>userInterface.getUserAsync(userId)} />
+      <FlatButton label="Update User" onClick={()=>userInterface.updateUser(userId, dummyUser.updatedUser)} />
+      <FlatButton label="Delete User" onClick={()=>userInterface.deleteUser(userId)} />
 
     </CardActions>
   </Card>

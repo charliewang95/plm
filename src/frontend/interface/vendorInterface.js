@@ -47,7 +47,7 @@ function getAllVendorsAsync() {
  * vendorId: string, the id of the vendor
  */
 function getVendorAsync(vendorId) {
-	return vendorActions.getVendorAsync(vendorId));
+	return vendorActions.getVendorAsync(vendorId);
 };
 
 /* 
@@ -65,7 +65,7 @@ function updateVendor(vendorId, name, contact, code, ingredientIds) {
  * vendorId: string, the id of the vendor
  */
 function deleteVendor(vendorId) {
-	return vendorActions.deleteById(vendorId);
+	return vendorActions.deleteVendor(vendorId);
 };
 
 //export functions above for use by other modules
