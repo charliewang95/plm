@@ -29,7 +29,7 @@ exports.delete = function(req, res, next) {
 };
 
 exports.getCertainPackage = function(req, res, next) {
-    Inventory.find({package: req.params.packageName}, function(err, inventories) {
+    Inventory.find({packageName: req.params.packageName}, function(err, inventories) {
         if (err) return next(err);
         else {
             res.send(inventories);

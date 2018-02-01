@@ -168,6 +168,7 @@ var validateCart = function(item, res, next, callback) { //check if checked out 
             if (quantity < item.quantity) {
                 res.status(400);
                 res.send("Inventory limit -- "+quantity+" pounds is exceeded: please decrease amount of "+obj.ingredientName);
+                callback(err, false);
             }
             else callback(err, true);
         }

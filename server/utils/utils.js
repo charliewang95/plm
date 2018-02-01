@@ -5,27 +5,27 @@ var modifierCreateUpdate = require('./modifierCreateUpdate');
 var validator = require('./validator');
 var postProcessor = require('./postProcessor');
 
-exports.getErrorMessage = function(err) {
-    var message = '';
-    if (err.code) {
-        switch (err.code) {
-            case 11000:
-            case 11001:
-                message = 'Ingredient already exists';
-                break;
-            default:
-                message = 'Something went wrong';
-        }
-    }
-    else {
-        for (var errName in err.errors) {
-            if (err.errors[errName].message)
-                message = err.errors[errName].message;
-        }
-    }
-
-    return message;
-};
+//exports.getErrorMessage = function(err) {
+//    var message = '';
+//    if (err.code) {
+//        switch (err.code) {
+//            case 11000:
+//            case 11001:
+//                message = 'Ingredient already exists';
+//                break;
+//            default:
+//                message = 'Something went wrong';
+//        }
+//    }
+//    else {
+//        for (var errName in err.errors) {
+//            if (err.errors[errName].message)
+//                message = err.errors[errName].message;
+//        }
+//    }
+//
+//    return message;
+//};
 
 exports.doWithAccess = function(req, res, next, model, action, userId, itemId, AdminRequired) {
     User.findById(userId, function(err, user) {
@@ -43,7 +43,7 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             else if (action == 'list') list(req, res, next, model);
             else if (action == 'listPartial') listPartial(req, res, next, model, userId);
             else if (action == 'update') update(req, res, next, model, itemId);
-            else if (action == 'updateWithUserAccess') update(req, res, next, model, userId, itemId);
+            else if (action == 'updateWithUserAccess') updateWithUserAccess(req, res, next, model, userId, itemId);
             else if (action == 'delete') deleteWithoutUserAccess(req, res, next, model, itemId);
             else if (action == 'deleteWithUserAccess') deleteWithUserAccess(req, res, next, model, userId, itemId);
             else if (action == 'deleteAllWithUserAccess') deleteAllWithUserAccess(req, res, next, model, userId);
@@ -102,15 +102,11 @@ var create = function(req, res, next, model) {
                         }
                     });
                 }
-                else {
-                    res.status(400);
-                    res.send('Validation failed');
-                }
             });
         }
         else {
             res.status(400);
-            res.send('Something went wrong');
+            res.send("Object doesn't exist");
         }
     });
 };
@@ -157,33 +153,40 @@ var update = function(req, res, next, model, itemId) {
                         }
                     });
                 }
-                else {
-                    res.status(400);
-                    res.send('Validation failed');
+            });
+        }
+        else {
+             res.status(400);
+             res.send("Object doesn't exist");
+        }
+    });
+};
+
+var updateWithUserAccess = function(req, res, next, model, userId, itemId) {
+    model.findOne({_id: itemId, userId: userId}, function(err, obj) {
+        if (err) {
+            return next(err);
+        }
+        else if (obj) {
+            validator.validate(model, req.body, res, next, function(err, valid){
+                if (err) {
+                    return next(err);
+                }
+                else if (valid) {
+                    model.findByIdAndUpdate(itemId, req.body, function(err, obj2) {
+                        if (err) {
+                            return next(err);
+                        }
+                        else {
+                            res.json(req.body);
+                        }
+                    });
                 }
             });
         }
         else {
              res.status(400);
-             res.send('Something went wrong');
-        }
-    });
-};
-
-var updateWithUserAccess = function(req, res, next, model, userId, itemId) { //no modifier
-    model.findOne({_id: itemId, userId: userId}, function(err, item1) {
-        if (err) {
-            return next(err);
-        }
-        else {
-            model.findByIdAndUpdate(itemId, req.body, function(err, item2) {
-                if (err) {
-                    return next(err);
-                }
-                else {
-                    res.json(item2);
-                }
-            });
+             res.send("Object doesn't exist");
         }
     });
 };
@@ -206,26 +209,59 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId) {
     });
 };
 
+//var deleteAllWithUserAccess = function(req, res, next, model, userId) {
+//    model.find({userId: userId}, function(err, items) {
+//        if (err) {
+//            return next(err);
+//        }
+//        else {
+//            for (var i = 0; i < items.length; i++) {
+//                items[i].remove(function(err) {
+//                    if (err) {
+//                        return next(err);
+//                    }
+//                });
+//                postProcessor.process(model, items[i], res, next, function(err, obj){
+//                    if (err) return next(err);
+//                })
+//            }
+//            res.json(items);
+//        }
+//    });
+//};
+
 var deleteAllWithUserAccess = function(req, res, next, model, userId) {
+    var fail = false;
     model.find({userId: userId}, function(err, items) {
         if (err) {
             return next(err);
         }
         else {
             for (var i = 0; i < items.length; i++) {
-                items[i].remove(function(err) {
+                var item = items[i];
+                validator.validate(model, item, res, next, function(err, valid){
                     if (err) {
                         return next(err);
                     }
-                });
-                postProcessor.process(model, items[i], res, next, function(err, obj){
-                    if (err) return next(err);
-                    else {
+                    else if (!valid) {
+                        fail = true;
+                    } else {
 
                     }
-                })
+                });
             }
-            res.json(items);
+            if (!fail) {
+                for (var i = 0; i < items.length; i++) {
+                    var item = items[i];
+                    item.remove(function(err) {
+                        if (err) return next(err);
+                    });
+                    postProcessor.process(model, item, res, next, function(err){
+                        if (err) return next(err);
+                    });
+                }
+                res.json(items);
+            }
         }
     });
 };

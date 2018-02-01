@@ -21,7 +21,7 @@ var IngredientSchema = new Schema({
         unique: true,
         required: true
     },
-    package: {
+    packageName: {
         type: String,
         enum: ['sack', 'pail', 'drum', 'supersack', 'truckload', 'railcar'],
         lowercase: true,

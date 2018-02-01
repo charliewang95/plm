@@ -20,7 +20,7 @@ var OrderSchema = new Schema({
     	ref: 'Vendor',
         required: true
     },
-    package: {
+    packageNum: {
         type: Number,
         required: true
     },
@@ -49,7 +49,7 @@ OrderSchema.statics.getNumPounds = function(ingredientId, package, res, next, ca
             res.send("Ingredient doesn't exist");
         }
         else {
-            pounds = ingredient.getPackagePounds(ingredient.package, function(pounds) {
+            pounds = ingredient.getPackagePounds(ingredient.packageName, function(pounds) {
                 if (pounds == 0) {
                     res.status(400);
                     res.send("Package name doesn't exist");

@@ -38,7 +38,7 @@ exports.modify = function(action, model, item, itemId, res, next, callback) {
 };
 
 var modifyOrder = function(item, res, next, callback) { //add number of pounds to order
-    Order.getNumPounds(item.ingredientId, item.package, res, next, function(err, pounds){
+    Order.getNumPounds(item.ingredientId, item.packageNum, res, next, function(err, pounds){
         if (err) {
             return next(err);
         }
