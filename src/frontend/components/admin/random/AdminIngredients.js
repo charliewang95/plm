@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import TestingCard from './testing/TestingCard.js';
 
-class Dashboard extends Component {
+class AdminIngredients extends Component {
   
   constructor(props) {
     super(props)
@@ -11,11 +10,11 @@ class Dashboard extends Component {
 
   render() {
     return (
-    	<div>
-        <TestingCard/>
+      <div>
+        This is the Admin Page
       </div>
     );
   }
 }
 
-export default Dashboard
+export default AdminIngredients

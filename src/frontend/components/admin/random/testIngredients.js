@@ -22,13 +22,7 @@ const data = {
    vendor_options2 : [
           { value: 'vendor1', label: 'vendor1' },
           { value: 'vendor2', label: 'vendor2' },
-          { value: 'vendor4', label: 'vendor4' },
-          { value: 'vendor5', label: 'vendor5' },
-          { value: 'vendor6', label: 'vendor6' },
-          { value: 'vendor7', label: 'vendor7' },
-          { value: 'vendor8', label: 'vendor8' },
-          { value: 'vendor9', label: 'vendor9' },
-          { value: 'vendor10', label: 'vendor10' }
+          { value: 'vendor3', label: 'vendor3' }
        ],
 
   /* Replace with the data from the back end */
@@ -37,7 +31,7 @@ const data = {
   /* Replace with the data from the back end -- filtered based on ingredients */
    vendor_options : ['target','wholefoods','li ming','panera','harris teeters'],
 
-   package_options: ['sail','supersack','drum','railcar','sack'],
+   package_options: ['sail','supersack','drum','railcar'],
    temperature_options:['room temperature','frozen','refrigerator'],
  },
 };
