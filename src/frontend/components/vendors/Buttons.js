@@ -8,6 +8,7 @@ import SaveIcon from 'material-ui-icons/Save';
 import CancelIcon from 'material-ui-icons/Cancel';
 import AddIcon from 'material-ui-icons/Add';
 import Tooltip from 'material-ui/Tooltip';
+import {Link} from 'react-router-dom';
 
 const styles = theme => ({
   fab: {
@@ -61,12 +62,12 @@ CancelButton.propTypes = {
 const AddVendorButton=()=>{
   return(
     <Tooltip title="Add Vendor">
-        <Button fab color="secondary"
-          style = {styles.absolute}
-          >
+      <Link to = "/addVendorForm">
+        <Button fab color="secondary">
           <AddIcon />
         </Button>
-      </Tooltip>
+      </Link>
+    </Tooltip>
   );
 }
 

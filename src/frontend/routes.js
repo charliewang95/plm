@@ -8,6 +8,7 @@ import Inventory from './components/inventory/Inventory';
 import Orders from './components/orders/Orders';
 import Storage from './components/storage/Storage';
 import Vendors from './components/vendors/Vendors';
+import AddVendorForm from './components/vendors/AddVendorForm';
 
 const Routes = () => (
       <div>
@@ -20,6 +21,7 @@ const Routes = () => (
 		      <Route path="/orders" component={Orders} />
 		      <Route path="/storage" component={Storage} />
           <Route path="/vendors" component={Vendors} />
+          <Route path="/addVendorForm" component={AddVendorForm} />
 		  </Switch>
       </div>
 

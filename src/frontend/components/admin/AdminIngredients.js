@@ -133,7 +133,6 @@ const availableValues = {
 
 };
 
-var variables = [];
 
 const MultiSelectCellBase = ({
   multiVal, multi, availableColumnValues, value, onValueChange, classes,

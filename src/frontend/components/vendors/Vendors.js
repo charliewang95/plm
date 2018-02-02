@@ -22,7 +22,6 @@ import Styles from  'react-select/dist/react-select.css';
 
 
 
-
 import dummyData from './dummyData.js';
 import * as vendorInterface from '../../interface/vendorInterface.js';
 import * as buttons from './Buttons.js';
@@ -256,9 +255,7 @@ class AdminIngredients extends React.PureComponent
           />
 
         </Grid>
-        // Add vendor Button
         <buttons.AddVendorButton/>
-
         <Dialog
           open={!!deletingRows.length}
           onClose={this.cancelDelete}
