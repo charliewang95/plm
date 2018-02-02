@@ -10,7 +10,8 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "start-dev": "nf start -p 3000",
-    "start-test-server": "nf start -x 80"
+    "start-test-server": "nf start -x 80",
+    "start-https": "nf start -x 443"
   },
   "repository": {
     "type": "git",

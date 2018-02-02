@@ -17,5 +17,9 @@
 
 * Hint: if you see permission denied when trying to run commands in the plm directory, run "sudo chmod -R 777 ." inside the directory and the problem should go away
 
+## To use https on servers:
+
+* run `sudo npm run start-https`. This will start a proxy at port 443, which is the default https port
+
 ## Design rules
 * Every url that is passed as argument should not end with '/'
