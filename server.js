@@ -18,12 +18,20 @@ app.use(function(req, res, next) {
  next();
 });
 
+ var fs = require('fs'),
+    https = require('https');
+
+    https.createServer({
+      key: fs.readFileSync('key.pem'),
+      cert: fs.readFileSync('cert.pem')
+    }, app).listen(config.port);
+
 //app.use(function (err, req, res, next) {
     //  console.error(err.stack);
     //  res.status(901).send('Admin required');
-    //})
+//})
 
-app.listen(config.port);
+// app.listen(config.port);
 
 module.exports = app;
-console.log(process.env.NODE_ENV + ' server running at http://localhost:' + config.port);
+console.log(process.env.NODE_ENV + ' Back-end running at https://localhost:' + config.port);

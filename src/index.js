@@ -1,7 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './frontend/components/App/App.js';
-import registerServiceWorker from './registerServiceWorker';
+import React from 'react'
+import ReactDOM from 'react-dom'
+//import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import registerServiceWorker from './registerServiceWorker'
+import App from './frontend/App'
+import { BrowserRouter } from 'react-router-dom'
+import './index.css'
 
-ReactDOM.render(<App />, document.getElementById('root'));
-registerServiceWorker();
+ReactDOM.render((
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
+), document.getElementById('root'))
+
+registerServiceWorker()
