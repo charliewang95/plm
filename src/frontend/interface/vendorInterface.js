@@ -1,5 +1,5 @@
 //vendorInterface.js
-//This interface is to be used by the front-end 
+//This interface is to be used by the front-end
 //It accepts string input as texts that follows the data-base schema
 //creates the corresponding json object if necessary
 //and calls actions to send the actual requests
@@ -8,9 +8,9 @@ import * as vendorActions from '../actions/vendorAction'
 
 /**
 takes in various properties of vendor,
-returns a Json object that encapsulates all properties 
+returns a Json object that encapsulates all properties
 name: string
-contact: string 
+contact: string
 code: string
 ingredients: an array of objects following IngredientPriceSchema
 **/
@@ -43,7 +43,7 @@ function getAllVendorsAsync(sessionId) {
 	return vendorActions.getAllVendorsAsync(sessionId);
 }
 
-/* 
+/*
  * get one vendor
  * vendorId: string, the id of the vendor
  * sessionId: string, id of the current session
@@ -52,18 +52,18 @@ function getVendorAsync(vendorId, sessionId) {
 	return vendorActions.getVendorAsync(vendorId, sessionId);
 };
 
-/* 
+/*
  * update one vendor
  * vendorId: string, the id of the vendor
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-function updateVendor(vendorId, name, contact, code, ingredients, sessionId) {
+function updateVendor(name, contact, code, ingredients, vendorId,sessionId) {
 	var updatedVendor = packIntoJson(name, contact, code, ingredients);
 	return vendorActions.updateVendor(vendorId, sessionId, updatedVendor);
 };
 
-/* 
+/*
  * delete one existing vendor
  * vendorId: string, the id of the vendor
  * sessionId: string, id of the current session

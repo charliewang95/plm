@@ -12,11 +12,11 @@ const data = {
         {id : 1, name: "salt",pkg: "sack",temperature: "fridge", vendors: "vendor3/20, vendor4/30"},
         {id : 2, name: "oil",pkg: "pail",temperature: "room", vendors: "target/35"},
         {id : 3, name: "pepper",pkg: "sack",temperature: "room", vendors: "vendor1/10, vendor2/20"},
-        {id : 4, name: "salt",pkg: "sack",temperature: "fridge", vendors: "vendor3/20, vendor4/30"},
-        {id: 5, name: "oil",pkg: "pail",temperature: "room", vendors: "target/35"},
-        {id: 6, name: "pepper",pkg: "sack",temperature: "room", vendors: "vendor1/10, vendor2/20"},
-        {id: 7, name: "salt",pkg: "sack",temperature: "fridge", vendors: "vendor3/20, vendor4/30"},
-        {id: 8, name: "oil",pkg: "pail",temperature: "room", vendors: "target/35"},
+        // {id : 4, name: "salt",pkg: "sack",temperature: "fridge", vendors: "vendor3/20, vendor4/30"},
+        // {id: 5, name: "oil",pkg: "pail",temperature: "room", vendors: "target/35"},
+        // {id: 6, name: "pepper",pkg: "sack",temperature: "room", vendors: "vendor1/10, vendor2/20"},
+        // {id: 7, name: "salt",pkg: "sack",temperature: "fridge", vendors: "vendor3/20, vendor4/30"},
+        // {id: 8, name: "oil",pkg: "pail",temperature: "room", vendors: "target/35"},
       ],
 
    vendor_options2 : [

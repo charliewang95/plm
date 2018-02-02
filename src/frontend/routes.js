@@ -7,6 +7,7 @@ import UserIngredients from './components/ingredients/UserIngredients';
 import Inventory from './components/inventory/Inventory';
 import Orders from './components/orders/Orders';
 import Storage from './components/storage/Storage';
+import Vendors from './components/vendors/Vendors';
 
 const Routes = () => (
       <div>
@@ -18,6 +19,7 @@ const Routes = () => (
 		      <Route path="/inventory" component={Inventory} />
 		      <Route path="/orders" component={Orders} />
 		      <Route path="/storage" component={Storage} />
+          <Route path="/vendors" component={Vendors} />
 		  </Switch>
       </div>
 
