@@ -21,9 +21,12 @@ import { withStyles } from 'material-ui/styles';
 import Styles from  'react-select/dist/react-select.css';
 
 
+
+
 import dummyData from './dummyData.js';
 import * as vendorInterface from '../../interface/vendorInterface.js';
 import * as buttons from './Buttons.js';
+
 
 const styles = theme => ({
   dialog: {
@@ -251,7 +254,10 @@ class AdminIngredients extends React.PureComponent
           <PagingPanel
             pageSizes={pageSizes}
           />
+
         </Grid>
+        // Add vendor Button
+        <buttons.AddVendorButton/>
 
         <Dialog
           open={!!deletingRows.length}

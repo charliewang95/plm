@@ -6,6 +6,19 @@ import DeleteIcon from 'material-ui-icons/Delete';
 import EditIcon from 'material-ui-icons/Edit';
 import SaveIcon from 'material-ui-icons/Save';
 import CancelIcon from 'material-ui-icons/Cancel';
+import AddIcon from 'material-ui-icons/Add';
+import Tooltip from 'material-ui/Tooltip';
+
+const styles = theme => ({
+  fab: {
+    margin: theme.spacing.unit * 2,
+  },
+  absolute: {
+    position: 'absolute',
+    bottom: theme.spacing.unit * 2,
+    right: theme.spacing.unit * 3,
+  },
+});
 
 
 const EditButton = ({ onExecute }) => (
@@ -45,5 +58,16 @@ CancelButton.propTypes = {
   onExecute: PropTypes.func.isRequired,
 };
 
+const AddVendorButton=()=>{
+  return(
+    <Tooltip title="Add Vendor">
+        <Button fab color="secondary"
+          style = {styles.absolute}
+          >
+          <AddIcon />
+        </Button>
+      </Tooltip>
+  );
+}
 
-export  {EditButton,CommitButton,DeleteButton,CancelButton};
+export  {EditButton,CommitButton,DeleteButton,CancelButton,AddVendorButton};
