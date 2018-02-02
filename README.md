@@ -11,15 +11,27 @@
 
 * Hint: to run locally, remove the .env file if it exists 
 
-## To deploy on test server
+## To deploy on Servers
 
-* Go to ~/../plm by running "cd ~/../pcm", then run "sudo npm run start-https". To view the content, go to https://vcm-2738.vm.duke.edu in your browser
+__ Note: Mongodb is alreayd running on servers as a service. This means you do not need to run mongodb separately when you want to start the server__
 
-* Hint: if you see permission denied when trying to run commands in the plm directory, run "sudo chmod -R 777 ." inside the directory and the problem should go away
+### Test Server
 
-## To use https on servers:
+* Go to ~/../plm by running `cd ~/../pcm`, then run `sudo npm run start-https`. To view the content, go to https://real-producers-test.colab.duke.edu in your browser
+
+### Production server
+
+* Go to plm by running `cd pcm`, then run `sudo npm run start-https`. To view the content, go to https://real-producers.colab.duke.edu in your browser
+
+### To use https on servers:
 
 * run `sudo npm run start-https`. This will start the web view on port 443, which is the default https port. 
+
+### Troubleshooting
+
+* If you see permission denied when trying to run commands in the plm directory, run "sudo chmod -R 777 ." inside the directory and the problem should go away
+
+* If you cannot connect to the remote server in the browser, check the .env file to make sure that 
 
 ## Design rules
 * Every url that is passed as argument should not end with '/'
