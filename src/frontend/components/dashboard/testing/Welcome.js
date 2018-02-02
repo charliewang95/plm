@@ -50,7 +50,7 @@ const WelcomeCard = () => (
       <FlatButton label="Update Vendor" onClick={()=>vendorInterface.updateVendor(vendorId, dummyVendor.updatedVendor, sessionId)} />
       <FlatButton label="Delete Vendor" onClick={()=>vendorInterface.deleteVendor(vendorId, sessionId)} />
 
-      <FlatButton label="Alert" onClick={()=>alert("Button pressed!")} />
+      <FlatButton label="Alert" onClick={()=>alert("(new) Button pressed!")} />
 
       <FlatButton label="All ingredients" onClick={()=>ingredientInterface.getAllIngredientsAsync(sessionId)} />
       <FlatButton label="Get One Ingredient" onClick={()=>ingredientInterface.getIngredientAsync(ingredientId, sessionId)} />

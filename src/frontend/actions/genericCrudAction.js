@@ -43,6 +43,7 @@ exported methods
  * sessionId: string, id of the current session
  */
 function create(url, object, sessionId) {
+	console.log('generic creating...')
 	var completeUrl = appendSessionIdToUrl(url,sessionId);
 	axios.post(completeUrl, object)
 	.then(function (response) {

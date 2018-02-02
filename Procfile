@@ -1,2 +1,2 @@
-web: react-scripts start
+web: HTTPS=true react-scripts start
 api: nodemon server.js

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "ECE458 project",
   "main": "server.js",
-  "proxy": "http://localhost:1337",
+  "proxy": "https://localhost:1337",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
