@@ -19,7 +19,7 @@
 
 ## To use https on servers:
 
-* run `sudo npm run start-https`. This will start a proxy at port 443, which is the default https port
+* run `sudo npm run start-https`. This will start a proxy at port 443->5000, which is the default https port. However, for some reason this does not work as server will drop connection unexpectedly
 
 ## Design rules
 * Every url that is passed as argument should not end with '/'
