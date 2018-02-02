@@ -21,6 +21,8 @@ __ Note: Mongodb is alreayd running on servers as a service. This means you do n
 
 ### Production server
 
+* The production server is kept running by the following command `sudo nohup npm run start-https >/dev/null 2>&1 &`. This prevents the process from hanging up after the user who typed this command logs out from the ssh session.
+
 * Go to plm by running `cd pcm`, then run `sudo npm run start-https`. To view the content, go to https://real-producers.colab.duke.edu in your browser
 
 ### To use https on servers:
