@@ -7,6 +7,8 @@ import DefaultWelcome from './components/home/Welcome/Welcome'
 import { BrowserRouter } from 'react-router-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
+import LoginPage from './charlie/LoginPage';
+
 const Routes = (props) => (
 
 <MuiThemeProvider>
@@ -16,6 +18,7 @@ const Routes = (props) => (
 	      <Route path="/home" component={Home} />
 	      <Route path="/about" component={About} />
 	      <Route path="/default-welcome" component={DefaultWelcome} />
+	      <Route path="/login" component={LoginPage} />
       </div>
     </BrowserRouter>
 </MuiThemeProvider>

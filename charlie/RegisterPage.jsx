@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SignUpForm from '../components/SignUpForm.jsx';
+import RegisterForm from '../components/RegisterForm.jsx';
 
 
-class SignUpPage extends React.Component {
+class RegisterPage extends React.Component {
 
   /**
    * Class constructor.
