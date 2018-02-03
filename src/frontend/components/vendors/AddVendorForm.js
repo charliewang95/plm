@@ -17,6 +17,9 @@ const styles = {
     }
   };
 
+//TODO: get the sessionId
+// const sessionId = '5a6a5977f5ce6b254fe2a91f';
+const sessionId = '5a6a5977f5ce6b254fe2a91f';
 
 class AddVendorForm extends React.Component{
   constructor(props) {
@@ -36,13 +39,11 @@ class AddVendorForm extends React.Component{
     console.log("name " + this.state.name);
     console.log("contact " + this.state.code);
     console.log("code " + this.state.contact);
-    // TODO: Send data to the back end
-    var ingredients = "";
-    var sessionId = "";
 
-    // vendorActions.addVendor(
-    //   this.state.name,this.state.contact,this.state.code,ingredients,sessionId);
-    // );
+    // TODO: Send data to the back end
+    vendorActions.addVendor(
+      this.state.name,this.state.contact,this.state.code,sessionId);
+
     e.preventDefault()
 
     }
@@ -83,7 +84,7 @@ class AddVendorForm extends React.Component{
                   <RaisedButton raised color = "secondary"
                     component = {Link} to = "/vendors">CANCEL</RaisedButton>
                   <RaisedButton raised
-                            component = {Link} to = "/vendors"
+                            // component = {Link} to = "/vendors"
                             color="primary"
                             style={styles.saveButton}
                             type="Submit"

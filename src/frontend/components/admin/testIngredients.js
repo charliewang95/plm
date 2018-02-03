@@ -1,22 +1,22 @@
 const data = {
     tablePage:{
     items: [
-      // ['pepper','sack','room temperature','vendor 1'],
-      // ['pepper','sack','room temperature','vendor 1'],
-      // ['pepper','sack','room temperature','vendor 1'],
-      // ['pepper','sack','room temperature','vendor 1'],
-      // ['pepper','sack','room temperature','vendor 1'],
-      // ['pepper','sack','room temperature','vendor 1'],
+      // ['pepper','sack','room temperatureZone','vendor 1'],
+      // ['pepper','sack','room temperatureZone','vendor 1'],
+      // ['pepper','sack','room temperatureZone','vendor 1'],
+      // ['pepper','sack','room temperatureZone','vendor 1'],
+      // ['pepper','sack','room temperatureZone','vendor 1'],
+      // ['pepper','sack','room temperatureZone','vendor 1'],
 
-        {id : 0, name: "pepper",pkg: "sack",temperature: "room", vendors: "vendor1/10, vendor2/20"},
-        {id : 1, name: "salt",pkg: "sack",temperature: "fridge", vendors: "vendor3/20, vendor4/30"},
-        {id : 2, name: "oil",pkg: "pail",temperature: "room", vendors: "target/35"},
-        {id : 3, name: "pepper",pkg: "sack",temperature: "room", vendors: "vendor1/10, vendor2/20"},
-        // {id : 4, name: "salt",pkg: "sack",temperature: "fridge", vendors: "vendor3/20, vendor4/30"},
-        // {id: 5, name: "oil",pkg: "pail",temperature: "room", vendors: "target/35"},
-        // {id: 6, name: "pepper",pkg: "sack",temperature: "room", vendors: "vendor1/10, vendor2/20"},
-        // {id: 7, name: "salt",pkg: "sack",temperature: "fridge", vendors: "vendor3/20, vendor4/30"},
-        // {id: 8, name: "oil",pkg: "pail",temperature: "room", vendors: "target/35"},
+        {id : 0, name: "pepper",packageName: "sack",temperatureZone: "room", vendors: "vendor1/10, vendor2/20"},
+        {id : 1, name: "salt",packageName: "sack",temperatureZone: "fridge", vendors: "vendor3/20, vendor4/30"},
+        {id : 2, name: "oil",packageName: "pail",temperatureZone: "room", vendors: "target/35"},
+        {id : 3, name: "pepper",packageName: "sack",temperatureZone: "room", vendors: "vendor1/10, vendor2/20"},
+        // {id : 4, name: "salt",packageName: "sack",temperatureZone: "fridge", vendors: "vendor3/20, vendor4/30"},
+        // {id: 5, name: "oil",packageName: "pail",temperatureZone: "room", vendors: "target/35"},
+        // {id: 6, name: "pepper",packageName: "sack",temperatureZone: "room", vendors: "vendor1/10, vendor2/20"},
+        // {id: 7, name: "salt",packageName: "sack",temperatureZone: "fridge", vendors: "vendor3/20, vendor4/30"},
+        // {id: 8, name: "oil",packageName: "pail",temperatureZone: "room", vendors: "target/35"},
       ],
 
    vendor_options2 : [
@@ -38,7 +38,7 @@ const data = {
    vendor_options : ['target','wholefoods','li ming','panera','harris teeters'],
 
    package_options: ['sail','supersack','drum','railcar','sack'],
-   temperature_options:['room temperature','frozen','refrigerator'],
+   temperatureZone_options:['room temperatureZone','frozen','refrigerator'],
  },
 };
 

@@ -21,10 +21,12 @@ import { withStyles } from 'material-ui/styles';
 import Styles from  'react-select/dist/react-select.css';
 
 
-
 import dummyData from './dummyData.js';
 import * as vendorActions from '../../interface/vendorInterface.js';
 import * as buttons from './Buttons.js';
+
+// TODO: get session Id from the user
+const sessionId = '5a6a5977f5ce6b254fe2a91f';
 
 
 const styles = theme => ({
@@ -89,8 +91,7 @@ class Vendors extends React.PureComponent
         { name: 'code', title: 'Code' },
       ],
 
-      // TODO: get data to display from back end
-      rows: dummyData,
+      rows:[],
       sorting: [],
       editingRowIds: [],
       rowChanges: {},
@@ -140,7 +141,7 @@ class Vendors extends React.PureComponent
             vendorName = rows[i].name;
             vendorContact=rows[i].contact;
             vendorCode= rows[i].code;
-            vendorId=rows[i].codeUnique;
+            vendorId=rows[i]._id;
           }
 
         };
@@ -148,8 +149,7 @@ class Vendors extends React.PureComponent
         console.log(" name " + vendorName);
         var ingredients = "";
         // TODO: Call updateVendor function to backend
-        vendorActions.updateVendor(vendorName,vendorContact,vendorCode,
-        vendorId,ingredients);
+        vendorActions.updateVendor(vendorName,vendorContact,vendorCode,vendorId);
       };
       // Delete pop up
       this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
@@ -163,9 +163,9 @@ class Vendors extends React.PureComponent
         const index = rows.findIndex(row => row.id === rowId);
         if (index > -1) {
           // TODO: Update table in Back end
-          const sessionId = "";
+
           console.log("Delete " + rows[index].name);
-          vendorActions.updateVendor(rows[index].vendorId,sessionId);
+          vendorActions.updateVendor(rows[index]._id,sessionId);
           // removes data from the table
           rows.splice(index, 1);
         }
@@ -175,6 +175,33 @@ class Vendors extends React.PureComponent
     this.changeColumnOrder = (order) => {
       this.setState({ columnOrder: order });
     };
+  }
+
+  componentDidMount(){
+    console.log(" MOUNT");
+    this.loadAllVendors();
+  }
+
+  loadAllVendors(){
+    console.log("LOAD ALL DATA ");
+    var startingIndex = 0;
+
+    var rawData = dummyData;
+    //TODO: Initialize data
+    // var rawData = vendorActions.getAllVendorsAsync();
+    // var processedData = [...rawData.map((row, index)=> ({
+    //     id: startingIndex + index,...row,
+    //   })),
+    // ];
+
+    var processedData = [...rawData.map((row, index)=> ({
+        addedid: startingIndex + index,...row,
+      })),
+    ];
+
+
+      console.log("processedData " + JSON.stringify(processedData));
+      this.setState({rows:processedData});
   }
 
   render() {

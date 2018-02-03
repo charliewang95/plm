@@ -34,7 +34,7 @@ var VendorSchema = new Schema({
         lowercase: true,
         required: true
     },
-	ingredients: [IngredientPriceSchema]
+	// ingredients: [IngredientPriceSchema]
 });
 
 mongoose.model('Vendor', VendorSchema);

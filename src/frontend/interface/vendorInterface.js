@@ -14,12 +14,12 @@ contact: string
 code: string
 ingredients: an array of objects following IngredientPriceSchema
 **/
-function packIntoJson(name, contact, code, ingredients){
+function packIntoJson(name, contact, code){
 	var vendorJson = new Object();
 	vendorJson.name = name;
 	vendorJson.contact = contact;
 	vendorJson.code = code;
-	vendorJson.ingredients = ingredients;
+	// vendorJson.ingredients = ingredients;
 	console.log("JSON");
 	console.log(vendorJson);
 	console.log(dummyVendor.sampleVendor);
@@ -30,8 +30,8 @@ function packIntoJson(name, contact, code, ingredients){
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-function addVendor(name, contact, code, ingredients, sessionId) {
-	var newVendor = packIntoJson(name, contact, code, ingredients);
+function addVendor(name, contact, code, sessionId) {
+	var newVendor = packIntoJson(name, contact, code);
 	vendorActions.addVendor(newVendor, sessionId);
 }
 
@@ -58,8 +58,8 @@ function getVendorAsync(vendorId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-function updateVendor(name, contact, code, ingredients, vendorId,sessionId) {
-	var updatedVendor = packIntoJson(name, contact, code, ingredients);
+function updateVendor(name, contact, code, vendorId,sessionId) {
+	var updatedVendor = packIntoJson(name, contact, code);
 	return vendorActions.updateVendor(vendorId, sessionId, updatedVendor);
 };
 
