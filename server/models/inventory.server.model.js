@@ -29,6 +29,4 @@ var InventorySchema = new Schema({
     }
 });
 
-
-
 mongoose.model('Inventory', InventorySchema);
