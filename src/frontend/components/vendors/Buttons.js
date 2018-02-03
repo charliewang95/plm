@@ -10,18 +10,6 @@ import AddIcon from 'material-ui-icons/Add';
 import Tooltip from 'material-ui/Tooltip';
 import {Link} from 'react-router-dom';
 
-const styles = theme => ({
-  fab: {
-    margin: theme.spacing.unit * 2,
-  },
-  absolute: {
-    position: 'absolute',
-    bottom: theme.spacing.unit * 2,
-    right: theme.spacing.unit * 3,
-  },
-});
-
-
 const EditButton = ({ onExecute }) => (
   <IconButton onClick={onExecute} title="Edit row">
     <EditIcon />

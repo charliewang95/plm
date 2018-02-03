@@ -4,8 +4,6 @@ import RaisedButton from 'material-ui/Button';
 import {Link} from 'react-router-dom';
 import Styles from  'react-select/dist/react-select.css';
 import TextField from 'material-ui/TextField';
-import {Card,CardHeader} from 'material-ui/Card';
-import * as vendorActions from '../../interface/vendorInterface.js';
 
 const styles = {
     buttons: {
@@ -17,15 +15,21 @@ const styles = {
     }
   };
 
+  const required = (value) => {
+  if (!value.toString().trim().length) {
+    // We can return string or jsx as the 'error' prop for the validated Component
+    return 'require';
+  }
+};
 
-class AddVendorForm extends React.Component{
+class EditStorageCapacityForm extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
-  		name: '',
+  		freezer: '',
   		value:undefined,
-      contact:'',
-      code:'',
+      refrigerator:'',
+      warehouse:'',
       }
     // this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -33,16 +37,11 @@ class AddVendorForm extends React.Component{
 
   onFormSubmit(e) {
     console.log("SUBMIT");
-    console.log("name " + this.state.name);
-    console.log("contact " + this.state.code);
-    console.log("code " + this.state.contact);
+    console.log("freezer " + this.state.freezer);
+    console.log("refrigerator " + this.state.refrigerator);
+    console.log("warehouse " + this.state.warehouse);
     // TODO: Send data to the back end
-    var ingredients = "";
-    var sessionId = "";
 
-    // vendorActions.addVendor(
-    //   this.state.name,this.state.contact,this.state.code,ingredients,sessionId);
-    // );
     e.preventDefault()
 
     }
@@ -52,48 +51,53 @@ class AddVendorForm extends React.Component{
     const { name, contact, code } = this.state;
     return (
             <div>
-              <label> Add a Vendor </label>
+              <label> Edit Storage Capacity </label>
 
             <form onSubmit={this.onFormSubmit}>
                 <TextField
                     fullWidth={true}
-                    id="name"
-                    label="Name"
-                    value={this.state.name}
-                    onChange = {(event) => this.setState({ name: event.target.value})}
+                    id="freezer"
+                    label="Freezer"
+                    value={this.state.freezer}
+                    onChange = {(event) => this.setState({ freezer: event.target.value})}
                     margin="normal"
+                    validations={[required]}
                 />
                 <TextField
                     fullWidth={true}
-                    id="contact"
-                    label="Contact"
-                    value={this.state.contact}
-                    onChange = {(event) => this.setState({ contact: event.target.value})}
+                    id="refrigerator"
+                    label="Refrigerator"
+                    value={this.state.Refrigerator}
+                    onChange = {(event) => this.setState({ refrigerator: event.target.value})}
                     margin="normal"
+                    validations={[required]}
                 />
                 <TextField
                     fullWidth={true}
-                    id="code"
+                    id="warehouse"
                     label="Code"
-                    value={this.state.code}
-                    onChange = {(event) => this.setState({ code: event.target.value})}
+                    value={this.state.warehouse}
+                    onChange = {(event) => this.setState({ warehouse: event.target.value})}
                     margin="normal"
+                    validations={[required]}
                 />
               <div style={styles.buttons}>
                   <RaisedButton raised color = "secondary"
-                    component = {Link} to = "/vendors">CANCEL</RaisedButton>
+                    component = {Link} to = "/storage">CANCEL</RaisedButton>
                   <RaisedButton raised
-                            component = {Link} to = "/vendors"
+                            component = {Link} to = "/storage"
                             color="primary"
                             style={styles.saveButton}
                             type="Submit"
                             primary={true}> SAVE </RaisedButton>
+
              </div>
            </form>
          </div>
+
     )
 	}
 };
 
 
-export default AddVendorForm;
+export default EditStorageCapacityForm;

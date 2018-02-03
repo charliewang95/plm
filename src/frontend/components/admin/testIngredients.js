@@ -43,39 +43,3 @@ const data = {
 };
 
 export default data;
-
-/* parse data to create objects in order to display */
-// export function generateRows() {
-//   const data = [];
-//   const columns = ['name','package','temperature','vendors'];
-//   for(i = 0; i < )
-//   const record = {};
-//
-//     columns.forEach((column) => {
-//       let values = columnValues[column];
-//
-//       if (typeof values === 'function') {
-//         record[column] = values({ random, index: i, record });
-//         return;
-//       }
-//
-//       while (values.length === 2 && typeof values[1] === 'object') {
-//         values = values[1][record[values[0]]];
-//       }
-//
-//       const value = values[Math.floor(random() * values.length)];
-//       if (typeof value === 'object') {
-//         record[column] = Object.assign({}, value);
-//       } else {
-//         record[column] = value;
-//       }
-//     });
-//
-//     data.push(record);
-//   }
-//   for(var i=0;i<data.length;i++){
-//     console.log("data " + data[i].saleDate);
-//   }
-//   // console.log(" data " + data[0].name);
-//   return data;
-// }

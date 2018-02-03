@@ -23,7 +23,7 @@ import Styles from  'react-select/dist/react-select.css';
 
 
 import dummyData from './dummyData.js';
-import * as vendorInterface from '../../interface/vendorInterface.js';
+import * as vendorActions from '../../interface/vendorInterface.js';
 import * as buttons from './Buttons.js';
 
 
@@ -78,7 +78,7 @@ EditCell.propTypes = {
 
 const getRowId = row => row.id;
 
-class AdminIngredients extends React.PureComponent
+class Vendors extends React.PureComponent
 {
   constructor(props){
     super(props);
@@ -148,7 +148,7 @@ class AdminIngredients extends React.PureComponent
         console.log(" name " + vendorName);
         var ingredients = "";
         // TODO: Call updateVendor function to backend
-        vendorInterface.updateVendor(vendorName,vendorContact,vendorCode,
+        vendorActions.updateVendor(vendorName,vendorContact,vendorCode,
         vendorId,ingredients);
       };
       // Delete pop up
@@ -163,9 +163,9 @@ class AdminIngredients extends React.PureComponent
         const index = rows.findIndex(row => row.id === rowId);
         if (index > -1) {
           // TODO: Update table in Back end
-          var sessionId = "";
+          const sessionId = "";
           console.log("Delete " + rows[index].name);
-          vendorInterface.updateVendor(rows[index].vendorId,sessionId);
+          vendorActions.updateVendor(rows[index].vendorId,sessionId);
           // removes data from the table
           rows.splice(index, 1);
         }
@@ -289,8 +289,8 @@ class AdminIngredients extends React.PureComponent
   }
 }
 
-AdminIngredients.propTypes = {
+Vendors.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { name: 'ControlledModeDemo' })(AdminIngredients);
+export default withStyles(styles, { name: 'ControlledModeDemo' })(Vendors);
