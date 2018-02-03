@@ -142,7 +142,7 @@ function updateById(url, propertyName, objectId, sessionId, newObject) {
 };
 
 /* 
- * delete one existing ingredient
+ * delete one existing objct by id
  * url: string, the url for the delete request
  * propertyName: string, segment in front of the objectId in the complete url used to identify what 
  * the next segment is
@@ -162,5 +162,24 @@ function deleteById(url, propertyName, objectId, sessionId) {
 	});
 };
 
+/* 
+ * delete all existing objects at a certain url
+ * url: string, the url for the delete request
+ * propertyName: string, segment following the base url
+ * sessionId: string, id of the current session
+ */
+function deleteAll(url, propertyName, sessionId) {
+	const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName]);
+	const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
+	axios.delete(completeUrl)
+	.then(function (response) {
+		console.log(response);
+		return response;
+	})
+	.catch(function (error) {
+		console.log(error);
+	});
+};
+
 //export functions above for use by other modules
-export { create, getAllAsync, getByIdAsync, updateById, deleteById};
+export { create, getAllAsync, getByIdAsync, updateById, deleteById, deleteAll};
