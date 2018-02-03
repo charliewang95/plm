@@ -61,7 +61,7 @@ function getOrderAsync(orderId, sessionId) {
  * sessionId: string, id of the current session
  */
 function updateOrder(orderId, userId, ingredientId, vendorId, _package, price, sessionId) {
-	var updatedOrder = packIntoJson(uuserId, ingredientId, vendorId, _package, price);
+	var updatedOrder = packIntoJson(userId, ingredientId, vendorId, _package, price);
 	return orderActions.updateOrder(orderId, sessionId, updatedOrder);
 };
 
