@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import DataTables from 'material-ui-datatables';
-import * as ingredientActions from '../actions/ingredientAction.js'
+import * as ingredientActions from '../../interface/ingredientInterface.js'
 
 const TABLE_COLUMNS = [
   {
@@ -30,7 +30,7 @@ const TABLE_DATA = [
   }
 ];
  
-class Home extends Component {
+class AdminIngredients extends Component {
   
   constructor(props) {
     super(props)
@@ -77,4 +77,4 @@ class Home extends Component {
   }
 }
 
-export default Home
+export default AdminIngredients
