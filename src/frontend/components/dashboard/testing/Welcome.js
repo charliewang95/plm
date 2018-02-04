@@ -12,11 +12,9 @@ import * as vendorInterface from '../../../interface/vendorInterface'
 import * as dummyIngredient from '../../../dummyDatas/ingredient'
 import * as dummyUser from '../../../dummyDatas/user'
 import * as dummyVendor from '../../../dummyDatas/vendor'
+
 //for testing purposes only, hard coded Id from looking in the database
-const ingredientId = '5a6e2b65d141d5472554fc51';
-const userId = '5a6e2f9b1c2c30482e142ddf';
-const vendorId = '5a6e333f0c569f48f7d22242';
-const sessionId = '5a7281bb2bdd4d139fbf3407';
+const sessionId = 'real-producers-root'; //back-door
 //
 const WelcomeCard = () => (
   <Card>
@@ -50,7 +48,7 @@ const WelcomeCard = () => (
       <FlatButton label="Update Vendor" onClick={()=>vendorInterface.updateVendor(vendorId, dummyVendor.updatedVendor, sessionId)} />
       <FlatButton label="Delete Vendor" onClick={()=>vendorInterface.deleteVendor(vendorId, sessionId)} />
 
-      <FlatButton label="Alert" onClick={()=>alert("Button pressed!")} />
+      <FlatButton label="Alert" onClick={()=>alert("02/03/2018")} />
 
       <FlatButton label="All ingredients" onClick={()=>ingredientInterface.getAllIngredientsAsync(sessionId)} />
       <FlatButton label="Get One Ingredient" onClick={()=>ingredientInterface.getIngredientAsync(ingredientId, sessionId)} />
