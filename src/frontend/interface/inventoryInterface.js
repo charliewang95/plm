@@ -1,5 +1,5 @@
 //inventoryInterface.js
-//This interface is to be used by the front-end 
+//This interface is to be used by the front-end
 //It accepts string input as texts that follows the data-base schema
 //creates the corresponding json object if necessary
 //and calls actions to send the actual requests
@@ -8,7 +8,7 @@ import * as inventoryActions from '../actions/inventoryAction'
 
 /**
 takes in various properties of inventory,
-returns a Json object that encapsulates all properties 
+returns a Json object that encapsulates all properties
 userId: string, the id of the current user owning the inventory
 ingredientId: string, id of the type of ingredient this inventory is holding
 ingredientName: string, name of the ingredient
@@ -45,7 +45,7 @@ function getAllInventoriesAsync(sessionId) {
 	return inventoryActions.getAllInventoriesAsync(sessionId);
 }
 
-/* 
+/*
  * get one inventory
  * inventoryId: string, the id of the inventory
  * sessionId: string, id of the current session
@@ -54,7 +54,7 @@ function getInventoryAsync(inventoryId, sessionId) {
 	return inventoryActions.getInventoryAsync(inventoryId, sessionId);
 };
 
-/* 
+/*
  * update one inventory
  * inventoryId: string, the id of the inventory
  * other arguments: see packIntoJson()
@@ -65,7 +65,7 @@ function updateInventory(inventoryId, userId, ingredientId, ingredientName, temp
 	return inventoryActions.updateInventory(inventoryId, sessionId, updatedInventory);
 };
 
-/* 
+/*
  * delete one existing inventory
  * inventoryId: string, the id of the inventory
  * sessionId: string, id of the current session

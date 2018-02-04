@@ -21,9 +21,26 @@ import {
 import dummyData from './dummyData';
 import {EditButton,CommitButton,CancelButton} from '../vendors/Buttons.js';
 import ShoppingCartButton from './ShoppingCartButton.js';
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from 'material-ui/Dialog';
+import Button from 'material-ui/Button';
+import TextField from 'material-ui/TextField';
+import Divider from 'material-ui/Divider';
+import * as cartActions from '../../interface/cartInterface';
+import * as inventoryActions from '../../interface/inventoryInterface';
+import * as testConfig from '../../../resources/testConfig.js'
+
+
 
 //TODO: Get if it ADMIN
-var  isAdmin= false;
+var  isAdmin= true;
+const userId = "user";
+const sessionId = testConfig.sessionId;
+const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 const Cell = (props)=>{
   return <Table.Cell {...props}
@@ -32,6 +49,7 @@ const Cell = (props)=>{
             wordWrap: "break-word"
           }}/>
 };
+
 
 Cell.propTypes = {
   column: PropTypes.shape({ name: PropTypes.string }).isRequired,
@@ -52,7 +70,10 @@ const commandComponents = {
   edit:    EditButton,
   commit:  CommitButton,
   cancel:  CancelButton,
-  addToCart: ShoppingCartButton,
+  // This is for the shopping cart- had to do this way because
+  // the package has delete integrated in the TableEditColumn --
+  // look into devextreme TableEditColumn API for details
+  delete: ShoppingCartButton,
 };
 
 const Command = ({ id, onExecute }) => {
@@ -89,13 +110,14 @@ class Inventory extends React.PureComponent {
       editingRowIds: [],
       rowChanges: {},
       tableColumnExtensions: [
-        { columnName: 'ingredientName', align: 'right' },
+        { columnName: 'ingredientName', align: 'left' },
       ],
       integratedFilteringColumnExtensions: [
         { columnName: 'temperatureZone', predicate: temperatureZonePredicate },
       ],
       rows: [],
-      // selection:[]
+      addingItemsToCart:[],
+      addedQuantity:'',
     };
 
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
@@ -104,7 +126,10 @@ class Inventory extends React.PureComponent {
       console.log(" ROW CHANGES: ");
       this.setState({ rowChanges });
     }
-    this.commitChanges = ({ changed}) => {
+
+    this.cancelItemOnCart = () => this.setState({ addingItemsToCart: [] });
+
+    this.commitChanges = ({ changed,deleted}) => {
       let { rows } = this.state;
 
       console.log(JSON.stringify(rows));
@@ -115,30 +140,60 @@ class Inventory extends React.PureComponent {
           console.log( " Changed Id " + changed[rows[i].id]);
           if(changed[rows[i].id]){
             rows[i].quantity = changed[rows[i].id].quantity;
+
+            //TODO: Update the inventory
+            inventoryActions.updateInventory(rows[i].inventoryId, userId,
+              rows[i].ingredientId, rows[i].ingredientName,
+              rows[i].temperatureZone, changed[rows[i].id].quantity, sessionId);
         }
       }
      }
-      // TODO: Update Quantity in back end
-   }
- };
+
+     this.setState({ rows, addingItemsToCart: deleted || this.state.addingItemsToCart });
+
+     // Called from the deleteCommand
+     this.addToCart=() => {
+       console.log(" Added Quantity " + this.state.addedQuantity);
+       this.state.addingItemsToCart.forEach((rowId) => {
+         const index = rows.findIndex(row => row.id === rowId);
+         if (index > -1) {
+
+           //TODO: Send data to both the inventory
+           console.log("Name" + rows[index].ingredientName);
+           console.log("Package " + rows[index].packageName);
+           console.log("ingredientId " + rows[index].ingredientId);
+
+             //TODO: Send data to the cart
+             cartActions.addCart(userId, rows[index].ingredientId,
+                this.state.addedQuantity, sessionId);
+         }
+       });
+       this.setState({ rows, addingItemsToCart: [] });
+     }
+   };
+ }
 
 // Initial loading of data
   componentDidMount() {
     this.loadInventory();
   }
 
-  loadInventory() {
+  async loadInventory() {
     console.log("LOADING DATA");
     var processedData=[];
-    var rawData = dummyData;
     //TODO: Initialize data
+    var rawData=[];
+    if(READ_FROM_DATABASE){
+      rawData = await inventoryActions.getAllInventoriesAsync(sessionId);
+    } else {
+      rawData = dummyData;
+    }
+
     var startingIndex = 0;
     var processedData = [...rawData.map((row, index)=> ({
         id: startingIndex + index,...row,
       })),
     ];
-
-    console.log("processedData " + JSON.stringify(processedData));
     this.setState({rows:processedData});
   }
 
@@ -147,7 +202,7 @@ class Inventory extends React.PureComponent {
     const {classes,} = this.props;
     const { rows, columns,editingRowIds,
       rowChanges,tableColumnExtensions,
-      integratedFilteringColumnExtensions} = this.state;
+      integratedFilteringColumnExtensions,addingItemsToCart,addedQuantity} = this.state;
     return (
       <Paper>
         <Grid
@@ -165,7 +220,7 @@ class Inventory extends React.PureComponent {
               rowChanges={rowChanges}
               onRowChangesChange={this.changeRowChanges}
               onCommitChanges={this.commitChanges}
-            /> }
+            />}
 
           <IntegratedFiltering columnExtensions={integratedFilteringColumnExtensions} />
           <Table cellComponent={Cell}/>
@@ -180,16 +235,54 @@ class Inventory extends React.PureComponent {
             <TableEditColumn
               width={120}
               showEditCommand
+              showDeleteCommand
               commandComponent={Command}
             />}
 
-              {/* <TableEditColumn
-                width={120}
-                showEditCommand
-                commandComponent={Command}
-              /> */}
-
         </Grid>
+
+        <Dialog
+          open={!!addingItemsToCart.length}
+          onClose={this.cancelItemOnCart}
+        >
+          <DialogTitle>Add Ingredient To Cart</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Please add the amount (in lbs) you want to add to cart.
+            </DialogContentText>
+              <Paper>
+                <label> </label>
+                <Grid
+                  rows={rows.filter(row => addingItemsToCart.indexOf(row.id) > -1)}
+                  columns={columns}
+                >
+                  <Table
+                    columnExtensions={tableColumnExtensions}
+                    cellComponent={Cell}
+                  />
+                <TableHeaderRow />
+              </Grid>
+            </Paper>
+            <Divider />
+            <Paper>
+              <TextField
+                autoFocus
+                margin="dense"
+                id="quantity"
+                label="Enter Quantity (lbs)"
+                fullWidth = {false}
+                onChange={(event) => this.setState({ addedQuantity: event.target.value})}
+                style={{
+                marginLeft: 20,
+                martginRight: 20
+                }}/>
+            </Paper>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.cancelItemOnCart} color="primary">Cancel</Button>
+            <Button onClick={this.addToCart} color="secondary">Add</Button>
+          </DialogActions>
+        </Dialog>
       </Paper>
     );
   }
