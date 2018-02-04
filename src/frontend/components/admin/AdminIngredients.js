@@ -32,6 +32,7 @@ import { withStyles } from 'material-ui/styles';
 import Styles from  'react-select/dist/react-select.css';
 import ReactSelect from 'react-select';
 import testData from './testIngredients';
+import SelectVendors from './SelectVendors';
 import * as ingredientInterface from '../../interface/ingredientInterface';
 
 const styles = theme => ({
@@ -138,9 +139,7 @@ var variables = [];
 const MultiSelectCellBase = ({
   multiVal, multi, availableColumnValues, value, onValueChange, classes,
 }) => (
-  <TableCell
-    className={classes.lookupEditCell}
-  >
+  <TableCell className={classes.lookupEditCell}>
     <ReactSelect.Creatable
         // type = "create"
         multi={true}
@@ -155,6 +154,7 @@ const MultiSelectCellBase = ({
         />
       }
     />
+     <SelectVendors />
     {/* </ReactSelect> */}
   </TableCell>
 );
@@ -390,7 +390,7 @@ class AdminIngredients extends React.PureComponent {
   }
 
   loadAllIngredients(){
-    const sessionId = '5a6a5977f5ce6b254fe2a91f';
+    const sessionId = '5a6a5977f5ce6b254fe2a91ff';
     var rawData = ingredientInterface.getAllIngredientsAsync(sessionId);
     var processedData = [];
 
@@ -408,7 +408,7 @@ class AdminIngredients extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.loadAllIngredients();
+    //this.loadAllIngredients();
   }
   // componentDidUpdate() {
   //   this.loadAllIngredients();
