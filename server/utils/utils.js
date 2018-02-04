@@ -22,8 +22,8 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
                 res.status(400);
                 res.send('Something went wrong');
             }
+        return;
     }
-    return;
     //actual content
     User.findById(userId, function(err, user) {
         if (err) next(err);
