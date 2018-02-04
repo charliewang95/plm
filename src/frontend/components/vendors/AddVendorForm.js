@@ -51,7 +51,6 @@ class AddVendorForm extends React.Component{
     this.setState({ fireRedirect: true });
     }
 
-
   render (){
     const { name, contact, code, fireRedirect } = this.state;
     return (

@@ -4,6 +4,8 @@ import RaisedButton from 'material-ui/Button';
 import {Link} from 'react-router-dom';
 import Styles from  'react-select/dist/react-select.css';
 import TextField from 'material-ui/TextField';
+import { Redirect } from 'react-router'
+import * as storageActions from '../../interface/storageInterface';
 
 const styles = {
     buttons: {
@@ -30,6 +32,7 @@ class EditStorageCapacityForm extends React.Component{
   		value:undefined,
       refrigerator:'',
       warehouse:'',
+      fireRedirect: false,
       }
     // this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -43,12 +46,12 @@ class EditStorageCapacityForm extends React.Component{
     // TODO: Send data to the back end
 
     e.preventDefault()
-
+    this.setState({ fireRedirect: true });
     }
 
 
   render (){
-    const { name, contact, code } = this.state;
+    const { name, contact, code,fireRedirect } = this.state;
     return (
             <div>
               <label> Edit Storage Capacity </label>
@@ -85,7 +88,7 @@ class EditStorageCapacityForm extends React.Component{
                   <RaisedButton raised color = "secondary"
                     component = {Link} to = "/storage">CANCEL</RaisedButton>
                   <RaisedButton raised
-                            component = {Link} to = "/storage"
+                            // component = {Link} to = "/storage"
                             color="primary"
                             style={styles.saveButton}
                             type="Submit"
@@ -93,6 +96,9 @@ class EditStorageCapacityForm extends React.Component{
 
              </div>
            </form>
+           {fireRedirect && (
+             <Redirect to={'/storage'}/>
+           )}
          </div>
 
     )

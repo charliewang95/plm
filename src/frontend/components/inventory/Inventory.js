@@ -32,13 +32,15 @@ import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
 import * as cartActions from '../../interface/cartInterface';
 import * as inventoryActions from '../../interface/inventoryInterface';
+import * as testConfig from '../../../resources/testConfig.js'
 
 
 
 //TODO: Get if it ADMIN
 var  isAdmin= true;
-const userId = "Id1";
-const sessionId = "real-producers-test";
+const userId = "user";
+const sessionId = testConfig.sessionId;
+const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 const Cell = (props)=>{
   return <Table.Cell {...props}
@@ -176,21 +178,22 @@ class Inventory extends React.PureComponent {
     this.loadInventory();
   }
 
-  loadInventory() {
+  async loadInventory() {
     console.log("LOADING DATA");
     var processedData=[];
-    // var rawData = dummyData;
     //TODO: Initialize data
-
-    var rawData = inventoryActions.getAllInventoriesAsync(sessionId);
+    var rawData=[];
+    if(READ_FROM_DATABASE){
+      rawData = await inventoryActions.getAllInventoriesAsync(sessionId);
+    } else {
+      rawData = dummyData;
+    }
 
     var startingIndex = 0;
     var processedData = [...rawData.map((row, index)=> ({
         id: startingIndex + index,...row,
       })),
     ];
-
-    console.log("processedData " + JSON.stringify(processedData));
     this.setState({rows:processedData});
   }
 
@@ -280,7 +283,6 @@ class Inventory extends React.PureComponent {
             <Button onClick={this.addToCart} color="secondary">Add</Button>
           </DialogActions>
         </Dialog>
-
       </Paper>
     );
   }
