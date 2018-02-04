@@ -11,6 +11,9 @@
 
 * Hint: to run locally, remove the .env file if it exists 
 
+## Testing
+* Testing variables are configured in `src/resources/testConfig.js`. Many front-end component imports the file for now.
+
 ## To deploy on Servers
 
 __ Note: Mongodb is alreayd running on servers as a service. This means you do not need to run mongodb separately when you want to start the server__

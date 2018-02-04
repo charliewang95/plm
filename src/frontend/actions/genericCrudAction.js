@@ -81,8 +81,14 @@ function getAll(url) {
  */
 async function getAllAsync(url, sessionId) {
 	var completeUrl = appendSessionIdToUrl(url,sessionId);
+	console.log("generic CRUD: getAllAsync()");
+	console.log("url: " + completeUrl);
+	console.log("sessionId: " + sessionId);
+
 	const res = await axios.get(completeUrl);
-	return res;
+	const result = res.data;
+	console.log("returning: " + result);
+	return result;
 }
 
 /* 

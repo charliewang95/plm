@@ -25,9 +25,11 @@ import dummyData from './dummyData.js';
 import * as vendorActions from '../../interface/vendorInterface.js';
 import * as buttons from './Buttons.js';
 
-// TODO: get session Id from the user
-const sessionId = '5a765f3d9de95bea24f905d9';
+import * as testConfig from '../../../resources/testConfig.js'
 
+// TODO: get session Id from the user
+const sessionId = testConfig.sessionId;
+const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 const styles = theme => ({
   dialog: {
@@ -146,12 +148,14 @@ class Vendors extends React.PureComponent
 
         };
         console.log("vendor Id " + vendorId);
-        console.log(" name " + vendorName);
+        console.log("vendor contact " + vendorContact);
+        console.log("vendor code " + vendorCode);
+        console.log("vendor name " + vendorName);
         var ingredients = "";
         // TODO: Call updateVendor function to backend
         if(vendorName &&  vendorContact && vendorId && vendorCode){
-        vendorActions.updateVendor(vendorName,vendorContact,vendorCode,vendorId);
-      }
+          vendorActions.updateVendor(vendorName,vendorContact,vendorCode,vendorId,sessionId);
+        }
       };
       // Delete pop up
       this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
@@ -167,7 +171,7 @@ class Vendors extends React.PureComponent
           // TODO: Update table in Back end
 
           console.log("Delete " + rows[index].name);
-          vendorActions.updateVendor(rows[index]._id,sessionId);
+          vendorActions.deleteVendor(rows[index]._id, sessionId);
           // removes data from the table
           rows.splice(index, 1);
         }
@@ -184,20 +188,26 @@ class Vendors extends React.PureComponent
     this.loadAllVendors();
   }
 
-  loadAllVendors(){
+  async loadAllVendors(){
     console.log("LOAD ALL DATA ");
     var startingIndex = 0;
-
-    var rawData = dummyData;
-    //TODO: Initialize data
-    // var rawData = vendorActions.getAllVendorsAsync();
-    // var processedData = [...rawData.map((row, index)=> ({
-    //     id: startingIndex + index,...row,
-    //   })),
-    // ];
+    var rawData = [];
+    if(READ_FROM_DATABASE){
+      //TODO: Initialize data
+      rawData = await vendorActions.getAllVendorsAsync(sessionId);
+      //commented out because collectively done after rawData is determined
+      /*
+      var processedData = [...rawData.map((row, index)=> ({
+          id: startingIndex + index,...row,
+        })),
+      ];*/
+    } else {
+      rawData = dummyData;
+    }
+    console.log("rawData " + JSON.stringify(rawData));
 
     var processedData = [...rawData.map((row, index)=> ({
-        addedid: startingIndex + index,...row,
+        id: startingIndex + index,...row,
       })),
     ];
 

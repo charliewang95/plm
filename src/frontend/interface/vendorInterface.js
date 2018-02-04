@@ -20,9 +20,9 @@ function packIntoJson(name, contact, code){
 	vendorJson.contact = contact;
 	vendorJson.code = code;
 	// vendorJson.ingredients = ingredients;
-	console.log("JSON");
+	console.log("Ingredient JSON");
 	console.log(vendorJson);
-	console.log(dummyVendor.sampleVendor);
+	// console.log(dummyVendor.sampleVendor);
 	return vendorJson;
 }
 
@@ -39,8 +39,10 @@ function addVendor(name, contact, code, sessionId) {
  * get all vendors
  * sessionId: string, id of the current session
 **/
-function getAllVendorsAsync(sessionId) {
-	return vendorActions.getAllVendorsAsync(sessionId);
+async function getAllVendorsAsync(sessionId) {
+	console.log("Interface: getAllVendorsAsync()");
+	console.log("sessionId: " + sessionId);
+	return await vendorActions.getAllVendorsAsync(sessionId);
 }
 
 /*
@@ -69,7 +71,7 @@ function updateVendor(name, contact, code, vendorId,sessionId) {
  * sessionId: string, id of the current session
  */
 function deleteVendor(vendorId, sessionId) {
-	return vendorActions.deleteVendor(vendorId);
+	return vendorActions.deleteVendor(vendorId,sessionId);
 };
 
 //export functions above for use by other modules
