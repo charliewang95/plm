@@ -74,5 +74,25 @@ function deleteUser(userId, sessionId) {
 	return userActions.deleteUser(userId, sessionId);
 };
 
+/*
+ * function that checks if user could login with provided information
+ * email: string, email of the user
+ * password: string, password of the user
+ */
+async function authenticateAsync(email, password){
+	var userInfo = new Object();
+	userInfo.email = email;
+	userInfo.password = password; 
+	try {
+      	return await userActions.authenticateAsync(userInfo);
+    }
+    catch(e) {
+      console.log('there was an error');
+      console.log(e); 
+      //TODO: different error message for different types of error
+      throw e;
+    }
+}
+
 //export functions above for use by other modules
-export { addUser, getAllUsersAsync, getUserAsync, updateUser, deleteUser};
+export { addUser, getAllUsersAsync, getUserAsync, updateUser, deleteUser, authenticateAsync};

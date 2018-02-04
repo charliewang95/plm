@@ -4,7 +4,7 @@ import * as genericActions from './genericCrudAction'
 //All the methods return the response on successful completion
 
 const baseUrl = '/users';
-const property = 'searchUser';
+const property = 'searchedUser';
 
 /* add one user
  * user: JSON object
@@ -72,5 +72,25 @@ function deleteUser(userId, sessionId) {
 	return genericActions.deleteById(baseUrl, property, userId, sessionId);
 };
 
+/*
+ * function that checks if user could login with provided information
+ * user: JSON object containing email and password
+ */
+async function authenticateAsync(user){
+    var completeUrl = '/users/authenticate';
+	try {
+      	const res = await axios.post(completeUrl, user);
+		const result = res.data;
+		console.log("returning: " + result);
+		return result;
+    }
+    catch(e) {
+      console.log('there was an error');
+      console.log(e); 
+      //TODO: different error message for different types of error
+      throw e;
+    }
+}
+
 //export functions above for use by other modules
-export { addUser, getAllUsersAsync, getUserAsync, updateUser, deleteUser};
+export { addUser, getAllUsersAsync, getUserAsync, updateUser, deleteUser, authenticateAsync};

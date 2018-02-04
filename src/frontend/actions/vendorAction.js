@@ -10,8 +10,12 @@ const property = 'vendor';
  * vendor: JSON object
  * sessionId: string
  */
-function addVendor(vendor, sessionId) {
-	return genericActions.create(baseUrl, vendor, sessionId);
+async function addVendor(vendor, sessionId) {
+	try {
+		return await genericActions.create(baseUrl, vendor, sessionId);
+	} catch(e) {
+		throw e;
+	}
 };
 
 /* 
