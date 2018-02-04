@@ -75,7 +75,7 @@ class EditStorageCapacityForm extends React.Component{
                 <TextField
                     fullWidth={true}
                     id="warehouse"
-                    label="Code"
+                    label="Warehouse"
                     value={this.state.warehouse}
                     onChange = {(event) => this.setState({ warehouse: event.target.value})}
                     margin="normal"

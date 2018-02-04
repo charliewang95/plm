@@ -18,7 +18,7 @@ const styles = theme => ({
 
 const EditStorageCapacityButton=()=>{
   return(
-    <Tooltip title="Add Vendor">
+    <Tooltip title="Edit Storage Capacity">
       <Link to = "/editStorageCapacityForm">
         <Button fab color="secondary">
           <EditIcon />

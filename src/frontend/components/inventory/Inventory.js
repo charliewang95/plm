@@ -1,6 +1,8 @@
 import React from 'react';
 import Paper from 'material-ui/Paper';
 import PropTypes from 'prop-types';
+
+
 import {
   FilteringState,
   IntegratedFiltering,EditingState
@@ -13,13 +15,15 @@ import {
   TableEditRow,
   TableEditColumn,
   TableColumnReordering,
+  TableSelection,
 } from '@devexpress/dx-react-grid-material-ui';
 
 import dummyData from './dummyData';
 import {EditButton,CommitButton,CancelButton} from '../vendors/Buttons.js';
+import ShoppingCartButton from './ShoppingCartButton.js';
 
 //TODO: Get if it ADMIN
-var  isAdmin= true;
+var  isAdmin= false;
 
 const Cell = (props)=>{
   return <Table.Cell {...props}
@@ -47,7 +51,8 @@ EditCell.propTypes = {
 const commandComponents = {
   edit:    EditButton,
   commit:  CommitButton,
-  cancel:  CancelButton ,
+  cancel:  CancelButton,
+  addToCart: ShoppingCartButton,
 };
 
 const Command = ({ id, onExecute }) => {
@@ -90,9 +95,11 @@ class Inventory extends React.PureComponent {
         { columnName: 'temperatureZone', predicate: temperatureZonePredicate },
       ],
       rows: [],
+      // selection:[]
     };
 
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
+    this.changeSelection = selection => this.setState({ selection });
     this.changeRowChanges = (rowChanges) => {
       console.log(" ROW CHANGES: ");
       this.setState({ rowChanges });
@@ -164,8 +171,6 @@ class Inventory extends React.PureComponent {
           <Table cellComponent={Cell}/>
           <TableHeaderRow />
           <TableFilterRow />
-
-          // Shows the edit cells only when it is an admin logged in
           {isAdmin &&
             <TableEditRow
               cellComponent={EditCell}
@@ -177,6 +182,12 @@ class Inventory extends React.PureComponent {
               showEditCommand
               commandComponent={Command}
             />}
+
+              {/* <TableEditColumn
+                width={120}
+                showEditCommand
+                commandComponent={Command}
+              /> */}
 
         </Grid>
       </Paper>

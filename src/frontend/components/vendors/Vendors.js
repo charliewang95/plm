@@ -26,7 +26,7 @@ import * as vendorActions from '../../interface/vendorInterface.js';
 import * as buttons from './Buttons.js';
 
 // TODO: get session Id from the user
-const sessionId = '5a6a5977f5ce6b254fe2a91f';
+const sessionId = '5a765f3d9de95bea24f905d9';
 
 
 const styles = theme => ({
