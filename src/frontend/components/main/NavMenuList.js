@@ -8,6 +8,7 @@ import KitchenIcon from 'material-ui-icons/Kitchen'; //Storage
 import InventoryIcon from 'material-ui-icons/Assignment';//Inventory
 import LocalPizzaIcon from 'material-ui-icons/LocalPizza'; //Ingredients
 import VendorsIcon from 'material-ui-icons/Group'; // Vendors
+import ShoppingCartIcon from 'material-ui-icons/ShoppingCart'; // Cart
 
 export const UserListItems = (
   <div>
@@ -58,6 +59,12 @@ export const MainListItems = (
         <VendorsIcon />
       </ListItemIcon>
       <ListItemText primary="Vendors" />
+    </ListItem>
+    <ListItem component={Link} to="/cart" button>
+      <ListItemIcon>
+        <ShoppingCartIcon />
+      </ListItemIcon>
+      <ListItemText primary="Cart" />
     </ListItem>
   </div>
 );

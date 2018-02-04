@@ -163,6 +163,7 @@ class Inventory extends React.PureComponent {
            console.log("Package " + rows[index].packageName);
            console.log("ingredientId " + rows[index].ingredientId);
 
+              // TODO: Send in the ingredientName once it is updated in the interface
              //TODO: Send data to the cart
              cartActions.addCart(userId, rows[index].ingredientId,
                 this.state.addedQuantity, sessionId);
