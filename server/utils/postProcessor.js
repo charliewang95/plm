@@ -63,7 +63,8 @@ var processVendor = function(itemId, res, next) {
                 var newVendors = [];
                 for (var j = 0; j<vendors.length; j++) {
                     var vendor = vendors[j];
-                    if (vendor.vendor.toString() != itemId.toString()) {
+                    console.log(vendor);
+                    if (vendor.vendorId.toString() !== itemId) {
                         newVendors.push(vendor);
 //                        VendorPrice.find({_id: vendor._id}, function(err, obj) {
 //                            console.log(vendor._id);
