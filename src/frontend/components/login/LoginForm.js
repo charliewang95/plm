@@ -5,8 +5,6 @@ import Card from 'material-ui/Card';
 import CardText from 'material-ui/Card';
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
-import Style from './styleLogin.css';
-import { withStyles } from 'material-ui/styles';
 
 const LoginForm = ({
     onSubmit,
@@ -65,4 +63,4 @@ LoginForm.propTypes = {
   user: PropTypes.object.isRequired
 };
 
-export default withStyles(Style)(LoginForm);
+export default LoginForm;

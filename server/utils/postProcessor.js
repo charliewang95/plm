@@ -60,16 +60,21 @@ var processVendor = function(itemId, res, next) {
             for (var i = 0; i < ingredients.length; i++) {
                 var currentIngredient = ingredients[i];
                 var vendors = currentIngredient.vendors;
+                var newVendors = [];
                 for (var j = 0; j<vendors.length; j++) {
                     var vendor = vendors[j];
-                    if (vendor.vendor.toString() == itemId.toString()) {
-                        VendorPrice.find({_id: vendor._id}, function(err, obj) {
-                            console.log(vendor._id);
-                            console.log(obj);
-                            if (err) return next(err);
-                        });
+                    if (vendor.vendor.toString() != itemId.toString()) {
+                        newVendors.push(vendor);
+//                        VendorPrice.find({_id: vendor._id}, function(err, obj) {
+//                            console.log(vendor._id);
+//                            console.log(obj);
+//                            if (err) return next(err);
+//                        });
                     }
                 }
+                currentIngredient.update({vendors: newVendors}, function(err, obj){
+                    if (err) return next(err);
+                })
             }
         }
     });

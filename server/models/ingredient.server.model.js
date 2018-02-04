@@ -3,9 +3,13 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 var VendorPriceSchema = new Schema({
-    vendor: {
+    vendorId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Vendor',
+        required: true
+    },
+    vendorName: {
+        type: String,
         required: true
     },
     price: {

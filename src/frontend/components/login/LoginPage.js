@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardText } from 'material-ui/Card';
 import TextField from 'material-ui/TextField';
 import LoginForm from './LoginForm';
-import axios from 'axios';
+import { authenticateAsync } from '../../interface/userInterface.js';
 
 class Login extends React.Component {
 
@@ -28,23 +28,14 @@ class Login extends React.Component {
         console.log('user trying to log in');
         console.log(this.state.user);
 
-        //TODO: call interface to authenticate
-        axios.post("/users/authenticate", this.state.user)
-    	.then(function (response) {
-    		console.log(response);
-    	})
-    	.catch(function (error) {
-    		console.log(error);
-    	});
+        authenticateAsync(this.state.email, this.state.password);
 
         if (true) {
             this.setState({
               errors: {}
             });
-            //this.props.history.push('/');
-            //TODO: remember sessionId and userId, then redirect to dashboard
-        } else {
-            //TODO:
+        }
+        else {
         }
     }
 

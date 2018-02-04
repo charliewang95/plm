@@ -50,8 +50,7 @@ const SignUpForm = ({
         />
       </div>
 
-      //TODO: add a checkbox for checking admin
-      //(user.state.isAdmin)
+      {/* TODO: add checkbox for isAdmin  */}
 
       <div className="button-line">
         <Button type="submit" label="Create New Account" primary >Create New Account</Button>

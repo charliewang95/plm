@@ -48,7 +48,7 @@ async function create(url, object, sessionId) {
 	try {
       	const res = await axios.post(completeUrl, object);
 		const result = res.data;
-		console.log("returning: " + result);
+		console.log(result);
 		return result;
     }
     catch(e) {

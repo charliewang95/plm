@@ -12,8 +12,8 @@ import Vendors from './components/vendors/Vendors';
 import AddVendorForm from './components/vendors/AddVendorForm';
 
 
-import Login from './components/charlie/LoginPage';
-import Register from './components/charlie/RegisterPage';
+import Login from './components/login/LoginPage';
+import Register from './components/login/RegisterPage';
 
 const Routes = () => (
       <div>
