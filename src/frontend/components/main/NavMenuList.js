@@ -5,8 +5,9 @@ import DashboardIcon from 'material-ui-icons/Dashboard'; //Dashboard
 import AndroidIcon from 'material-ui-icons/Android'; //Admin
 import AttachMoneyIcon from 'material-ui-icons/AttachMoney'; //Orders
 import KitchenIcon from 'material-ui-icons/Kitchen'; //Storage
-import ShoppingCartIcon from 'material-ui-icons/ShoppingCart'; //Inventory
+import InventoryIcon from 'material-ui-icons/Assignment';//Inventory
 import LocalPizzaIcon from 'material-ui-icons/LocalPizza'; //Ingredients
+import VendorsIcon from 'material-ui-icons/Group'; // Vendors
 
 export const UserListItems = (
   <div>
@@ -34,23 +35,29 @@ export const MainListItems = (
       </ListItemIcon>
       <ListItemText primary="Ingredients (User)" />
     </ListItem>
-    <ListItem component={Link} to="/orders" button> 
+    <ListItem component={Link} to="/orders" button>
       <ListItemIcon>
         <AttachMoneyIcon />
       </ListItemIcon>
       <ListItemText primary="Orders" />
     </ListItem>
-    <ListItem component={Link} to="/inventory" button> 
+    <ListItem component={Link} to="/inventory" button>
       <ListItemIcon>
-        <ShoppingCartIcon/>
+        <InventoryIcon/>
       </ListItemIcon>
       <ListItemText primary="Inventory" />
     </ListItem>
-    <ListItem component={Link} to="/storage" button> 
+    <ListItem component={Link} to="/storage" button>
       <ListItemIcon>
         <KitchenIcon />
       </ListItemIcon>
       <ListItemText primary="Storage" />
+    </ListItem>
+    <ListItem component={Link} to="/vendors" button>
+      <ListItemIcon>
+        <VendorsIcon />
+      </ListItemIcon>
+      <ListItemText primary="Vendors" />
     </ListItem>
   </div>
 );

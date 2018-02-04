@@ -35,6 +35,7 @@ var VendorSchema = new Schema({
         required: true
     },
 	//ingredients: [IngredientPriceSchema]
+
 });
 
 mongoose.model('Vendor', VendorSchema);
