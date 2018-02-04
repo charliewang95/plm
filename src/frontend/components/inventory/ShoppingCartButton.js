@@ -6,16 +6,23 @@ import ShoppingCartIcon from 'material-ui-icons/ShoppingCart';
 import Tooltip from 'material-ui/Tooltip';
 import {Link} from 'react-router-dom';
 
-const ShoppingCartButton=()=>{
+let iconStyles = {
+  fontSize: '48px'
+};
+
+const ShoppingCartButton=({ onExecute })=>{
   return(
-    <Tooltip title="Add Vendor">
-      <Link to = "/addVendorForm">
-        <Button fab color="secondary">
-          <ShoppingCartIcon />
+    <Tooltip title="Add to Cart">
+      {/* <Link to = "/addVendorForm"> */}
+        <Button fab mini color="secondary" size="small" onClick={onExecute}>
+          <ShoppingCartIcon style={iconStyles}/>
         </Button>
-      </Link>
+      {/* </Link> */}
     </Tooltip>
   );
 }
+ShoppingCartButton.propTypes = {
+  onExecute: PropTypes.func.isRequired,
+};
 
 export default ShoppingCartButton;

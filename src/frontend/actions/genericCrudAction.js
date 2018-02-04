@@ -42,17 +42,30 @@ exported methods
  * object: JSON object
  * sessionId: string, id of the current session
  */
-function create(url, object, sessionId) {
+async function create(url, object, sessionId) {
 	console.log('generic creating...')
 	var completeUrl = appendSessionIdToUrl(url,sessionId);
-	axios.post(completeUrl, object)
+	try {
+      	const res = await axios.post(completeUrl, object);
+		const result = res.data;
+		console.log("returning: " + result);
+		return result;
+    }
+    catch(e) {
+      console.log('there was an error');
+      console.log(e); 
+      //TODO: different error message for different types of error
+      throw e;
+    }
+	
+	/*
 	.then(function (response) {
 		console.log(response);
 		return response;
 	})
 	.catch(function (error) {
 		console.log(error);
-	});
+	});*/
 };
 
 /* 
@@ -81,8 +94,14 @@ function getAll(url) {
  */
 async function getAllAsync(url, sessionId) {
 	var completeUrl = appendSessionIdToUrl(url,sessionId);
+	console.log("generic CRUD: getAllAsync()");
+	console.log("url: " + completeUrl);
+	console.log("sessionId: " + sessionId);
+
 	const res = await axios.get(completeUrl);
-	return res;
+	const result = res.data;
+	console.log("returning: " + result);
+	return result;
 }
 
 /* 

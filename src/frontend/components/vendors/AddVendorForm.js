@@ -7,6 +7,13 @@ import TextField from 'material-ui/TextField';
 import {Card,CardHeader} from 'material-ui/Card';
 import * as vendorActions from '../../interface/vendorInterface.js';
 
+import { Redirect } from 'react-router'
+import * as testConfig from '../../../resources/testConfig.js'
+
+// TODO: get session Id from the user
+const sessionId = testConfig.sessionId;
+const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
+
 const styles = {
     buttons: {
       marginTop: 30,
@@ -17,9 +24,6 @@ const styles = {
     }
   };
 
-//TODO: get the sessionId
-const sessionId = '5a765f3d9de95bea24f905d9';
-
 class AddVendorForm extends React.Component{
   constructor(props) {
     super(props);
@@ -28,28 +32,36 @@ class AddVendorForm extends React.Component{
   		value:undefined,
       contact:'',
       code:'',
+      fireRedirect: false
       }
     // this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
-  onFormSubmit(e) {
+  async onFormSubmit(e) {
     console.log("SUBMIT");
     console.log("name " + this.state.name);
     console.log("contact " + this.state.code);
     console.log("code " + this.state.contact);
-
-    // TODO: Send data to the back end
-    vendorActions.addVendor(
-      this.state.name,this.state.contact,this.state.code,sessionId);
-
     e.preventDefault()
-
+    // TODO: Send data to the back end
+    try{
+      const response = await vendorActions.addVendor(
+      this.state.name,this.state.contact,this.state.code,sessionId);
+      this.setState({ fireRedirect: true });
     }
+    catch (e){
+      console.log('An error passed to the front end!')
+      //TODO: error handling in the front end
+      alert(e);
+    }
+      
 
+
+  }
 
   render (){
-    const { name, contact, code } = this.state;
+    const { name, contact, code, fireRedirect } = this.state;
     return (
             <div>
               <label> Add a Vendor </label>
@@ -83,13 +95,16 @@ class AddVendorForm extends React.Component{
                   <RaisedButton raised color = "secondary"
                     component = {Link} to = "/vendors">CANCEL</RaisedButton>
                   <RaisedButton raised
-                            // component = {Link} to = "/vendors"
                             color="primary"
+                            // component = {Link} to = "/vendors" //commented out because it overrides onSubmit
                             style={styles.saveButton}
                             type="Submit"
-                            primary={true}> SAVE </RaisedButton>
+                            primary="true"> SAVE </RaisedButton>
              </div>
            </form>
+           {fireRedirect && (
+             <Redirect to={'/vendors'}/>
+           )}
          </div>
     )
 	}

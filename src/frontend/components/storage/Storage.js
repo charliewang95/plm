@@ -43,7 +43,8 @@ class Storage extends Component{
       console.log(storage[0].temperatureZone + storage[0].capacity);
       console.log(storage[0].temperatureZone + storage[0].capacity);
 
-      // var rawData = ingredientInterface.getAllIngredientsAsync(sessionId);
+      //TODO: Get data from the Storage Interface
+       // var rawData = ingredientInterface.getAllIngredientsAsync(sessionId);
       this.setState({freezer:storage[0].capacity});
       this.setState({refrigerator:storage[1].capacity});
       this.setState({warehouse:storage[2].capacity});
