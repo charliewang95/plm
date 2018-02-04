@@ -38,16 +38,15 @@ class AddVendorForm extends React.Component{
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
-  onFormSubmit(e) {
+  async onFormSubmit(e) {
     console.log("SUBMIT");
     console.log("name " + this.state.name);
     console.log("contact " + this.state.code);
     console.log("code " + this.state.contact);
-
-    // TODO: Send data to the back end
-    vendorActions.addVendor(
-      this.state.name,this.state.contact,this.state.code,sessionId);
     e.preventDefault()
+    // TODO: Send data to the back end
+    await vendorActions.addVendor(
+      this.state.name,this.state.contact,this.state.code,sessionId);
     this.setState({ fireRedirect: true });
     }
 

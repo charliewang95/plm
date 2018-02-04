@@ -30,9 +30,9 @@ function packIntoJson(name, contact, code){
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-function addVendor(name, contact, code, sessionId) {
+async function addVendor(name, contact, code, sessionId) {
 	var newVendor = packIntoJson(name, contact, code);
-	vendorActions.addVendor(newVendor, sessionId);
+	return await vendorActions.addVendor(newVendor, sessionId);
 }
 
 /**
