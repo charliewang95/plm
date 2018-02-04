@@ -23,6 +23,12 @@ var InventorySchema = new Schema({
         enum: ['freezer', 'refrigerator', 'warehouse'],
         required: true
     },
+    packageName: {
+        type: String,
+        enum: ['sack', 'pail', 'drum', 'supersack', 'truckload', 'railcar'],
+        lowercase: true,
+        required: true
+    },
     quantity: { //in pounds
         type: Number,
         required: true

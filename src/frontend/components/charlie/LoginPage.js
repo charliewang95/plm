@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Auth from '../modules/Auth';
-import LoginForm from '../components/LoginForm.jsx';
+import Auth from './Auth';
+import LoginForm from './LoginForm';
 
 
 class LoginPage extends React.Component {
@@ -43,7 +43,7 @@ class LoginPage extends React.Component {
     // create a string for an HTTP body message
     const email = encodeURIComponent(this.state.user.email);
     const password = encodeURIComponent(this.state.user.password);
-    const formData = `email=${email}&password=${password}`;
+    const formData = 'email=${email}&password=${password}';
 
     // create an AJAX request
     const xhr = new XMLHttpRequest();

@@ -34,7 +34,7 @@
     "express": "^4.10.7",
     "express-session": "^1.15.6",
     "foreman": "^2.0.0-1",
-    "material-ui": "1.0.0-beta.30",
+    "material-ui": "^1.0.0-beta.30",
     "material-ui-datatables": "^0.18.2",
     "material-ui-icons": "^1.0.0-beta.17",
     "material-ui-search-bar": "^0.4.1",

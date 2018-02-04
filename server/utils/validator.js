@@ -65,18 +65,18 @@ var validateOrder = function(item, res, next, callback) { //check if exceed capa
                         else {
                             for (var i=0; i<inventories.length; i++) {
                                 quantity+=inventories[i].quantity;
-                                if (inventories[i].ingredientId != ingredientId) {
+                                if (inventories[i].ingredientId.toString() == ingredientId.toString()) {
                                     oldQuantity = inventories[i].quantity;
                                 }
                             }
                         }
                         newQuantity = item.pounds + quantity;
-                        if (newQuantity > capacity) {
+                        if (newQuantity > capacity && obj1.packageName != 'truckload' && obj1.packageName != 'railcar') {
                             res.status(400);
                             res.send("Capacity -- "+capacity+" pounds will be exceeded. Your existed storage is "+quantity+" pounds.");
                         }
                         else {
-                            updateInventory(ingredientId, newQuantity-oldQuantity, res, next, function(err4, obj4){
+                            updateInventory(ingredientId, oldQuantity+item.pounds, res, next, function(err4, obj4){
                                 if (err4) return next(err4);
                                 else {
                                     callback(err4, true);
@@ -104,6 +104,7 @@ var updateInventory = function(ingredientId, quantity, res, next, callback) {
                     item.ingredientId = ingredientId;
                     item.ingredientName = ingredient.name;
                     item.temperatureZone = ingredient.temperatureZone;
+                    item.packageName = ingredient.packageName;
                     item.quantity = quantity;
                     item.save(function(err) {
                         if (err) {

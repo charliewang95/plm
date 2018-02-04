@@ -8,7 +8,7 @@ import Inventory from './components/inventory/Inventory';
 import Orders from './components/orders/Orders';
 import Storage from './components/storage/Storage';
 
-import LoginPage from './charlie/LoginPage';
+import Login from './components/charlie/Test';
 
 const Routes = () => (
       <div>
@@ -20,7 +20,7 @@ const Routes = () => (
 		      <Route path="/inventory" component={Inventory} />
 		      <Route path="/orders" component={Orders} />
 		      <Route path="/storage" component={Storage} />
-		      <Route path="/login" component={LoginPage} />
+		      <Route path="/login" component={Login} />
 		  </Switch>
       </div>
 
