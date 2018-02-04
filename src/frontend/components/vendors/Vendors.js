@@ -113,7 +113,7 @@ class Vendors extends React.PureComponent
       let { rows } = this.state;
       // If any value in the row is changed
       if (changed) {
-        console.log("changed " + Object.keys(changed));
+        console.log("changed " + JSON.stringify(changed));
         // Variables to send data to the back end
         var vendorName ="";
         var vendorContact = "";
@@ -149,7 +149,9 @@ class Vendors extends React.PureComponent
         console.log(" name " + vendorName);
         var ingredients = "";
         // TODO: Call updateVendor function to backend
+        if(vendorName &&  vendorContact && vendorId && vendorCode){
         vendorActions.updateVendor(vendorName,vendorContact,vendorCode,vendorId);
+      }
       };
       // Delete pop up
       this.setState({ rows, deletingRows: deleted || this.state.deletingRows });

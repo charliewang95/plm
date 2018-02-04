@@ -7,6 +7,8 @@ import Paper from 'material-ui/Paper';
 import storage from './dummyData.js';
 import EditStorageCapacityButton from './EditStorageCapacityButton';
 
+// TODO: Get whether or not the admin has logged in
+const isAdmin = true;
 
 const styles = theme => ({
   root: {
@@ -49,8 +51,6 @@ class Storage extends Component{
 
 
     render(){
-      // TODO: Get whether or not the admin has logged in 
-      const isAdmin = true;
       const{classes} = this.props;
       // const { freezer, refrigerator, warehouse } = this.state;
       return (

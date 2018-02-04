@@ -282,8 +282,8 @@ class AdminIngredients extends React.PureComponent {
       addedRows: addedRows.map(row => (Object.keys(row).length ? row : {
 
         /* TODO: Change this after getting the data from back End */
-        name: testData.tablePage.ingredient_options[0],
-        vendors: testData.tablePage.vendor_options[0],
+        // name: testData.tablePage.ingredient_options[0],
+        // vendors: testData.tablePage.vendor_options[0],
         temperatureZone: testData.tablePage.temperatureZone_options[0],
         packageName:testData.tablePage.package_options[0],
       })),
@@ -348,6 +348,7 @@ class AdminIngredients extends React.PureComponent {
             }
           };
         };
+        //TODO: send data to the back end
       }
 
     this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
@@ -390,9 +391,8 @@ class AdminIngredients extends React.PureComponent {
 
     var rawData = ingredientInterface.getAllIngredientsAsync(sessionId);
     var rawData = testData.tablePage.items;
-  
 
-
+    var processedData=[];
     // //loop through ingredient
     for (var i = 0; i < rawData.length; i++) {
       var vendorArrayString = "";
