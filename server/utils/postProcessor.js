@@ -27,12 +27,12 @@ exports.process = function(model, item, res, next, callback) {
         processCart(item, res, next, function(err, obj){
             if (err) return next(err);
             else {
-                 callback(err, obj);
+                 callback(err);
             }
         });
     }
     else {
-        callback(false, true);
+        callback(false);
     }
 };
 
@@ -47,11 +47,9 @@ var processCart = function(item, res, next, callback) { //
         }
         else {
             quantity = obj.quantity - item.quantity;
-            updateInventory(ingredientId, quantity, res, next, function(err2, obj2){
-                if (err2) return next(err2);
-                else {
-                    callback(err2, true);
-                }
+            updateInventory(ingredientId, quantity, res, next, function(err, obj2){
+                if (err) return next(err);
+                else callback(err);
             });
         }
     });
@@ -61,7 +59,7 @@ var updateInventory = function(ingredientId, quantity, res, next, callback) {
     Inventory.findOneAndUpdate({ingredientId: ingredientId}, {quantity: quantity}, function(err, obj) {
         if (err) return next(err);
         else {
-            callback(err, null);
+            callback(err);
         }
     });
 };

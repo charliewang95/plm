@@ -7,6 +7,12 @@ import UserIngredients from './components/ingredients/UserIngredients';
 import Inventory from './components/inventory/Inventory';
 import Orders from './components/orders/Orders';
 import Storage from './components/storage/Storage';
+import EditStorageCapacityForm from './components/storage/EditStorageCapacityForm';
+import Vendors from './components/vendors/Vendors';
+import AddVendorForm from './components/vendors/AddVendorForm';
+
+
+import Login from './components/charlie/Test';
 
 const Routes = () => (
       <div>
@@ -18,6 +24,10 @@ const Routes = () => (
 		      <Route path="/inventory" component={Inventory} />
 		      <Route path="/orders" component={Orders} />
 		      <Route path="/storage" component={Storage} />
+		      <Route path="/login" component={Login} />
+          <Route path="/vendors" component={Vendors} />
+          <Route path="/addVendorForm" component={AddVendorForm} />
+          <Route path="/editStorageCapacityForm" component={EditStorageCapacityForm} />
 		  </Switch>
       </div>
 

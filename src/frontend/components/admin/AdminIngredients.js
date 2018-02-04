@@ -35,6 +35,10 @@ import testData from './testIngredients';
 import SelectVendors from './SelectVendors';
 import * as ingredientInterface from '../../interface/ingredientInterface';
 
+  // TODO: get the sessionID
+  const sessionId = '5a6a5977f5ce6b254fe2a91f';
+
+
 const styles = theme => ({
   lookupEditCell: {
     verticalAlign: 'top',
@@ -123,10 +127,10 @@ Command.propTypes = {
   onExecute: PropTypes.func.isRequired,
 };
 
-// options for the drop down 
+// options for the drop down
 const availableValues = {
-  pkg: testData.tablePage.package_options,
-  temperature: testData.tablePage.temperature_options,
+  packageName: testData.tablePage.package_options,
+  temperatureZone: testData.tablePage.temperatureZone_options,
   // vendors: testData.tablePage.vendor_options,
 
   // TODO: Get the data from the back end
@@ -134,7 +138,6 @@ const availableValues = {
 
 };
 
-var variables = [];
 
 const MultiSelectCellBase = ({
   multiVal, multi, availableColumnValues, value, onValueChange, classes,
@@ -144,6 +147,8 @@ const MultiSelectCellBase = ({
         // type = "create"
         multi={true}
         options={availableColumnValues}
+        // props.input.value?props.input.value:"Any"
+        // value = {multiVal ? multiVal : value};
         // onChange={(option) => {{value : option}};
         onChange={(option) => {onValueChange(option); multiVal.push(option);}}
         value = {value}
@@ -176,22 +181,21 @@ export const MultiSelectCell = withStyles(styles, { name: 'ControlledModeDemo' }
 
 
 const LookupEditCellBase = ({
-  availableColumnValues,value, onValueChange, classes,
+  availableColumnValues, value, onValueChange, classes,
 }) => (
   <TableCell
     className={classes.lookupEditCell}
   >
     <Select
+      multi={false}
       value={value}
-      onChange={(event)=> onValueChange(event.target.value)}
+      onChange={(event) => onValueChange(event.target.value)}
       input={
         <Input
           classes={{ root: classes.inputRoot }}
-          id="select-multiple"
         />
       }
     >
-      // Creates the menu */
       {availableColumnValues.map(item => (
         <MenuItem key={item} value={item}>{item}</MenuItem>
       ))}
@@ -204,15 +208,14 @@ LookupEditCellBase.propTypes = {
   onValueChange: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
-
 LookupEditCellBase.defaultProps = {
   value: undefined,
 };
-
 export const LookupEditCell = withStyles(styles, { name: 'ControlledModeDemo' })(LookupEditCellBase);
 
 
 const Cell = (props) => {
+  console.log(" CELL props value: " + props.value)
   return <Table.Cell {...props} />;
 };
 
@@ -227,9 +230,8 @@ const EditCell = (props) => {
   // EDIT to make changes to the multi select things //
   /* CHANGE */
   if (props.column.name =='vendors') {
-    console.log('Options ' + availableColumnValues);
     return  <MultiSelectCell {...props} availableColumnValues={availableColumnValues}
-    multi = {true} multiVal = {[]}/>;
+    multi = {true} multiVal = {[]} />;
   }else if (availableColumnValues){
     return <LookupEditCell {...props} availableColumnValues={availableColumnValues}/>;
   }
@@ -244,25 +246,23 @@ const getRowId = row => row.id;
 
 
 class AdminIngredients extends React.PureComponent {
-
   constructor(props) {
-
     super(props);
-
     this.state = {
       columns: [
         { name: 'name', title: 'Name' },
-        { name: 'pkg', title: 'Package' },
-        { name: 'temperature', title: 'Temperature' },
+        { name: 'packageName', title: 'Package' },
+        { name: 'temperatureZone', title: 'temperatureZone' },
         { name: 'vendors', title: 'Vendors/Price' },
       ],
 
       tableColumnExtensions: [
-        { columnName: 'package', align: 'right' },
+        { columnName: 'vendors', align: 'right' },
       ],
 
       // TODO: get data to display from back end
-      rows: testData.tablePage.items,
+      // rows: testData.tablePage.items,
+      rows:[],
       sorting: [],
       editingRowIds: [],
       addedRows: [],
@@ -271,24 +271,25 @@ class AdminIngredients extends React.PureComponent {
       deletingRows: [],
       pageSize: 0,
       pageSizes: [5, 10, 0],
-      columnOrder: ['name', 'pkg', 'temperature', 'vendors'],
+      columnOrder: ['name', 'packageName', 'temperatureZone', 'vendors'],
     };
 
-    console.log(" NAME : " + testData.tablePage.items[0].name);
+    // console.log(" NAME : " + testData.tablePage.items[0].name);
 
     this.changeSorting = sorting => this.setState({ sorting });
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeAddedRows = addedRows => this.setState({
       addedRows: addedRows.map(row => (Object.keys(row).length ? row : {
 
-        name: testData.tablePage.ingredient_options[0],
-        vendors: testData.tablePage.vendor_options[0],
-        temperature: testData.tablePage.temperature_options[0],
-        pkg:testData.tablePage.package_options[0],
+        /* TODO: Change this after getting the data from back End */
+        // name: testData.tablePage.ingredient_options[0],
+        // vendors: testData.tablePage.vendor_options[0],
+        temperatureZone: testData.tablePage.temperatureZone_options[0],
+        packageName:testData.tablePage.package_options[0],
       })),
     });
     // this.changeRowChanges = rowChanges => this.setState({ rowChanges });
-    this.changeRowChanges = (rowChanges) => {this.handleRowChange({rowChanges})};
+    this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
     this.commitChanges = ({ added, changed, deleted }) => {
@@ -296,12 +297,8 @@ class AdminIngredients extends React.PureComponent {
       let { rows } = this.state;
 
       if (added) {
-        console.log(" added " + added);
-        console.log(" Keys " + Object.keys(added));
-        // console.log("Id " + added.row.id);
+        console.log('Added');
         const startingAddedId = (rows.length - 1) > 0 ? rows[rows.length - 1].id + 1 : 0;
-        console.log("Starting Id " + startingAddedId);
-
 
         // TODO: Add checks for Values
         var vendors_string = "";
@@ -330,12 +327,12 @@ class AdminIngredients extends React.PureComponent {
             if(changed[rows[i].id].name){
               rows[i].name = changed[rows[i].id].name;
             }
-            if(changed[rows[i].id].pkg){
-              rows[i].pkg = changed[rows[i].id].pkg;
+            if(changed[rows[i].id].packageName){
+              rows[i].packageName = changed[rows[i].id].packageName;
             }
 
-            if(changed[rows[i].id].temperature){
-              rows[i].temperature = changed[rows[i].id].temperature;
+            if(changed[rows[i].id].temperatureZone){
+              rows[i].temperatureZone = changed[rows[i].id].temperatureZone;
             }
             var vendor_string = "";
 
@@ -351,6 +348,7 @@ class AdminIngredients extends React.PureComponent {
             }
           };
         };
+        //TODO: send data to the back end
       }
 
     this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
@@ -368,7 +366,7 @@ class AdminIngredients extends React.PureComponent {
           // This line removes the data from the rows
           //TODO: get the right data and send it to back end for delete
           var name = rows[index].name;
-          var pkg = rows[index].pkg;
+          var packageName = rows[index].packageName;
 
           rows.splice(index, 1);
         }
@@ -382,37 +380,34 @@ class AdminIngredients extends React.PureComponent {
     };
   }
 
-  handleRowChange({rowChanges}){
-    console.log("ROW CHANGES Keys: " + Object.keys(rowChanges));
+  // handleRowChange({rowChanges}){
+    // console.log("ROW CHANGES Keys: " + Object.keys(rowChanges));
 
-    console.log("RC" + rowChanges.id + rowChanges.name + rowChanges.pkg + rowChanges.vendors);
-    this.setState ({rowChanges: rowChanges});
-  }
+    // console.log("RC" + rowChanges.id + rowChanges.name + rowChanges.packageName + rowChanges.vendors);
+    // this.setState ({rowChanges: rowChanges});
+  // }
 
   loadAllIngredients(){
     const sessionId = '5a6a5977f5ce6b254fe2a91ff';
-    var rawData = ingredientInterface.getAllIngredientsAsync(sessionId);
-    var processedData = [];
 
-    //loop through ingredient
-    for (var i = 0; i < rawData.length; i++) { 
+    var rawData = ingredientInterface.getAllIngredientsAsync(sessionId);
+    var rawData = testData.tablePage.items;
+
+    var processedData=[];
+    // //loop through ingredient
+    for (var i = 0; i < rawData.length; i++) {
       var vendorArrayString = "";
       //loop through vendor
       for (var j=0; j<rawData.vendors.length; j++){
         vendorArrayString+=rawData.vendors[j].name + "/ $" + rawData.vendors[j].price + ", ";
       }
-      var singleData = new Object ("id": i, "name": rawData.name, "pkg": "sack", "temperature": rawData.temperatureZone, "vendors" : vendorArrayString);
+      var singleData = new Object ("id": i, "name": rawData.name, "packageName": "sack", "temperatureZone": rawData.temperatureZone, "vendors" : vendorArrayString);
       processedData.push(singleData);
     }
+
+
     this.setState({rows: processedData});
   }
-
-  componentDidMount() {
-    //this.loadAllIngredients();
-  }
-  // componentDidUpdate() {
-  //   this.loadAllIngredients();
-  // }
 
   render() {
     const {

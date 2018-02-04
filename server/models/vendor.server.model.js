@@ -1,5 +1,5 @@
 var mongoose = require('mongoose'),
-    Ingredient = require('mongoose').model('Ingredient'),
+    //Ingredient = require('mongoose').model('Ingredient'),
 	Schema = mongoose.Schema;
 
 var IngredientPriceSchema = new Schema({
@@ -34,7 +34,8 @@ var VendorSchema = new Schema({
         lowercase: true,
         required: true
     },
-	ingredients: [IngredientPriceSchema]
+	//ingredients: [IngredientPriceSchema]
+
 });
 
 mongoose.model('Vendor', VendorSchema);

@@ -19,7 +19,7 @@ import { withStyles } from 'material-ui/styles';
 const ingredientId = '5a6e2b65d141d5472554fc51';
 const userId = '5a6e2f9b1c2c30482e142ddf';
 const vendorId = '5a6e333f0c569f48f7d22242';
-const sessionId = '5a6a5977f5ce6b254fe2a91f';
+const sessionId = 'real-producers-root'; //back-door
 //
 
 const styles = theme => ({
@@ -82,7 +82,7 @@ class TestingCard extends Component {
               Delete Vendor
             </Button>
 
-            <Button onClick={()=>alert("Button pressed!")}>
+            <Button onClick={()=>alert("02/03/2018")}>
               Alert
             </Button>
 
