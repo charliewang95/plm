@@ -37,8 +37,8 @@ const data = {
   /* Replace with the data from the back end -- filtered based on ingredients */
    vendor_options : ['target','wholefoods','li ming','panera','harris teeters'],
 
-   package_options: ['sail','supersack','drum','railcar','sack'],
-   temperatureZone_options:['room temperatureZone','frozen','refrigerator'],
+   package_options: ['sack', 'pail', 'drum', 'supersack', 'truckload', 'railcar'],
+   temperatureZone_options:['freezer', 'refrigerator', 'warehouse'],
  },
 };
 

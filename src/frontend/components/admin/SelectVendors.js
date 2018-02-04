@@ -6,8 +6,11 @@ import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
 import AddCircleIcon from 'material-ui-icons/AddCircle';
 import VendorItem from './VendorItem';
-
+import * as testConfig from '../../../resources/testConfig.js'
+import * as vendorActions from '../../interface/vendorInterface.js';
 const VENDORS = require('./dummyVendors');
+const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
+const sessionId = "5a6a5977f5ce6b254fe2a91f";
 
 class SelectVendors extends Component {
 
@@ -17,32 +20,36 @@ class SelectVendors extends Component {
       selectName: "",
       inputPrice: 0,
       options: [
-                 {
-                  name: "Target",
-                  id: "ABCDe",
-                 },
-                 {  name: "Walmart",
-                  id: "ABCDf",
-                 },
-                 {
-                    name: "Duke",
-                    id: "QWERe",
-                 }
-                ],
-      vendorsArray: [{
-                  id: "ABCDe",
-                  price: 3
-                 }],
+       {
+        name: "Target",
+        id: "5a76b607c37e254b74f45b42",
+       },
+       {  
+        name: "Vendor P",
+        id: "5a76b571c37e254b74f45b3e",
+       },
+       {
+        name: "Vendor R",
+        id: "5a76b5bfc37e254b74f45b40",
+       }
+      ],
+      vendorsArray: this.props.initialArray,
       idToNameMap: {}, //id = key, name=value
     };
     this.updateId = this.updateId.bind(this);
     this.deleteVendor = this.deleteVendor.bind(this);
     this.addVendor = this.addVendor.bind(this);
     this.updatePrice = this.updatePrice.bind(this);
+    this.loadVendorsArray = this.loadVendorsArray.bind(this);
   }
 
   componentWillMount(){
     this.createMap();
+    this.loadVendorsArray();
+  }
+
+  componentDidMount(){
+  //  this.loadAllVendors();
   }
 
   componentDidUpdate(){
@@ -50,20 +57,51 @@ class SelectVendors extends Component {
     console.log(this.state.vendorsArray);
   }
 
-  createMap(){
-    var map = new Map();
-    for(var i; i<this.state.options.length; i++){
-      var vendor = this.state.options[i];
-      map.set(vendor.id, vendor.name);
+  loadVendorsArray(){
+    console.log("vendors array loaded");
+    console.log(this.state.vendorsArray);
+    this.setState({vendorsArray: this.props.initialArray});
+  }
+
+  async loadAllVendors(){
+    var startingIndex = 0;
+    var rawData = [];
+    if(READ_FROM_DATABASE){
+      //TODO: Initialize data
+      rawData = await vendorActions.getAllVendorsAsync(sessionId);
+      //commented out because collectively done after rawData is determined
+      /*
+      var processedData = [...rawData.map((row, index)=> ({
+          id: startingIndex + index,...row,
+        })),
+      ];*/
+    } else {
+      rawData = VENDORS;
     }
+      this.setState({options: rawData});
+  }
+
+
+  createMap(){
+    // var map = new Map();
+    // for(var i; i<this.state.options.length; i++){
+    //   var vendor = this.state.options[i];
+    //   map.set(vendor.id, vendor.name);
+    // }
+    // this.setState({idToNameMap:map});
+    var map = new Map();
+    map.set("5a76b571c37e254b74f45b3e", "Vendor P");
+    map.set("5a76b5bfc37e254b74f45b40", "Vendor R")
+    map.set("5a76b607c37e254b74f45b42", "Target");
     this.setState({idToNameMap:map});
   }
 
   addVendor(){
     var newVendor = new Object();
-    console.log(this.state.selectName.name);
+    console.log("hihi");
+    console.log(this.state.selectName);
     var tempId = this.state.selectName.id;
-    newVendor = {id: tempId, price: this.state.inputPrice};
+    newVendor = {vendor: tempId, price: this.state.inputPrice};
     console.log(newVendor);
     // var updateVendor = new Array(this.state.vendorsArray.slice(0));
     // updateVendor.push(newVendor);
@@ -74,6 +112,7 @@ class SelectVendors extends Component {
     this.setState({inputPrice : 0});
     this.setState({selectName: ""})
     console.log(this.state.vendorsArray);
+    this.props.handleChange(this.state.vendorsArray);
   }
 
   deleteVendor(index){
@@ -84,18 +123,15 @@ class SelectVendors extends Component {
       updateVendor.splice(index,1);
       this.setState({vendorsArray: updateVendor});
     }
+    this.props.handleChange(this.state.vendorsArray);
   }
 
   updateId (vendor, index) {
-    if(index>0){
+    console.log("updateId is fired");
+    if(index!=-1){
       var updateVendor = this.state.vendorsArray.slice();
-      updateVendor[index].id = vendor.id;
+      updateVendor[index].vendor = vendor.id;
       this.setState({vendorsArray: updateVendor});
-    }else{
-      console.log(vendor);
-      console.log(vendor.name);
-      this.setState({selectName: vendor.name});
-      console.log(this.state.selectName);
     }
   }
 
@@ -105,11 +141,11 @@ class SelectVendors extends Component {
       var updateVendor = this.state.vendorsArray.slice();
       updateVendor[index].price = newPrice.target.value;
       this.setState({vendorsArray:updateVendor});
-    }else{
-      this.setState({
-        inputPrice: newPrice.target.value,
-      });
     }
+  }
+
+  updatePriceHere(newPrice){
+    this.setState({inputPrice: newPrice.target.value});
   }
 
   updateName(value){
@@ -122,6 +158,7 @@ class SelectVendors extends Component {
       <Grid container spacing={16}>
         <Grid item sm={7}>
          <Select
+          placeholder="Select New Vendor"
           name="Vendor Name"
           options={this.state.options}
           valueKey="id"
@@ -131,7 +168,7 @@ class SelectVendors extends Component {
           />
         </Grid>
         <Grid item sm={3}>
-          <TextField value={this.state.inputPrice} onChange={(value)=>{this.updatePrice(value, -1);}}/>
+          <TextField value={this.state.inputPrice} onChange={(value)=>{this.updatePriceHere(value);}}/>
         </Grid>
         <Grid item sm={1}>
           <IconButton aria-label="Add" onClick={()=>{this.addVendor();}}>
