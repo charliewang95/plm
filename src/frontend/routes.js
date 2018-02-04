@@ -12,6 +12,8 @@ import Vendors from './components/vendors/Vendors';
 import AddVendorForm from './components/vendors/AddVendorForm';
 
 
+import Login from './components/charlie/Test';
+
 const Routes = () => (
       <div>
 	      <Switch>
@@ -22,6 +24,7 @@ const Routes = () => (
 		      <Route path="/inventory" component={Inventory} />
 		      <Route path="/orders" component={Orders} />
 		      <Route path="/storage" component={Storage} />
+		      <Route path="/login" component={Login} />
           <Route path="/vendors" component={Vendors} />
           <Route path="/addVendorForm" component={AddVendorForm} />
           <Route path="/editStorageCapacityForm" component={EditStorageCapacityForm} />
