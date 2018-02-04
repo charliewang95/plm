@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Card, CardText } from 'material-ui/Card';
-import RaisedButton from 'material-ui/RaisedButton';
+import Card from 'material-ui/Card';
+import CardText from 'material-ui/Card';
+import Button from 'material-ui/Button';
+import Check from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
 
 const SignUpForm = ({
@@ -20,10 +22,10 @@ const SignUpForm = ({
       <div className="field-line">
         <TextField
           floatingLabelText="Name"
-          name="name"
-          errorText={errors.name}
+          name="username"
+          errorText={errors.username}
           onChange={onChange}
-          value={user.name}
+          value={user.username}
         />
       </div>
 
@@ -48,20 +50,13 @@ const SignUpForm = ({
         />
       </div>
 
-      <div className="field-line">
-          <Checkbox
-            label="Administrator"
-            handleCheckboxChange={toggleCheckbox}
-            key="Administrator"
-          />
-      </div>
+      //TODO: add a checkbox for checking admin
+      //(user.state.isAdmin)
 
       <div className="button-line">
-        <RaisedButton type="submit" label="Create New Account" primary />
+        <Button type="submit" label="Create New Account" primary >Create New Account</Button>
       </div>
 
-      //routing to login page
-      //<CardText>Already have an account? <Link to={'/login'}>Log in</Link></CardText>
     </form>
   </Card>
 );

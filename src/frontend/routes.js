@@ -12,7 +12,8 @@ import Vendors from './components/vendors/Vendors';
 import AddVendorForm from './components/vendors/AddVendorForm';
 
 
-import Login from './components/charlie/Test';
+import Login from './components/charlie/LoginPage';
+import Register from './components/charlie/RegisterPage';
 
 const Routes = () => (
       <div>
@@ -25,6 +26,7 @@ const Routes = () => (
 		      <Route path="/orders" component={Orders} />
 		      <Route path="/storage" component={Storage} />
 		      <Route path="/login" component={Login} />
+		      <Route path="/register" component={Register} />
           <Route path="/vendors" component={Vendors} />
           <Route path="/addVendorForm" component={AddVendorForm} />
           <Route path="/editStorageCapacityForm" component={EditStorageCapacityForm} />

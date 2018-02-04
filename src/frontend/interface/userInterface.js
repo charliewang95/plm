@@ -24,7 +24,7 @@ function packIntoJson(email, username, password, isAdmin, loggedIn){
 	userJson.loggedIn = loggedIn;
 	console.log("JSON");
 	console.log(userJson);
-	console.log(dummyUser.sampleUser);
+	//console.log(dummyUser.sampleUser);
 	return userJson;
 };
 

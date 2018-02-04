@@ -9,9 +9,9 @@ var Storage = mongoose.model('Storage');
 var Inventory = mongoose.model('Inventory');
 var Cart = mongoose.model('Cart');
 
-exports.process = function(model, item, res, next) {
+exports.process = function(model, item, itemId, res, next) {
     if (model == Vendor) {
-        processVendor(item, res, next);
+        processVendor(itemId, res, next);
     }
 //    else if (model == Storage) {
 //        validateStorage(item, res, next, function(err, obj){
@@ -53,18 +53,20 @@ var updateInventory = function(ingredientId, quantity, res, next, callback) {
     });
 };
 
-var processVendor = function(item, res, next) {
+var processVendor = function(itemId, res, next) {
     Ingredient.find({}, function(err, ingredients){
         if (err) return next(err);
         else {
-            for (var i = 0; i<ingredients.length; i++) {
+            for (var i = 0; i < ingredients.length; i++) {
                 var currentIngredient = ingredients[i];
                 var vendors = currentIngredient.vendors;
                 for (var j = 0; j<vendors.length; j++) {
                     var vendor = vendors[j];
-                    if (vendor.vendor.toString() == item._id.toString()) {
-                        vendor.remove(function(err) {
-                           if (err) return next(err);
+                    if (vendor.vendor.toString() == itemId.toString()) {
+                        VendorPrice.find({_id: vendor._id}, function(err, obj) {
+                            console.log(vendor._id);
+                            console.log(obj);
+                            if (err) return next(err);
                         });
                     }
                 }

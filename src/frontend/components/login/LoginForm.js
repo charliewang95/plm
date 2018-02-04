@@ -38,7 +38,7 @@ const LoginForm = ({
                 <div> password </div>
                 <div className="field-line">
                     <TextField
-                        floatingLabelText="Password"
+                        floatinglabeltext="Password"
                         type="password"
                         name="password"
                         onChange={onChange}

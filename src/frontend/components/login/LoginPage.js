@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardText } from 'material-ui/Card';
 import TextField from 'material-ui/TextField';
 import LoginForm from './LoginForm';
+import axios from 'axios';
 
 class Login extends React.Component {
 
@@ -24,16 +25,34 @@ class Login extends React.Component {
     processForm(event) {
         // prevent default action. in this case, action is the form submission event
         event.preventDefault();
-         console.log('ss');
+        console.log('user trying to log in');
+        console.log(this.state.user);
 
         //TODO: call interface to authenticate
+        axios.post("/users/authenticate", this.state.user)
+    	.then(function (response) {
+    		console.log(response);
+    	})
+    	.catch(function (error) {
+    		console.log(error);
+    	});
+
+        if (true) {
+            this.setState({
+              errors: {}
+            });
+            //this.props.history.push('/');
+            //TODO: remember sessionId and userId, then redirect to dashboard
+        } else {
+            //TODO:
+        }
     }
 
     changeUser(event) {
         const field = event.target.name;
         const user = this.state.user;
         user[field] = event.target.value;
-
+        console.log(user);
         this.setState({
           user
         });

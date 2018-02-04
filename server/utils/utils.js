@@ -197,14 +197,15 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId) {
             return next(err);
         }
         else {
-            item.remove(function(err) {
-                if (err) {
-                    return next(err);
-                }
-                else {
+//            item.remove(function(err) {
+//                if (err) {
+//                    return next(err);
+//                }
+//                else {
+                    postProcessor.process(model, item, itemId, res, next);
                     res.json(item);
-                }
-            });
+//                }
+//            });
         }
     });
 };
