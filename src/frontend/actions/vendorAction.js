@@ -28,8 +28,10 @@ function getAllVendors() {
  * get all vendors
  * sessionId: string, id of the current session
  */
-function getAllVendorsAsync(sessionId){
-	return genericActions.getAllAsync(baseUrl, sessionId);
+async function getAllVendorsAsync(sessionId){
+	console.log("Action: getAllVendorsAsync()");
+	console.log("sessionId: " + sessionId);
+	return await genericActions.getAllAsync(baseUrl, sessionId);
 };
 
 /* 
