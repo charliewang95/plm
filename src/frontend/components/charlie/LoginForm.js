@@ -51,7 +51,7 @@ const LoginForm = ({
                     <Button type="submit" label="Log in" primary>Log In</Button>
                 </div>
 
-                <CardText>Don't have an account? <Link to={'/signup'}>Create one</Link>.</CardText>
+                <CardText>Don't have an account? Yes, there's no register button here. I know it sucks, but please ask your administrator to create one for you.</CardText>
             </form>
         </Card>
     </div>
