@@ -19,7 +19,7 @@ var VendorSchema = new Schema({
 	name: {
 		type: String,
 		trim: true,
-		unique: true,
+		unique: [true, "already exists"],
 		required: true
 	},
 	contact: String,

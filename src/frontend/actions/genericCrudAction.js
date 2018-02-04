@@ -45,10 +45,19 @@ exported methods
 async function create(url, object, sessionId) {
 	console.log('generic creating...')
 	var completeUrl = appendSessionIdToUrl(url,sessionId);
-	const res = await axios.post(completeUrl, object);
-	const result = res.data;
-	console.log("returning: " + result);
-	return result;
+	try {
+      	const res = await axios.post(completeUrl, object);
+		const result = res.data;
+		console.log("returning: " + result);
+		return result;
+    }
+    catch(e) {
+      console.log('there was an error');
+      console.log(e); 
+      //TODO: different error message for different types of error
+      throw e;
+    }
+	
 	/*
 	.then(function (response) {
 		console.log(response);

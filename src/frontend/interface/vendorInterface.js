@@ -32,7 +32,12 @@ function packIntoJson(name, contact, code){
  */
 async function addVendor(name, contact, code, sessionId) {
 	var newVendor = packIntoJson(name, contact, code);
-	return await vendorActions.addVendor(newVendor, sessionId);
+	try{
+		return await vendorActions.addVendor(newVendor, sessionId);
+	} catch (e) {
+		throw e;
+	}
+	
 }
 
 /**

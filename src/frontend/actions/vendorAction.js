@@ -11,7 +11,11 @@ const property = 'vendor';
  * sessionId: string
  */
 async function addVendor(vendor, sessionId) {
-	return await genericActions.create(baseUrl, vendor, sessionId);
+	try {
+		return await genericActions.create(baseUrl, vendor, sessionId);
+	} catch(e) {
+		throw e;
+	}
 };
 
 /* 
