@@ -9,12 +9,10 @@ var Storage = mongoose.model('Storage');
 var Inventory = mongoose.model('Inventory');
 var Cart = mongoose.model('Cart');
 
-exports.process = function(model, item, res, next, callback) {
-//    if (model == Vendor) {
-//        processVendor(item, res, next, function(){
-//            callback();
-//        });
-//    }
+exports.process = function(model, item, itemId, res, next) {
+    if (model == Vendor) {
+        processVendor(itemId, res, next);
+    }
 //    else if (model == Storage) {
 //        validateStorage(item, res, next, function(err, obj){
 //            if (err) return next(err);
@@ -23,20 +21,12 @@ exports.process = function(model, item, res, next, callback) {
 //            }
 //        });
 //    }
-    if (model == Cart) {
-        processCart(item, res, next, function(err, obj){
-            if (err) return next(err);
-            else {
-                 callback(err);
-            }
-        });
-    }
-    else {
-        callback(false);
+    else if (model == Cart) {
+        processCart(item, res, next);
     }
 };
 
-var processCart = function(item, res, next, callback) { //
+var processCart = function(item, res, next) { //
     var ingredientId = item.ingredientId;
     var quantity;
     Inventory.findOne({ingredientId: ingredientId}, function(err, obj){
@@ -49,7 +39,6 @@ var processCart = function(item, res, next, callback) { //
             quantity = obj.quantity - item.quantity;
             updateInventory(ingredientId, quantity, res, next, function(err, obj2){
                 if (err) return next(err);
-                else callback(err);
             });
         }
     });
@@ -63,3 +52,30 @@ var updateInventory = function(ingredientId, quantity, res, next, callback) {
         }
     });
 };
+
+var processVendor = function(itemId, res, next) {
+    Ingredient.find({}, function(err, ingredients){
+        if (err) return next(err);
+        else {
+            for (var i = 0; i < ingredients.length; i++) {
+                var currentIngredient = ingredients[i];
+                var vendors = currentIngredient.vendors;
+                var newVendors = [];
+                for (var j = 0; j<vendors.length; j++) {
+                    var vendor = vendors[j];
+                    if (vendor.vendor.toString() != itemId.toString()) {
+                        newVendors.push(vendor);
+//                        VendorPrice.find({_id: vendor._id}, function(err, obj) {
+//                            console.log(vendor._id);
+//                            console.log(obj);
+//                            if (err) return next(err);
+//                        });
+                    }
+                }
+                currentIngredient.update({vendors: newVendors}, function(err, obj){
+                    if (err) return next(err);
+                })
+            }
+        }
+    });
+}

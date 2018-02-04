@@ -18,20 +18,29 @@ exports.modify = function(model, item, itemId, res, next, callback) {
             }
         });
     }
-    else if (model == Ingredient) {
-        modifyIngredient(item, res, next, function(err, obj){
-            if (err) next(err);
-            else {
-                callback(err, obj);
-            }
-        });
-    }
+//    else if (model == Ingredient) {
+//        modifyIngredient(item, res, next, function(err, obj){
+//            if (err) next(err);
+//            else {
+//                callback(err, obj);
+//            }
+//        });
+//    }
     else callback(false, item);
 };
 
 var modifyVendor = function(item, res, next, callback) {
-    var ingredients = item.ingredients;
-    var fail = false;
+    Ingredient.find({}, function(err, ingredients){
+        if (err) return next(err);
+        else {
+            for (var i = 0; i<ingredients.length; i++) {
+                var currentIngredient = ingredients[i];
+                if (currentIngredient.vendor)
+            }
+        }
+    })
+
+
     for (var i = 0; i < ingredients.length; i++) {
         var currentIngredient = ingredients[i];
         var ingredientId = currentIngredient.ingredient;

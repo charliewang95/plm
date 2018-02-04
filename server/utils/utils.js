@@ -192,7 +192,26 @@ var updateWithUserAccess = function(req, res, next, model, userId, itemId) {
 };
 
 var deleteWithoutUserAccess = function(req, res, next, model, itemId) {
-    model.findOne({_id: itemId}, req.body, function(err, item) {
+    model.find({_id: itemId}, req.body, function(err, item) {
+        if (err) {
+            return next(err);
+        }
+        else {
+//            item.remove(function(err) {
+//                if (err) {
+//                    return next(err);
+//                }
+//                else {
+                    postProcessor.process(model, item, itemId, res, next);
+                    res.json(item);
+//                }
+//            });
+        }
+    });
+};
+
+var deleteWithUserAccess = function(req, res, next, model, userId, itemId) {
+    model.find({userId: userId, _id: itemId}, function(err, items) {
         if (err) {
             return next(err);
         }
@@ -204,32 +223,7 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId) {
                 else {
                     res.json(item);
                 }
-            })
+            });
         }
     });
 };
-
-//var deleteAllWithUserAccess = function(req, res, next, model, userId) {
-//    model.find({userId: userId}, function(err, items) {
-//        if (err) {
-//            return next(err);
-//        }
-//        else {
-//            for (var i = 0; i < items.length; i++) {
-//                items[i].remove(function(err) {
-//                    if (err) {
-//                        return next(err);
-//                    }
-//                });
-//                postProcessor.process(model, items[i], res, next, function(err, obj){
-//                    if (err) return next(err);
-//                })
-//            }
-//            res.json(items);
-//        }
-//    });
-//};
-
-/*
-Specifically for carts/checkout at the moment
-*/

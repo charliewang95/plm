@@ -6,7 +6,7 @@ module.exports = function(app) {
 
 	app.route('/users/searchedUser/:searchedUserId/user/:userId').get(users.read).put(users.update).delete(users.delete);
 
-    app.route('/users/authenticate/email/:email/password/:password').post(users.authenticate);
+    app.route('/users/authenticate').post(users.authenticate);
 
 	app.route('/register')
 		.get(users.renderRegister)
