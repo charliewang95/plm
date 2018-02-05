@@ -81,7 +81,7 @@ async function authenticateAsync(user){
 	try {
       	const res = await axios.post(completeUrl, user);
 		const result = res.data;
-		console.log("returning: " + result);
+		console.log(res);
 		return result;
     }
     catch(e) {
