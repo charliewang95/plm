@@ -23,7 +23,7 @@ exports.delete = function(req, res, next) {
 };
 
 exports.listNamesCodes = function(req, res, next) {
-    Vendor.find({}, 'name, code', function(err, vendors){
+    Vendor.find({}, 'name codeUnique', function(err, vendors){
         if (err) next(err);
         else res.send(vendors);
     });
