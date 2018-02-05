@@ -7,7 +7,6 @@ import UserIngredients from './components/ingredients/UserIngredients';
 import Inventory from './components/inventory/Inventory';
 import Orders from './components/orders/Orders';
 import Storage from './components/storage/Storage';
-import EditStorageCapacityForm from './components/storage/EditStorageCapacityForm';
 import Vendors from './components/vendors/Vendors';
 import AddVendorForm from './components/vendors/AddVendorForm';
 import Cart from './components/cart/Cart';
@@ -30,7 +29,6 @@ const Routes = () => (
 		      <Route path="/register" component={Register} />
           <Route path="/vendors" component={Vendors} />
           <Route path="/addVendorForm" component={AddVendorForm} />
-          <Route path="/editStorageCapacityForm" component={EditStorageCapacityForm} />
           <Route path="/cart" component={Cart} />
 		  </Switch>
       </div>
