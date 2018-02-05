@@ -15,8 +15,9 @@ import MenuIcon from 'material-ui-icons/Menu';
 import ChevronLeftIcon from 'material-ui-icons/ChevronLeft';
 import ChevronRightIcon from 'material-ui-icons/ChevronRight';
 import { UserListItems, MainListItems } from './NavMenuList';
-
 import Routes from '../../routes.js';
+import Login from '../login/LoginPage';
+
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -108,10 +109,20 @@ const styles = theme => ({
 });
 
 class PersistentDrawer extends React.Component {
-  state = {
-    open: false,
-    anchor: 'left',
-  };
+
+  constructor(props) {
+        super(props);
+        this.state = {
+          open: false,
+          anchor: 'left',
+          loggedIn: false,
+        };
+        this.login = this.login.bind(this);
+  }
+
+  login(key){
+    this.setState({loggedIn:key});
+  }
 
   handleDrawerOpen = () => {
     this.setState({ open: true });
@@ -130,7 +141,7 @@ class PersistentDrawer extends React.Component {
   render() {
     const { classes, theme } = this.props;
     const { anchor, open } = this.state;
-
+    const loggedIn = false;
     const drawer = (
       <Drawer
         type="persistent"
@@ -166,7 +177,7 @@ class PersistentDrawer extends React.Component {
     return (
       <div className={classes.root}>
         <div className={classes.appFrame}>
-          <AppBar
+          {this.state.loggedIn && <AppBar
             className={classNames(classes.appBar, {
               [classes.appBarShift]: open,
               [classes[`appBarShift-${anchor}`]]: open,
@@ -185,7 +196,7 @@ class PersistentDrawer extends React.Component {
                 Real Producer
               </Typography>
             </Toolbar>
-          </AppBar>
+          </AppBar>}
           {before}
           <main
             className={classNames(classes.content, classes[`content-${anchor}`], {
@@ -193,7 +204,8 @@ class PersistentDrawer extends React.Component {
               [classes[`contentShift-${anchor}`]]: open,
             })}
           >
-            <Routes/>
+            {this.state.loggedIn && <Routes/>}
+            {!this.state.loggedIn && <Login login={this.login}/>}
           </main>
           {after}
         </div>

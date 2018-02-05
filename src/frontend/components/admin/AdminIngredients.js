@@ -37,7 +37,7 @@ import * as ingredientInterface from '../../interface/ingredientInterface';
 import * as vendorInterface from '../../interface/vendorInterface';
 import * as testConfig from '../../../resources/testConfig.js'
   // TODO: get the sessionId
-const sessionId = '5a6a5977f5ce6b254fe2a91f';
+const sessionId = 'real-producers-root';
 
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 

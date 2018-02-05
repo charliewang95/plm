@@ -10,7 +10,7 @@ import * as testConfig from '../../../resources/testConfig.js'
 import * as vendorActions from '../../interface/vendorInterface.js';
 const VENDORS = require('./dummyVendors');
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
-const sessionId = "5a6a5977f5ce6b254fe2a91f";
+const sessionId = "real-producers-root";
 
 class SelectVendors extends Component {
 
