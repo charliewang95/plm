@@ -60,9 +60,9 @@ class Orders extends React.PureComponent{
 
    async loadAllIngredients(){
      var rawData = [];
-    // if(READ_FROM_DATABASE){
-      // rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
-    // }else{
+    if(READ_FROM_DATABASE){
+      rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
+    }else{
     rawData = dummyData;
 
     // Gets the ingredient Options from the data
@@ -76,10 +76,10 @@ class Orders extends React.PureComponent{
     console.log("Ingredient Options " + JSON.stringify(parsedIngredientOptions));
     // console.log(" Ingredient Options " + JSON.stringify(this.state.ingredient_options));
     // Set the options for the ingredients
-
+    }
   }
 
-  async handleIngredientChange(option){
+  async handleIngredientChange(option) {
     console.log(" Ingredient Selected ");
 
     console.log("Package Name " + option.packageName);
@@ -89,10 +89,10 @@ class Orders extends React.PureComponent{
 
     //TODO: get vendors list for the selected ingredient
     try{
-      // var ingredientDetails = ingredientActions.getIngredientAsync(option.value,sessionId);
-      var ingredientDetails = dummyData[1];
+      var ingredientDetails = ingredientActions.getIngredientAsync(option.value,sessionId);
+      // var ingredientDetails = dummyData[1];
       var parsedVendorOptions = [...ingredientDetails.vendors.map((row,index)=> ({
-          value: row.vendorId,label: (row.vendor + " / Price: $ " + row.price),
+          value: row.vendorId,label: (row.vendorName + " / Price: $ " + row.price),
           price: row.price,
         })),
       ];
@@ -101,8 +101,6 @@ class Orders extends React.PureComponent{
       //TODO: error handling in the front end
       alert(e);
     }
-
-
     this.setState({vendor_options:parsedVendorOptions});
   }
 

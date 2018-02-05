@@ -215,7 +215,7 @@ class Inventory extends React.PureComponent {
 
     var startingIndex = 0;
     var processedData = [...rawData.map((row, index)=> ({
-        id: startingIndex + index,...row,
+        id: index,...row,
       })),
     ];
     this.setState({rows:processedData});
