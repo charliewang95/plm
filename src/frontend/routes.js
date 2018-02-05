@@ -10,6 +10,7 @@ import Storage from './components/storage/Storage';
 import Vendors from './components/vendors/Vendors';
 import AddVendorForm from './components/vendors/AddVendorForm';
 import Cart from './components/cart/Cart';
+import Report from './components/report/Report';
 
 
 import Login from './components/login/LoginPage';
@@ -30,6 +31,7 @@ const Routes = () => (
           <Route path="/vendors" component={Vendors} />
           <Route path="/addVendorForm" component={AddVendorForm} />
           <Route path="/cart" component={Cart} />
+          <Route path="/report" component={Report} />
 		  </Switch>
       </div>
 
