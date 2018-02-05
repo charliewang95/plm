@@ -17,7 +17,7 @@ vendors: array of objects following the VendorPriceSchema
 function packIntoJson(name, packageType, temperatureZone, vendors){
 	var ingredientJson = new Object();
 	ingredientJson.name = name;
-	ingredientJson.package = packageType;
+	ingredientJson.packageName = packageType;
 	ingredientJson.temperatureZone = temperatureZone;
 	ingredientJson.vendors = vendors;
 	console.log("JSON");
@@ -31,6 +31,8 @@ function packIntoJson(name, packageType, temperatureZone, vendors){
  * sessionId: string, id of the current session
  */
 function addIngredient(name, packageType, temperatureZone, vendors, sessionId) {
+	console.log("add ingredients");
+	console.log(vendors);
 	var newIngredient = packIntoJson(name, packageType, temperatureZone, vendors);
 	ingredientActions.addIngredient(newIngredient, sessionId);
 }
