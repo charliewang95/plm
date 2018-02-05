@@ -76,28 +76,23 @@ async function deleteUser(userId, sessionId) {
  * function that checks if user could login with provided information
  * user: JSON object containing email and password
  */
-async function authenticateAsync(user, callback){
+
+async function authenticateAsync(user){
+	console.log("fuck");
     var completeUrl = '/users/authenticate';
-//	try {
-var errorMessage = "";
-      	await axios.post(completeUrl, user).then(function(response){
-      	    console.log(response);
-      	    callback(response);
-      	}).catch((error)=>{
-      	    errorMessage = error.response.data;
-      	    console.log(error.response);
-      	    callback(errorMessage);
-      	});
-//		const result = res.data;
-//		console.log(res);
-//		return result;
-//    }
-//    catch(e) {
-//      console.log('there was an error');
-//      console.log(e);
-//      //TODO: different error message for different types of error
-//      throw e;
-//    }
+	try {
+      	const res = await axios.post(completeUrl, user);
+      	console.log("You should not see me");
+		const result = res.data;
+		console.log(res);
+		return result;
+    }
+    catch(e) {
+      console.log('there was an error');
+      console.log(e); 
+      //TODO: different error message for different types of error
+      throw e;
+    }
 }
 
 //export functions above for use by other modules
