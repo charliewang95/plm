@@ -17,21 +17,21 @@ class VendorItem extends Component {
   render() {
     return (
     	<div>
-      {this.props.vendorsArray.map((vendor,index)=>(
+      {this.props.vendorsArray && this.props.vendorsArray.map((vendor,index)=>(
         <Grid container spacing={16} key={index}>
         <Grid item sm={7}>
-         <div>{vendor.name}</div>
          <Select
           name="Vendor Name"
           options={this.props.options}
           labelKey="name"
           valueKey="id"
-          value={vendor.id}
+          value={vendor.vendor}
+          clearable = {false}
           onChange={(value)=>{this.props.updateId(value, index);}}
           />
         </Grid>
         <Grid item sm={3}>
-          <TextField value={vendor.price} onChange={(value)=>{this.props.updatePrice(value, index);}}/>
+          <TextField placeholder={vendor.price.toString()} onChange={(value)=>{this.props.updatePrice(value, index);}}/>
         </Grid>
         <Grid item sm={1}>
           <IconButton aria-label="Delete" onClick={()=>{this.props.deleteVendor(index);}}>
