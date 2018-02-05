@@ -97,6 +97,9 @@ const getRowId = row => row.id;
 const toLowerCase = value => String(value).toLowerCase();
 const temperatureZonePredicate = (value, filter) => toLowerCase(value).startsWith(toLowerCase(filter.value));
 
+const RowDetail = (props)=>{
+return <IngredientDetail {...props}/>;
+}
 
 class Inventory extends React.PureComponent {
 
@@ -254,9 +257,9 @@ class Inventory extends React.PureComponent {
           <Table cellComponent={Cell}/>
           <TableHeaderRow />
           <TableFilterRow />
-          <TableRowDetail
-            contentComponent={IngredientDetail}
-          />
+          {/*<TableRowDetail
+            contentComponent={RowDetail}
+          />*/}
           {isAdmin &&
             <TableEditRow
               cellComponent={EditCell}

@@ -29,7 +29,7 @@ export default class Demo extends React.PureComponent {
 
     this.state = {
       columns: [
-        { name: 'ingredientName', title: 'IngredientName' },
+        { name: 'name', title: 'Ingredient Name' },
         { name: 'moneySpent', title: 'Expenditure (Orders) /$ ' },
         { name: 'moneyProd', title: 'Expenditure (Production) /$' },
       ],
@@ -38,7 +38,7 @@ export default class Demo extends React.PureComponent {
       currentPage: 0,
       pageSize: 0,
       pageSizes: [5, 10, 20],
-      columnOrder: ['ingredientName', 'moneySpent', 'moneyProd'],
+      columnOrder: ['name', 'moneySpent', 'moneyProd'],
     };
     this.changeSorting = sorting => this.setState({ sorting });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });

@@ -427,9 +427,9 @@ class AdminIngredients extends React.PureComponent {
       //loop through vendor
       console.log("This is the rawData");
       for (var j=0; j<rawData[i].vendors.length; j++){
-        console.log(rawData[i].vendors[j].vendor);
-        var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].vendor);
-        console.log(vendorName);
+        console.log(rawData[i].vendors[j].vendorId);
+        //var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].vendorId);
+        var vendorName = rawData[i].vendors[j].vendorName;
         vendorArrayString+=vendorName + " / $" + rawData[i].vendors[j].price;
 
          if(i!= (rawData[i].vendors.length-1) ){
