@@ -14,7 +14,7 @@ import dummyData from './dummyData.js';
 
 
 // TODO: Get the user ID
-const userId = "Id1";
+const userId = "5a63be959144b37a6136491e";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 
@@ -40,7 +40,7 @@ class Cart extends React.Component {
     var rawData = dummyData;
     if(READ_FROM_DATABASE){
       //TODO: Initialize data
-      rawData = await vendorActions.getAllCartsAsync(testConfig.sessionId);
+      rawData = await vendorActions.getAllCartsAsync(userId);
     } else {
       rawData = dummyData;
     }
@@ -58,9 +58,9 @@ class Cart extends React.Component {
     return (
 
       <Paper>
-        <Typography type="headline" component="h3">
+        {/*<Typography type="headline" component="h3">
           Cart
-        </Typography>
+        </Typography>*/}
       <Divider/>
         <Grid
           rows={rows}

@@ -20,7 +20,6 @@ function packIntoJson(temperatureZone, capacity){
 	storageJson.capacity = capacity;
 	console.log("JSON");
 	console.log(storageJson);
-	console.log(dummyStorage.sampleStorage);
 	return storageJson;
 }
 
