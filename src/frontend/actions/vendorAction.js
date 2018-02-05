@@ -54,8 +54,8 @@ function getVendor(vendorId) {
  * vendorId: string, the id of the ingredient
  * sessionId: string, id of the current session
  */
-function getVendorAsync(vendorId, sessionId){
-	return genericActions.getByIdAsync(baseUrl, property, vendorId, sessionId);
+async function getVendorAsync(vendorId, sessionId){
+	return await genericActions.getByIdAsync(baseUrl, property, vendorId, sessionId);
 };
 
 /* 
@@ -64,8 +64,8 @@ function getVendorAsync(vendorId, sessionId){
  * sessionId: string, id of the current session
  * vendor: JSON object representing the updated info about the vendor
  */
-function updateVendor(vendorId, sessionId, vendor) {
-	return genericActions.updateById(baseUrl, property, vendorId, sessionId, vendor);
+async function updateVendor(vendorId, sessionId, vendor) {
+	return await genericActions.updateById(baseUrl, property, vendorId, sessionId, vendor);
 };
 
 /* 
@@ -73,8 +73,8 @@ function updateVendor(vendorId, sessionId, vendor) {
  * vendorId: string, the id of the vendor
  * sessionId: string, id of the current session
  */
-function deleteVendor(vendorId, sessionId) {
-	return genericActions.deleteById(baseUrl, property, vendorId, sessionId);
+async function deleteVendor(vendorId, sessionId) {
+	return await genericActions.deleteById(baseUrl, property, vendorId, sessionId);
 };
 
 //export functions above for use by other modules

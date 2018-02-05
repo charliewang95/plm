@@ -60,8 +60,8 @@ async function getAllVendorNamesCodesAsync(sessionId) {
  * vendorId: string, the id of the vendor
  * sessionId: string, id of the current session
  */
-function getVendorAsync(vendorId, sessionId) {
-	return vendorActions.getVendorAsync(vendorId, sessionId);
+async function getVendorAsync(vendorId, sessionId) {
+	return await vendorActions.getVendorAsync(vendorId, sessionId);
 };
 
 /*
@@ -70,9 +70,9 @@ function getVendorAsync(vendorId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-function updateVendor(name, contact, code, vendorId,sessionId) {
+async function updateVendor(name, contact, code, vendorId,sessionId) {
 	var updatedVendor = packIntoJson(name, contact, code);
-	return vendorActions.updateVendor(vendorId, sessionId, updatedVendor);
+	return await vendorActions.updateVendor(vendorId, sessionId, updatedVendor);
 };
 
 /*
@@ -80,8 +80,8 @@ function updateVendor(name, contact, code, vendorId,sessionId) {
  * vendorId: string, the id of the vendor
  * sessionId: string, id of the current session
  */
-function deleteVendor(vendorId, sessionId) {
-	return vendorActions.deleteVendor(vendorId,sessionId);
+async function deleteVendor(vendorId, sessionId) {
+	return await vendorActions.deleteVendor(vendorId,sessionId);
 };
 
 //export functions above for use by other modules

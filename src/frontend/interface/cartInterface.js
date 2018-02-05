@@ -29,9 +29,9 @@ function packIntoJson(userId, ingredientId, ingredientName, quantity){
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-function addCart(userId, ingredientId, ingredientName, quantity, sessionId) {
+async function addCart(userId, ingredientId, ingredientName, quantity, sessionId) {
 	var newCart = packIntoJson(userId, ingredientId, ingredientName, quantity);
-	cartActions.addCart(newCart, sessionId);
+	return await cartActions.addCart(newCart, sessionId);
 }
 
 /**
@@ -57,9 +57,9 @@ async function getCartAsync(cartId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-function updateCart(cartId, userId, ingredientId, ingredientName, quantity, sessionId) {
+async function updateCart(cartId, userId, ingredientId, ingredientName, quantity, sessionId) {
 	var updatedCart = packIntoJson(userId, ingredientId, quantity);
-	return cartActions.updateCart(cartId, sessionId, updatedCart);
+	return await cartActions.updateCart(cartId, sessionId, updatedCart);
 };
 
 /* 
@@ -67,16 +67,16 @@ function updateCart(cartId, userId, ingredientId, ingredientName, quantity, sess
  * cartId: string, the id of the cart
  * sessionId: string, id of the current session
  */
-function deleteCart(cartId, sessionId) {
-	return cartActions.deleteCart(cartId, sessionId);
+async function deleteCart(cartId, sessionId) {
+	return await cartActions.deleteCart(cartId, sessionId);
 };
 
 /*
  * checkout a cart pertaining to a particular session
  * sessionId: string, id of the current session
  */
-function checkoutCart(sessionId){
-	return cartActions.checkoutCart(sessionId);
+async function checkoutCart(sessionId){
+	return await cartActions.checkoutCart(sessionId);
 };
 
 //export functions above for use by other modules

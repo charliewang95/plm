@@ -10,8 +10,8 @@ const property = 'ingredient';
  * ingredient: JSON object
  * sessionId: string, id of the current session
  */
-function addIngredient(ingredient, sessionId) {
-	return genericActions.create(baseUrl,ingredient,sessionId);
+async function addIngredient(ingredient, sessionId) {
+	return await genericActions.create(baseUrl,ingredient,sessionId);
 };
 
 /* 
@@ -58,8 +58,8 @@ async function getIngredientAsync(ingredientId, sessionId){
  * sessionId: string, id of the current session
  * ingredient: JSON object representing the updated info about the ingredient
  */
-function updateIngredient(ingredientId, sessionId, ingredient) {
-	return genericActions.updateById(baseUrl, property, ingredientId, sessionId, ingredient);
+async function updateIngredient(ingredientId, sessionId, ingredient) {
+	return await genericActions.updateById(baseUrl, property, ingredientId, sessionId, ingredient);
 };
 
 /* 
@@ -67,8 +67,8 @@ function updateIngredient(ingredientId, sessionId, ingredient) {
  * ingredientId: string, the id of the ingredient
  * sessionId: string, id of the current session
  */
-function deleteIngredient(ingredientId, sessionId) {
-	return genericActions.deleteById(baseUrl, property, ingredientId, sessionId);
+async function deleteIngredient(ingredientId, sessionId) {
+	return await genericActions.deleteById(baseUrl, property, ingredientId, sessionId);
 };
 
 //export functions above for use by other modules
