@@ -32,9 +32,10 @@ function packIntoJson(userId, ingredientId, ingredientName, temperatureZone, pac
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-function addInventory(userId, ingredientId, ingredientName, temperatureZone, packageName,  quantity, sessionId) {
+
+async function addInventory(userId, ingredientId, ingredientName, temperatureZone, packageName, quantity, sessionId) {
 	var newInventory = packIntoJson(userId, ingredientId, ingredientName, temperatureZone, packageName, quantity);
-	inventoryActions.addInventory(newInventory, sessionId);
+	return await inventoryActions.addInventory(newInventory, sessionId);
 }
 
 /**
@@ -60,9 +61,10 @@ async function getInventoryAsync(inventoryId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-function updateInventory(inventoryId, userId, ingredientId, ingredientName, temperatureZone, packageName, quantity, sessionId) {
+
+async function updateInventory(inventoryId, userId, ingredientId, ingredientName, temperatureZone, packageName, quantity, sessionId) {
 	var updatedInventory = packIntoJson(userId, ingredientId, ingredientName, temperatureZone, packageName, quantity);
-	return inventoryActions.updateInventory(inventoryId, sessionId, updatedInventory);
+	return await inventoryActions.updateInventory(inventoryId, sessionId, updatedInventory);
 };
 
 /*
@@ -70,8 +72,8 @@ function updateInventory(inventoryId, userId, ingredientId, ingredientName, temp
  * inventoryId: string, the id of the inventory
  * sessionId: string, id of the current session
  */
-function deleteInventory(inventoryId, sessionId) {
-	return inventoryActions.deleteInventory(inventoryId, sessionId);
+async function deleteInventory(inventoryId, sessionId) {
+	return await inventoryActions.deleteInventory(inventoryId, sessionId);
 };
 
 

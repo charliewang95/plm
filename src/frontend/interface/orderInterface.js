@@ -32,9 +32,9 @@ function packIntoJson(userId, ingredientId, vendorId, _package, price){
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-function addOrder(userId, ingredientId, vendorId, _package, price, sessionId) {
+async function addOrder(userId, ingredientId, vendorId, _package, price, sessionId) {
 	var newOrder = packIntoJson(userId, ingredientId, vendorId, _package, price);
-	orderActions.addOrder(newOrder, sessionId);
+	return await orderActions.addOrder(newOrder, sessionId);
 }
 
 /**
@@ -60,9 +60,9 @@ async function getOrderAsync(orderId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-function updateOrder(orderId, userId, ingredientId, vendorId, _package, price, sessionId) {
+async function updateOrder(orderId, userId, ingredientId, vendorId, _package, price, sessionId) {
 	var updatedOrder = packIntoJson(userId, ingredientId, vendorId, _package, price);
-	return orderActions.updateOrder(orderId, sessionId, updatedOrder);
+	return await orderActions.updateOrder(orderId, sessionId, updatedOrder);
 };
 
 /* 
@@ -70,8 +70,8 @@ function updateOrder(orderId, userId, ingredientId, vendorId, _package, price, s
  * orderId: string, the id of the order
  * sessionId: string, id of the current session
  */
-function deleteOrder(orderId, sessionId) {
-	return orderActions.deleteOrder(orderId, sessionId);
+async function deleteOrder(orderId, sessionId) {
+	return await orderActions.deleteOrder(orderId, sessionId);
 };
 
 //export functions above for use by other modules
