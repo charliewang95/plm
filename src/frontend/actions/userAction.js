@@ -28,8 +28,8 @@ function getAllUsers() {
  * get all users
  * sessionId: string, id of the current session
  */
-function getAllUsersAsync(sessionId){
-	return genericActions.getAllAsync(baseUrl, sessionId);
+async function getAllUsersAsync(sessionId){
+	return await genericActions.getAllAsync(baseUrl, sessionId);
 };
 
 /* 

@@ -18,8 +18,8 @@ function addOrder(order, sessionId) {
  * get all orders
  * sessionId: string, id of the current session
  */
-function getAllOrdersAsync(sessionId){
-	return genericActions.getAllAsync(baseUrl, sessionId);
+async function getAllOrdersAsync(sessionId){
+	return await genericActions.getAllAsync(baseUrl, sessionId);
 };
 
 /* 
@@ -28,8 +28,8 @@ function getAllOrdersAsync(sessionId){
  * sessionId: string, id of the current session
  */
 
-function getOrderAsync(orderId, sessionId){
-	return genericActions.getByIdAsync(baseUrl, property, orderId, sessionId);
+async function getOrderAsync(orderId, sessionId){
+	return await genericActions.getByIdAsync(baseUrl, property, orderId, sessionId);
 };
 
 /* 

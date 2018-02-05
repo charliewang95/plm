@@ -29,8 +29,8 @@ function getAllIngredients() {
  * get all ingredients
  * sessionId: string, id of the current session
  */
-function getAllIngredientsAsync(sessionId){
-	return genericActions.getAllAsync(baseUrl, sessionId);
+async function getAllIngredientsAsync(sessionId){
+	return await genericActions.getAllAsync(baseUrl, sessionId);
 };
 /* 
  * get one ingredient
@@ -48,8 +48,8 @@ function getIngredient(ingredientId) {
  * ingredientId: string, the id of the ingredient
  * sessionId: string, id of the current session
  */
-function getIngredientAsync(ingredientId, sessionId){
-	return genericActions.getByIdAsync(baseUrl, property, ingredientId, sessionId);
+async function getIngredientAsync(ingredientId, sessionId){
+	return await genericActions.getByIdAsync(baseUrl, property, ingredientId, sessionId);
 };
 
 /* 

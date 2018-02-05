@@ -41,8 +41,8 @@ function addIngredient(name, packageType, temperatureZone, vendors, sessionId) {
  * get all ingredients
  * sessionId: string, id of the current session
 **/
-function getAllIngredientsAsync(sessionId) {
-	return ingredientActions.getAllIngredientsAsync(sessionId);
+async function getAllIngredientsAsync(sessionId) {
+	return await ingredientActions.getAllIngredientsAsync(sessionId);
 }
 
 /* 
@@ -50,8 +50,8 @@ function getAllIngredientsAsync(sessionId) {
  * ingredientId: string, the id of the ingredient
  * sessionId: string, id of the current session
  */
-function getIngredientAsync(ingredientId, sessionId) {
-	return ingredientActions.getIngredientAsync(ingredientId, sessionId);
+async function getIngredientAsync(ingredientId, sessionId) {
+	return await ingredientActions.getIngredientAsync(ingredientId, sessionId);
 };
 
 /* 

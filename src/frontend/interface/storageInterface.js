@@ -37,8 +37,8 @@ function addStorage(temperatureZone, capacity, sessionId) {
  * get all storages
  * sessionId: string, id of the current session
 **/
-function getAllStoragesAsync(sessionId) {
-	return storageActions.getAllStoragesAsync(sessionId);
+async function getAllStoragesAsync(sessionId) {
+	return await storageActions.getAllStoragesAsync(sessionId);
 }
 
 /*
@@ -46,8 +46,8 @@ function getAllStoragesAsync(sessionId) {
  * storageId: string, the id of the storage
  * sessionId: string, id of the current session
  */
-function getStorageAsync(storageId, sessionId) {
-	return storageActions.getStorageAsync(storageId, sessionId);
+async function getStorageAsync(storageId, sessionId) {
+	return await storageActions.getStorageAsync(storageId, sessionId);
 };
 
 /*
