@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 
 import {
   FilteringState,
-  IntegratedFiltering,EditingState
+  IntegratedFiltering,EditingState,
+  RowDetailState,
 } from '@devexpress/dx-react-grid';
 import {
   Grid,
@@ -16,6 +17,7 @@ import {
   TableEditColumn,
   TableColumnReordering,
   TableSelection,
+  TableRowDetail,
 } from '@devexpress/dx-react-grid-material-ui';
 
 import dummyData from './dummyData';
@@ -33,11 +35,12 @@ import Divider from 'material-ui/Divider';
 import * as cartActions from '../../interface/cartInterface';
 import * as inventoryActions from '../../interface/inventoryInterface';
 import * as testConfig from '../../../resources/testConfig.js'
+import IngredientDetail from './IngredientDetail';
 
 
 
 //TODO: Get if it ADMIN
-var  isAdmin= false;
+var  isAdmin= true;
 const userId = "user";
 const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
@@ -116,6 +119,8 @@ class Inventory extends React.PureComponent {
         { columnName: 'temperatureZone', predicate: temperatureZonePredicate },
       ],
       rows: [],
+      addingItemsToCart:[],
+      addedQuantity:'',
       expandedRowIds:[],
     };
 
@@ -154,18 +159,42 @@ class Inventory extends React.PureComponent {
       }
      }
 
-      // TODO: Update Quantity in back end
-    inventoryActions.updateInventory(
-      rows[changedRowIndex]._id,userId,rows[changedRowIndex].ingredientId,
-      rows[changedRowIndex].ingredientName,rows[changedRowIndex].temperatureZone,
-      rows[changedRowIndex].quantity,sessionId);
-   }
+     this.setState({ rows, addingItemsToCart: deleted || this.state.addingItemsToCart });
 
+     // Called from the deleteCommand
+     this.addToCart=() => {
+       console.log(" Added Quantity " + this.state.addedQuantity);
+       this.state.addingItemsToCart.forEach((rowId) => {
+         const index = rows.findIndex(row => row.id === rowId);
+         if (index > -1) {
+
+           //TODO: Send data to both the inventory
+           console.log("Name" + rows[index].ingredientName);
+           console.log("Package " + rows[index].packageName);
+           console.log("ingredientId " + rows[index].ingredientId);
+
+             //TODO: Send data to the cart
+             try{
+               cartActions.addCart(userId, rows[index].ingredientId,
+                  this.state.addedQuantity, sessionId);
+              }catch(e){
+                console.log('An error passed to the front end!')
+                //TODO: error handling in the front end
+                alert(e);
+              }
+         }
+       });
+       this.setState({ rows, addingItemsToCart: [] });
+     }
+   };
+
+   // Set state of the expandable rows
    this.changeExpandedDetails = (expandedRowIds) => {
      console.log("Changed Expanded RowIds ");
      this.setState({ expandedRowIds });
    }
- };
+
+ }
 
 // Initial loading of data
   componentDidMount() {
@@ -175,14 +204,15 @@ class Inventory extends React.PureComponent {
   async loadInventory() {
     console.log("LOADING DATA");
     var processedData=[];
-    var rawData = [];
-    // var startingIndex = 0;
-    // TODO: load data from back end
+    //TODO: Initialize data
+    var rawData=[];
     // if(READ_FROM_DATABASE){
       // rawData = await inventoryActions.getAllInventoriesAsync(sessionId);
     // } else {
       rawData = dummyData;
     // }
+
+    var startingIndex = 0;
     var processedData = [...rawData.map((row, index)=> ({
         id: startingIndex + index,...row,
       })),
@@ -195,7 +225,7 @@ class Inventory extends React.PureComponent {
     const {classes,} = this.props;
     const { rows, columns,editingRowIds,
       rowChanges,tableColumnExtensions,
-      integratedFilteringColumnExtensions,addingItemsToCart,addedQuantity} = this.state;
+      integratedFilteringColumnExtensions,addingItemsToCart,addedQuantity,expandedRowIds} = this.state;
     return (
       <Paper>
         <Grid
@@ -216,9 +246,16 @@ class Inventory extends React.PureComponent {
             />}
 
           <IntegratedFiltering columnExtensions={integratedFilteringColumnExtensions} />
+          <RowDetailState
+                      expandedRowIds={expandedRowIds}
+                      onExpandedRowIdsChange={this.changeExpandedDetails}
+                    />
           <Table cellComponent={Cell}/>
           <TableHeaderRow />
           <TableFilterRow />
+          <TableRowDetail
+            contentComponent={IngredientDetail}
+          />
           {isAdmin &&
             <TableEditRow
               cellComponent={EditCell}
