@@ -28,17 +28,10 @@ const Routes = () => (
 		      <Route path="/storage" component={Storage} />
 		      <Route path="/login" component={Login} />
 		      <Route path="/register" component={Register} />
-<<<<<<< HEAD
-	          <Route path="/vendors" component={Vendors} />
-	          <Route path="/addVendorForm" component={AddVendorForm} />
-	          <Route path="/editStorageCapacityForm" component={EditStorageCapacityForm} />
-	          <Route path="/cart" component={Cart} />
-=======
           <Route path="/vendors" component={Vendors} />
           <Route path="/addVendorForm" component={AddVendorForm} />
           <Route path="/cart" component={Cart} />
           <Route path="/report" component={Report} />
->>>>>>> bd2636ab4dc6b371c98b551f5b371ac57bd80ef8
 		  </Switch>
       </div>
 
