@@ -41,8 +41,8 @@ function addOrder(userId, ingredientId, vendorId, _package, price, sessionId) {
  * get all orders
  * sessionId: string, id of the current session
 **/
-function getAllOrdersAsync(sessionId) {
-	return orderActions.getAllOrdersAsync(sessionId);
+async function getAllOrdersAsync(sessionId) {
+	return await orderActions.getAllOrdersAsync(sessionId);
 }
 
 /* 
@@ -50,8 +50,8 @@ function getAllOrdersAsync(sessionId) {
  * orderId: string, the id of the order
  * sessionId: string, id of the current session
  */
-function getOrderAsync(orderId, sessionId) {
-	return orderActions.getOrderAsync(orderId, sessionId);
+async function getOrderAsync(orderId, sessionId) {
+	return await orderActions.getOrderAsync(orderId, sessionId);
 };
 
 /* 

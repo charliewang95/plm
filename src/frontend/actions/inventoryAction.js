@@ -18,8 +18,8 @@ function addInventory(inventory, sessionId) {
  * get all inventories
  * sessionId: string, id of the current session
  */
-function getAllInventoriesAsync(sessionId){
-	return genericActions.getAllAsync(baseUrl, sessionId);
+async function getAllInventoriesAsync(sessionId){
+	return await genericActions.getAllAsync(baseUrl, sessionId);
 };
 
 /* 
@@ -28,8 +28,8 @@ function getAllInventoriesAsync(sessionId){
  * sessionId: string, id of the current session
  */
 
-function getInventoryAsync(inventoryId, sessionId){
-	return genericActions.getByIdAsync(baseUrl, property, inventoryId, sessionId);
+async function getInventoryAsync(inventoryId, sessionId){
+	return await genericActions.getByIdAsync(baseUrl, property, inventoryId, sessionId);
 };
 
 /* 

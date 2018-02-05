@@ -41,8 +41,8 @@ function addUser(email, username, password, isAdmin, loggedIn, sessionId) {
  * get all users
  * sessionId: string, id of the current session
 **/
-function getAllUsersAsync(sessionId) {
-	return userActions.getAllUsersAsync(sessionId);
+async function getAllUsersAsync(sessionId) {
+	return await userActions.getAllUsersAsync(sessionId);
 };
 
 /* 
@@ -50,8 +50,8 @@ function getAllUsersAsync(sessionId) {
  * userId: string, the id of the user
  * sessionId: string, id of the current session
  */
-function getUserAsync(userId, sessionId) {
-	return userActions.getUserAsync(userId, sessionId);
+async function getUserAsync(userId, sessionId) {
+	return await userActions.getUserAsync(userId, sessionId);
 };
 
 /* 

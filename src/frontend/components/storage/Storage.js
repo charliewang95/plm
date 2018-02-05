@@ -8,8 +8,14 @@ import storage from './dummyData.js';
 import EditStorageCapacityButton from './EditStorageCapacityButton';
 // import storageActions from '../../Storage.js';
 
+import * as testConfig from '../../../resources/testConfig.js';
+
 // TODO: Get whether or not the admin has logged in
 const isAdmin = true;
+
+// TODO: get session Id from the user
+const sessionId = testConfig.sessionId;
+const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 const styles = theme => ({
   root: {
@@ -39,7 +45,6 @@ class Storage extends Component{
 
     loadStorageInfo(){
       console.log(" Load Storage ");
-      const sessionId = '5a6a5977f5ce6b254fe2a91f';
       console.log(storage[0].temperatureZone + storage[0].capacity);
       console.log(storage[0].temperatureZone + storage[0].capacity);
       console.log(storage[0].temperatureZone + storage[0].capacity);
