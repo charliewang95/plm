@@ -39,6 +39,11 @@ var processCart = function(item, res, next) { //
             quantity = obj.quantity - item.quantity;
             updateInventory(ingredientId, quantity, res, next, function(err, obj2){
                 if (err) return next(err);
+                else {
+                    updateIngredient(ingredientId, item.quantity, obj.quantity, res, next, function(err, obj3){
+                        if (err) return next(err);
+                    });
+                }
             });
         }
     });
@@ -49,6 +54,25 @@ var updateInventory = function(ingredientId, quantity, res, next, callback) {
         if (err) return next(err);
         else {
             callback(err);
+        }
+    });
+};
+
+var updateIngredient = function(ingredientId, cartQuantity, oldQuantity, res, next, callback) {
+    Ingredient.findById(ingredientId, function(err, ingredient){
+        if (err) return next(err);
+        else if (!ingredient) {
+            res.status(400);
+            res.send("Ingredient doesn't exist");
+        }
+        else {
+            var moneyProd = ingredient.moneyProd;
+            var moneySpent = ingredient.moneySpent;
+            var newMoneyProd = moneyProd+1.0*cartQuantity*(moneySpent-moneyProd)/oldQuantity;
+            //console.log(newMoneyProd);
+            ingredient.update({moneyProd: newMoneyProd}, function(err, obj){
+                if (err) return next(err);
+            });
         }
     });
 };
