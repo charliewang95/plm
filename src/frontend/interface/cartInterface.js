@@ -13,14 +13,15 @@ userId: string, the id of the current user owning the cart
 ingredientId: string, id of the type of ingredient this cart is holding
 quantity: number, the amount of that type of ingredient in the cart, in units of pounds
 **/
-function packIntoJson(userId, ingredientId, quantity){
+function packIntoJson(userId, ingredientId, ingredientName, quantity){
 	var cartJson = new Object();
 	cartJson.userId = userId;
 	cartJson.ingredientId = ingredientId;
+	cartJson.ingredientName = ingredientName;
 	cartJson.quantity = quantity;
 	console.log("JSON");
 	console.log(cartJson);
-	console.log(dummyCart.sampleCart);
+	//console.log(dummyCart.sampleCart);
 	return cartJson;
 }
 
@@ -28,8 +29,8 @@ function packIntoJson(userId, ingredientId, quantity){
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-function addCart(userId, ingredientId, quantity, sessionId) {
-	var newCart = packIntoJson(userId, ingredientId, quantity);
+function addCart(userId, ingredientId, ingredientName, quantity, sessionId) {
+	var newCart = packIntoJson(userId, ingredientId, ingredientName, quantity);
 	cartActions.addCart(newCart, sessionId);
 }
 
@@ -56,7 +57,7 @@ function getCartAsync(cartId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-function updateCart(cartId, userId, ingredientId, quantity, sessionId) {
+function updateCart(cartId, userId, ingredientId, ingredientName, quantity, sessionId) {
 	var updatedCart = packIntoJson(userId, ingredientId, quantity);
 	return cartActions.updateCart(cartId, sessionId, updatedCart);
 };
