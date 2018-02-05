@@ -116,8 +116,7 @@ class Inventory extends React.PureComponent {
         { columnName: 'temperatureZone', predicate: temperatureZonePredicate },
       ],
       rows: [],
-      addingItemsToCart:[],
-      addedQuantity:'',
+      expandedRowIds:[],
     };
 
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
@@ -155,35 +154,18 @@ class Inventory extends React.PureComponent {
       }
      }
 
-     this.setState({ rows, addingItemsToCart: deleted || this.state.addingItemsToCart });
+      // TODO: Update Quantity in back end
+    inventoryActions.updateInventory(
+      rows[changedRowIndex]._id,userId,rows[changedRowIndex].ingredientId,
+      rows[changedRowIndex].ingredientName,rows[changedRowIndex].temperatureZone,
+      rows[changedRowIndex].quantity,sessionId);
+   }
 
-     // Called from the deleteCommand
-     this.addToCart=() => {
-       console.log(" Added Quantity " + this.state.addedQuantity);
-       this.state.addingItemsToCart.forEach((rowId) => {
-         const index = rows.findIndex(row => row.id === rowId);
-         if (index > -1) {
-
-           //TODO: Send data to both the inventory
-           console.log("Name" + rows[index].ingredientName);
-           console.log("Package " + rows[index].packageName);
-           console.log("ingredientId " + rows[index].ingredientId);
-
-             //TODO: Send data to the cart
-             try{
-               cartActions.addCart(userId, rows[index].ingredientId,
-                  this.state.addedQuantity, sessionId);
-              }catch(e){
-                console.log('An error passed to the front end!')
-                //TODO: error handling in the front end
-                alert(e);
-              }
-         }
-       });
-       this.setState({ rows, addingItemsToCart: [] });
-     }
-   };
- }
+   this.changeExpandedDetails = (expandedRowIds) => {
+     console.log("Changed Expanded RowIds ");
+     this.setState({ expandedRowIds });
+   }
+ };
 
 // Initial loading of data
   componentDidMount() {
@@ -193,15 +175,14 @@ class Inventory extends React.PureComponent {
   async loadInventory() {
     console.log("LOADING DATA");
     var processedData=[];
-    //TODO: Initialize data
-    var rawData=[];
+    var rawData = [];
+    // var startingIndex = 0;
+    // TODO: load data from back end
     // if(READ_FROM_DATABASE){
       // rawData = await inventoryActions.getAllInventoriesAsync(sessionId);
     // } else {
       rawData = dummyData;
     // }
-
-    var startingIndex = 0;
     var processedData = [...rawData.map((row, index)=> ({
         id: startingIndex + index,...row,
       })),
