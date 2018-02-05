@@ -17,7 +17,7 @@ import testVendorData from '../vendors/dummyData.js';
 
 
 //TODO: get session Id
-const userId = "ID1";
+const userId = "5a63be959144b37a6136491e";
 const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 

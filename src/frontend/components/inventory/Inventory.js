@@ -41,7 +41,7 @@ import IngredientDetail from './IngredientDetail';
 
 //TODO: Get if it ADMIN
 var  isAdmin= true;
-const userId = "user";
+const userId = "5a63be959144b37a6136491e";
 const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
