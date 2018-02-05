@@ -94,7 +94,7 @@ class Storage extends React.PureComponent {
       this.setState({ rowChanges });
     }
 
-    this.commitChanges = ({ changed,deleted}) => {
+    this.commitChanges = ({ changed}) => {
       let { rows } = this.state;
 
       console.log(JSON.stringify(rows));
