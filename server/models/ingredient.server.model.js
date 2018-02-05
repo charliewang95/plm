@@ -7,6 +7,15 @@ var VendorPriceSchema = new Schema({
         type: String,
         required: true
     },
+    vendorName: {
+        type: String,
+        required: true
+    },
+    vendorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Vendor',
+        required: true
+    },
     price: {
         type: Number,
         required: true

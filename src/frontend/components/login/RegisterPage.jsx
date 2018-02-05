@@ -40,6 +40,8 @@ class RegisterPage extends React.Component {
 //        console.log(user);
 
     addUser(this.state.user.email, this.state.user.username, this.state.user.password, false, false, '5a63be959144b37a6136491e');
+
+
   }
 
   /**

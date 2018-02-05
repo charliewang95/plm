@@ -10,8 +10,8 @@ const property = 'searchedUser';
  * user: JSON object
  * sessionId: string
  */
-function addUser(user, sessionId) {
-	return genericActions.create(baseUrl, user, sessionId);
+async function addUser(user, sessionId) {
+	return await genericActions.create(baseUrl, user, sessionId);
 };
 
 /* 
@@ -28,8 +28,8 @@ function getAllUsers() {
  * get all users
  * sessionId: string, id of the current session
  */
-function getAllUsersAsync(sessionId){
-	return genericActions.getAllAsync(baseUrl, sessionId);
+async function getAllUsersAsync(sessionId){
+	return await genericActions.getAllAsync(baseUrl, sessionId);
 };
 
 /* 
@@ -48,8 +48,8 @@ function getUser(userId) {
  * ingredientId: string, the id of the ingredient
  * sessionId: string, id of the current session
  */
-function getUserAsync(userId, sessionId){
-	return genericActions.getByIdAsync(baseUrl, property, userId, sessionId);
+async function getUserAsync(userId, sessionId){
+	return await genericActions.getByIdAsync(baseUrl, property, userId, sessionId);
 };
 
 
@@ -59,8 +59,8 @@ function getUserAsync(userId, sessionId){
  * sessionId: string, id of the current session
  * user: JSON object representing the updated info about the user
  */
-function updateUser(userId, sessionId, user) {
-	return genericActions.updateById(baseUrl, property, userId, sessionId, user);
+async function updateUser(userId, sessionId, user) {
+	return await genericActions.updateById(baseUrl, property, userId, sessionId, user);
 };
 
 /* 
@@ -68,8 +68,8 @@ function updateUser(userId, sessionId, user) {
  * userId: string, the id of the user
  * sessionId: string, id of the current session
  */
-function deleteUser(userId, sessionId) {
-	return genericActions.deleteById(baseUrl, property, userId, sessionId);
+async function deleteUser(userId, sessionId) {
+	return await genericActions.deleteById(baseUrl, property, userId, sessionId);
 };
 
 /*

@@ -15,16 +15,16 @@ ingredientName: string, name of the ingredient
 temperatureZone: string 'freezer', 'refrigerator', 'warehouse', 'Freezer', 'Refrigerator', 'Warehouse'
 quantity: number, the amount of that type of ingredient in the inventory, in units of pounds
 **/
-function packIntoJson(userId, ingredientId, ingredientName, temperatureZone, quantity){
+function packIntoJson(userId, ingredientId, ingredientName, temperatureZone, packageName, quantity){
 	var inventoryJson = new Object();
 	inventoryJson.userId = userId;
 	inventoryJson.ingredientId = ingredientId;
 	inventoryJson.ingredientName = ingredientName;
 	inventoryJson.temperatureZone = temperatureZone;
+	inventoryJson.packageName = packageName;
 	inventoryJson.quantity = quantity;
 	console.log("JSON");
 	console.log(inventoryJson);
-	console.log(dummyInventory.sampleInventory);
 	return inventoryJson;
 }
 
@@ -32,17 +32,18 @@ function packIntoJson(userId, ingredientId, ingredientName, temperatureZone, qua
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-function addInventory(userId, ingredientId, ingredientName, temperatureZone, quantity, sessionId) {
-	var newInventory = packIntoJson(userId, ingredientId, ingredientName, temperatureZone, quantity);
-	inventoryActions.addInventory(newInventory, sessionId);
+
+async function addInventory(userId, ingredientId, ingredientName, temperatureZone, packageName, quantity, sessionId) {
+	var newInventory = packIntoJson(userId, ingredientId, ingredientName, temperatureZone, packageName, quantity);
+	return await inventoryActions.addInventory(newInventory, sessionId);
 }
 
 /**
  * get all inventories
  * sessionId: string, id of the current session
 **/
-function getAllInventoriesAsync(sessionId) {
-	return inventoryActions.getAllInventoriesAsync(sessionId);
+async function getAllInventoriesAsync(sessionId) {
+	return await inventoryActions.getAllInventoriesAsync(sessionId);
 }
 
 /*
@@ -50,8 +51,8 @@ function getAllInventoriesAsync(sessionId) {
  * inventoryId: string, the id of the inventory
  * sessionId: string, id of the current session
  */
-function getInventoryAsync(inventoryId, sessionId) {
-	return inventoryActions.getInventoryAsync(inventoryId, sessionId);
+async function getInventoryAsync(inventoryId, sessionId) {
+	return await inventoryActions.getInventoryAsync(inventoryId, sessionId);
 };
 
 /*
@@ -60,9 +61,10 @@ function getInventoryAsync(inventoryId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-function updateInventory(inventoryId, userId, ingredientId, ingredientName, temperatureZone, quantity, sessionId) {
-	var updatedInventory = packIntoJson(userId, ingredientId, ingredientName, temperatureZone, quantity);
-	return inventoryActions.updateInventory(inventoryId, sessionId, updatedInventory);
+
+async function updateInventory(inventoryId, userId, ingredientId, ingredientName, temperatureZone, packageName, quantity, sessionId) {
+	var updatedInventory = packIntoJson(userId, ingredientId, ingredientName, temperatureZone, packageName, quantity);
+	return await inventoryActions.updateInventory(inventoryId, sessionId, updatedInventory);
 };
 
 /*
@@ -70,8 +72,8 @@ function updateInventory(inventoryId, userId, ingredientId, ingredientName, temp
  * inventoryId: string, the id of the inventory
  * sessionId: string, id of the current session
  */
-function deleteInventory(inventoryId, sessionId) {
-	return inventoryActions.deleteInventory(inventoryId, sessionId);
+async function deleteInventory(inventoryId, sessionId) {
+	return await inventoryActions.deleteInventory(inventoryId, sessionId);
 };
 
 

@@ -32,17 +32,17 @@ function packIntoJson(email, username, password, isAdmin, loggedIn){
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-function addUser(email, username, password, isAdmin, loggedIn, sessionId) {
+async function addUser(email, username, password, isAdmin, loggedIn, sessionId) {
 	var newUser = packIntoJson(email, username, password, isAdmin, loggedIn);
-	userActions.addUser(newUser, sessionId);
+	return await userActions.addUser(newUser, sessionId);
 };
 
 /**
  * get all users
  * sessionId: string, id of the current session
 **/
-function getAllUsersAsync(sessionId) {
-	return userActions.getAllUsersAsync(sessionId);
+async function getAllUsersAsync(sessionId) {
+	return await userActions.getAllUsersAsync(sessionId);
 };
 
 /* 
@@ -50,8 +50,8 @@ function getAllUsersAsync(sessionId) {
  * userId: string, the id of the user
  * sessionId: string, id of the current session
  */
-function getUserAsync(userId, sessionId) {
-	return userActions.getUserAsync(userId, sessionId);
+async function getUserAsync(userId, sessionId) {
+	return await userActions.getUserAsync(userId, sessionId);
 };
 
 /* 
@@ -60,9 +60,9 @@ function getUserAsync(userId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-function updateUser(userId, email, username, password, isAdmin, loggedIn, sessionId) {
+async function updateUser(userId, email, username, password, isAdmin, loggedIn, sessionId) {
 	var updatedUser = packIntoJson(email, username, password, isAdmin, loggedIn);
-	return userActions.updateUser(userId, sessionId, updatedUser);
+	return await userActions.updateUser(userId, sessionId, updatedUser);
 };
 
 /* 
@@ -70,8 +70,8 @@ function updateUser(userId, email, username, password, isAdmin, loggedIn, sessio
  * userId: string, the id of the user
  * sessionId: string, id of the current session
  */
-function deleteUser(userId, sessionId) {
-	return userActions.deleteUser(userId, sessionId);
+async function deleteUser(userId, sessionId) {
+	return await userActions.deleteUser(userId, sessionId);
 };
 
 /*

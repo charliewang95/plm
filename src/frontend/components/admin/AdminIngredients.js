@@ -35,11 +35,17 @@ import testData from './testIngredients';
 import SelectVendors from './SelectVendors';
 import * as ingredientInterface from '../../interface/ingredientInterface';
 import * as vendorInterface from '../../interface/vendorInterface';
-import * as testConfig from '../../../resources/testConfig.js'
   // TODO: get the sessionId
+<<<<<<< HEAD
 const sessionId = 'real-producers-root';
+=======
+import * as testConfig from '../../../resources/testConfig.js'
+>>>>>>> bd2636ab4dc6b371c98b551f5b371ac57bd80ef8
 
+// TODO: get session Id from the user
+const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
+
 
 
 const styles = theme => ({

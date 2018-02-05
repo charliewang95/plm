@@ -10,16 +10,16 @@ const property = 'storage';
  * storage: JSON object following storage.server.model.js
  * sessionId: string, id of the current session
  */
-function addStorage(storage, sessionId) {
-	return genericActions.create(baseUrl,storage,sessionId);
+async function addStorage(storage, sessionId) {
+	return await genericActions.create(baseUrl,storage,sessionId);
 };
 
 /* 
  * get all storages
  * sessionId: string, id of the current session
  */
-function getAllStoragesAsync(sessionId){
-	return genericActions.getAllAsync(baseUrl, sessionId);
+async function getAllStoragesAsync(sessionId){
+	return await genericActions.getAllAsync(baseUrl, sessionId);
 };
 
 /* 
@@ -28,8 +28,8 @@ function getAllStoragesAsync(sessionId){
  * sessionId: string, id of the current session
  */
 
-function getStorageAsync(storageId, sessionId){
-	return genericActions.getByIdAsync(baseUrl, property, storageId, sessionId);
+async function getStorageAsync(storageId, sessionId){
+	return await genericActions.getByIdAsync(baseUrl, property, storageId, sessionId);
 };
 
 /* 
@@ -38,8 +38,8 @@ function getStorageAsync(storageId, sessionId){
  * sessionId: string, id of the current session
  * storage: JSON object representing the updated info about the storage
  */
-function updateStorage(storageId, sessionId, storage) {
-	return genericActions.updateById(baseUrl, property, storageId, sessionId, storage);
+async function updateStorage(storageId, sessionId, storage) {
+	return await genericActions.updateById(baseUrl, property, storageId, sessionId, storage);
 };
 
 /* 
@@ -47,8 +47,8 @@ function updateStorage(storageId, sessionId, storage) {
  * storageId: string, the id of the storage
  * sessionId: string, id of the current session
  */
-function deleteStorage(storageId, sessionId) {
-	return genericActions.deleteById(baseUrl, property, storageId, sessionId);
+async function deleteStorage(storageId, sessionId) {
+	return await genericActions.deleteById(baseUrl, property, storageId, sessionId);
 };
 
 //export functions above for use by other modules

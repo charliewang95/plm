@@ -6,11 +6,16 @@ import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
 import AddCircleIcon from 'material-ui-icons/AddCircle';
 import VendorItem from './VendorItem';
-import * as testConfig from '../../../resources/testConfig.js'
 import * as vendorActions from '../../interface/vendorInterface.js';
+import * as testConfig from '../../../resources/testConfig.js';
+
 const VENDORS = require('./dummyVendors');
+
+
+// TODO: get session Id from the user
+const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
-const sessionId = "real-producers-root";
+
 
 class SelectVendors extends Component {
 

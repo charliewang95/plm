@@ -10,16 +10,16 @@ const property = 'order';
  * order: JSON object following order.server.model.js
  * sessionId: string, id of the current session
  */
-function addOrder(order, sessionId) {
-	return genericActions.create(baseUrl,order,sessionId);
+async function addOrder(order, sessionId) {
+	return await genericActions.create(baseUrl,order,sessionId);
 };
 
 /* 
  * get all orders
  * sessionId: string, id of the current session
  */
-function getAllOrdersAsync(sessionId){
-	return genericActions.getAllAsync(baseUrl, sessionId);
+async function getAllOrdersAsync(sessionId){
+	return await genericActions.getAllAsync(baseUrl, sessionId);
 };
 
 /* 
@@ -28,8 +28,8 @@ function getAllOrdersAsync(sessionId){
  * sessionId: string, id of the current session
  */
 
-function getOrderAsync(orderId, sessionId){
-	return genericActions.getByIdAsync(baseUrl, property, orderId, sessionId);
+async function getOrderAsync(orderId, sessionId){
+	return await genericActions.getByIdAsync(baseUrl, property, orderId, sessionId);
 };
 
 /* 
@@ -38,8 +38,8 @@ function getOrderAsync(orderId, sessionId){
  * sessionId: string, id of the current session
  * order: JSON object representing the updated info about the order
  */
-function updateOrder(orderId, sessionId, order) {
-	return genericActions.updateById(baseUrl, property, orderId, sessionId, order);
+async function updateOrder(orderId, sessionId, order) {
+	return await genericActions.updateById(baseUrl, property, orderId, sessionId, order);
 };
 
 /* 
@@ -47,8 +47,8 @@ function updateOrder(orderId, sessionId, order) {
  * orderId: string, the id of the order
  * sessionId: string, id of the current session
  */
-function deleteOrder(orderId, sessionId) {
-	return genericActions.deleteById(baseUrl, property, orderId, sessionId);
+async function deleteOrder(orderId, sessionId) {
+	return await genericActions.deleteById(baseUrl, property, orderId, sessionId);
 };
 
 //export functions above for use by other modules
