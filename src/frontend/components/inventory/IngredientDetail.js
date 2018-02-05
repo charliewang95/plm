@@ -26,13 +26,14 @@ const dummyData = {_id: "ID1", name: "pepper",packageName: "sack",temperatureZon
                     moneySpent:"500", moneyProd: "400"};
 
 const IngredientDetail  = async function(row){
-  console.log("Details for " + row.ingredientName + " " + row.ingredientId);
+  console.log("Details for " + row.row.ingredientName + " " + row.row.ingredientId);
   var ingredientDetail = "";
   if(READ_FROM_DATABASE){
      try{
         // TODO: load ingredient details from the backend
-        ingredientDetail = await ingredientActions.getIngredientAsync(row.ingredientId,sessionId);
-        console.log(ingredientDetail);
+        console.log(row.ingredientId);
+        ingredientDetail = await ingredientActions.getIngredientAsync(row.row.ingredientId,sessionId);
+
        }catch(e){
          console.log(" Error sent to front end");
          alert(e);

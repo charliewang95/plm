@@ -191,7 +191,7 @@ class Inventory extends React.PureComponent {
 
    // Set state of the expandable rows
    this.changeExpandedDetails = (expandedRowIds) => {
-     console.log("Changed Expanded RowIds ");
+     console.log("Changed Expanded RowIds "+expandedRowIds);
      this.setState({ expandedRowIds });
    }
 
