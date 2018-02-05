@@ -22,12 +22,13 @@ class Login extends React.Component {
         this.changeUser = this.changeUser.bind(this);
     }
 
-    processForm(event) {
+    async processForm(event) {
         // prevent default action. in this case, action is the form submission event
         event.preventDefault();
         console.log('user trying to log in');
         console.log(this.state.user);
-        console.log(authenticateAsync(this.state.user.email, this.state.user.password));
+        var res = await authenticateAsync(this.state.user.email, this.state.user.password);
+        console.log(res);
 //        if(!authenticateAsync(this.state.user.email, this.state.user.password)){
 //            this.setState({
 //              errors: {}

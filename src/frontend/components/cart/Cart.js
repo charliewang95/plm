@@ -32,7 +32,8 @@ import Dialog, {
 // TODO: Get the user ID
 const userId = "5a63be959144b37a6136491e";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
-const sessionId = testConfig.sessionId;
+//const sessionId = testConfig.sessionId;
+const sessionId = '5a63be959144b37a6136491e';
 
 const Cell = (props) => {
   console.log(" CELL props value: " + props.value)

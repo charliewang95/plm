@@ -157,7 +157,8 @@ var validateStorage = function(item, res, next, callback) { //check if capacity 
 //                            console.log(err2);
 //                            quantity = obj2.quantity;
 //                        }
-                quantity+=inventory.quantity;
+                if (inventory.packageName != 'truckload' && inventory.packageName != 'railcar')
+                    quantity+=inventory.quantity;
             }
             if (item.capacity < quantity) {
                 res.status(400);

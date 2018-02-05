@@ -123,7 +123,7 @@ exports.authenticate = function(req, res, next) {
         if (err) return next(err);
         else if (!user) {
             //res.status(400);
-            res.send("Error. This email is not linked to any account");
+            res.send("Username does not exist");
         }
         else {
             if (user.authenticate(req.body.password)) {
@@ -132,7 +132,7 @@ exports.authenticate = function(req, res, next) {
                 });
             } else {
                 //res.status(400);
-                res.send("Error. Incorrect password.");
+                res.send("Incorrect password.");
             }
         }
     });
