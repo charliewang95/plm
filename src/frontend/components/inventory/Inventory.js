@@ -109,7 +109,7 @@ class Inventory extends React.PureComponent {
         { columnName: 'temperatureZone', predicate: temperatureZonePredicate },
       ],
       rows: [],
-      expandedRowIds:[2, 5],
+      expandedRowIds:[],
       // selection:[]
     };
 
@@ -139,7 +139,6 @@ class Inventory extends React.PureComponent {
       rows[changedRowIndex]._id,userId,rows[changedRowIndex].ingredientId,
       rows[changedRowIndex].ingredientName,rows[changedRowIndex].temperatureZone,
       rows[changedRowIndex].quantity,sessionId);
-    )
    }
 
    this.changeExpandedDetails = (expandedRowIds) => {
@@ -159,11 +158,11 @@ class Inventory extends React.PureComponent {
     var rawData = [];
     // var startingIndex = 0;
     // TODO: load data from back end
-    if(READ_FROM_DATABASE){
-      rawData = await inventoryActions.getAllInventoriesAsync(sessionId);
-    } else {
+    // if(READ_FROM_DATABASE){
+      // rawData = await inventoryActions.getAllInventoriesAsync(sessionId);
+    // } else {
       rawData = dummyData;
-    }
+    // }
     var processedData = [...rawData.map((row, index)=> ({
         id:index,...row,
       })),
