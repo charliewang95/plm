@@ -18,8 +18,8 @@ function addStorage(storage, sessionId) {
  * get all storages
  * sessionId: string, id of the current session
  */
-function getAllStoragesAsync(sessionId){
-	return genericActions.getAllAsync(baseUrl, sessionId);
+async function getAllStoragesAsync(sessionId){
+	return await genericActions.getAllAsync(baseUrl, sessionId);
 };
 
 /* 
@@ -28,8 +28,8 @@ function getAllStoragesAsync(sessionId){
  * sessionId: string, id of the current session
  */
 
-function getStorageAsync(storageId, sessionId){
-	return genericActions.getByIdAsync(baseUrl, property, storageId, sessionId);
+async function getStorageAsync(storageId, sessionId){
+	return await genericActions.getByIdAsync(baseUrl, property, storageId, sessionId);
 };
 
 /* 

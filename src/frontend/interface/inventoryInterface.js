@@ -41,8 +41,8 @@ function addInventory(userId, ingredientId, ingredientName, temperatureZone, qua
  * get all inventories
  * sessionId: string, id of the current session
 **/
-function getAllInventoriesAsync(sessionId) {
-	return inventoryActions.getAllInventoriesAsync(sessionId);
+async function getAllInventoriesAsync(sessionId) {
+	return await inventoryActions.getAllInventoriesAsync(sessionId);
 }
 
 /*
@@ -50,8 +50,8 @@ function getAllInventoriesAsync(sessionId) {
  * inventoryId: string, the id of the inventory
  * sessionId: string, id of the current session
  */
-function getInventoryAsync(inventoryId, sessionId) {
-	return inventoryActions.getInventoryAsync(inventoryId, sessionId);
+async function getInventoryAsync(inventoryId, sessionId) {
+	return await inventoryActions.getInventoryAsync(inventoryId, sessionId);
 };
 
 /*

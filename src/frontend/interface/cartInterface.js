@@ -38,8 +38,8 @@ function addCart(userId, ingredientId, ingredientName, quantity, sessionId) {
  * get all carts
  * sessionId: string, id of the current session
 **/
-function getAllCartsAsync(sessionId) {
-	return cartActions.getAllCartsAsync(sessionId);
+async function getAllCartsAsync(sessionId) {
+	return await cartActions.getAllCartsAsync(sessionId);
 }
 
 /* 
@@ -47,8 +47,8 @@ function getAllCartsAsync(sessionId) {
  * cartId: string, the id of the cart
  * sessionId: string, id of the current session
  */
-function getCartAsync(cartId, sessionId) {
-	return cartActions.getCartAsync(cartId, sessionId);
+async function getCartAsync(cartId, sessionId) {
+	return await cartActions.getCartAsync(cartId, sessionId);
 };
 
 /* 

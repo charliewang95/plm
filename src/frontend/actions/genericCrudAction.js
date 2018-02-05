@@ -134,8 +134,14 @@ function getById(objectId, url) {
 async function getByIdAsync(url, propertyName, objectId, sessionId) {
 	const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName, objectId]);
 	const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
+	console.log("generic CRUD: getByIdAsync()");
+	console.log("url: " + completeUrl);
+	console.log("sessionId: " + sessionId);
+
 	const res = await axios.get(completeUrl);
-	return res.data;
+	const result = res.data;
+	console.log("returning: " + result);
+	return result;
 };
 
 /* 

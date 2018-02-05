@@ -18,8 +18,8 @@ function addCart(cart, sessionId) {
  * get all carts
  * sessionId: string, id of the current session
  */
-function getAllCartsAsync(sessionId){
-	return genericActions.getAllAsync(baseUrl, sessionId);
+async function getAllCartsAsync(sessionId){
+	return await genericActions.getAllAsync(baseUrl, sessionId);
 };
 
 /* 
@@ -28,8 +28,8 @@ function getAllCartsAsync(sessionId){
  * sessionId: string, id of the current session
  */
 
-function getCartAsync(cartId, sessionId){
-	return genericActions.getByIdAsync(baseUrl, property, cartId, sessionId);
+async function getCartAsync(cartId, sessionId){
+	return await genericActions.getByIdAsync(baseUrl, property, cartId, sessionId);
 };
 
 /* 
