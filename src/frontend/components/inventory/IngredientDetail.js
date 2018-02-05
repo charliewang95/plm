@@ -25,7 +25,7 @@ const dummyData = {_id: "ID1", name: "pepper",packageName: "sack",temperatureZon
                     vendors: [{code: "ID1", price: "10"},{code: "ID2", price: "15"}],
                     moneySpent:"500", moneyProd: "400"};
 
-const IngredientDetail  = async function(row){
+const IngredientDetail  = async ({row}) => {
   console.log("Details for " + row.ingredientName + " " + row.ingredientId);
   var ingredientDetail = "";
   if(READ_FROM_DATABASE){
