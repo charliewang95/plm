@@ -1,5 +1,5 @@
 //storageInterface.js
-//This interface is to be used by the front-end 
+//This interface is to be used by the front-end
 //It accepts string input as texts that follows the data-base schema
 //creates the corresponding json object if necessary
 //and calls actions to send the actual requests
@@ -8,7 +8,7 @@ import * as storageActions from '../actions/storageAction'
 
 /**
 takes in various properties of storage,
-returns a Json object that encapsulates all properties 
+returns a Json object that encapsulates all properties
 ingredientId: string, id of the type of ingredient being storageed
 temperatureZone: string 'freezer', 'refrigerator', 'warehouse', 'Freezer', 'Refrigerator', 'Warehouse'
 capacity: number, the maximum amount of the ingredient tha can be stored, in units of pounds
@@ -41,7 +41,7 @@ function getAllStoragesAsync(sessionId) {
 	return storageActions.getAllStoragesAsync(sessionId);
 }
 
-/* 
+/*
  * get one storage
  * storageId: string, the id of the storage
  * sessionId: string, id of the current session
@@ -50,7 +50,7 @@ function getStorageAsync(storageId, sessionId) {
 	return storageActions.getStorageAsync(storageId, sessionId);
 };
 
-/* 
+/*
  * update one storage
  * storageId: string, the id of the storage
  * other arguments: see packIntoJson()
@@ -61,7 +61,7 @@ function updateStorage(storageId, ingredientId, temperatureZone, capacity, sessi
 	return storageActions.updateStorage(storageId, sessionId, updatedStorage);
 };
 
-/* 
+/*
  * delete one existing storage
  * storageId: string, the id of the storage
  * sessionId: string, id of the current session

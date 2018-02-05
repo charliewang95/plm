@@ -37,7 +37,7 @@ import * as testConfig from '../../../resources/testConfig.js'
 
 
 //TODO: Get if it ADMIN
-var  isAdmin= true;
+var  isAdmin= false;
 const userId = "user";
 const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
@@ -142,9 +142,15 @@ class Inventory extends React.PureComponent {
             rows[i].quantity = changed[rows[i].id].quantity;
 
             //TODO: Update the inventory
-            inventoryActions.updateInventory(rows[i].inventoryId, userId,
-              rows[i].ingredientId, rows[i].ingredientName,
-              rows[i].temperatureZone, changed[rows[i].id].quantity, sessionId);
+            try{
+              inventoryActions.updateInventory(rows[i].inventoryId, userId,
+                rows[i].ingredientId, rows[i].ingredientName,
+                rows[i].temperatureZone, changed[rows[i].id].quantity, sessionId);
+            }catch(e){
+              console.log('An error passed to the front end!')
+              //TODO: error handling in the front end
+              alert(e);
+            }
         }
       }
      }
@@ -164,8 +170,14 @@ class Inventory extends React.PureComponent {
            console.log("ingredientId " + rows[index].ingredientId);
 
              //TODO: Send data to the cart
-             cartActions.addCart(userId, rows[index].ingredientId,
-                this.state.addedQuantity, sessionId);
+             try{
+               cartActions.addCart(userId, rows[index].ingredientId,
+                  this.state.addedQuantity, sessionId);
+              }catch(e){
+                console.log('An error passed to the front end!')
+                //TODO: error handling in the front end
+                alert(e);
+              }
          }
        });
        this.setState({ rows, addingItemsToCart: [] });
@@ -183,11 +195,11 @@ class Inventory extends React.PureComponent {
     var processedData=[];
     //TODO: Initialize data
     var rawData=[];
-    if(READ_FROM_DATABASE){
-      rawData = await inventoryActions.getAllInventoriesAsync(sessionId);
-    } else {
+    // if(READ_FROM_DATABASE){
+      // rawData = await inventoryActions.getAllInventoriesAsync(sessionId);
+    // } else {
       rawData = dummyData;
-    }
+    // }
 
     var startingIndex = 0;
     var processedData = [...rawData.map((row, index)=> ({
@@ -272,6 +284,7 @@ class Inventory extends React.PureComponent {
                 label="Enter Quantity (lbs)"
                 fullWidth = {false}
                 onChange={(event) => this.setState({ addedQuantity: event.target.value})}
+                verticalSpacing= "desnse"
                 style={{
                 marginLeft: 20,
                 martginRight: 20

@@ -55,7 +55,7 @@ class AddVendorForm extends React.Component{
       //TODO: error handling in the front end
       alert(e);
     }
-      
+
 
 
   }
@@ -68,6 +68,7 @@ class AddVendorForm extends React.Component{
 
             <form onSubmit={this.onFormSubmit}>
                 <TextField
+                    required
                     fullWidth={true}
                     id="name"
                     label="Name"
@@ -76,6 +77,7 @@ class AddVendorForm extends React.Component{
                     margin="normal"
                 />
                 <TextField
+                    required
                     fullWidth={true}
                     id="contact"
                     label="Contact"
@@ -84,6 +86,7 @@ class AddVendorForm extends React.Component{
                     margin="normal"
                 />
                 <TextField
+                    required
                     fullWidth={true}
                     id="code"
                     label="Code"

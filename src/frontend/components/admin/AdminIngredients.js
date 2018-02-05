@@ -230,6 +230,7 @@ const EditCell = (props) => {
   // EDIT to make changes to the multi select things //
   /* CHANGE */
   if (props.column.name =='vendors') {
+    // props.row.vendors
     return  <MultiSelectCell {...props} availableColumnValues={availableColumnValues}
     multi = {true} multiVal = {[]} />;
   }else if (availableColumnValues){
