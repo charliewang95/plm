@@ -31,8 +31,8 @@ const IngredientDetail  = ({row}) => {
   if(READ_FROM_DATABASE){
      try{
         // TODO: load ingredient details from the backend
-        console.log(ingredientActions.getIngredientAsync(row.ingredientId,sessionId));
         ingredientDetail = ingredientActions.getIngredientAsync(row.ingredientId,sessionId);
+        console.log(ingredientDetail);
        }catch(e){
          console.log(" Error sent to front end");
          alert(e);

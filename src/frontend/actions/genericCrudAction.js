@@ -100,7 +100,7 @@ async function getAllAsync(url, sessionId) {
 
 	const res = await axios.get(completeUrl);
 	const result = res.data;
-	console.log("returning: " + result);
+	console.log(result);
 	return result;
 }
 
@@ -140,7 +140,7 @@ async function getByIdAsync(url, propertyName, objectId, sessionId) {
 
 	const res = await axios.get(completeUrl);
 	const result = res.data;
-	console.log("returning: " + result);
+	console.log(result);
 	return result;
 };
 
@@ -158,7 +158,7 @@ async function updateById(url, propertyName, objectId, sessionId, newObject) {
 	const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
 	const res = await axios.put(completeUrl, newObject)//
 	const result = res.data;
-	console.log("returning: " + result);
+	console.log(result);
 	return result;
 
 	// .then(function (response) {
@@ -183,7 +183,7 @@ async function deleteById(url, propertyName, objectId, sessionId) {
 	const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
 	const res = await axios.delete(completeUrl);
 	const result = res.data;
-	console.log("returning: " + result);
+	console.log(result);
 	return result;
 
 	// .then(function (response) {
@@ -206,7 +206,7 @@ async function deleteAll(url, propertyName, sessionId) {
 	const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
 	const res = await axios.delete(completeUrl);
 	const result = res.data;
-	console.log("returning: " + result);
+	console.log(result);
 	return result;
 	
 	// .then(function (response) {
