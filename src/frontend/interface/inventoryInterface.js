@@ -15,16 +15,16 @@ ingredientName: string, name of the ingredient
 temperatureZone: string 'freezer', 'refrigerator', 'warehouse', 'Freezer', 'Refrigerator', 'Warehouse'
 quantity: number, the amount of that type of ingredient in the inventory, in units of pounds
 **/
-function packIntoJson(userId, ingredientId, ingredientName, temperatureZone, quantity){
+function packIntoJson(userId, ingredientId, ingredientName, temperatureZone, packageName, quantity){
 	var inventoryJson = new Object();
 	inventoryJson.userId = userId;
 	inventoryJson.ingredientId = ingredientId;
 	inventoryJson.ingredientName = ingredientName;
 	inventoryJson.temperatureZone = temperatureZone;
+	inventoryJson.packageName = packageName;
 	inventoryJson.quantity = quantity;
 	console.log("JSON");
 	console.log(inventoryJson);
-	console.log(dummyInventory.sampleInventory);
 	return inventoryJson;
 }
 
@@ -32,8 +32,8 @@ function packIntoJson(userId, ingredientId, ingredientName, temperatureZone, qua
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-function addInventory(userId, ingredientId, ingredientName, temperatureZone, quantity, sessionId) {
-	var newInventory = packIntoJson(userId, ingredientId, ingredientName, temperatureZone, quantity);
+function addInventory(userId, ingredientId, ingredientName, temperatureZone, packageName,  quantity, sessionId) {
+	var newInventory = packIntoJson(userId, ingredientId, ingredientName, temperatureZone, packageName, quantity);
 	inventoryActions.addInventory(newInventory, sessionId);
 }
 
@@ -60,8 +60,8 @@ async function getInventoryAsync(inventoryId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-function updateInventory(inventoryId, userId, ingredientId, ingredientName, temperatureZone, quantity, sessionId) {
-	var updatedInventory = packIntoJson(userId, ingredientId, ingredientName, temperatureZone, quantity);
+function updateInventory(inventoryId, userId, ingredientId, ingredientName, temperatureZone, packageName, quantity, sessionId) {
+	var updatedInventory = packIntoJson(userId, ingredientId, ingredientName, temperatureZone, packageName, quantity);
 	return inventoryActions.updateInventory(inventoryId, sessionId, updatedInventory);
 };
 

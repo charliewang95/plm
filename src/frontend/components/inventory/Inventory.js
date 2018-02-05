@@ -147,9 +147,9 @@ class Inventory extends React.PureComponent {
 
             //TODO: Update the inventory
             try{
-              inventoryActions.updateInventory(rows[i].inventoryId, userId,
+              inventoryActions.updateInventory(rows[i]._id, userId,
                 rows[i].ingredientId, rows[i].ingredientName,
-                rows[i].temperatureZone, changed[rows[i].id].quantity, sessionId);
+                rows[i].temperatureZone, rows[i].packageName, changed[rows[i].id].quantity, sessionId);
             }catch(e){
               console.log('An error passed to the front end!')
               //TODO: error handling in the front end
