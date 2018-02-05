@@ -52,7 +52,6 @@ var IngredientSchema = new Schema({
 });
 
 IngredientSchema.index({ name: 1, packageName: 1}, { unique: true });
-IngredientSchema.index({ name: 1, temperatureZone: 1}, { unique: true });
 
 IngredientSchema.methods.getPackagePounds = function(packageName, callback) {
     if (packageName == 'sack' || packageName == 'pail')

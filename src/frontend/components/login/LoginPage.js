@@ -63,19 +63,29 @@ class LoginPage extends React.Component{
 
   async handleLogin(){
     console.log("I was fired");
-    var res = await userActions.authenticateAsync(this.state.username, this.state.password);
+    var res;
     var message = "";
-    var success = false;
-    console.log(res);
-    if(res.username){
-      console.log("Hi");
-      success = true;
-    }else{
-      console.log("I was entered");
-      console.log(res.data);
-      message = "Failed";
-    }
-    this.props.login(success, message);
+    userActions.authenticateAsync(this.state.username, this.state.password, function(res){
+        console.log(res);
+        if (res.status == 400) {
+            message = res.data;
+            alert(message);
+        } else {
+
+        }
+    });
+//    var message = "";
+//    var success = false;
+//    console.log(res);
+//    if(res.username){
+//      console.log("Hi");
+//      success = true;
+//    }else{
+//      console.log("I was entered");
+//      console.log(res.data);
+//      message = "Failed";
+//    }
+//    this.props.login(success, message);
   }
 
 

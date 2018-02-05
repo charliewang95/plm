@@ -77,21 +77,21 @@ async function deleteUser(userId, sessionId) {
  * user: JSON object containing email and password
  */
 
-async function authenticateAsync(user){
-	console.log("fuck");
+async function authenticateAsync(user, callback){
     var completeUrl = '/users/authenticate';
 	try {
       	const res = await axios.post(completeUrl, user);
-      	console.log("You should not see me");
-		const result = res.data;
 		console.log(res);
-		return result;
+		callback(res);
     }
     catch(e) {
       console.log('there was an error');
-      console.log(e); 
+      console.log(e.response);
       //TODO: different error message for different types of error
-      throw e;
+      if (e.response.status == 400)
+        callback(e.response);
+      else
+        throw e;
     }
 }
 

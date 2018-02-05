@@ -5,10 +5,25 @@ var config = require('./config/config'),
 	express = require('./config/express'),
 	passport = require('./config/passport');
 
+
 var db = mongoose(),
 	app = express(),
 	passport = passport();
-//
+
+var User = require('mongoose').model('User');
+User.findOne({username: 'admin'}, function(err, obj){
+    if (!obj) {
+        var admin = new User();
+        admin.username = 'admin';
+        admin.password = 'PassworD';
+        admin.email = 'random@duke.edu';
+        admin.isAdmin = true;
+        admin.loggedIn = false;
+        admin.save(function(err){
+            //console.log(admin);
+        });
+    }
+})
 //app.use(function(req, res, next) {
 // res.setHeader('Access-Control-Allow-Origin', '*');
 // res.setHeader('Access-Control-Allow-Credentials', 'true');

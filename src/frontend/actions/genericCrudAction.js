@@ -42,20 +42,23 @@ exported methods
  * object: JSON object
  * sessionId: string, id of the current session
  */
-async function create(url, object, sessionId) {
+async function create(url, object, sessionId, callback) {
 	console.log('generic creating...')
 	var completeUrl = appendSessionIdToUrl(url,sessionId);
 	try {
       	const res = await axios.post(completeUrl, object);
 		const result = res.data;
 		console.log(result);
-		return result;
+		callback(res);
     }
     catch(e) {
       console.log('there was an error');
       console.log(e); 
       //TODO: different error message for different types of error
-      throw e;
+      if (e.response.status == 400)
+        callback(e.response);
+      else
+        throw e;
     }
 	
 	/*
@@ -153,13 +156,13 @@ async function getByIdAsync(url, propertyName, objectId, sessionId) {
  * sessionId: string, id of the current session
  * newObject: JSON object representing the updated info about the object
  */
-async function updateById(url, propertyName, objectId, sessionId, newObject) {
+async function updateById(url, propertyName, objectId, sessionId, newObject, callback) {
 	const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName, objectId]);
 	const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
-	const res = await axios.put(completeUrl, newObject)//
-	const result = res.data;
-	console.log(result);
-	return result;
+	//const res = await axios.put(completeUrl, newObject)//
+	//const result = res.data;
+	//console.log(result);
+	//return result;
 
 	// .then(function (response) {
 	// 	console.log(response);
@@ -168,6 +171,22 @@ async function updateById(url, propertyName, objectId, sessionId, newObject) {
 	// .catch(function (error) {
 	// 	console.log(error);
 	// });
+
+	try {
+        const res = await axios.put(completeUrl, newObject);
+        const result = res.data;
+        console.log(result);
+        callback(res);
+    }
+    catch(e) {
+      console.log('there was an error');
+      console.log(e);
+      //TODO: different error message for different types of error
+      if (e.response.status == 400)
+        callback(e.response);
+      else
+        throw e;
+    }
 };
 
 /* 

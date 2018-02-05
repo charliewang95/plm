@@ -62,7 +62,7 @@ var convertBulkImport = function(req, res, next, array, i, callback){
         if (ingredient.TEMPERATURE == 'room temperature') temperatureZone = 'warehouse';
         else if (ingredient.TEMPERATURE == 'frozen') temperatureZone = 'freezer';
         else if (ingredient.TEMPERATURE == 'refrigerated') temperatureZone = 'refrigerator';
-        else res.status(400).send('Temperature is not defined. Ingredients above this point are successfully loaded.');
+        else res.status(400).send('Temperature "'+ingredient.TEMPERATURE+'" is not defined. Ingredients above this point are successfully loaded.');
         //console.log("processing "+ingredientName);
 
         Ingredient.findOne({name: ingredientName, packageName: packageName}, function(err, obj){
@@ -72,8 +72,7 @@ var convertBulkImport = function(req, res, next, array, i, callback){
             else if (obj) {
                 console.log("ingredient "+ingredientName+" already exists");
                 if (obj.temperatureZone != temperatureZone) {
-                    res.status(400).send('Action denied. Ingredient '+ingredientName+' can only be stored in '+obj.temperatureZone);
-                    res.end();
+                    res.status(400).send('Action denied. Ingredient '+ingredientName+' can only be stored in '+obj.temperatureZone+'. Ingredients above this point are successfully loaded.');
                 } else {
                     Vendor.findOne({codeUnique: vendorCode}, function(err, obj2){ //need to check if vendor already selling it
                         if (err) return next(err)
