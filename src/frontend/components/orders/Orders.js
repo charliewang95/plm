@@ -41,7 +41,7 @@ class Orders extends React.PureComponent{
       vendorId:'',
   		value:undefined,
       packagName:'',
-      quantity:0,
+      quantity:'',
       ingredientId:'',
       rows:[],
       fireRedirect: false,
@@ -67,27 +67,20 @@ class Orders extends React.PureComponent{
     }else{
     rawData = dummyData;
     }
-    // console.log(" Comes here ");
-    // console.log(" RAW DATA " + JSON.stringify(rawData));
-    // Gets the ingredient Options from the data
     var parsedIngredientOptions = [...rawData.map((row, index)=> ({
         value: row._id,label: row.name,packageName: row.packageName,
       })),
-    ]; 
+    ];
 
     console.log("parsedIngredientOptions" + JSON.stringify(parsedIngredientOptions));
     this.setState({ingredient_options:parsedIngredientOptions});
 
     console.log("Ingredient Options " + JSON.stringify(parsedIngredientOptions));
-    // console.log(" Ingredient Options " + JSON.stringify(this.state.ingredient_options));
-    // Set the options for the ingredients
     }
 
 
   async handleIngredientChange(option) {
     console.log(" Ingredient Selected " + option.label);
-
-    console.log("Package Name " + option.packageName);
 
     this.setState({packageName:option.packageName});
     this.setState({ingredientId:option.value});
@@ -112,15 +105,18 @@ class Orders extends React.PureComponent{
 
 // event handler when a vendor is selected from the drop down
   handleVendorChange(option){
-    console.log("Vendor Changed");
-    console.log(" value " + option.value);
-    console.log(" label " + option.label);
-    console.log(" price " + option.price);
-    console.log(" price " + option.price);
-
     this.setState({vendorId: option.value});
     this.setState({price: option.price});
+  }
 
+  // event handler when quantity is changed
+  handleQuantityChange(event){
+  const re = /^[0-9\b]+$/;
+      if (event.target.value == '' || re.test(event.target.value)) {
+         this.setState({quantity: event.target.value})
+      }else{
+        alert(" Quantity must be a number.");
+      }
   }
 
  async onFormSubmit(e) {
@@ -133,8 +129,9 @@ class Orders extends React.PureComponent{
     e.preventDefault();
     //TODO: Send data to back end
     try{
+
       const response = await orderActions.addOrder(userId,this.state.ingredientId,
-      this.state.vendorId,this.state.quantity,this.state.price,sessionId);
+      this.state.vendorId,parseInt(this.state.quantity,10),this.state.price,sessionId);
       this.setState({ fireRedirect: true });
     }
     catch (e){
@@ -142,13 +139,23 @@ class Orders extends React.PureComponent{
       //TODO: error handling in the front end
       alert(e);
     }
+    this.clearFields();
+  }
+
+  clearFields(){
+    console.log(" Comes HERE ");
+    this.setState({vendorName:""});
+    this.setState({vendorId:""});
+    this.setState({packageName:''});
+    this.setState({ingredientId:''});
+    this.setState({vendor_options: []});
+    this.setState({quantity: ''});
   }
 
   render (){
     const { vendorName, vendorId, packagName, quantity,ingredientId,rows,
       fireRedirect ,ingredient_options,vendor_options} = this.state;
     return (
-      // <PageBase title = 'Add Ingredients' navigation = '/Application Form'>
         <div>
           <label> Place an Order </label>
             <form onSubmit={this.onFormSubmit} >
@@ -168,7 +175,6 @@ class Orders extends React.PureComponent{
                   fullWidth={true}
                   disabled={true}
                   id="packageName"
-                  // label="Package"
                   value={this.state.packageName}
                   onChange = {(event) => this.setState({ packageName: event.target.value})}
                   margin="dense"
@@ -176,14 +182,13 @@ class Orders extends React.PureComponent{
               />
             </div>
               <TextField
-                  numeric
                   required
                   fullWidth={true}
                   id="quantity"
                   label="Quantity of Package:"
                   value={this.state.quantity}
-                  onChange = {(event) => this.setState({ quantity: event.target.value})}
-                  margin="normal"
+                  onChange = {(event) => this.handleQuantityChange(event)}
+                  margin="dense"
               />
               <div style = {styles.buttons}>
                 <label> Vendor: </label>
@@ -197,7 +202,9 @@ class Orders extends React.PureComponent{
               </div>
               <div style={styles.buttons}>
                   <RaisedButton raised color = "secondary"
-                    component = {Link} to = "/dashboard">CANCEL</RaisedButton>
+                    // component = {Link} to = "/orders"
+                    onClick ={(event) => this.clearFields(event)}>
+                    CANCEL</RaisedButton>
                   <RaisedButton raised
                             color="primary"
                             // component = {Link} to = "/vendors" //commented out because it overrides onSubmit
@@ -207,7 +214,7 @@ class Orders extends React.PureComponent{
              </div>
            </form>
            {fireRedirect && (
-             <Redirect to={'/dashboard'}/>
+             <Redirect to={'/orders'}/>
            )}
          </div>
          )
