@@ -38,12 +38,12 @@ class Cart extends React.Component {
   async loadCartData(){
     var startingIndex = 0;
     var rawData = dummyData;
-    // if(READ_FROM_DATABASE){
+    if(READ_FROM_DATABASE){
       //TODO: Initialize data
-      // rawData = await vendorActions.getAllCartsAsync(testConfig.sessionId);
-    // } else {
+      rawData = await vendorActions.getAllCartsAsync(testConfig.sessionId);
+    } else {
       rawData = dummyData;
-    // }
+    }
     var processedData = [...rawData.map((row, index)=> ({
         id: startingIndex + index,...row,
       })),

@@ -58,6 +58,7 @@ class EditStorageCapacityForm extends React.Component{
 
             <form onSubmit={this.onFormSubmit}>
                 <TextField
+                    required
                     fullWidth={true}
                     id="freezer"
                     label="Freezer"
@@ -67,6 +68,7 @@ class EditStorageCapacityForm extends React.Component{
                     validations={[required]}
                 />
                 <TextField
+                    required
                     fullWidth={true}
                     id="refrigerator"
                     label="Refrigerator"
@@ -76,6 +78,7 @@ class EditStorageCapacityForm extends React.Component{
                     validations={[required]}
                 />
                 <TextField
+                    required
                     fullWidth={true}
                     id="warehouse"
                     label="Warehouse"

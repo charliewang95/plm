@@ -31,6 +31,10 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             res.status(401);
             res.send('User does not exist');
         }
+        else if (!user.loggedIn) {
+            res.status(403);
+            res.send('User is not logged in');
+        }
         else if (AdminRequired && !user.isAdmin) {
             res.status(403);
             res.send('Admin access required');
@@ -197,6 +201,26 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId) {
             return next(err);
         }
         else {
+            console.log(item);
+            item.remove(function(err) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    postProcessor.process(model, item, itemId, res, next);
+                    res.json(item);
+                }
+            });
+        }
+    });
+};
+
+var deleteWithUserAccess = function(req, res, next, model, userId, itemId) {
+    model.find({userId: userId, _id: itemId}, function(err, items) {
+        if (err) {
+            return next(err);
+        }
+        else {
             item.remove(function(err) {
                 if (err) {
                     return next(err);
@@ -204,32 +228,7 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId) {
                 else {
                     res.json(item);
                 }
-            })
+            });
         }
     });
 };
-
-//var deleteAllWithUserAccess = function(req, res, next, model, userId) {
-//    model.find({userId: userId}, function(err, items) {
-//        if (err) {
-//            return next(err);
-//        }
-//        else {
-//            for (var i = 0; i < items.length; i++) {
-//                items[i].remove(function(err) {
-//                    if (err) {
-//                        return next(err);
-//                    }
-//                });
-//                postProcessor.process(model, items[i], res, next, function(err, obj){
-//                    if (err) return next(err);
-//                })
-//            }
-//            res.json(items);
-//        }
-//    });
-//};
-
-/*
-Specifically for carts/checkout at the moment
-*/

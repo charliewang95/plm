@@ -5,8 +5,6 @@ import Card from 'material-ui/Card';
 import CardText from 'material-ui/Card';
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
-import Style from './styleLogin.css';
-import { withStyles } from 'material-ui/styles';
 
 const LoginForm = ({
     onSubmit,
@@ -38,7 +36,7 @@ const LoginForm = ({
                 <div> password </div>
                 <div className="field-line">
                     <TextField
-                        floatingLabelText="Password"
+                        floatinglabeltext="Password"
                         type="password"
                         name="password"
                         onChange={onChange}
@@ -51,7 +49,7 @@ const LoginForm = ({
                     <Button type="submit" label="Log in" primary>Log In</Button>
                 </div>
 
-                <CardText>Don't have an account? <Link to={'/signup'}>Create one</Link>.</CardText>
+                <CardText>Don't have an account? Yes, there's no register button here. I know it sucks, but please ask your administrator to create one for you.</CardText>
             </form>
         </Card>
     </div>
@@ -65,4 +63,4 @@ LoginForm.propTypes = {
   user: PropTypes.object.isRequired
 };
 
-export default withStyles(Style)(LoginForm);
+export default LoginForm;

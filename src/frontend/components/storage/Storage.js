@@ -6,6 +6,7 @@ import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Ta
 import Paper from 'material-ui/Paper';
 import storage from './dummyData.js';
 import EditStorageCapacityButton from './EditStorageCapacityButton';
+// import storageActions from '../../Storage.js';
 
 // TODO: Get whether or not the admin has logged in
 const isAdmin = true;

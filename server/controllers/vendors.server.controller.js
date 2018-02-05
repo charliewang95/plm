@@ -22,8 +22,8 @@ exports.delete = function(req, res, next) {
 	utils.doWithAccess(req, res, next, Vendor, 'delete', req.params.userId, req.params.vendorId, true);
 };
 
-exports.listNameIds = function(req, res, next) {
-    Vendor.find({}, '_id, name', function(err, vendors){
+exports.listNamesCodes = function(req, res, next) {
+    Vendor.find({}, 'name, code', function(err, vendors){
         if (err) next(err);
         else res.send(vendors);
     });

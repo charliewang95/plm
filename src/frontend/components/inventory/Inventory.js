@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 
 import {
   FilteringState,
-  IntegratedFiltering,EditingState
+  IntegratedFiltering,EditingState,
+  RowDetailState,
 } from '@devexpress/dx-react-grid';
 import {
   Grid,
@@ -16,6 +17,7 @@ import {
   TableEditColumn,
   TableColumnReordering,
   TableSelection,
+  TableRowDetail,
 } from '@devexpress/dx-react-grid-material-ui';
 
 import dummyData from './dummyData';
@@ -33,6 +35,7 @@ import Divider from 'material-ui/Divider';
 import * as cartActions from '../../interface/cartInterface';
 import * as inventoryActions from '../../interface/inventoryInterface';
 import * as testConfig from '../../../resources/testConfig.js'
+import IngredientDetail from './IngredientDetail';
 
 
 
@@ -118,6 +121,7 @@ class Inventory extends React.PureComponent {
       rows: [],
       addingItemsToCart:[],
       addedQuantity:'',
+      expandedRowIds:[],
     };
 
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
@@ -142,9 +146,15 @@ class Inventory extends React.PureComponent {
             rows[i].quantity = changed[rows[i].id].quantity;
 
             //TODO: Update the inventory
-            inventoryActions.updateInventory(rows[i].inventoryId, userId,
-              rows[i].ingredientId, rows[i].ingredientName,
-              rows[i].temperatureZone, changed[rows[i].id].quantity, sessionId);
+            try{
+              inventoryActions.updateInventory(rows[i].inventoryId, userId,
+                rows[i].ingredientId, rows[i].ingredientName,
+                rows[i].temperatureZone, changed[rows[i].id].quantity, sessionId);
+            }catch(e){
+              console.log('An error passed to the front end!')
+              //TODO: error handling in the front end
+              alert(e);
+            }
         }
       }
      }
@@ -165,13 +175,26 @@ class Inventory extends React.PureComponent {
 
               // TODO: Send in the ingredientName once it is updated in the interface
              //TODO: Send data to the cart
-             cartActions.addCart(userId, rows[index].ingredientId,
-                this.state.addedQuantity, sessionId);
+             try{
+               cartActions.addCart(userId, rows[index].ingredientId,
+                  this.state.addedQuantity, sessionId);
+              }catch(e){
+                console.log('An error passed to the front end!')
+                //TODO: error handling in the front end
+                alert(e);
+              }
          }
        });
        this.setState({ rows, addingItemsToCart: [] });
      }
    };
+
+   // Set state of the expandable rows
+   this.changeExpandedDetails = (expandedRowIds) => {
+     console.log("Changed Expanded RowIds ");
+     this.setState({ expandedRowIds });
+   }
+
  }
 
 // Initial loading of data
@@ -184,11 +207,11 @@ class Inventory extends React.PureComponent {
     var processedData=[];
     //TODO: Initialize data
     var rawData=[];
-    if(READ_FROM_DATABASE){
-      rawData = await inventoryActions.getAllInventoriesAsync(sessionId);
-    } else {
+    // if(READ_FROM_DATABASE){
+      // rawData = await inventoryActions.getAllInventoriesAsync(sessionId);
+    // } else {
       rawData = dummyData;
-    }
+    // }
 
     var startingIndex = 0;
     var processedData = [...rawData.map((row, index)=> ({
@@ -203,7 +226,7 @@ class Inventory extends React.PureComponent {
     const {classes,} = this.props;
     const { rows, columns,editingRowIds,
       rowChanges,tableColumnExtensions,
-      integratedFilteringColumnExtensions,addingItemsToCart,addedQuantity} = this.state;
+      integratedFilteringColumnExtensions,addingItemsToCart,addedQuantity,expandedRowIds} = this.state;
     return (
       <Paper>
         <Grid
@@ -224,9 +247,16 @@ class Inventory extends React.PureComponent {
             />}
 
           <IntegratedFiltering columnExtensions={integratedFilteringColumnExtensions} />
+          <RowDetailState
+                      expandedRowIds={expandedRowIds}
+                      onExpandedRowIdsChange={this.changeExpandedDetails}
+                    />
           <Table cellComponent={Cell}/>
           <TableHeaderRow />
           <TableFilterRow />
+          <TableRowDetail
+            contentComponent={IngredientDetail}
+          />
           {isAdmin &&
             <TableEditRow
               cellComponent={EditCell}
@@ -273,6 +303,7 @@ class Inventory extends React.PureComponent {
                 label="Enter Quantity (lbs)"
                 fullWidth = {false}
                 onChange={(event) => this.setState({ addedQuantity: event.target.value})}
+                verticalSpacing= "desnse"
                 style={{
                 marginLeft: 20,
                 martginRight: 20

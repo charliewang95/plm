@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var Order = mongoose.model('Order');
+var Vendor = mongoose.model('Vendor');
 var Ingredient = mongoose.model('Ingredient');
 var Storage = mongoose.model('Storage');
 var Inventory = mongoose.model('Inventory');
@@ -31,6 +32,15 @@ exports.validate = function(model, item, res, next, callback) {
              }
          });
      }
+     else if (model == Ingredient) {
+          validateIngredient(item, res, next, function(err, obj){
+              if (err) return next(err);
+              else {
+                  console.log('top '+obj);
+                  callback(err, obj);
+              }
+          });
+      }
     else {
         callback(false, true);
     }
@@ -181,4 +191,24 @@ var validateCart = function(item, res, next, callback) { //check if checked out 
             else callback(err, true);
         }
     });
+};
+
+var validateIngredient = function(item, res, next, callback) { //check if ingredient hsa vendors that doesn't exist
+    var vendors = item.vendors;
+    var counter = 0;
+    for (var i = 0; i<vendors.length; i++) {
+        counter++;
+        var vendor = vendors[i];
+        Vendor.findOne({codeUnique: vendor.code.toLowerCase()}, function(err, obj){
+            if (err) return next(err);
+            else if (!obj){
+                res.status(400);
+                res.send('Vendor '+vendor.code+' does not exist.');
+                callback(err, false);
+            }
+            else if (counter == vendors.length) {
+                callback(err, true);
+            }
+        })
+    }
 };

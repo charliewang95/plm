@@ -3,9 +3,8 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 var VendorPriceSchema = new Schema({
-    vendor: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Vendor',
+    code: {
+        type: String,
         required: true
     },
     price: {
@@ -34,7 +33,10 @@ var IngredientSchema = new Schema({
     },
     moneySpent: {
         type: Number,
-        required: true,
+        default: 0
+    },
+    moneyProd: {
+        type: Number,
         default: 0
     },
     vendors : [VendorPriceSchema]

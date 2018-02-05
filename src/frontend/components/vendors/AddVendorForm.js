@@ -38,18 +38,27 @@ class AddVendorForm extends React.Component{
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
-  onFormSubmit(e) {
+  async onFormSubmit(e) {
     console.log("SUBMIT");
     console.log("name " + this.state.name);
     console.log("contact " + this.state.code);
     console.log("code " + this.state.contact);
-
-    // TODO: Send data to the back end
-    vendorActions.addVendor(
-      this.state.name,this.state.contact,this.state.code,sessionId);
     e.preventDefault()
-    this.setState({ fireRedirect: true });
+    // TODO: Send data to the back end
+    try{
+      const response = await vendorActions.addVendor(
+      this.state.name,this.state.contact,this.state.code,sessionId);
+      this.setState({ fireRedirect: true });
     }
+    catch (e){
+      console.log('An error passed to the front end!')
+      //TODO: error handling in the front end
+      alert(e);
+    }
+
+
+
+  }
 
   render (){
     const { name, contact, code, fireRedirect } = this.state;
@@ -59,6 +68,7 @@ class AddVendorForm extends React.Component{
 
             <form onSubmit={this.onFormSubmit}>
                 <TextField
+                    required
                     fullWidth={true}
                     id="name"
                     label="Name"
@@ -67,6 +77,7 @@ class AddVendorForm extends React.Component{
                     margin="normal"
                 />
                 <TextField
+                    required
                     fullWidth={true}
                     id="contact"
                     label="Contact"
@@ -75,6 +86,7 @@ class AddVendorForm extends React.Component{
                     margin="normal"
                 />
                 <TextField
+                    required
                     fullWidth={true}
                     id="code"
                     label="Code"

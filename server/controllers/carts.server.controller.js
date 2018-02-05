@@ -49,19 +49,7 @@ var deleteAllWithUserAccess = function(req, res, next, userId) {
                         item.remove(function(err) {
                             if (err) return next(err);
                             else {
-                                postProcessor.process(Cart, item, res, next, function(err){
-                                    if (err) return next(err);
-//                                    else {
-//                                        if (i == items.length) {
-//                                             console.log(i);
-                                            //                                            if (errorMessage == '')
-                                            //                                                res.json(items);
-                                            //                                            else
-//
-//                                        }
-//
-//                                    }
-                                });
+                                postProcessor.process(Cart, item, res, next);
                             };
                         });
             }
