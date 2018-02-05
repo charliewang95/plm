@@ -10,8 +10,8 @@ const property = 'cart';
  * cart: JSON object following cart.server.model.js
  * sessionId: string, id of the current session
  */
-function addCart(cart, sessionId) {
-	return genericActions.create(baseUrl,cart,sessionId);
+async function addCart(cart, sessionId) {
+	return await genericActions.create(baseUrl,cart,sessionId);
 };
 
 /* 
@@ -38,8 +38,8 @@ async function getCartAsync(cartId, sessionId){
  * sessionId: string, id of the current session
  * cart: JSON object representing the updated info about the cart
  */
-function updateCart(cartId, sessionId, cart) {
-	return genericActions.updateById(baseUrl, property, cartId, sessionId, cart);
+async function updateCart(cartId, sessionId, cart) {
+	return await genericActions.updateById(baseUrl, property, cartId, sessionId, cart);
 };
 
 /* 
@@ -47,17 +47,17 @@ function updateCart(cartId, sessionId, cart) {
  * cartId: string, the id of the cart
  * sessionId: string, id of the current session
  */
-function deleteCart(cartId, sessionId) {
-	return genericActions.deleteById(baseUrl, property, cartId, sessionId);
+async function deleteCart(cartId, sessionId) {
+	return await genericActions.deleteById(baseUrl, property, cartId, sessionId);
 };
 
 /*
  * checkout a cart pertaining to a particular session
  * sessionId: string, id of the current session
  */
-function checkoutCart(sessionId) {
+async function checkoutCart(sessionId) {
 	const checkoutSegment = 'checkout';
-	return genericActions.deleteAll(baseUrl, checkoutSegment, sessionId);
+	return await genericActions.deleteAll(baseUrl, checkoutSegment, sessionId);
 };
 
 //export functions above for use by other modules

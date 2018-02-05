@@ -28,9 +28,9 @@ function packIntoJson(temperatureZone, capacity){
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-function addStorage(temperatureZone, capacity, sessionId) {
+async function addStorage(temperatureZone, capacity, sessionId) {
 	var newStorage = packIntoJson(temperatureZone, capacity);
-	storageActions.addStorage(newStorage, sessionId);
+	return await storageActions.addStorage(newStorage, sessionId);
 }
 
 /**
@@ -56,9 +56,9 @@ async function getStorageAsync(storageId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-function updateStorage(storageId, temperatureZone, capacity, sessionId) {
+async function updateStorage(storageId, temperatureZone, capacity, sessionId) {
 	var updatedStorage = packIntoJson(temperatureZone, capacity);
-	return storageActions.updateStorage(storageId, sessionId, updatedStorage);
+	return await storageActions.updateStorage(storageId, sessionId, updatedStorage);
 };
 
 /*
@@ -66,8 +66,8 @@ function updateStorage(storageId, temperatureZone, capacity, sessionId) {
  * storageId: string, the id of the storage
  * sessionId: string, id of the current session
  */
-function deleteStorage(storageId, sessionId) {
-	return storageActions.deleteStorage(storageId, sessionId);
+async function deleteStorage(storageId, sessionId) {
+	return await storageActions.deleteStorage(storageId, sessionId);
 };
 
 //export functions above for use by other modules

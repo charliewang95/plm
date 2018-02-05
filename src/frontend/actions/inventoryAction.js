@@ -10,8 +10,8 @@ const property = 'inventory';
  * inventory: JSON object following inventory.server.model.js
  * sessionId: string, id of the current session
  */
-function addInventory(inventory, sessionId) {
-	return genericActions.create(baseUrl,inventory,sessionId);
+async function addInventory(inventory, sessionId) {
+	return await genericActions.create(baseUrl,inventory,sessionId);
 };
 
 /* 
@@ -38,8 +38,8 @@ async function getInventoryAsync(inventoryId, sessionId){
  * sessionId: string, id of the current session
  * inventory: JSON object representing the updated info about the inventory
  */
-function updateInventory(inventoryId, sessionId, inventory) {
-	return genericActions.updateById(baseUrl, property, inventoryId, sessionId, inventory);
+async function updateInventory(inventoryId, sessionId, inventory) {
+	return await genericActions.updateById(baseUrl, property, inventoryId, sessionId, inventory);
 };
 
 /* 
@@ -47,8 +47,8 @@ function updateInventory(inventoryId, sessionId, inventory) {
  * inventoryId: string, the id of the inventory
  * sessionId: string, id of the current session
  */
-function deleteInventory(inventoryId, sessionId) {
-	return genericActions.deleteById(baseUrl, property, inventoryId, sessionId);
+async function deleteInventory(inventoryId, sessionId) {
+	return await genericActions.deleteById(baseUrl, property, inventoryId, sessionId);
 };
 
 //export functions above for use by other modules
