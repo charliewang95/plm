@@ -38,7 +38,8 @@ class LoginPage extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
-  		freezer: '',
+  		username:'',
+      password:'',
   		value:undefined,
       refrigerator:'',
       warehouse:'',
@@ -51,18 +52,29 @@ class LoginPage extends React.Component{
 
   onFormSubmit(e) {
     console.log("SUBMIT");
-    console.log("freezer " + this.state.freezer);
-    console.log("refrigerator " + this.state.refrigerator);
-    console.log("warehouse " + this.state.warehouse);
+    console.log("username " + this.state.username);
+    console.log("password " + this.state.password);
     // TODO: Send data to the back end
 
     e.preventDefault()
     this.setState({ fireRedirect: true });
     }
 
-  handleLogin(){
+  async handleLogin(){
     console.log("I was fired");
-    this.props.login(true);
+    var res = await userActions.authenticateAsync(this.state.username, this.state.password);
+    var message = "";
+    var success = false;
+    console.log(res);
+    if(res.username){
+      console.log("Hi");
+      success = true;
+    }else{
+      console.log("I was entered");
+      console.log(res.data);
+      message = "Failed";
+    }
+    this.props.login(success, message);
   }
 
 
@@ -83,8 +95,8 @@ class LoginPage extends React.Component{
                     fullWidth={true}
                     id="freezer"
                     label="Username"
-                    value={this.state.freezer}
-                    onChange = {(event) => this.setState({ freezer: event.target.value})}
+                    value={this.state.username}
+                    onChange = {(event) => this.setState({ username: event.target.value})}
                     margin="normal"
                     validations={[required]}
                 />
@@ -93,8 +105,8 @@ class LoginPage extends React.Component{
                     fullWidth={true}
                     id="refrigerator"
                     label="Password"
-                    value={this.state.Refrigerator}
-                    onChange = {(event) => this.setState({ refrigerator: event.target.value})}
+                    value={this.state.password}
+                    onChange = {(event) => this.setState({ password: event.target.value})}
                     margin="normal"
                     validations={[required]}
                 />
@@ -111,9 +123,6 @@ class LoginPage extends React.Component{
              </div>
            </form>
            </Card>
-           {fireRedirect && (
-             <Redirect to={'/storage'}/>
-           )}
          </div>
 
     )

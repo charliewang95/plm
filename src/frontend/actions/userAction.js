@@ -77,9 +77,11 @@ function deleteUser(userId, sessionId) {
  * user: JSON object containing email and password
  */
 async function authenticateAsync(user){
+	console.log("fuck");
     var completeUrl = '/users/authenticate';
 	try {
       	const res = await axios.post(completeUrl, user);
+      	console.log("You should not see me");
 		const result = res.data;
 		console.log(res);
 		return result;

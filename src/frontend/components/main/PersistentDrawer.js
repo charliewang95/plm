@@ -120,7 +120,8 @@ class PersistentDrawer extends React.Component {
         this.login = this.login.bind(this);
   }
 
-  login(key){
+  login(key, message){
+    alert(message.toString());
     this.setState({loggedIn:key});
   }
 

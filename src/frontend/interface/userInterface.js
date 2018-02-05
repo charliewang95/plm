@@ -76,15 +76,17 @@ function deleteUser(userId, sessionId) {
 
 /*
  * function that checks if user could login with provided information
- * email: string, email of the user
+ * email: string, username of the user
  * password: string, password of the user
  */
-async function authenticateAsync(email, password){
+async function authenticateAsync(username, password){
 	var userInfo = new Object();
-	userInfo.email = email;
+	userInfo.username = username;
 	userInfo.password = password;
 	try {
-      	return await userActions.authenticateAsync(userInfo);
+		var res = await userActions.authenticateAsync(userInfo);
+		console.log(res);
+		return res;
     }
     catch(e) {
       console.log('there was an error');
