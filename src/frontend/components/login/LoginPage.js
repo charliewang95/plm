@@ -27,16 +27,14 @@ class Login extends React.Component {
         event.preventDefault();
         console.log('user trying to log in');
         console.log(this.state.user);
-
-        authenticateAsync(this.state.email, this.state.password);
-
-        if (true) {
-            this.setState({
-              errors: {}
-            });
-        }
-        else {
-        }
+        console.log(authenticateAsync(this.state.user.email, this.state.user.password));
+//        if(!authenticateAsync(this.state.user.email, this.state.user.password)){
+//            this.setState({
+//              errors: {}
+//            });
+//        } else {
+//            //this.props.history.push('/dashboard');
+//        }
     }
 
     changeUser(event) {

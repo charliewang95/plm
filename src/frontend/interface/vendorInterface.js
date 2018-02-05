@@ -5,7 +5,7 @@
 //and calls actions to send the actual requests
 import * as dummyVendor from '../dummyDatas/vendor.js'
 import * as vendorActions from '../actions/vendorAction'
-
+import axios from 'axios'
 /**
 takes in various properties of vendor,
 returns a Json object that encapsulates all properties
@@ -48,6 +48,11 @@ async function getAllVendorsAsync(sessionId) {
 	console.log("Interface: getAllVendorsAsync()");
 	console.log("sessionId: " + sessionId);
 	return await vendorActions.getAllVendorsAsync(sessionId);
+}
+
+async function getAllVendorNamesCodesAsync(sessionId) {
+   const res = await axios.get('/vendors/vendorNamesCodes/user/'+sessionId);
+   return res;
 }
 
 /*

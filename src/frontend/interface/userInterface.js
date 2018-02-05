@@ -83,7 +83,6 @@ async function authenticateAsync(email, password){
 	var userInfo = new Object();
 	userInfo.email = email;
 	userInfo.password = password;
-	console.log("sdf");
 	try {
       	return await userActions.authenticateAsync(userInfo);
     }

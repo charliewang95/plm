@@ -31,6 +31,10 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             res.status(401);
             res.send('User does not exist');
         }
+        else if (!user.loggedIn) {
+            res.status(403);
+            res.send('User is not logged in');
+        }
         else if (AdminRequired && !user.isAdmin) {
             res.status(403);
             res.send('Admin access required');
