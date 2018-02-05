@@ -17,7 +17,7 @@ import testVendorData from '../vendors/dummyData.js';
 
 
 //TODO: get session Id
-const userId = "5a63be959144b37a6136491e";
+const userId = "5a765f3d9de95bea24f905d9";
 const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
@@ -41,7 +41,7 @@ class Orders extends React.PureComponent{
       vendorId:'',
   		value:undefined,
       packagName:'',
-      quantity:'',
+      quantity:0,
       ingredientId:'',
       rows:[],
       fireRedirect: false,
@@ -59,48 +59,54 @@ class Orders extends React.PureComponent{
   }
 
    async loadAllIngredients(){
+     console.log(" LOAD ALL INGREDIENTS");
      var rawData = [];
     if(READ_FROM_DATABASE){
       rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
+      console.log("data from DB " + JSON.stringify(rawData));
     }else{
     rawData = dummyData;
-
+    }
+    // console.log(" Comes here ");
+    // console.log(" RAW DATA " + JSON.stringify(rawData));
     // Gets the ingredient Options from the data
     var parsedIngredientOptions = [...rawData.map((row, index)=> ({
         value: row._id,label: row.name,packageName: row.packageName,
       })),
-    ];
+    ]; 
 
+    console.log("parsedIngredientOptions" + JSON.stringify(parsedIngredientOptions));
     this.setState({ingredient_options:parsedIngredientOptions});
 
     console.log("Ingredient Options " + JSON.stringify(parsedIngredientOptions));
     // console.log(" Ingredient Options " + JSON.stringify(this.state.ingredient_options));
     // Set the options for the ingredients
     }
-  }
+
 
   async handleIngredientChange(option) {
-    console.log(" Ingredient Selected ");
+    console.log(" Ingredient Selected " + option.label);
 
     console.log("Package Name " + option.packageName);
 
     this.setState({packageName:option.packageName});
     this.setState({ingredientId:option.value});
-
+    var ingredientDetails = "";
     //TODO: get vendors list for the selected ingredient
     try{
-      var ingredientDetails = ingredientActions.getIngredientAsync(option.value,sessionId);
-      // var ingredientDetails = dummyData[1];
-      var parsedVendorOptions = [...ingredientDetails.vendors.map((row,index)=> ({
-          value: row.vendorId,label: (row.vendorName + " / Price: $ " + row.price),
-          price: row.price,
-        })),
-      ];
+       ingredientDetails = await ingredientActions.getIngredientAsync(option.value,sessionId);
     }catch(e){
       console.log('An error passed to the front end!')
-      //TODO: error handling in the front end
       alert(e);
     }
+    console.log("Vendors " + JSON.stringify(ingredientDetails.vendors));
+
+    var parsedVendorOptions = [...ingredientDetails.vendors.map((row,index)=> ({
+        value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
+        price: row.price,
+      })),
+    ];
+    console.log("Vendor options " + JSON.stringify(parsedVendorOptions));
     this.setState({vendor_options:parsedVendorOptions});
   }
 
@@ -109,6 +115,7 @@ class Orders extends React.PureComponent{
     console.log("Vendor Changed");
     console.log(" value " + option.value);
     console.log(" label " + option.label);
+    console.log(" price " + option.price);
     console.log(" price " + option.price);
 
     this.setState({vendorId: option.value});
@@ -165,10 +172,11 @@ class Orders extends React.PureComponent{
                   value={this.state.packageName}
                   onChange = {(event) => this.setState({ packageName: event.target.value})}
                   margin="dense"
-                  verticalSpacing= "dense"
+
               />
             </div>
               <TextField
+                  numeric
                   required
                   fullWidth={true}
                   id="quantity"

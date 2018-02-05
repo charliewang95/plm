@@ -1,5 +1,5 @@
 //orderInterface.js
-//This interface is to be used by the front-end 
+//This interface is to be used by the front-end
 //It accepts string input as texts that follows the data-base schema
 //creates the corresponding json object if necessary
 //and calls actions to send the actual requests
@@ -8,7 +8,7 @@ import * as orderActions from '../actions/orderAction'
 
 /**
 takes in various properties of order,
-returns a Json object that encapsulates all properties 
+returns a Json object that encapsulates all properties
 userId: string, the id of the current user issueing the order
 ingredientId: string, id of the type of ingredient being ordered
 vendorId: string, string, id of the vendor that the user is ordering from
@@ -20,7 +20,7 @@ function packIntoJson(userId, ingredientId, vendorId, _package, price){
 	orderJson.userId = userId;
 	orderJson.ingredientId = ingredientId;
 	orderJson.vendorId = vendorId;
-	orderJson.package = _package;
+	orderJson.packageNum = _package;
 	orderJson.price = price;
 	console.log("JSON");
 	console.log(orderJson);
@@ -45,7 +45,7 @@ async function getAllOrdersAsync(sessionId) {
 	return await orderActions.getAllOrdersAsync(sessionId);
 }
 
-/* 
+/*
  * get one order
  * orderId: string, the id of the order
  * sessionId: string, id of the current session
@@ -54,7 +54,7 @@ async function getOrderAsync(orderId, sessionId) {
 	return await orderActions.getOrderAsync(orderId, sessionId);
 };
 
-/* 
+/*
  * update one order
  * orderId: string, the id of the order
  * other arguments: see packIntoJson()
@@ -65,7 +65,7 @@ async function updateOrder(orderId, userId, ingredientId, vendorId, _package, pr
 	return await orderActions.updateOrder(orderId, sessionId, updatedOrder);
 };
 
-/* 
+/*
  * delete one existing order
  * orderId: string, the id of the order
  * sessionId: string, id of the current session

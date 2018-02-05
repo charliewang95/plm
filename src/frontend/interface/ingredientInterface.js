@@ -1,5 +1,5 @@
 //ingredientInterface.js
-//This interface is to be used by the front-end 
+//This interface is to be used by the front-end
 //It accepts string input as texts that follows the data-base schema
 //creates the corresponding json object if necessary
 //and calls actions to send the actual requests
@@ -8,7 +8,7 @@ import * as ingredientActions from '../actions/ingredientAction'
 
 /**
 takes in various properties of ingredient,
-returns a Json object that encapsulates all properties 
+returns a Json object that encapsulates all properties
 name: string
 packageType: string 'Sack', 'Pail', 'Drum', 'Supersack', 'Truckload', 'Railcar', or lowercase
 temperatureZone: string 'freezer', 'refrigerator', 'warehouse', 'Freezer', 'Refrigerator', 'Warehouse'
@@ -45,7 +45,7 @@ async function getAllIngredientsAsync(sessionId) {
 	return await ingredientActions.getAllIngredientsAsync(sessionId);
 }
 
-/* 
+/*
  * get one ingredient
  * ingredientId: string, the id of the ingredient
  * sessionId: string, id of the current session
@@ -54,7 +54,7 @@ async function getIngredientAsync(ingredientId, sessionId) {
 	return await ingredientActions.getIngredientAsync(ingredientId, sessionId);
 };
 
-/* 
+/*
  * update one ingredient
  * ingredientId: string, the id of the ingredient
  * other arguments: see packIntoJson()
@@ -65,7 +65,7 @@ async function updateIngredient(ingredientId, name, packageType, temperatureZone
 	return await ingredientActions.updateIngredient(ingredientId, sessionId, updatedIngredient);
 };
 
-/* 
+/*
  * delete one existing ingredient
  * ingredientId: string, the id of the ingredient
  * sessionId: string, id of the current session
