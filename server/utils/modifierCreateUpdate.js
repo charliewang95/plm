@@ -52,7 +52,7 @@ var modifyOrder = function(item, res, next, callback) { //add number of pounds t
                     var vendors = ingredient.vendors;
                     for (var i = 0; i < vendors.length; i++) {
                         var vendor = vendors[i];
-                        if (vendor.vendor.toString() === item.vendorId.toString()) {
+                        if (vendor.vendorId.toString() === item.vendorId.toString()) {
                             fail = false;
                             price = vendor.price;
                             str = str.slice(0,-1)+',"price":'+price+',"totalPrice":'+price*pounds+'}';
@@ -175,7 +175,7 @@ var modifyIngredient = function(action, item, itemId, res, next, callback) {
                 res.send('Vendor '+vendor.code+' does not exist.');
             }
             else {
-                var str = JSON.stringify(vendor).slice(0,-1)+',"vendorName":"'+obj.name+'"}';
+                var str = JSON.stringify(vendor).slice(0,-1)+',"vendorName":"'+obj.name+'","vendorId":"'+obj._id+'"}';
                 newVendor = JSON.parse(str);
                 newVendors.push(newVendor);
                 if (counter == vendors.length) {
