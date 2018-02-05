@@ -36,7 +36,6 @@ exports.validate = function(model, item, res, next, callback) {
           validateIngredient(item, res, next, function(err, obj){
               if (err) return next(err);
               else {
-                  console.log('top '+obj);
                   callback(err, obj);
               }
           });
@@ -194,22 +193,26 @@ var validateCart = function(item, res, next, callback) { //check if checked out 
     });
 };
 
-var validateIngredient = function(item, res, next, callback) { //check if ingredient hsa vendors that doesn't exist
+var validateIngredient = function(item, res, next, callback) { //check if ingredient haa vendors that doesn't exist
     var vendors = item.vendors;
-    var counter = 0;
-    for (var i = 0; i<vendors.length; i++) {
-        counter++;
-        var vendor = vendors[i];
-        Vendor.findOne({codeUnique: vendor.code.toLowerCase()}, function(err, obj){
-            if (err) return next(err);
-            else if (!obj){
-                res.status(400);
-                res.send('Vendor '+vendor.code+' does not exist.');
-                callback(err, false);
-            }
-            else if (counter == vendors.length) {
-                callback(err, true);
-            }
-        })
+    if (vendors == null || vendors.length == 0){
+            callback(0, item);
+    } else {
+        var counter = 0;
+        for (var i = 0; i<vendors.length; i++) {
+            counter++;
+            var vendor = vendors[i];
+            Vendor.findOne({codeUnique: vendor.code.toLowerCase()}, function(err, obj){
+                if (err) return next(err);
+                else if (!obj){
+                    res.status(400);
+                    res.send('Vendor '+vendor.code+' does not exist.');
+                    callback(err, false);
+                }
+                else if (counter == vendors.length) {
+                    callback(err, true);
+                }
+            })
+        }
     }
 };

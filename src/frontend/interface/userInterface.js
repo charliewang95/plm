@@ -79,19 +79,21 @@ async function deleteUser(userId, sessionId) {
  * email: string, email of the user
  * password: string, password of the user
  */
-async function authenticateAsync(email, password){
+async function authenticateAsync(username, password, callback){
 	var userInfo = new Object();
-	userInfo.email = email;
+	userInfo.username = username;
 	userInfo.password = password;
-	try {
-      	return await userActions.authenticateAsync(userInfo);
-    }
-    catch(e) {
-      console.log('there was an error');
-      console.log(e); 
-      //TODO: different error message for different types of error
-      throw e;
-    }
+//	try {
+      	await userActions.authenticateAsync(userInfo, function(obj){
+      	    callback(obj);
+      	});
+//    }
+//    catch(e) {
+//      console.log('there was an error');
+//      console.log(e);
+//      //TODO: different error message for different types of error
+//      throw e;
+//    }
 }
 
 //export functions above for use by other modules

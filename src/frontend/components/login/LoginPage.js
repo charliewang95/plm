@@ -14,7 +14,7 @@ class Login extends React.Component {
             errors: {},
             successMessage :'',
             user: {
-                email: '',
+                username: '',
                 password: ''
             }
         };
@@ -27,8 +27,10 @@ class Login extends React.Component {
         event.preventDefault();
         console.log('user trying to log in');
         console.log(this.state.user);
-        var res = await authenticateAsync(this.state.user.email, this.state.user.password);
-        console.log(res);
+        await authenticateAsync(this.state.user.username, this.state.user.password, function(res){
+            console.log(res);
+        });
+
 //        if(!authenticateAsync(this.state.user.email, this.state.user.password)){
 //            this.setState({
 //              errors: {}

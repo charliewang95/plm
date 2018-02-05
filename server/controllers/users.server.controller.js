@@ -118,11 +118,11 @@ exports.delete = function(req, res, next) {
 //}
 
 exports.authenticate = function(req, res, next) {
-    User.findOne({email: req.body.email}, function(err, user){
+    User.findOne({username: req.body.username}, function(err, user){
         console.log(req.body);
         if (err) return next(err);
         else if (!user) {
-            //res.status(400);
+            res.status(400);
             res.send("Username does not exist");
         }
         else {

@@ -26,8 +26,8 @@ const LoginForm = ({
 
                     <TextField
                         floatingLabelText="Email"
-                        name="email"
-                        errorText={errors.email}
+                        name="username"
+                        errorText={errors.username}
                         onChange={onChange}
                         value={user.email}
                     />
