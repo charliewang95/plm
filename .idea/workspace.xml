@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="3862f87b-362e-4c1c-a738-cd70a2ba3d34" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/src/frontend/components/inventory/IngredientDetail.js" afterPath="$PROJECT_DIR$/src/frontend/components/inventory/IngredientDetail.js" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/components/inventory/Inventory.js" afterPath="$PROJECT_DIR$/src/frontend/components/inventory/Inventory.js" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -24,17 +23,17 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="IngredientDetail.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="IngredientDetail.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/frontend/components/inventory/IngredientDetail.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="598">
-              <caret line="48" column="33" lean-forward="true" selection-start-line="48" selection-start-column="33" selection-end-line="48" selection-end-column="33" />
+            <state relative-caret-position="390">
+              <caret line="26" column="0" lean-forward="true" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Report.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Report.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/frontend/components/report/Report.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
@@ -946,18 +945,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/frontend/components/inventory/IngredientDetail.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="598">
-          <caret line="48" column="33" lean-forward="true" selection-start-line="48" selection-start-column="33" selection-end-line="48" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/frontend/components/report/Report.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/frontend/components/inventory/IngredientDetail.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" column="0" lean-forward="true" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
           <folding />
         </state>
       </provider>
