@@ -135,7 +135,7 @@ async function getByIdAsync(url, propertyName, objectId, sessionId) {
 	const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName, objectId]);
 	const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
 	const res = await axios.get(completeUrl);
-	return res;
+	return res.data;
 };
 
 /* 

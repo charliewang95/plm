@@ -175,7 +175,7 @@ class Inventory extends React.PureComponent {
 
              //TODO: Send data to the cart
              try{
-               cartActions.addCart(userId, rows[index].ingredientId,
+               cartActions.addCart(userId, rows[index].ingredientId, rows[index].ingredientName,
                   this.state.addedQuantity, sessionId);
               }catch(e){
                 console.log('An error passed to the front end!')
@@ -206,11 +206,11 @@ class Inventory extends React.PureComponent {
     var processedData=[];
     //TODO: Initialize data
     var rawData=[];
-    // if(READ_FROM_DATABASE){
-      // rawData = await inventoryActions.getAllInventoriesAsync(sessionId);
-    // } else {
+     if(READ_FROM_DATABASE){
+       rawData = await inventoryActions.getAllInventoriesAsync(sessionId);
+     } else {
       rawData = dummyData;
-    // }
+     }
 
     var startingIndex = 0;
     var processedData = [...rawData.map((row, index)=> ({
@@ -296,6 +296,7 @@ class Inventory extends React.PureComponent {
             <Divider />
             <Paper>
               <TextField
+                required
                 autoFocus
                 margin="dense"
                 id="quantity"

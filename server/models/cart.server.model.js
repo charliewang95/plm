@@ -14,8 +14,8 @@ var CartSchema = new Schema({
         required: true
 	},
 	ingredientName: {
-    		type: String,
-            required: true
+        type: String,
+        required: true
     },
 	quantity: { // in pounds
 	    type: Number,
