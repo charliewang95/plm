@@ -118,29 +118,41 @@ class SelectVendors extends Component {
   deleteVendor(index){
     if (index !== -1) {
       console.log("delete");
-      console.log(this.state.vendorsArray);
-      var updateVendor = this.state.vendorsArray.slice();
-      updateVendor.splice(index,1);
-      this.setState({vendorsArray: updateVendor});
+      // var updateVendor = this.state.vendorsArray.slice();
+      // updateVendor.splice(index, 1);
+      // console.log("deletedArray");
+      // console.log(updateVendor);
+      // this.setState({vendorsArray: updateVendor});
+      this.state.vendorsArray.splice(index, 1);
+      this.setState({vendorsArray:this.state.vendorsArray});
+      this.props.handleChange(this.state.vendorsArray);
     }
-    this.props.handleChange(this.state.vendorsArray);
+
   }
 
   updateId (vendor, index) {
     console.log("updateId is fired");
     if(index!=-1){
-      var updateVendor = this.state.vendorsArray.slice();
-      updateVendor[index].vendor = vendor.id;
-      this.setState({vendorsArray: updateVendor});
+      // var updateVendor = this.state.vendorsArray.slice();
+      // updateVendor[index].vendor = vendor.id;
+      // this.setState({vendorsArray: updateVendor});
+      this.state.vendorsArray[index].vendor = vendor.id;
+      this.setState({vendorsArray: this.state.vendorsArray});
+      this.props.handleChange(this.state.vendorsArray);
     }
   }
 
   updatePrice (newPrice, index){
     console.log(newPrice.target.value);
-    if(index>0){
-      var updateVendor = this.state.vendorsArray.slice();
-      updateVendor[index].price = newPrice.target.value;
-      this.setState({vendorsArray:updateVendor});
+    var price = newPrice.target.value;
+    var isEmpty = (!price || (price.length==0));
+    if(index>0 && !isEmpty){
+      // var updateVendor = this.state.vendorsArray.slice();
+      // updateVendor[index].price = newPrice.target.value;
+      // this.setState({vendorsArray: updateVendor});
+      this.state.vendorsArray[index].price = price;
+      this.setState({vendorsArray: this.state.vendorsArray});
+      this.props.handleChange(this.state.vendorsArray);
     }
   }
 
