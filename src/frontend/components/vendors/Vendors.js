@@ -102,8 +102,8 @@ class Vendors extends React.PureComponent
       rowChanges: {},
       currentPage: 0,
       deletingRows: [],
-      pageSize: 0,
-      pageSizes: [5, 10, 0],
+      pageSize: 5,
+      pageSizes: [5,10,0],
       columnOrder: ['name', 'contact', 'code'],
     };
 

@@ -14,7 +14,8 @@ import Divider from 'material-ui/Divider';
 
 import dummyData from './dummyData.js';
 import testVendorData from '../vendors/dummyData.js';
-
+import SimpleTable from './packageTable.js';
+import Typography from 'material-ui/Typography';
 
 //TODO: get session Id
 const userId = "5a765f3d9de95bea24f905d9";
@@ -30,6 +31,9 @@ const styles = {
     },
     saveButton: {
       marginLeft: 5
+    },
+    calculateButton:{
+      marginLeft: 100
     }
   };
 
@@ -40,6 +44,7 @@ class Orders extends React.PureComponent{
     this.state = {
   		vendorName:'',
       vendorId:'',
+      price: 0,
   		value:undefined,
       packagName:'',
       quantity:'',
@@ -48,10 +53,12 @@ class Orders extends React.PureComponent{
       fireRedirect: false,
       ingredient_options:[],
       vendor_options:[],
+      total: 0,
       }
 
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.handleVendorChange = this.handleVendorChange.bind(this);
+    this.calculate = this.calculate.bind(this);
   }
 
   // load all the ingredients initially
@@ -136,6 +143,10 @@ class Orders extends React.PureComponent{
         alert(" Quantity must be a number.");
       }
   }
+ 
+ componentDidUpdate(){
+  this.calculate();
+ }
 
  async onFormSubmit(e) {
     console.log("SUBMIT");
@@ -166,6 +177,29 @@ class Orders extends React.PureComponent{
     this.clearFields();
   }
 
+  packageWeight(){
+    if(this.state.packageName=='drum'){
+      return 500;
+    }
+    else if(this.state.packageName=='supersack'){
+      return 2000;
+    }else if(this.state.packageName=='truckload'){
+      return 5000;
+    }else if(this.state.packageName=='railcar'){
+      return 280000
+    }else{
+      return 50;
+    }
+  }
+
+  calculate(){
+    console.log("clicked!");
+    var packageWeight = this.packageWeight();
+    var tempTotal = this.state.quantity * this.state.price * packageWeight;
+    console.log(tempTotal);
+    this.setState({total: tempTotal});
+  }
+
   clearFields(){
     console.log(" Comes HERE ");
     this.setState({vendorName:""});
@@ -181,10 +215,10 @@ class Orders extends React.PureComponent{
       fireRedirect ,ingredient_options,vendor_options} = this.state;
     return (
         <div>
-          <label> Place an Order </label>
+         <p><font size="6">Place an Order</font></p>
             <form onSubmit={this.onFormSubmit} >
               <div style = {styles.buttons}>
-                <label> Ingredient Name: </label>
+                 <p><font size="3">Ingredient Name:</font></p>
                 <Select
                   required
         					multi={false}
@@ -194,7 +228,7 @@ class Orders extends React.PureComponent{
                 />
               </div>
             <div style = {styles.buttons}>
-              <label> Package: </label>
+              <label> Package (Refer to the table below): </label>
               <TextField
                   fullWidth={true}
                   disabled={true}
@@ -202,20 +236,20 @@ class Orders extends React.PureComponent{
                   value={this.state.packageName}
                   onChange = {(event) => this.setState({ packageName: event.target.value})}
                   margin="dense"
-
               />
             </div>
+            <br></br>
+            <label> Quantity of Package: </label>
               <TextField
                   required
                   fullWidth={true}
                   id="quantity"
-                  label="Quantity of Package:"
                   value={this.state.quantity}
                   onChange = {(event) => this.handleQuantityChange(event)}
                   margin="dense"
               />
               <div style = {styles.buttons}>
-                <label> Vendor: </label>
+                <p><font size="3">Vendor</font></p>
                 <Select
                   required
                   multi={false}
@@ -224,6 +258,10 @@ class Orders extends React.PureComponent{
                   value = {vendorId}
                 />
               </div>
+              <p><font size="6">Current Total: $ {this.state.total}</font></p>
+              <Divider></Divider>
+              <br></br>
+              <SimpleTable />
               <div style={styles.buttons}>
                   <RaisedButton raised color = "secondary"
                     // component = {Link} to = "/orders"
@@ -234,7 +272,7 @@ class Orders extends React.PureComponent{
                             // component = {Link} to = "/vendors" //commented out because it overrides onSubmit
                             style={styles.saveButton}
                             type="Submit"
-                            primary="true"> SAVE </RaisedButton>
+                            primary="true"> ORDER </RaisedButton>
              </div>
            </form>
            {fireRedirect && (
