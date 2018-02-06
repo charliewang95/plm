@@ -17,7 +17,7 @@ vendors: array of objects following the VendorPriceSchema
 function packIntoJson(name, packageType, temperatureZone, vendors){
 	var ingredientJson = new Object();
 	ingredientJson.name = name;
-	ingredientJson.package = packageType;
+	ingredientJson.packageName = packageType;
 	ingredientJson.temperatureZone = temperatureZone;
 	ingredientJson.vendors = vendors;
 	console.log("JSON");
@@ -30,17 +30,19 @@ function packIntoJson(name, packageType, temperatureZone, vendors){
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-function addIngredient(name, packageType, temperatureZone, vendors, sessionId) {
+async function addIngredient(name, packageType, temperatureZone, vendors, sessionId) {
+	console.log("add ingredients");
+	console.log(vendors);
 	var newIngredient = packIntoJson(name, packageType, temperatureZone, vendors);
-	ingredientActions.addIngredient(newIngredient, sessionId);
+	return await ingredientActions.addIngredient(newIngredient, sessionId);
 }
 
 /**
  * get all ingredients
  * sessionId: string, id of the current session
 **/
-function getAllIngredientsAsync(sessionId) {
-	return ingredientActions.getAllIngredientsAsync(sessionId);
+async function getAllIngredientsAsync(sessionId) {
+	return await ingredientActions.getAllIngredientsAsync(sessionId);
 }
 
 /* 
@@ -48,8 +50,8 @@ function getAllIngredientsAsync(sessionId) {
  * ingredientId: string, the id of the ingredient
  * sessionId: string, id of the current session
  */
-function getIngredientAsync(ingredientId, sessionId) {
-	return ingredientActions.getIngredientAsync(ingredientId, sessionId);
+async function getIngredientAsync(ingredientId, sessionId) {
+	return await ingredientActions.getIngredientAsync(ingredientId, sessionId);
 };
 
 /* 
@@ -58,9 +60,9 @@ function getIngredientAsync(ingredientId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-function updateIngredient(ingredientId, name, packageType, temperatureZone, vendors, sessionId) {
+async function updateIngredient(ingredientId, name, packageType, temperatureZone, vendors, sessionId) {
 	var updatedIngredient = packIntoJson(name, packageType, temperatureZone, vendors);
-	return ingredientActions.updateIngredient(ingredientId, sessionId, updatedIngredient);
+	return await ingredientActions.updateIngredient(ingredientId, sessionId, updatedIngredient);
 };
 
 /* 
@@ -68,8 +70,8 @@ function updateIngredient(ingredientId, name, packageType, temperatureZone, vend
  * ingredientId: string, the id of the ingredient
  * sessionId: string, id of the current session
  */
-function deleteIngredient(ingredientId, sessionId) {
-	return ingredientActions.deleteIngredient(ingredientId, sessionId);
+async function deleteIngredient(ingredientId, sessionId) {
+	return await ingredientActions.deleteIngredient(ingredientId, sessionId);
 };
 
 //export functions above for use by other modules

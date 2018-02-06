@@ -28,20 +28,19 @@ exports.renderRegister = function(req, res, next) {
 
 exports.register = function(req, res, next) {
 	if (!req.user) {
+	    console.log("here");
 		var user = new User(req.body);
-		var message = null;
-		user.provider = 'local';
+		console.log(user);
 		user.save(function(err) {
 			if (err) {
-				var message = getErrorMessage(err);
-				req.flash('error', message);
+				//var message = getErrorMessage(err);
+				//req.flash('error', message);
 				return res.redirect('/register');
 			}	
 
 			req.login(user, function(err) {
 				if (err) 
 					return next(err);
-				
 				return res.redirect('/');
 			});
 		});
@@ -117,3 +116,24 @@ exports.delete = function(req, res, next) {
 //        if (err)
 //    });
 //}
+
+exports.authenticate = function(req, res, next) {
+    User.findOne({email: req.body.email}, function(err, user){
+        console.log(req.body);
+        if (err) return next(err);
+        else if (!user) {
+            //res.status(400);
+            res.send("Error. This email is not linked to any account");
+        }
+        else {
+            if (user.authenticate(req.body.password)) {
+                user.update({loggedIn: true}, function(err, obj){
+                    //res.send(JSON.stringify(obj));
+                });
+            } else {
+                //res.status(400);
+                res.send("Error. Incorrect password.");
+            }
+        }
+    });
+}

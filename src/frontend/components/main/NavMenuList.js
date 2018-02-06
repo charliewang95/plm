@@ -5,8 +5,11 @@ import DashboardIcon from 'material-ui-icons/Dashboard'; //Dashboard
 import AndroidIcon from 'material-ui-icons/Android'; //Admin
 import AttachMoneyIcon from 'material-ui-icons/AttachMoney'; //Orders
 import KitchenIcon from 'material-ui-icons/Kitchen'; //Storage
-import ShoppingCartIcon from 'material-ui-icons/ShoppingCart'; //Inventory
+import InventoryIcon from 'material-ui-icons/Assignment';//Inventory
 import LocalPizzaIcon from 'material-ui-icons/LocalPizza'; //Ingredients
+import VendorsIcon from 'material-ui-icons/Group'; // Vendors
+import ShoppingCartIcon from 'material-ui-icons/ShoppingCart'; // Cart
+import ReportIcon from 'material-ui-icons/Receipt'; // Report
 
 export const UserListItems = (
   <div>
@@ -34,23 +37,41 @@ export const MainListItems = (
       </ListItemIcon>
       <ListItemText primary="Ingredients (User)" />
     </ListItem>
-    <ListItem component={Link} to="/orders" button> 
+    <ListItem component={Link} to="/orders" button>
       <ListItemIcon>
         <AttachMoneyIcon />
       </ListItemIcon>
       <ListItemText primary="Orders" />
     </ListItem>
-    <ListItem component={Link} to="/inventory" button> 
+    <ListItem component={Link} to="/inventory" button>
       <ListItemIcon>
-        <ShoppingCartIcon/>
+        <InventoryIcon/>
       </ListItemIcon>
       <ListItemText primary="Inventory" />
     </ListItem>
-    <ListItem component={Link} to="/storage" button> 
+    <ListItem component={Link} to="/storage" button>
       <ListItemIcon>
         <KitchenIcon />
       </ListItemIcon>
       <ListItemText primary="Storage" />
+    </ListItem>
+    <ListItem component={Link} to="/vendors" button>
+      <ListItemIcon>
+        <VendorsIcon />
+      </ListItemIcon>
+      <ListItemText primary="Vendors" />
+    </ListItem>
+    <ListItem component={Link} to="/cart" button>
+      <ListItemIcon>
+        <ShoppingCartIcon />
+      </ListItemIcon>
+      <ListItemText primary="Cart" />
+    </ListItem>
+    <ListItem component={Link} to="/report" button>
+      <ListItemIcon>
+        <ReportIcon />
+      </ListItemIcon>
+      <ListItemText primary="Report" />
     </ListItem>
   </div>
 );

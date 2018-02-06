@@ -5,5 +5,5 @@ module.exports = function(app) {
     app.route('/vendors/user/:userId').post(vendors.create);
     app.route('/vendors/user/:userId').get(vendors.list);
     app.route('/vendors/vendor/:vendorId/user/:userId').put(vendors.update).get(vendors.read).delete(vendors.delete);
-    //app.route('/vendors/vendorNames').get()
+    app.route('/vendors/vendorNamesCodes/user/:userId').get(vendors.listNamesCodes);
 };
