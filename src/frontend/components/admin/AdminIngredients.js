@@ -326,7 +326,9 @@ class AdminIngredients extends React.PureComponent {
         ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone, added[0].vendorsArray, sessionId, function(res){
             if (res.status == 400) {
                 alert(res.data);
-            }
+            } else if (res.status == 500) {
+              alert('Ingredient name already exists');
+          }
         });
 
       }
@@ -371,7 +373,7 @@ class AdminIngredients extends React.PureComponent {
                 if (res.status == 400) {
                     alert(res.data);
                 } else if (res.status == 500) {
-                    alert('Ingredient name and temperature zone combination already exists');
+                    alert('Ingredient name already exists');
                 } else {
 
                     console.log("sdfadfsdf");
