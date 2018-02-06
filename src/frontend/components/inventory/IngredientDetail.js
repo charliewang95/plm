@@ -25,14 +25,18 @@ const dummyData = {_id: "ID1", name: "pepper",packageName: "sack",temperatureZon
                     vendors: [{code: "ID1", price: "10"},{code: "ID2", price: "15"}],
                     moneySpent:"500", moneyProd: "400"};
 
-const IngredientDetail  = async ({row}) => {
+const IngredientDetail = ({row}) => {
   console.log("Details for " + row.ingredientName + " " + row.ingredientId);
   var ingredientDetail = "";
+  //state={ingredientDetail: ""};
   if(READ_FROM_DATABASE){
      try{
         // TODO: load ingredient details from the backend
-        ingredientDetail = await ingredientActions.getIngredientAsync(row.ingredientId,sessionId);
-        console.log(ingredientDetail);
+        console.log(row.ingredientId);
+        ingredientActions.getIngredientAsync(row.ingredientId,sessionId, function(obj){
+            ingredientDetail = obj;
+        });
+//        ingredientDetail = helper(row.ingredientId,sessionId);
        }catch(e){
          console.log(" Error sent to front end");
          alert(e);
@@ -46,6 +50,7 @@ const IngredientDetail  = async ({row}) => {
     var vendorString = ""
 
     console.log("vendorString " + vendorString);
+
   return (
       <div>
         <div> MoneySpent (Orders): {ingredientDetail.moneySpent} </div>
@@ -53,5 +58,7 @@ const IngredientDetail  = async ({row}) => {
        </div>
   );
 };
+
+
 
 export default IngredientDetail;

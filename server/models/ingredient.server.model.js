@@ -3,7 +3,7 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 var VendorPriceSchema = new Schema({
-    code: {
+    codeUnique: {
         type: String,
         required: true
     },
@@ -26,8 +26,8 @@ mongoose.model('VendorPrice', VendorPriceSchema);
 var IngredientSchema = new Schema({
     name: {
         type: String,
-        unique: true,
-        required: true
+        required: true,
+        lowercase: true
     },
     packageName: {
         type: String,
@@ -50,6 +50,8 @@ var IngredientSchema = new Schema({
     },
     vendors : [VendorPriceSchema]
 });
+
+IngredientSchema.index({ name: 1, packageName: 1}, { unique: true });
 
 IngredientSchema.methods.getPackagePounds = function(packageName, callback) {
     if (packageName == 'sack' || packageName == 'pail')

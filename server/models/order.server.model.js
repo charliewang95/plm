@@ -54,7 +54,9 @@ OrderSchema.statics.getNumPounds = function(ingredientId, package, res, next, ca
                     res.status(400);
                     res.send("Package name doesn't exist");
                 }
-                else callback(err, pounds*package);
+                else {
+                    callback(err, pounds*package);
+                }
             });
         }
     });

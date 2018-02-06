@@ -56,7 +56,7 @@ var modifyOrder = function(item, res, next, callback) { //add number of pounds t
                             fail = false;
                             price = vendor.price;
                             str = str.slice(0,-1)+',"price":'+price+',"totalPrice":'+price*pounds+'}';
-                            moneySpent = ingredient.moneySpent;
+                            var moneySpent = ingredient.moneySpent;
                             ingredient.update({moneySpent: moneySpent + price*pounds}, function(err, obj) {
                                 if (err) return next(err);
                                 else {
@@ -165,24 +165,28 @@ var modifyVendor = function(action, item, itemId, res, next, callback) { //add u
 var modifyIngredient = function(action, item, itemId, res, next, callback) {
     var counter = 0;
     var vendors = item.vendors;
-    var newVendors = [];
-    for (var i = 0; i<vendors.length; i++) {
-        counter++;
-        var vendor = vendors[i];
-        Vendor.findOne({codeUnique: vendor.code.toLowerCase()}, function(err, obj){
-            if (err) next(err);
-            else if (!obj) {
-                res.send('Vendor '+vendor.code+' does not exist.');
-            }
-            else {
-                var str = JSON.stringify(vendor).slice(0,-1)+',"vendorName":"'+obj.name+'","vendorId":"'+obj._id+'"}';
-                newVendor = JSON.parse(str);
-                newVendors.push(newVendor);
-                if (counter == vendors.length) {
-                    item.vendors = newVendors;
-                    callback(0, item);
+    if (vendors == null || vendors.length == 0){
+        callback(0, item);
+    } else {
+        var newVendors = [];
+        for (var i = 0; i<vendors.length; i++) {
+            counter++;
+            var vendor = vendors[i];
+            Vendor.findOne({codeUnique: vendor.code.toLowerCase()}, function(err, obj){
+                if (err) next(err);
+                else if (!obj) {
+                    res.send('Vendor '+vendor.code+' does not exist.');
                 }
-            }
-        });
+                else {
+                    var str = JSON.stringify(vendor).slice(0,-1)+',"vendorName":"'+obj.name+'","vendorId":"'+obj._id+'"}';
+                    newVendor = JSON.parse(str);
+                    newVendors.push(newVendor);
+                    if (counter == vendors.length) {
+                        item.vendors = newVendors;
+                        callback(0, item);
+                    }
+                }
+            });
+        }
     }
 };

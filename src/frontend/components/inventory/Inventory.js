@@ -42,6 +42,7 @@ import IngredientDetail from './IngredientDetail';
 //TODO: Get if it ADMIN
 var  isAdmin= true;
 const userId = "5a63be959144b37a6136491e";
+// const sessionId = "5a63be959144b37a6136491e";
 const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
@@ -50,7 +51,8 @@ const Cell = (props)=>{
     style={{
             whiteSpace: "normal",
             wordWrap: "break-word"
-          }}/>
+          }}
+        />
 };
 
 
@@ -60,7 +62,9 @@ Cell.propTypes = {
 
 const EditCell = (props) => {
   if(props.column.name == 'quantity'){
-    return <TableEditRow.Cell {...props} />;
+    return <TableEditRow.Cell {...props}
+            required
+            />;
   };
   return <Cell {...props} />;
 };
@@ -97,6 +101,9 @@ const getRowId = row => row.id;
 const toLowerCase = value => String(value).toLowerCase();
 const temperatureZonePredicate = (value, filter) => toLowerCase(value).startsWith(toLowerCase(filter.value));
 
+const RowDetail = (props)=>{
+return <IngredientDetail {...props}/>;
+}
 
 class Inventory extends React.PureComponent {
 
@@ -143,18 +150,33 @@ class Inventory extends React.PureComponent {
         for(var i = 0; i < rows.length;i++){
           console.log( " Changed Id " + changed[rows[i].id]);
           if(changed[rows[i].id]){
-            rows[i].quantity = changed[rows[i].id].quantity;
-
+            // Validate
+            const re = /^[0-9\b]+$/;
+            var enteredQuantity = changed[rows[i].id].quantity;
+                if (re.test(enteredQuantity)) {
+                   rows[i].quantity = changed[rows[i].id].quantity;
+                }else{
+                  alert(" Quantity must be a number.");
+                }
             //TODO: Update the inventory
-            try{
-              inventoryActions.updateInventory(rows[i]._id, userId,
+//            try{
+//              inventoryActions.updateInventory(rows[i]._id, userId,
+//                rows[i].ingredientId, rows[i].ingredientName,
+//                rows[i].temperatureZone, rows[i].packageName, changed[rows[i].id].quantity, sessionId);
+//            }catch(e){
+//              console.log('An error passed to the front end!')
+//              //TODO: error handling in the front end
+//              alert(e);
+//            }
+        inventoryActions.updateInventory(rows[i]._id, userId,
                 rows[i].ingredientId, rows[i].ingredientName,
-                rows[i].temperatureZone, rows[i].packageName, changed[rows[i].id].quantity, sessionId);
-            }catch(e){
-              console.log('An error passed to the front end!')
-              //TODO: error handling in the front end
-              alert(e);
-            }
+                rows[i].temperatureZone, rows[i].packageName, Number(changed[rows[i].id].quantity), sessionId,function(res){
+                    if (res.status == 400) {
+                        alert(res.data);
+                    } else if (res.status == 500) {
+                          alert('Ingredient and package combination already exists');
+                      }
+                });
         }
       }
      }
@@ -168,34 +190,36 @@ class Inventory extends React.PureComponent {
          const index = rows.findIndex(row => row.id === rowId);
          if (index > -1) {
 
-           //TODO: Send data to both the inventory
+           //TODO: Send data to cart
            console.log("Name" + rows[index].ingredientName);
            console.log("Package " + rows[index].packageName);
            console.log("ingredientId " + rows[index].ingredientId);
 
-              // TODO: Send in the ingredientName once it is updated in the interface
-             //TODO: Send data to the cart
-             try{
-               cartActions.addCart(userId, rows[index].ingredientId, rows[index].ingredientName,
-                  this.state.addedQuantity, sessionId);
-              }catch(e){
-                console.log('An error passed to the front end!')
-                //TODO: error handling in the front end
-                alert(e);
-              }
-         }
-       });
-       this.setState({ rows, addingItemsToCart: [] });
+//             try{
+//               cartActions.addCart(userId, rows[index].ingredientId, rows[index].ingredientName,
+//                  parseInt(this.state.addedQuantity), sessionId);
+//              }catch(e){
+//                console.log('An error passed to the front end!')
+//                //TODO: error handling in the front end
+//                alert(e);
+//              }
+                cartActions.addCart(userId, rows[index].ingredientId, rows[index].ingredientName,
+                 parseInt(this.state.addedQuantity), sessionId, function(res){
+                    if (res.status == 400) {
+                        alert(res.data);
+                    }
+                 });
+            }
+          });
+          this.setState({ rows, addingItemsToCart: [] });
+       }
+     };
+     // Set state of the expandable rows
+     this.changeExpandedDetails = (expandedRowIds) => {
+       console.log("Changed Expanded RowIds ");
+       this.setState({ expandedRowIds });
      }
-   };
-
-   // Set state of the expandable rows
-   this.changeExpandedDetails = (expandedRowIds) => {
-     console.log("Changed Expanded RowIds ");
-     this.setState({ expandedRowIds });
    }
-
- }
 
 // Initial loading of data
   componentDidMount() {
@@ -220,6 +244,16 @@ class Inventory extends React.PureComponent {
     ];
     this.setState({rows:processedData});
   }
+
+    handleIngredientQuantity(event){
+    const re = /^[0-9\b]+$/;
+        if (event.target.value == '' || re.test(event.target.value)) {
+           this.setState({addedQuantity: event.target.value})
+        }else{
+          alert(" Quantity must be a number.");
+        }
+    }
+
 
   render() {
     // const { rows, columns, integratedFilteringColumnExtensions } = this.state;
@@ -254,9 +288,9 @@ class Inventory extends React.PureComponent {
           <Table cellComponent={Cell}/>
           <TableHeaderRow />
           <TableFilterRow />
-          <TableRowDetail
-            contentComponent={IngredientDetail}
-          />
+          {/*<TableRowDetail
+            contentComponent={RowDetail}
+          />*/}
           {isAdmin &&
             <TableEditRow
               cellComponent={EditCell}
@@ -303,7 +337,7 @@ class Inventory extends React.PureComponent {
                 id="quantity"
                 label="Enter Quantity (lbs)"
                 fullWidth = {false}
-                onChange={(event) => this.setState({ addedQuantity: event.target.value})}
+                onChange={(event) => this.handleIngredientQuantity(event)}
                 verticalSpacing= "desnse"
                 style={{
                 marginLeft: 20,

@@ -10,12 +10,15 @@ const property = 'vendor';
  * vendor: JSON object
  * sessionId: string
  */
-async function addVendor(vendor, sessionId) {
-	try {
-		return await genericActions.create(baseUrl, vendor, sessionId);
-	} catch(e) {
-		throw e;
-	}
+async function addVendor(vendor, sessionId, callback) {
+//	try {
+//		return await genericActions.create(baseUrl, vendor, sessionId);
+//	} catch(e) {
+//		throw e;
+//	}
+    genericActions.create(baseUrl, vendor, sessionId, function(res){
+        callback(res);
+    });
 };
 
 /* 
@@ -64,8 +67,11 @@ async function getVendorAsync(vendorId, sessionId){
  * sessionId: string, id of the current session
  * vendor: JSON object representing the updated info about the vendor
  */
-async function updateVendor(vendorId, sessionId, vendor) {
-	return await genericActions.updateById(baseUrl, property, vendorId, sessionId, vendor);
+async function updateVendor(vendorId, sessionId, vendor, callback) {
+	//return await genericActions.updateById(baseUrl, property, vendorId, sessionId, vendor);
+	genericActions.updateById(baseUrl, property, vendorId, sessionId, vendor, function(res){
+	    callback(res);
+	})
 };
 
 /* 

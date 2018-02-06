@@ -118,21 +118,21 @@ exports.delete = function(req, res, next) {
 //}
 
 exports.authenticate = function(req, res, next) {
-    User.findOne({email: req.body.email}, function(err, user){
+    User.findOne({username: req.body.username}, function(err, user){
         console.log(req.body);
         if (err) return next(err);
         else if (!user) {
-            //res.status(400);
-            res.send("Error. This email is not linked to any account");
+            res.status(400);
+            res.send("Username does not exist");
         }
         else {
             if (user.authenticate(req.body.password)) {
                 user.update({loggedIn: true}, function(err, obj){
-                    //res.send(JSON.stringify(obj));
+                    res.send(user);
                 });
             } else {
                 //res.status(400);
-                res.send("Error. Incorrect password.");
+                res.send("Incorrect password.");
             }
         }
     });

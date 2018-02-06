@@ -16,6 +16,7 @@ const VENDORS = require('./dummyVendors');
 const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
+
 class SelectVendors extends Component {
 
   constructor(props) {

@@ -38,8 +38,10 @@ async function getStorageAsync(storageId, sessionId){
  * sessionId: string, id of the current session
  * storage: JSON object representing the updated info about the storage
  */
-async function updateStorage(storageId, sessionId, storage) {
-	return await genericActions.updateById(baseUrl, property, storageId, sessionId, storage);
+async function updateStorage(storageId, sessionId, storage, callback) {
+	genericActions.updateById(baseUrl, property, storageId, sessionId, storage, function(res){
+	    callback(res);
+	});
 };
 
 /* 

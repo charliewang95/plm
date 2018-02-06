@@ -29,9 +29,12 @@ function packIntoJson(userId, ingredientId, ingredientName, quantity){
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-async function addCart(userId, ingredientId, ingredientName, quantity, sessionId) {
+async function addCart(userId, ingredientId, ingredientName, quantity, sessionId, callback) {
 	var newCart = packIntoJson(userId, ingredientId, ingredientName, quantity);
-	return await cartActions.addCart(newCart, sessionId);
+	//return await cartActions.addCart(newCart, sessionId);
+	cartActions.addCart(newCart, sessionId, function(res){
+	    callback(res);
+	});
 }
 
 /**
@@ -57,9 +60,12 @@ async function getCartAsync(cartId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-async function updateCart(cartId, userId, ingredientId, ingredientName, quantity, sessionId) {
+async function updateCart(cartId, userId, ingredientId, ingredientName, quantity, sessionId, callback) {
 	var updatedCart = packIntoJson(userId, ingredientId, quantity);
-	return await cartActions.updateCart(cartId, sessionId, updatedCart);
+	//return await cartActions.updateCart(cartId, sessionId, updatedCart);
+	cartActions.updateCart(cartId, sessionId, updatedCart, function(res){
+	    callback(res);
+	});
 };
 
 /* 
