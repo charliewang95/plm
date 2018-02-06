@@ -52,6 +52,11 @@ var processCart = function(item, res, next) { //
 var updateInventory = function(ingredientId, quantity, res, next, callback) {
     Inventory.findOneAndUpdate({ingredientId: ingredientId}, {quantity: quantity}, function(err, obj) {
         if (err) return next(err);
+        else if (quantity == 0){
+            obj.remove(function(err){
+                callback(err);
+            });
+        }
         else {
             callback(err);
         }
