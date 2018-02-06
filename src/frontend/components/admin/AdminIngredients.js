@@ -393,6 +393,7 @@ class AdminIngredients extends React.PureComponent {
     this.changeColumnOrder = (order) => {
       this.setState({ columnOrder: order });
     };
+    this.uploadFile = this.uploadFile.bind(this);
   }
 
   // handleRowChange({rowChanges}){
@@ -494,6 +495,18 @@ class AdminIngredients extends React.PureComponent {
     this.setState({rows: finalData});
   }
 
+      uploadFile(event) {
+        let file = event.target.files[0];
+        console.log(file);
+        
+        if (file) {
+          let data = new FormData();
+          data.append('file', file);
+          console.log(data);
+          // axios.post('/files', data)...
+        }
+    }
+
   render() {
     const {
       classes,
@@ -514,6 +527,7 @@ class AdminIngredients extends React.PureComponent {
     } = this.state;
 
     return (
+      <div>
       <Paper>
         <Grid
           allowColumnResizing = {true}
@@ -602,6 +616,11 @@ class AdminIngredients extends React.PureComponent {
           </DialogActions>
         </Dialog>
       </Paper>
+      <p> bulk import </p>
+      <input type="file"
+        name="myFile"
+        onChange={this.uploadFile} />
+      </div>
     );
   }
 }
