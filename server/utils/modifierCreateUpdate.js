@@ -165,37 +165,39 @@ var modifyVendor = function(action, item, itemId, res, next, callback) { //add u
 var modifyIngredient = function(action, item, itemId, res, next, callback) {
     var counter = 0;
     var vendors = item.vendors;
+    var vendor;
     if (vendors == null || vendors.length == 0){
         callback(0, item);
     } else {
         var newVendors = [];
-        for (var i = 0; i<vendors.length; i++) {
-            counter++;
-            var vendor = vendors[i];
-            Vendor.findOne({codeUnique: vendor.codeUnique.toLowerCase()}, function(err, obj){
-                if (err) next(err);
-                else if (!obj) {
-                    res.send('Vendor '+vendor.codeUnique+' does not exist.');
-                }
-                else {
-                    var str = JSON.stringify(vendor).slice(0,-1)+',"vendorName":"'+obj.name+'","vendorId":"'+obj._id+'"}';
-                    newVendor = JSON.parse(str);
-                    newVendors.push(newVendor);
-                    if (counter == vendors.length) {
-                        item.vendors = newVendors;
-                        callback(0, item);
-                    }
-                    else {
-                        var str = JSON.stringify(vendor).slice(0,-1)+',"vendorName":"'+obj.name+'","vendorId":"'+obj._id+'"}';
-                        newVendor = JSON.parse(str);
-                        newVendors.push(newVendor);
-                        if (counter == vendors.length) {
-                            item.vendors = newVendors;
-                            callback(0, item);
-                        }
-                    }
-                }
-            });
-        }
+        helperIngredient(vendors, 0, res, next, newVendors, function(err, obj){
+            item.vendors = obj;
+            callback(0, item);
+        })
+    }
+};
+
+var helperIngredient = function(vendors, i, res, next, array, callback) {
+    if (i == vendors.length) {
+        callback(0, array);
+    } else {
+        vendor = vendors[i];
+//        console.log(vendor);
+        var newVendor;
+        Vendor.findOne({name: vendor.vendorName}, function(err, obj){
+            if (err) next(err);
+            else if (!obj) {
+                res.send('Vendor '+vendor.codeUnique+' does not exist.');
+            }
+            else {
+//                console.log(i);
+//                console.log(vendor);
+                var str = JSON.stringify(vendor).slice(0,-1)+',"codeUnique":"'+obj.codeUnique+'","vendorId":"'+obj._id+'"}';
+                newVendor = JSON.parse(str);
+                array.push(newVendor);
+
+                helperIngredient(vendors, i+1, res, next, array, callback);
+            }
+        });
     }
 };

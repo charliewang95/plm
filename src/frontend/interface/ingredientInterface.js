@@ -14,14 +14,15 @@ packageType: string 'Sack', 'Pail', 'Drum', 'Supersack', 'Truckload', 'Railcar',
 temperatureZone: string 'freezer', 'refrigerator', 'warehouse', 'Freezer', 'Refrigerator', 'Warehouse'
 vendors: array of objects following the VendorPriceSchema
 **/
-function packIntoJson(name, packageType, temperatureZone, vendors){
+function packIntoJson(name, packageType, temperatureZone, vendors, moneySpent, moneyProd){
 	var ingredientJson = new Object();
 	ingredientJson.name = name;
 	ingredientJson.packageName = packageType;
 	ingredientJson.temperatureZone = temperatureZone;
 	ingredientJson.vendors = vendors;
-	console.log("JSON");
-	console.log(ingredientJson);
+	ingredientJson.moneySpent = moneySpent;
+	ingredientJson.moneyProd = moneyProd;
+	console.log(vendors);
 	return ingredientJson;
 }
 
@@ -31,7 +32,7 @@ function packIntoJson(name, packageType, temperatureZone, vendors){
  */
 async function addIngredient(name, packageType, temperatureZone, vendors, sessionId, callback) {
 	console.log("add ingredients");
-	var newIngredient = packIntoJson(name, packageType, temperatureZone, vendors);
+	var newIngredient = packIntoJson(name, packageType, temperatureZone, vendors, 0, 0);
 	//return await ingredientActions.addIngredient(newIngredient, sessionId);
 	ingredientActions.addIngredient(newIngredient, sessionId, function(res){
 	    callback(res);
@@ -61,8 +62,8 @@ async function getIngredientAsync(ingredientId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-async function updateIngredient(ingredientId, name, packageType, temperatureZone, vendors, sessionId, callback) {
-	var updatedIngredient = packIntoJson(name, packageType, temperatureZone, vendors);
+async function updateIngredient(ingredientId, name, packageType, temperatureZone, vendors, moneySpent, moneyProd, sessionId, callback) {
+	var updatedIngredient = packIntoJson(name, packageType, temperatureZone, vendors, moneySpent, moneyProd);
 	//return await ingredientActions.updateIngredient(ingredientId, sessionId, updatedIngredient);
 	ingredientActions.updateIngredient(ingredientId, sessionId, updatedIngredient, function(res){
 	    callback(res);

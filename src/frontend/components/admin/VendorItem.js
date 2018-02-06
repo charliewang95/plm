@@ -28,9 +28,8 @@ class VendorItem extends Component {
          <Select
           name="Vendor Name"
           options={this.props.options}
-          labelKey="name"
-          valueKey="codeUnique"
-          value={vendor.codeUnique}
+          valueKey="vendorName"
+          value={vendor.vendorName}
           clearable = {false}
           onChange={(value)=>{this.props.updateId(value, index);}}
           />
