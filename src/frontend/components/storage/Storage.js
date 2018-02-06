@@ -23,12 +23,10 @@ import * as testConfig from '../../../resources/testConfig.js'
 import dummyData from './dummyData';
 
 //TODO: get user data
-// const sessionId = testConfig.sessionId;
-const sessionId = "5a765f3d9de95bea24f905d9";
-const userId = "5a765f3d9de95bea24f905d9";
+const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 var  isAdmin= true;
-
+const userId = "user";
 
 const Cell = (props)=>{
   return <Table.Cell {...props}
@@ -96,22 +94,20 @@ class Storage extends React.PureComponent {
       this.setState({ rowChanges });
     }
 
-    this.commitChanges = async ({ changed}) => {
-      var THIS = this;
+    this.commitChanges = ({ changed}) => {
       let { rows } = this.state;
 
       console.log(JSON.stringify(rows));
       console.log("changed " + JSON.stringify(changed));
 
       if(changed){
-
         for(var i = 0; i < rows.length;i++){
           console.log( " Changed Id " + changed[rows[i].id]);
           if(changed[rows[i].id]){
             const re = /^[0-9\b]+$/;
             var enteredQuantity = changed[rows[i].id].capacity;
                 if (re.test(enteredQuantity)) {
-                    rows[i].capacity = changed[rows[i].id].capacity;
+                   rows[i].capacity = changed[rows[i].id].capacity;
                 }else{
                   alert(" Quantity must be a number.");
                 }
@@ -119,22 +115,26 @@ class Storage extends React.PureComponent {
             console.log("zone " + rows[i].temperatureZone);
             console.log("capacity " + rows[i].capacity);
 
-            await storageActions.updateStorage(rows[i]._id,
+            //TODO: Update the Storage
+//            try{
+//              storageActions.updateStorage(rows[i]._id,
+//                rows[i].temperatureZone, rows[i].capacity,sessionId);
+//            }catch(e){
+//              console.log('An error passed to the front end!')
+//              //TODO: error handling in the front end
+//              alert(e);
+//            }
+            storageActions.updateStorage(rows[i]._id,
                 rows[i].temperatureZone, rows[i].capacity,sessionId, function(res){
                     if (res.status == 400) {
-                      //Reload window when cancelled
-                        if(!alert(res.data)){
-                          window.location.reload();
-                        }
-                      }
-                  });
-              }
-            }
+                        alert(res.data);
+                    }
+               });
           }
         }
-        this.commitChanges = this.commitChanges.bind(this);
       }
-
+    }
+  }
 
   componentDidMount() {
     this.loadStorageInfo();
@@ -157,7 +157,7 @@ class Storage extends React.PureComponent {
 
   render() {
     const {classes} = this.props;
-    const { rows,columns ,editingRowIds,rowChanges,} = this.state;
+    const { rows, columns ,editingRowIds,rowChanges} = this.state;
 
     return (
       <Paper>
