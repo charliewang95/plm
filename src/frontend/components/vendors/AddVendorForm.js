@@ -11,31 +11,43 @@ import { Redirect } from 'react-router'
 import * as testConfig from '../../../resources/testConfig.js'
 
 // TODO: get session Id from the user
-const sessionId = testConfig.sessionId;
+var sessionId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 const styles = {
-    buttons: {
-      marginTop: 30,
-      float: 'center'
-    },
-    saveButton: {
-      marginLeft: 5
-    }
-  };
+  buttons: {
+    marginTop: 30,
+    float: 'center'
+  },
+  saveButton: {
+    marginLeft: 5
+  }
+};
 
 class AddVendorForm extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
-  		name: '',
-  		value:undefined,
+      name: '',
+      value:undefined,
       contact:'',
       code:'',
       fireRedirect: false
-      }
+    }
     // this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
+    this.redirectToVendorsFrom = this.redirectToVendorsFrom.bind(this);
+  }
+
+  componentWillMount(){
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+  }
+
+  vendorSuccessfullyAdded() {
+    alert('Vendor ' + this.state.name + ' is added successfully');
+  }
+  redirectToVendorsFrom() {
+    this.setState({ fireRedirect: true });
   }
 
   async onFormSubmit(e) {
@@ -55,16 +67,19 @@ class AddVendorForm extends React.Component{
 //      //TODO: error handling in the front end
 //      alert(e);
 //    }
-        vendorActions.addVendor(
-          this.state.name,this.state.contact,this.state.code,sessionId, function(res){
-            if (res.status == 400) {
-                alert(res.data);
-            } else if (res.status == 500) {
-                  alert('Vendor name or code already exists');
-              }
-          });
-        this.setState({ fireRedirect: true });
+  const me = this;
+  await vendorActions.addVendor(
 
+    this.state.name,this.state.contact,this.state.code,sessionId, function(res){
+      if (res.status == 400) {
+        alert(res.data);
+      } else if (res.status == 500) {
+        alert('Vendor name or code already exists');
+      }else{
+        me.vendorSuccessfullyAdded();
+        // me.redirectToVendorsFrom();
+      }
+    });
 
   }
 
@@ -104,13 +119,13 @@ class AddVendorForm extends React.Component{
                 />
               <div style={styles.buttons}>
                   <RaisedButton raised color = "secondary"
-                    component = {Link} to = "/vendors">CANCEL</RaisedButton>
+                    component = {Link} to = "/vendors">Back To Vendors' List</RaisedButton>
                   <RaisedButton raised
                             color="primary"
                             // component = {Link} to = "/vendors" //commented out because it overrides onSubmit
                             style={styles.saveButton}
                             type="Submit"
-                            primary="true"> SAVE </RaisedButton>
+                            primary="true"> Add </RaisedButton>
              </div>
            </form>
            {fireRedirect && (

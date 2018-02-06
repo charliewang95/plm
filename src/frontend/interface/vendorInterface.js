@@ -54,7 +54,7 @@ async function getAllVendorsAsync(sessionId) {
 }
 
 async function getAllVendorNamesCodesAsync(sessionId) {
-   const res = await axios.get('/vendors/vendorNamesCodes/user/'+sessionId);
+   const res = await axios.get('/vendors/vendorNames/user/'+sessionId);
    return res;
 }
 
@@ -91,4 +91,4 @@ async function deleteVendor(vendorId, sessionId) {
 };
 
 //export functions above for use by other modules
-export { addVendor, getAllVendorsAsync, getVendorAsync, updateVendor, deleteVendor};
+export { addVendor, getAllVendorsAsync, getVendorAsync, updateVendor, deleteVendor, getAllVendorNamesCodesAsync};

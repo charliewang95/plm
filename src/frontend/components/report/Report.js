@@ -17,9 +17,8 @@ import * as ingredientActions from '../../interface/ingredientInterface';
 
 import * as testConfig from '../../../resources/testConfig.js';
 
-
-const userId = "5a765f3d9de95bea24f905d9";
-const sessionId = testConfig.sessionId;
+// const sessionId = testConfig.sessionId;
+var sessionId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 
@@ -36,8 +35,8 @@ export default class Demo extends React.PureComponent {
       rows: [],
       sorting:[],
       currentPage: 0,
-      pageSize: 0,
-      pageSizes: [5, 10, 20],
+      pageSize: 5,
+      pageSizes: [5, 10, 0],
       columnOrder: ['name', 'moneySpent', 'moneyProd'],
     };
     this.changeSorting = sorting => this.setState({ sorting });
@@ -56,16 +55,17 @@ export default class Demo extends React.PureComponent {
   async loadAllIngredients(){
       var rawData = [];
 
-    try{
+    // try{
        if(READ_FROM_DATABASE){
+         sessionId = JSON.parse(localStorage.getItem('user'))._id;
          rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
        }else{
          rawData = dummyData;
        }
-     }catch(e){
-       console.log("Error passed to front end");
-       alert(e);
-     }
+     // }catch(e){
+       // console.log("Error passed to front end");
+       // alert(e);
+     // }
      // adds integer values as row id
      var processedData = [...rawData.map((row, index)=> ({
          id: index,...row,

@@ -25,11 +25,14 @@ import dummyData from './dummyData.js';
 import * as vendorActions from '../../interface/vendorInterface.js';
 import * as buttons from './Buttons.js';
 
-import * as testConfig from '../../../resources/testConfig.js'
+import * as testConfig from '../../../resources/testConfig.js';
+import cookie from 'react-cookies';
 
 // TODO: get session Id from the user
-const sessionId = testConfig.sessionId;
+//var sessionId = (localStorage.getItem('user') == null) ? null: JSON.parse(localStorage.getItem('user'))._id;
+var sessionId = '';
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
+var isAdmin = '';
 
 const styles = theme => ({
   dialog: {
@@ -99,8 +102,8 @@ class Vendors extends React.PureComponent
       rowChanges: {},
       currentPage: 0,
       deletingRows: [],
-      pageSize: 0,
-      pageSizes: [5, 10, 0],
+      pageSize: 5,
+      pageSizes: [5,10,0],
       columnOrder: ['name', 'contact', 'code'],
     };
 
@@ -156,10 +159,14 @@ class Vendors extends React.PureComponent
         if(vendorName &&  vendorContact && vendorId && vendorCode){
           vendorActions.updateVendor(vendorName,vendorContact,vendorCode,vendorId,sessionId,function(res){
             if (res.status == 400) {
-                alert(res.data);
-            } else if (res.status == 500) {
-                  alert('Vendor name or code already exists');
+              if(!alert(res.data)){
+                window.location.reload();
               }
+              }else if (res.status == 500) {
+                if(!alert("Vendor name or code already exists")){
+                  window.location.reload();
+                }
+            }
           });
         }
       };
@@ -189,6 +196,11 @@ class Vendors extends React.PureComponent
     };
   }
 
+  componentWillMount(){
+    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+  }
+
   componentDidMount(){
     console.log(" MOUNT");
     this.loadAllVendors();
@@ -200,6 +212,7 @@ class Vendors extends React.PureComponent
     var rawData = [];
     if(READ_FROM_DATABASE){
       //TODO: Initialize data
+      sessionId = JSON.parse(localStorage.getItem('user'))._id;
       rawData = await vendorActions.getAllVendorsAsync(sessionId);
       //commented out because collectively done after rawData is determined
       /*
@@ -262,7 +275,7 @@ class Vendors extends React.PureComponent
           <IntegratedSorting />
           <IntegratedPaging />
 
-          <EditingState
+          {isAdmin && <EditingState
             editingRowIds={editingRowIds}
             onEditingRowIdsChange={this.changeEditingRowIds}
             rowChanges={rowChanges}
@@ -270,7 +283,7 @@ class Vendors extends React.PureComponent
             // addedRows={addedRows}
             // onAddedRowsChange={this.changeAddedRows}
             onCommitChanges={this.commitChanges}
-          />
+          /> }
 
           <DragDropProvider />
 
@@ -285,22 +298,26 @@ class Vendors extends React.PureComponent
           />
 
           <TableHeaderRow showSortingControls />
-          <TableEditRow
+
+          {isAdmin && <TableEditRow
             cellComponent={EditCell}
-          />
+          /> }
+          {isAdmin &&
           <TableEditColumn
             width={120}
             // showAddCommand={!addedRows.length}
             showEditCommand
             showDeleteCommand
             commandComponent={Command}
-          />
+          /> }
           <PagingPanel
             pageSizes={pageSizes}
           />
 
         </Grid>
-        <buttons.AddVendorButton/>
+
+        {isAdmin && <buttons.AddVendorButton/> }
+        {isAdmin &&
         <Dialog
           open={!!deletingRows.length}
           onClose={this.cancelDelete}
@@ -329,6 +346,7 @@ class Vendors extends React.PureComponent
             <Button onClick={this.deleteRows} color="secondary">Delete</Button>
           </DialogActions>
         </Dialog>
+      }
       </Paper>
     );
   }

@@ -13,7 +13,8 @@ const VENDORS = require('./dummyVendors');
 
 
 // TODO: get session Id from the user
-const sessionId = testConfig.sessionId;
+//const sessionId = testConfig.sessionId;
+const sessionId = '5a63be959144b37a6136491e';
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 
@@ -24,20 +25,7 @@ class SelectVendors extends Component {
     this.state = {
       selectName: "",
       inputPrice: 0,
-      options: [
-       {
-        name: "Target",
-        id: "5a76b607c37e254b74f45b42",
-       },
-       {  
-        name: "Vendor P",
-        id: "5a76b571c37e254b74f45b3e",
-       },
-       {
-        name: "Vendor R",
-        id: "5a76b5bfc37e254b74f45b40",
-       }
-      ],
+      options: [],
       vendorsArray: this.props.initialArray,
       idToNameMap: {}, //id = key, name=value
     };
@@ -46,15 +34,19 @@ class SelectVendors extends Component {
     this.addVendor = this.addVendor.bind(this);
     this.updatePrice = this.updatePrice.bind(this);
     this.loadVendorsArray = this.loadVendorsArray.bind(this);
+    this.loadCodeNameArray = this.loadCodeNameArray.bind(this);
+    this.createMap = this.createMap.bind(this);
   }
 
   componentWillMount(){
-    this.createMap();
+    this.loadCodeNameArray();
     this.loadVendorsArray();
   }
 
   componentDidMount(){
-  //  this.loadAllVendors();
+    this.createMap();
+    console.log("componentDidMount()");
+    console.log(this.state.options);
   }
 
   componentDidUpdate(){
@@ -68,45 +60,39 @@ class SelectVendors extends Component {
     this.setState({vendorsArray: this.props.initialArray});
   }
 
-  async loadAllVendors(){
-    var startingIndex = 0;
+  async loadCodeNameArray(){
+   // var startingIndex = 0;
     var rawData = [];
-    if(READ_FROM_DATABASE){
-      //TODO: Initialize data
-      rawData = await vendorActions.getAllVendorsAsync(sessionId);
-      //commented out because collectively done after rawData is determined
-      /*
-      var processedData = [...rawData.map((row, index)=> ({
-          id: startingIndex + index,...row,
-        })),
-      ];*/
-    } else {
-      rawData = VENDORS;
-    }
-      this.setState({options: rawData});
+    rawData = await vendorActions.getAllVendorNamesCodesAsync(sessionId);
+    console.log("loadCodeNameArray was called");
+    console.log(rawData.data);
+    var optionsArray = rawData.data.map(obj=>{
+    var temp = new Object();
+    temp.vendorName = obj.vendorName;
+    temp.label = obj.vendorName;
+    return temp;
+    })
+
+
+    this.setState({options: optionsArray});
   }
 
-
-  createMap(){
-    // var map = new Map();
-    // for(var i; i<this.state.options.length; i++){
-    //   var vendor = this.state.options[i];
-    //   map.set(vendor.id, vendor.name);
-    // }
-    // this.setState({idToNameMap:map});
+  async createMap(){
+    var list = this.state.options;
     var map = new Map();
-    map.set("5a76b571c37e254b74f45b3e", "Vendor P");
-    map.set("5a76b5bfc37e254b74f45b40", "Vendor R")
-    map.set("5a76b607c37e254b74f45b42", "Target");
+    list.forEach(function(vendor){
+      map.set(vendor.codeUnique, vendor.name);
+    });
     this.setState({idToNameMap:map});
   }
 
   addVendor(){
     var newVendor = new Object();
-    console.log("hihi");
+    console.log("addVendor() was called");
     console.log(this.state.selectName);
-    var tempId = this.state.selectName.id;
-    newVendor = {vendor: tempId, price: this.state.inputPrice};
+    var tempId = this.state.selectName.vendorName;
+    var priceFloat = parseFloat(this.state.inputPrice);
+    newVendor = {vendorName: tempId, price: priceFloat};
     console.log(newVendor);
     // var updateVendor = new Array(this.state.vendorsArray.slice(0));
     // updateVendor.push(newVendor);
@@ -141,17 +127,21 @@ class SelectVendors extends Component {
       // var updateVendor = this.state.vendorsArray.slice();
       // updateVendor[index].vendor = vendor.id;
       // this.setState({vendorsArray: updateVendor});
-      this.state.vendorsArray[index].vendor = vendor.id;
+      this.state.vendorsArray[index].vendorName = vendor.vendorName;
       this.setState({vendorsArray: this.state.vendorsArray});
       this.props.handleChange(this.state.vendorsArray);
     }
   }
 
   updatePrice (newPrice, index){
-    console.log(newPrice.target.value);
-    var price = newPrice.target.value;
+    console.log("this is the price");
+    var price = parseFloat(newPrice.target.value);
+    console.log(typeof (price));
+
     var isEmpty = (!price || (price.length==0));
-    if(index>0 && !isEmpty){
+
+    console.log(index);
+    if(index>=0 && !isEmpty){
       // var updateVendor = this.state.vendorsArray.slice();
       // updateVendor[index].price = newPrice.target.value;
       // this.setState({vendorsArray: updateVendor});
@@ -166,6 +156,8 @@ class SelectVendors extends Component {
   }
 
   updateName(value){
+    console.log("updateName");
+    console.log(value);
     this.setState({selectName: value});
   }
 
@@ -178,8 +170,7 @@ class SelectVendors extends Component {
           placeholder="Select New Vendor"
           name="Vendor Name"
           options={this.state.options}
-          valueKey="id"
-          labelKey="name"
+          valueKey="vendorName"
           value={this.state.selectName} //value displayed
           onChange={this.updateName.bind(this)}
           />

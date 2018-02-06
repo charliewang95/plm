@@ -12,8 +12,6 @@ import Card, {CardMedia} from 'material-ui/Card';
 import { Switch, Route } from 'react-router-dom';
 import PersistentDrawer from '../main/PersistentDrawer';
 import * as userActions from'../../interface/userInterface';
-import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
-
 const styles = {
     buttons: {
       marginTop: 30,
@@ -63,24 +61,17 @@ class LoginPage extends React.Component{
     this.setState({ fireRedirect: true });
     }
 
-  async handleLogin(e){
+  async handleLogin(){
     console.log("I was fired");
     var res;
     var message = "";
-    e.preventDefault();
-    var temp = this;
     userActions.authenticateAsync(this.state.username, this.state.password, function(res){
         console.log(res);
         if (res.status == 400) {
             message = res.data;
             alert(message);
-            localStorage.removeItem('user');
         } else {
-            console.log(res.data);
-            localStorage.setItem('user', JSON.stringify(res.data));
-            console.log("hi" + JSON.parse(localStorage.getItem('user')).isAdmin);
-            var isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
-            temp.props.login(isAdmin, res.data);
+            this.props.login(true, "success");
         }
     });
 //    var message = "";
@@ -113,6 +104,7 @@ class LoginPage extends React.Component{
                 <TextField
                     required
                     fullWidth={true}
+                    id="freezer"
                     label="Username"
                     value={this.state.username}
                     onChange = {(event) => this.setState({ username: event.target.value})}
@@ -122,13 +114,24 @@ class LoginPage extends React.Component{
                 <TextField
                     required
                     fullWidth={true}
-                    id="adornment-password"
+                    id="freezer"
+                    label="Email"
+                    value={this.state.email}
+                    onChange = {(event) => this.setState({ email: event.target.value})}
+                    margin="normal"
+                    validations={[required]}
+                />
+                <TextField
+                    required
+                    fullWidth={true}
+                    id="refrigerator"
                     label="Password"
                     value={this.state.password}
                     onChange = {(event) => this.setState({ password: event.target.value})}
                     margin="normal"
                     validations={[required]}
                 />
+
               <div style={styles.buttons}>
                   <RaisedButton raised color = "primary"
                     onClick={this.handleLogin} >LOGIN</RaisedButton>

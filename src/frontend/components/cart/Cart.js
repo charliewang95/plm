@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Paper from 'material-ui/Paper';
 import PropTypes from 'prop-types';
@@ -29,13 +30,11 @@ import Dialog, {
 
 
 // TODO: Get the user ID
-//const sessionId = "5a765f3d9de95bea24f905d9";
-const userId = "5a63be959144b37a6136491e"
+
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
-//const sessionId = testConfig.sessionId;
-const sessionId = '5a63be959144b37a6136491e';
-
+var userId = "";
+var sessionId = "";
 const Cell = (props) => {
   console.log(" CELL props value: " + props.value)
   return <Table.Cell {...props} />;
@@ -73,8 +72,8 @@ class Cart extends React.Component {
       rowChanges: {},
       deletingRows: [],
       currentPage: 0,
-      pageSize: 0,
-      pageSizes: [5, 10, 20],
+      pageSize: 5,
+      pageSizes: [5, 10, 0],
     };
 
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
@@ -115,6 +114,7 @@ class Cart extends React.Component {
       // TODO: send data to back End
       console.log("checkout");
       cartActions.checkoutCart(sessionId);
+      window.location.reload();
     };
 
   }
@@ -128,6 +128,8 @@ class Cart extends React.Component {
     var rawData = '';
     if(READ_FROM_DATABASE){
       // TODO: Initialize data
+      sessionId = JSON.parse(localStorage.getItem('user'))._id;
+      userId =  JSON.parse(localStorage.getItem('user'))._id;
       rawData = await cartActions.getAllCartsAsync(userId);
       console.log("rawData " + JSON.stringify(rawData));
     } else {

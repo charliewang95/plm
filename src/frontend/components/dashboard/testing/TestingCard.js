@@ -16,11 +16,12 @@ import * as dummyVendor from '../../../dummyDatas/vendor'
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 //import classnames from 'classnames';
-const ingredientId = '5a6e2b65d141d5472554fc51';
-const userId = '5a6e2f9b1c2c30482e142ddf';
-const vendorId = '5a6e333f0c569f48f7d22242';
-const sessionId = 'real-producers-root'; //back-door
+// const ingredientId = '5a6e2b65d141d5472554fc51';
+// const userId = '5a6e2f9b1c2c30482e142ddf';
+// const vendorId = '5a6e333f0c569f48f7d22242';
+// const sessionId = 'real-producers-root'; //back-door
 //
+
 
 const styles = theme => ({
   card: {
@@ -31,21 +32,10 @@ const styles = theme => ({
   },
 });
 
-
-
-class TestingCard extends Component {
-
-  render() {
-     const { classes } = this.props;
-        
-    return (
-      <div>
-        <Card className={classes.card}>
-          <CardHeader title={cardConstants.WELCOME_MESSAGE}/>
-          <CardMedia className={classes.media} image="/box_of_veggie.jpg"/> 
-          <CardActions >
+/* What is originally inside <CardActions> for testing */
+/*
             <Button onClick={()=>ingredientInterface.addIngredient(
-              dummyIngredient.sampleIngredient.name, dummyIngredient.sampleIngredient.package, 
+              dummyIngredient.sampleIngredient.name, dummyIngredient.sampleIngredient.package,
               dummyIngredient.sampleIngredient.temperatureZone, dummyIngredient.sampleIngredient.vendors,
               sessionId)}>
                 {cardConstants.ADD_INGREDIENTS}
@@ -98,7 +88,7 @@ class TestingCard extends Component {
             </Button>
 
             <Button onClick={()=>ingredientInterface.deleteIngredient(ingredientId, sessionId)}>
-              Delete Ingredient    
+              Delete Ingredient
             </Button>
 
             <Button onClick={()=>userInterface.getAllUsersAsync(sessionId)}>
@@ -116,6 +106,20 @@ class TestingCard extends Component {
             <Button onClick={()=>userInterface.deleteUser(userId, sessionId)}>
               Delete User
             </Button>
+*/
+
+
+class TestingCard extends Component {
+
+  render() {
+     const { classes } = this.props;
+
+    return (
+      <div>
+        <Card className={classes.card}>
+          <CardHeader title={'Welcome to the world of FOOD, '+JSON.parse(localStorage.getItem('user')).username+'!'}/>
+          <CardMedia className={classes.media} image="/box_of_veggie.jpg"/>
+          <CardActions >
 
           </CardActions>
         </Card>
@@ -127,7 +131,5 @@ class TestingCard extends Component {
 TestingCard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-
+//{cardConstants.WELCOME_MESSAGE}
 export default withStyles(styles)(TestingCard);
-
-
