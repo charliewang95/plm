@@ -14,12 +14,12 @@ import Paper from 'material-ui/Paper';
 const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
-const RowDetail = ({ row }) => (
-  console.log("row" + row.ingredientName),
-  // TODO: Call the ingredient interface to get details for the ingredient
-
-  <div>Details for {row.ingredientName} from {row.temperatureZone}</div>
-);
+// const RowDetail = ({ row }) => (
+//   console.log("row" + row.ingredientName),
+//   // TODO: Call the ingredient interface to get details for the ingredient
+//
+//   <div>Details for {row.ingredientName} from {row.temperatureZone}</div>
+// );
 
 const dummyData = {_id: "ID1", name: "pepper",packageName: "sack",temperatureZone: "warehouse",
                     vendors: [{code: "ID1", price: "10"},{code: "ID2", price: "15"}],
