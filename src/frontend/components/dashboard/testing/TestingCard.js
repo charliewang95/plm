@@ -116,7 +116,7 @@ class TestingCard extends Component {
     return (
       <div>
         <Card className={classes.card}>
-          <CardHeader title={cardConstants.WELCOME_MESSAGE}/>
+          <CardHeader title={'Welcome to the world of FOOD, '+JSON.parse(localStorage.getItem('user')).username+'!'}/>
           <CardMedia className={classes.media} image="/box_of_veggie.jpg"/> 
           <CardActions >
 
@@ -130,7 +130,7 @@ class TestingCard extends Component {
 TestingCard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-
+//{cardConstants.WELCOME_MESSAGE}
 export default withStyles(styles)(TestingCard);
 
 
