@@ -6,13 +6,16 @@ import Paper from 'material-ui/Paper';
 
 const styles = theme => ({
   root: {
-    width: '36%',
-    //marginTop: theme.spacing.unit * 3,
-    //overflowX: 'auto',
+    width: '20%',
+    marginTop: theme.spacing.unit * 3,
+    overflowX: 'auto',
   },
   table: {
-    width: 415,
+    minWidth: 100,
   },
+  tableCell: {
+    width: 30,
+  }
 });
 
 let id = 0;
@@ -38,15 +41,15 @@ function SimpleTable(props) {
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell> Package Name </TableCell>
-            <TableCell> Weight (lbs) </TableCell>
+            <TableCell className={classes.tableCell}> Package Name </TableCell>
+            <TableCell > Weight (lbs) </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {data.map(n => {
             return (
               <TableRow key={n.id}>
-                <TableCell>{n.packageName}</TableCell>
+                <TableCell className={classes.tableCell}>{n.packageName}</TableCell>
                 <TableCell>{n.weight}</TableCell>
               </TableRow>
             );

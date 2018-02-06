@@ -4,8 +4,6 @@
     <list default="true" id="3862f87b-362e-4c1c-a738-cd70a2ba3d34" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/src/frontend/components/admin/AdminIngredients.js" afterPath="$PROJECT_DIR$/src/frontend/components/admin/AdminIngredients.js" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/components/login/LoginPage.js" afterPath="$PROJECT_DIR$/src/frontend/components/login/LoginPage.js" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/components/orders/packageTable.js" afterPath="$PROJECT_DIR$/src/frontend/components/orders/packageTable.js" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
