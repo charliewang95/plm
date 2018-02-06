@@ -1,11 +1,15 @@
 # Real Producers
 ## To get it running
 
-* run "npm install"
+* Softwares needed to be installed: Node.js, Express.js, MongoDB 
+
+* type "npm install"
+
+* type "mongod" to run the MongoDB instance
 
 * run "npm start" to run the front-end
 
-* run "node server.js" to run the back-end. __Note: Make sure Mongodb is running__
+* run "node server.js" to run the back-end.
 
 * run "npm run start-dev" to run both ends at the same time. The front end will be listening on port 443 (default https port), and the back-end on port 1337
 
@@ -16,11 +20,11 @@
 
 ## To deploy on Servers
 
-__ Note: Mongodb is alreayd running on servers as a service. This means you do not need to run mongodb separately when you want to start the server__
+__ Note: Mongodb is already running on servers as a service. This means you do not need to run mongodb separately when you want to start the server__
 
 ### Test Server
 
-* Go to ~/../plm by running `cd ~/../pcm`, then run `sudo npm run start-https`. To view the content, go to https://real-producers-test.colab.duke.edu in your browser
+* On the test server shell, go to ~/../plm by running `cd ~/../pcm`, then run `sudo npm run start-https`. To view the content, go to https://real-producers-test.colab.duke.edu in your browser
 
 ### Production server
 
