@@ -104,8 +104,13 @@ class Storage extends React.PureComponent {
         for(var i = 0; i < rows.length;i++){
           console.log( " Changed Id " + changed[rows[i].id]);
           if(changed[rows[i].id]){
-            rows[i].capacity = changed[rows[i].id].capacity;
-
+            const re = /^[0-9\b]+$/;
+            var enteredQuantity = changed[rows[i].id].capacity;
+                if (re.test(enteredQuantity)) {
+                   rows[i].quantity = changed[rows[i].id].capacity;
+                }else{
+                  alert(" Quantity must be a number.");
+                }
             console.log("id " + rows[i]._id);
             console.log("zone " + rows[i].temperatureZone);
             console.log("capacity " + rows[i].capacity);
@@ -113,7 +118,7 @@ class Storage extends React.PureComponent {
             //TODO: Update the Storage
             try{
               storageActions.updateStorage(rows[i]._id,
-                rows[i].temperatureZone, rows[i].capacity,sessionId);
+                rows[i].temperatureZone, parseInt(rows[i].capacity,10),sessionId);
             }catch(e){
               console.log('An error passed to the front end!')
               //TODO: error handling in the front end
