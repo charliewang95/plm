@@ -4,7 +4,8 @@
 var express = require('express');
 var router = express.Router();
 var util = require("util");
-var fs = require("fs"); 
+var fs = require("fs");
+var ingredients = require('../controllers/ingredients.server.controller');
 
 module.exports = function(app) {
 	app.route('/upload/user/:userId').post(function(req, res, next){
@@ -14,8 +15,9 @@ module.exports = function(app) {
 			console.log(filePath);
 			const content = fs.readFileSync(filePath, 'utf8');
 			// console.log(content);
-			fs.unlinkSync(filePath);//delete the file
-			res.send("SUCCESS");
+			ingredients.bulkImportIngredients(req, res, next, content, function(){
+			    fs.unlinkSync(filePath);
+			});
 
 			// if (req.files.myFile.size === 0) {
 			// 	return next(new Error("Hey, first would you select a file?"));
