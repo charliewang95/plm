@@ -44,6 +44,7 @@ module.exports = function() {
 	require('../server/routes/uploads.server.routes.js')(app);
 
 	app.use(express.static('./public'));
+	app.use('/format-spec', express.static(__dirname + '/public/FormatSpec.pdf'));
 
 	return app;
 };
