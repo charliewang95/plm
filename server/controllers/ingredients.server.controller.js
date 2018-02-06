@@ -26,8 +26,7 @@ exports.delete = function(req, res, next) {
     utils.doWithAccess(req, res, next, Ingredient, 'delete', req.params.userId, req.params.ingredientId, true);
 };
 
-exports.bulkImportIngredients = function(req, res, next) {
-    var contents = fs.readFileSync('/Users/charliewang95/Desktop/test2.csv', 'utf8');
+exports.bulkImportIngredients = function(req, res, next, contents, callback) {
     console.log(contents);
     var jsonArray = [];
     const csv=require('csvtojson')
@@ -39,7 +38,8 @@ exports.bulkImportIngredients = function(req, res, next) {
     .on('done',()=>{
         console.log(jsonArray);
         convertBulkImport(req, res, next, jsonArray, 0, function(){
-            res.send(jsonArray);
+            res.send("Bulk import Success!");
+            callback();
         })
     })
 };
@@ -79,7 +79,7 @@ var convertBulkImport = function(req, res, next, array, i, callback){
                         else if (!obj2) {
                             res.status(400).send('Actions denied. Vendor '+vendorCode+' does not exist. Ingredients above this point are successfully loaded.');
                         } else {
-                            var vendors = ingredient.vendors;
+                            var vendors = obj.vendors;
                             if (vendors == null || vendors.length == 0)
                                 vendors = [];
                             console.log("old vendors");

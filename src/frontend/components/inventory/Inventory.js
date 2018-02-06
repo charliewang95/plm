@@ -259,7 +259,7 @@ class Inventory extends React.PureComponent {
 
   render() {
     // const { rows, columns, integratedFilteringColumnExtensions } = this.state;
-    const {classes,} = this.props;
+    // const {classes,} = this.props;
     const { rows, columns,editingRowIds,
       rowChanges,tableColumnExtensions,
       integratedFilteringColumnExtensions,addingItemsToCart,addedQuantity,expandedRowIds} = this.state;
@@ -367,8 +367,8 @@ class Inventory extends React.PureComponent {
   }
 }
 
-Inventory.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
+// Inventory.propTypes = {
+//   classes: PropTypes.object.isRequired,
+// };
 
 export default Inventory;

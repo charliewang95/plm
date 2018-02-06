@@ -6,7 +6,6 @@ import Styles from  'react-select/dist/react-select.css';
 import TextField from 'material-ui/TextField';
 import {Card,CardHeader} from 'material-ui/Card';
 
-import classNames from 'classnames';
 import { withStyles } from 'material-ui/styles';
 import IconButton from 'material-ui/IconButton';
 import Input, { InputLabel, InputAdornment } from 'material-ui/Input';

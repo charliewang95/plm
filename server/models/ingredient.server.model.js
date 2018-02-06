@@ -27,7 +27,8 @@ var IngredientSchema = new Schema({
     name: {
         type: String,
         required: true,
-        lowercase: true
+        lowercase: true,
+        unique: true
     },
     packageName: {
         type: String,
@@ -51,7 +52,7 @@ var IngredientSchema = new Schema({
     vendors : [VendorPriceSchema]
 });
 
-IngredientSchema.index({ name: 1, packageName: 1}, { unique: true });
+//IngredientSchema.index({ name: 1, packageName: 1}, { unique: true });
 
 IngredientSchema.methods.getPackagePounds = function(packageName, callback) {
     if (packageName == 'sack' || packageName == 'pail')
