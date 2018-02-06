@@ -101,9 +101,12 @@ class Cart extends React.Component {
 
           //TODO: Call delete cart in back End
           await cartActions.deleteCart(cartId,sessionId);
-
           // Delete row from the cart table
           rows.splice(index, 1);
+
+          // console.log(" Cart After Delete " + JSON.stringify(rows));
+          alert(" Ingredient successfully removed from cart ! ");
+
         }
 
       });
@@ -116,7 +119,10 @@ class Cart extends React.Component {
       // TODO: send data to back End
       console.log("checkout" );
       await cartActions.checkoutCart(sessionId);
+
       this.setState({rows:[]});
+
+      alert(" Ingredients successfully moved from cart to production ! ");
 
       // window.location.reload();
 
@@ -202,10 +208,10 @@ class Cart extends React.Component {
             onClose={this.cancelDelete}
             // classes={{ paper: classes.dialog }}
           >
-            <DialogTitle>Remove item from cart</DialogTitle>
+            <DialogTitle>Check out to production</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Are you sure to remove the following item?
+                Are you sure to move this ingredient to production?
               </DialogContentText>
               <Paper>
                 <Grid
@@ -228,10 +234,10 @@ class Cart extends React.Component {
         <Button raised
                   color="primary"
                   component = {Link} to = "/cart" //commented out because it overrides onSubmit
-                  style={{marginLeft: 400, marginBottom: 30}}
+                  style={{marginLeft: 380, marginBottom: 30}}
                   type="submit"
                   onClick = {this.handleCheckOut}
-                  primary="true"> Check Out </Button>
+                  primary="true"> Check out for production </Button>
       </div>
       </Paper>
 

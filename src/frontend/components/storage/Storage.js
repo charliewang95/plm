@@ -128,6 +128,8 @@ class Storage extends React.PureComponent {
                         if(!alert(res.data)){
                           window.location.reload();
                         }
+                      }else{
+                        alert(" Storage capacity updated successfully! ");
                       }
                   });
               }

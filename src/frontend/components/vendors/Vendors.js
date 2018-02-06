@@ -316,7 +316,7 @@ class Vendors extends React.PureComponent
 
         </Grid>
 
-        {isAdmin && <buttons.AddVendorButton/> }
+        {isAdmin && <buttons.AddVendorButton /> }
         {isAdmin &&
         <Dialog
           open={!!deletingRows.length}
