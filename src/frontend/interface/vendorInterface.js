@@ -30,13 +30,16 @@ function packIntoJson(name, contact, code){
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-async function addVendor(name, contact, code, sessionId) {
+async function addVendor(name, contact, code, sessionId, callback) {
 	var newVendor = packIntoJson(name, contact, code);
-	try{
-		return await vendorActions.addVendor(newVendor, sessionId);
-	} catch (e) {
-		throw e;
-	}
+//	try{
+//		return await vendorActions.addVendor(newVendor, sessionId);
+//	} catch (e) {
+//		throw e;
+//	}
+    vendorActions.addVendor(newVendor, sessionId, function(res){
+        callback(res);
+    });
 	
 }
 
@@ -70,9 +73,12 @@ async function getVendorAsync(vendorId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-async function updateVendor(name, contact, code, vendorId,sessionId) {
+async function updateVendor(name, contact, code, vendorId,sessionId, callback) {
 	var updatedVendor = packIntoJson(name, contact, code);
-	return await vendorActions.updateVendor(vendorId, sessionId, updatedVendor);
+	//return await vendorActions.updateVendor(vendorId, sessionId, updatedVendor);
+	vendorActions.updateVendor(vendorId, sessionId, updatedVendor, function(res){
+        callback(res);
+    });
 };
 
 /*

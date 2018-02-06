@@ -53,12 +53,14 @@ async function create(url, object, sessionId, callback) {
     }
     catch(e) {
       console.log('there was an error');
-      console.log(e); 
+      console.log(e);
       //TODO: different error message for different types of error
-      if (e.response.status == 400)
+      if (e.response.status == 400 || e.response.status == 500)
         callback(e.response);
-      else
+      else {
+        console.log(e.response);
         throw e;
+      }
     }
 	
 	/*
@@ -182,7 +184,7 @@ async function updateById(url, propertyName, objectId, sessionId, newObject, cal
       console.log('there was an error');
       console.log(e);
       //TODO: different error message for different types of error
-      if (e.response.status == 400)
+      if (e.response.status == 400 || e.response.status == 500)
         callback(e.response);
       else
         throw e;

@@ -149,15 +149,24 @@ class Inventory extends React.PureComponent {
             rows[i].quantity = changed[rows[i].id].quantity;
 
             //TODO: Update the inventory
-            try{
-              inventoryActions.updateInventory(rows[i]._id, userId,
+//            try{
+//              inventoryActions.updateInventory(rows[i]._id, userId,
+//                rows[i].ingredientId, rows[i].ingredientName,
+//                rows[i].temperatureZone, rows[i].packageName, changed[rows[i].id].quantity, sessionId);
+//            }catch(e){
+//              console.log('An error passed to the front end!')
+//              //TODO: error handling in the front end
+//              alert(e);
+//            }
+        inventoryActions.updateInventory(rows[i]._id, userId,
                 rows[i].ingredientId, rows[i].ingredientName,
-                rows[i].temperatureZone, rows[i].packageName, changed[rows[i].id].quantity, sessionId);
-            }catch(e){
-              console.log('An error passed to the front end!')
-              //TODO: error handling in the front end
-              alert(e);
-            }
+                rows[i].temperatureZone, rows[i].packageName, changed[rows[i].id].quantity, sessionId,function(res){
+                    if (res.status == 400) {
+                        alert(res.data);
+                    } else if (res.status == 500) {
+                          alert('Ingredient and package combination already exists');
+                      }
+                });
         }
       }
      }

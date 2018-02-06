@@ -22,7 +22,6 @@ function packIntoJson(name, packageType, temperatureZone, vendors){
 	ingredientJson.vendors = vendors;
 	console.log("JSON");
 	console.log(ingredientJson);
-	console.log(dummyIngredient.sampleIngredient);
 	return ingredientJson;
 }
 

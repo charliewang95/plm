@@ -85,7 +85,7 @@ var convertBulkImport = function(req, res, next, array, i, callback){
                             console.log("old vendors");
                             console.log(vendors);
                             var newVendor = new Object();
-                            newVendor.code = vendorCode;
+                            newVendor.codeUnique = vendorCode;
                             newVendor.vendorName = obj2.name;
                             newVendor.vendorId = obj2._id;
                             newVendor.price = Number(vendorPrice);
@@ -111,7 +111,7 @@ var convertBulkImport = function(req, res, next, array, i, callback){
                     } else {
                         var vendors = [];
                         var newVendor = new Object();
-                        newVendor.code = vendorCode;
+                        newVendor.codeUnique = vendorCode;
                         newVendor.vendorName = obj2.name;
                         newVendor.vendorId = obj2._id;
                         newVendor.price = Number(vendorPrice);

@@ -33,9 +33,12 @@ function packIntoJson(userId, ingredientId, ingredientName, temperatureZone, pac
  * sessionId: string, id of the current session
  */
 
-async function addInventory(userId, ingredientId, ingredientName, temperatureZone, packageName, quantity, sessionId) {
+async function addInventory(userId, ingredientId, ingredientName, temperatureZone, packageName, quantity, sessionId, callback) {
 	var newInventory = packIntoJson(userId, ingredientId, ingredientName, temperatureZone, packageName, quantity);
-	return await inventoryActions.addInventory(newInventory, sessionId);
+	//return await inventoryActions.addInventory(newInventory, sessionId);
+	inventoryActions.addInventory(newInventory, sessionId, function(res){
+	    callback(res);
+	})
 }
 
 /**
@@ -62,9 +65,12 @@ async function getInventoryAsync(inventoryId, sessionId) {
  * sessionId: string, id of the current session
  */
 
-async function updateInventory(inventoryId, userId, ingredientId, ingredientName, temperatureZone, packageName, quantity, sessionId) {
+async function updateInventory(inventoryId, userId, ingredientId, ingredientName, temperatureZone, packageName, quantity, sessionId, callback) {
 	var updatedInventory = packIntoJson(userId, ingredientId, ingredientName, temperatureZone, packageName, quantity);
-	return await inventoryActions.updateInventory(inventoryId, sessionId, updatedInventory);
+	//return await inventoryActions.updateInventory(inventoryId, sessionId, updatedInventory);
+	inventoryActions.updateInventory(inventoryId, sessionId, updatedInventory, function(res){
+	    callback(res);
+	})
 };
 
 /*

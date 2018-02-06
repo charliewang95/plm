@@ -45,17 +45,25 @@ class AddVendorForm extends React.Component{
     console.log("code " + this.state.contact);
     e.preventDefault()
     // TODO: Send data to the back end
-    try{
-      const response = await vendorActions.addVendor(
-      this.state.name,this.state.contact,this.state.code,sessionId);
-      this.setState({ fireRedirect: true });
-    }
-    catch (e){
-      console.log('An error passed to the front end!')
-      //TODO: error handling in the front end
-      alert(e);
-    }
-
+//    try{
+//      const response = await vendorActions.addVendor(
+//      this.state.name,this.state.contact,this.state.code,sessionId);
+//      this.setState({ fireRedirect: true });
+//    }
+//    catch (e){
+//      console.log('An error passed to the front end!')
+//      //TODO: error handling in the front end
+//      alert(e);
+//    }
+        vendorActions.addVendor(
+          this.state.name,this.state.contact,this.state.code,sessionId, function(res){
+            if (res.status == 400) {
+                alert(res.data);
+            } else if (res.status == 500) {
+                  alert('Vendor name or code already exists');
+              }
+          });
+        this.setState({ fireRedirect: true });
 
 
   }

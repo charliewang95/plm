@@ -40,6 +40,14 @@ exports.validate = function(model, item, res, next, callback) {
               }
           });
       }
+      else if (model == Inventory) {
+             validateInventory(item, res, next, function(err, obj){
+                 if (err) return next(err);
+                 else {
+                     callback(err, obj);
+                 }
+             });
+         }
     else {
         callback(false, true);
     }
@@ -215,4 +223,40 @@ var validateIngredient = function(item, res, next, callback) { //check if ingred
             })
         }
     }
+};
+
+var validateInventory = function(item, res, next, callback) { //check if ingredient haa vendors that doesn't exist
+    var ingredientId = item.ingredientId;
+    var quantity = item.quantity;
+    var packageName = item.packageName;
+    var temperatureZone = item.temperatureZone;
+    var capacity;
+    Storage.findOne({temperatureZone: temperatureZone}, function(err, storage){
+        if (err) return next(err);
+        else if (!storage) {
+            res.status(400);
+            res.send("Storage capacity needs to be set for "+temperatureZone);
+        }
+        else {
+            var capacity = storage.capacity;
+            var currentQuantity = 0;
+            Inventory.find({temperatureZone: temperatureZone}, function(err, items){
+                for (var i = 0; i < items.length; i++) {
+                    var inventory = items[i];
+                    if (inventory.packageName != 'truckload' && inventory.packageName != 'railcar')
+                        currentQuantity+=inventory.quantity;
+                    if (inventory.ingredientId == ingredientId && inventory.packageName == packageName)
+                        currentQuantity-=inventory.quantity;
+                }
+                var newQuantity = 0;
+                newQuantity = quantity + currentQuantity;
+                if (capacity < newQuantity) {
+                    res.status(400);
+                    res.send("Capacity -- "+capacity+" will be exceeded by current quantity "+ newQuantity +" for "+temperatureZone);
+                }
+                else callback(err, true);
+            })
+
+        }
+    })
 };

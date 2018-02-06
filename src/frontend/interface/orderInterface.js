@@ -24,7 +24,6 @@ function packIntoJson(userId, ingredientId, vendorId, _package, price){
 	orderJson.price = price;
 	console.log("JSON");
 	console.log(orderJson);
-	console.log(dummyOrder.sampleOrder);
 	return orderJson;
 }
 
