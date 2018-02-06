@@ -9,11 +9,23 @@ const FormData = require('form-data');
  * form: multipart/formdata such as created by `const form = new FormData();`
  * sessionId: string, id of the current session
  */
-async function upload(form, sessionId){
+async function upload(form, sessionId, callback){
   const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-  const res = await axios.post('/upload/user/'.concat(sessionId), form, config);
-  console.log(res.data);
-  return res.data;
+  try{
+    const res = await axios.post('/upload/user/'.concat(sessionId), form, config);
+    console.log(res.data);
+    callback(res);
+  } catch(e) {
+        console.log('there was an error');
+        console.log(e);
+        //TODO: different error message for different types of error
+        if (e.response.status == 400 || e.response.status == 500)
+          callback(e.response);
+        else {
+          console.log(e.response);
+          throw e;
+        }
+  }
 };
 
 //export functions above for use by other modules

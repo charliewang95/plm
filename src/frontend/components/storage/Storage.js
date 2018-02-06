@@ -122,7 +122,7 @@ class Storage extends React.PureComponent {
             console.log("capacity " + rows[i].capacity);
 
             await storageActions.updateStorage(rows[i]._id,
-                rows[i].temperatureZone, rows[i].capacity,sessionId, function(res){
+                rows[i].temperatureZone, Number(rows[i].capacity), sessionId, function(res){
                     if (res.status == 400) {
                       //Reload window when cancelled
                         if(!alert(res.data)){
