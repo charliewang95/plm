@@ -35,6 +35,7 @@ import testData from './testIngredients';
 import SelectVendors from './SelectVendors';
 import * as ingredientInterface from '../../interface/ingredientInterface';
 import * as vendorInterface from '../../interface/vendorInterface';
+import * as uploadInterface from '../../interface/uploadInterface';
   // TODO: get the sessionId
 import * as testConfig from '../../../resources/testConfig.js'
 
@@ -326,7 +327,9 @@ class AdminIngredients extends React.PureComponent {
         ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone, added[0].vendorsArray, sessionId, function(res){
             if (res.status == 400) {
                 alert(res.data);
-            }
+            } else if (res.status == 500) {
+              alert('Ingredient name already exists');
+          }
         });
 
       }
@@ -371,7 +374,7 @@ class AdminIngredients extends React.PureComponent {
                 if (res.status == 400) {
                     alert(res.data);
                 } else if (res.status == 500) {
-                    alert('Ingredient name and temperature zone combination already exists');
+                    alert('Ingredient name already exists');
                 } else {
 
                     console.log("sdfadfsdf");
@@ -413,6 +416,7 @@ class AdminIngredients extends React.PureComponent {
     this.changeColumnOrder = (order) => {
       this.setState({ columnOrder: order });
     };
+    this.uploadFile = this.uploadFile.bind(this);
   }
 
   // handleRowChange({rowChanges}){
@@ -530,6 +534,35 @@ class AdminIngredients extends React.PureComponent {
     this.setState({rows: finalData});
   }
 
+    async uploadFile(event) {
+        let file = event.target.files[0];
+        console.log(file);
+        
+        if (file) {
+          let form = new FormData();
+          form.append('file', file);
+          console.log(form);
+           await uploadInterface.upload(form, sessionId, function(res){
+                if (res.status == 400) {
+                    alert(res.data);
+                } else if (res.status == 500) {
+                    alert('Duplicate Key on Ingredients (different package not allowed)');
+                } else if (res.status == 200) {
+                    console.log(res);
+                    if(!alert(res.data))
+                        window.location.reload();
+                }
+           });
+
+//          console.log(res);
+//          if(res == "SUCCESS") {
+//            alert("File successfully uploaded!");
+//          } else {
+//            alert("File upload failed!");
+//          }
+        }
+    }
+
   render() {
     const {
       classes,
@@ -550,6 +583,7 @@ class AdminIngredients extends React.PureComponent {
     } = this.state;
 
     return (
+      <div>
       <Paper>
         <Grid
           allowColumnResizing = {true}
@@ -640,6 +674,11 @@ class AdminIngredients extends React.PureComponent {
         </Dialog>
       }
       </Paper>
+      <p> bulk import </p>
+      <input type="file"
+        name="myFile"
+        onChange={this.uploadFile} />
+      </div>
     );
   }
 }

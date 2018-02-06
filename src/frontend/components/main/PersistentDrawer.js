@@ -19,6 +19,7 @@ import Routes from '../../routes.js';
 import Login from '../login/LoginPage';
 import cookie from 'react-cookies';
 import Button from 'material-ui/Button';
+import {Link} from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -219,7 +220,7 @@ class PersistentDrawer extends React.Component {
               <Typography type="title" color="inherit" noWrap>
                 Real Producer
               </Typography>
-              <Button color="inherit" onClick={this.logout}>Logout</Button>
+              <Button color="inherit" onClick={this.logout} component={Link} to="/">Logout</Button>
             </Toolbar>
           </AppBar>}
           {before}
