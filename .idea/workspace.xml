@@ -2,8 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3862f87b-362e-4c1c-a738-cd70a2ba3d34" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/components/admin/AdminIngredients.js" afterPath="$PROJECT_DIR$/src/frontend/components/admin/AdminIngredients.js" />
+      <change beforePath="$PROJECT_DIR$/uploads/12366ee7618f3434af9231a3489ddf9b" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/uploads/1da28f552cd811b35879ee5bfdcf58de" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/uploads/2b583b7298338bc0c4a3a67e9897bd6c" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/uploads/3067d10e8b197fad9c90daeab6bb9da3" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/uploads/319d34163f90834e4ed9462fc052af47" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/uploads/508d944b00891fc9ed18d8d4cdb5bc51" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/uploads/93b9e505b447f8e6369d3e13bc7d3f49" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/uploads/b4b693a8bbb08f7398302337c633c3c0" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/uploads/bca61b8e6a62fa5251ffd31d6c247ce9" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/uploads/ff7986e63595691da1300df05c76cc4c" afterPath="" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -560,7 +568,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -574,7 +581,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
