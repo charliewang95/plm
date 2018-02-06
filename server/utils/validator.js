@@ -32,14 +32,14 @@ exports.validate = function(model, item, res, next, callback) {
              }
          });
      }
-     else if (model == Ingredient) {
-          validateIngredient(item, res, next, function(err, obj){
-              if (err) return next(err);
-              else {
-                  callback(err, obj);
-              }
-          });
-      }
+//     else if (model == Ingredient) {
+//          validateIngredient(item, res, next, function(err, obj){
+//              if (err) return next(err);
+//              else {
+//                  callback(err, obj);
+//              }
+//          });
+//      }
       else if (model == Inventory) {
              validateInventory(item, res, next, function(err, obj){
                  if (err) return next(err);
@@ -81,12 +81,14 @@ var validateOrder = function(item, res, next, callback) { //check if exceed capa
                         }
                         else {
                             for (var i=0; i<inventories.length; i++) {
-                                quantity+=inventories[i].quantity;
+                                if (inventories[i].packageName != 'truckload' && inventories[i].packageName != 'railcar')
+                                    quantity+=inventories[i].quantity;
                                 if (inventories[i].ingredientId.toString() == ingredientId.toString()) {
                                     oldQuantity = inventories[i].quantity;
                                 }
                             }
                         }
+
                         newQuantity = item.pounds + quantity;
                         if (newQuantity > capacity && obj1.packageName != 'truckload' && obj1.packageName != 'railcar') {
                             res.status(400);
@@ -202,24 +204,28 @@ var validateCart = function(item, res, next, callback) { //check if checked out 
 };
 
 var validateIngredient = function(item, res, next, callback) { //check if ingredient haa vendors that doesn't exist
+    console.log('validating ingredient '+item.name);
+    console.log(item);
     var vendors = item.vendors;
     var counter = 0;
-    console.log(vendors);
-    for (var i = 0; i<vendors.length; i++) {
-        counter++;
-        var vendor = vendors[i];
-        console.log(vendor);
-        Vendor.findOne({codeUnique: vendor.codeUnique.toLowerCase()}, function(err, obj){
-            if (err) return next(err);
-            else if (!obj){
-                res.status(400);
-                res.send('Vendor '+vendor.codeUnique+' does not exist.');
-                callback(err, false);
-            }
-            else if (counter == vendors.length) {
-                callback(err, true);
-            }
-        })
+    if (vendors == null || vendors.length == 0) {
+        callback(0, true);
+    } else {
+        for (var i = 0; i<vendors.length; i++) {
+
+            var vendor = vendors[i];
+            Vendor.findOne({codeUnique: vendor.codeUnique.toLowerCase()}, function(err, obj){
+                if (err) return next(err);
+                else if (!obj){
+                    res.status(400);
+                    res.send('Vendor '+vendor.codeUnique+' does not exist.');
+                    callback(err, false);
+                }
+                else if (counter == vendors.length) {
+                    callback(err, true);
+                }
+            })
+        }
     }
 };
 

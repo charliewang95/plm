@@ -54,7 +54,7 @@ async function getAllVendorsAsync(sessionId) {
 }
 
 async function getAllVendorNamesCodesAsync(sessionId) {
-   const res = await axios.get('/vendors/vendorNamesCodes/user/'+sessionId);
+   const res = await axios.get('/vendors/vendorNames/user/'+sessionId);
    return res;
 }
 

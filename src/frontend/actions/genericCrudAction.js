@@ -44,7 +44,8 @@ exported methods
  * callback: a function
  */
 async function create(url, object, sessionId, callback) {
-	console.log('generic creating...')
+    console.log('generic creating');
+	console.log(object);
 	var completeUrl = appendSessionIdToUrl(url,sessionId);
 	try {
       	const res = await axios.post(completeUrl, object);
@@ -176,6 +177,7 @@ async function updateById(url, propertyName, objectId, sessionId, newObject, cal
 	// });
 
 	try {
+	    console.log(newObject);
         const res = await axios.put(completeUrl, newObject);
         const result = res.data;
         console.log(result);
