@@ -106,7 +106,7 @@ class Vendors extends React.PureComponent
       pageSizes: [5,10,0],
       columnOrder: ['name', 'contact', 'code'],
     };
-
+    var temp = this;
     this.changeSorting = sorting => this.setState({ sorting });
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
@@ -124,6 +124,7 @@ class Vendors extends React.PureComponent
         var vendorContact = "";
         var vendorCode = "";
         var vendorId="";
+        var oldRows = rows;
         for(var i =0; i < rows.length; i++)
         {
           // Accessing the changes made to the rows and displaying them
@@ -165,6 +166,7 @@ class Vendors extends React.PureComponent
               }else if (res.status == 500) {
                 if(!alert("Vendor name or code already exists")){
                   window.location.reload();
+                  temp.setState({rows:oldRows});
                 }
             }
           });

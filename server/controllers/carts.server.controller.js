@@ -31,29 +31,34 @@ exports.deleteAll = function(req, res, next) {
 };
 
 var deleteAllWithUserAccess = function(req, res, next, userId) {
+    console.log('checking out for '+userId);
     var errorMessage = '';
     Cart.find({userId: userId}, function(err, items) {
+        console.log('cart items');
+        console.log(items);
         if (err) {
             return next(err);
         } else if (items.length == 0) {
             res.status(400).send("Cart is empty");
         } else {
             //deleteAllHelper(preProcess, postProcess, model, items, res, next);
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
+//            for (var i = 0; i < items.length; i++) {
+//                var item = items[i];
 //                validateCart(item, res, next, function(err, message, valid){
 //                    if (err) {
 //                        return next(err);
 //                    }
 //                    else if (valid) {
-                        item.remove(function(err) {
-                            if (err) return next(err);
-                            else {
-                                postProcessor.process(Cart, item, res, next);
-                            };
-                        });
-            }
-            res.json(items);
+//                        item.remove(function(err) {
+//                            if (err) return next(err);
+//                            else {
+//                                postProcessor.process(Cart, item, item._id, res, next);
+//                                if ()
+//                            };
+//                        });
+            deleteHelper(0, items, res, next, function(){
+                res.json(items);
+            })
         }
     });
 }
@@ -72,6 +77,20 @@ var deleteAllWithUserAccess = function(req, res, next, userId) {
 //        }
 //    });
 //};
+
+var deleteHelper = function(i, items, res, next, callback) {
+    if (i == items.length) {
+        callback();
+    } else {
+        items[i].remove(function(err) {
+            if (err) return next(err);
+            else {
+                postProcessor.process(Cart, items[i], items[i]._id, res, next);
+                deleteHelper(i+1, items, res, next, callback);
+            };
+        });
+    }
+};
 
 var validateCart = function(item, res, next, callback) { //check if checked out items exceed inventory quantity
     var ingredientId = item.ingredientId;
@@ -97,68 +116,3 @@ var validateCart = function(item, res, next, callback) { //check if checked out 
         }
     });
 };
-
-function doSynchronousLoop(data, processData, done) {
-	if (data.length > 0) {
-		var loop = function(data, i, processData, done) {
-			processData(data[i], i, function() {
-				if (++i < data.length) {
-					loop(data, i, processData, done);
-				} else {
-					done();
-				}
-			});
-		};
-		loop(data, 0, processData, done);
-	} else {
-		done();
-	}
-};
-
-//var deleteAllHelper = function(func, callback, model, items, res, next) {
-//    func(model, items, res, next, function(valid) {
-//        if (valid) {
-//            callback(model, items, res, next);
-//        }
-//        else {
-//            res.status(400);
-//            res.send("Something's wrong");
-//        }
-//    });
-//};
-//
-//function preProcess(model, items, res, next, callback) {
-//    var counter = 0;
-//    for (var i = 0; i < items.length; i++) {
-//        counter++;
-//        var item = items[i];
-//        validator.validate(model, item, res, next, function(err, valid){
-//            if (err) {
-//                return next(err);
-//            }
-//            else if (counter == items.length) {
-//                console.log("got here");
-//                callback(true);
-//            }
-//        });
-//    }
-//}
-//
-//function postProcess(model, items, res, next) {
-//    for (var i = 0; i < items.length; i++) {
-//        var item = items[i];
-//        item.remove(function(err) {
-//            if (err) return next(err);
-//            else {
-//                postProcessor.process(model, item, res, next, function(err){
-//                    if (err) return next(err);
-//                    else {
-//                        if (i == items.length-1) {
-//                            res.json(items);
-//                        }
-//                    }
-//                });
-//            }
-//        });
-//    }
-//}
