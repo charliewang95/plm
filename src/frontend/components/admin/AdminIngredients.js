@@ -39,9 +39,13 @@ import * as vendorInterface from '../../interface/vendorInterface';
 import * as testConfig from '../../../resources/testConfig.js'
 
 // TODO: get session Id from the user
-const sessionId = '5a63be959144b37a6136491e';
-const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
+// const sessionId = testConfig.sessionId;
+var sessionId = "";
+
+
+const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
+var isAdmin = "";
 
 const styles = theme => ({
   lookupEditCell: {
@@ -148,7 +152,7 @@ const MultiSelectCellBase = ({
   onValueChange, vendorsArray, classes
 }) => (
   <TableCell className={classes.lookupEditCell}>
-    
+
      <SelectVendors initialArray={vendorsArray} handleChange={onValueChange}/>
     {/* </ReactSelect> */}
   </TableCell>
@@ -400,7 +404,7 @@ class AdminIngredients extends React.PureComponent {
           ingredientInterface.deleteIngredient(rows[index].ingredientId, sessionId);
           rows.splice(index, 1);
         }
-        
+
       });
 
       this.setState({ rows, deletingRows: [] });
@@ -421,6 +425,7 @@ class AdminIngredients extends React.PureComponent {
   componentWillMount(){
     this.loadCodeNameArray();
     this.loadAllIngredients();
+    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
   }
 
   componentDidMount(){
@@ -430,6 +435,7 @@ class AdminIngredients extends React.PureComponent {
   async loadCodeNameArray(){
    // var startingIndex = 0;
     var rawData = [];
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
     rawData = await vendorInterface.getAllVendorNamesCodesAsync(sessionId);
     console.log("loadCodeNameArray was called");
     console.log(rawData.data);
@@ -456,9 +462,10 @@ class AdminIngredients extends React.PureComponent {
   }
 
   async loadAllIngredients(){
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
     var rawData = await ingredientInterface.getAllIngredientsAsync(sessionId);
     if(rawData.length==0){
-      return 
+      return
     }
     console.log("rawData asdfasdfasdf");
     console.log(rawData[0].vendors);
@@ -564,7 +571,7 @@ class AdminIngredients extends React.PureComponent {
           <IntegratedSorting />
           <IntegratedPaging />
 
-          <EditingState
+          {isAdmin && <EditingState
             editingRowIds={editingRowIds}
             onEditingRowIdsChange={this.changeEditingRowIds}
             rowChanges={rowChanges}
@@ -572,7 +579,7 @@ class AdminIngredients extends React.PureComponent {
             addedRows={addedRows}
             onAddedRowsChange={this.changeAddedRows}
             onCommitChanges={this.commitChanges}
-          />
+          />}
 
           <DragDropProvider />
 
@@ -587,22 +594,23 @@ class AdminIngredients extends React.PureComponent {
           />
 
           <TableHeaderRow showSortingControls />
-          <TableEditRow
+
+          {isAdmin && <TableEditRow
             cellComponent={EditCell}
-          />
-          <TableEditColumn
+          /> }
+          {isAdmin && <TableEditColumn
             width={120}
             showAddCommand={!addedRows.length}
             showEditCommand
             showDeleteCommand
             commandComponent={Command}
-          />
+          />}
           <PagingPanel
             pageSizes={pageSizes}
           />
         </Grid>
 
-        <Dialog
+        {isAdmin && <Dialog
           open={!!deletingRows.length}
           onClose={this.cancelDelete}
           classes={{ paper: classes.dialog }}
@@ -630,6 +638,7 @@ class AdminIngredients extends React.PureComponent {
             <Button onClick={this.deleteRows} color="secondary">Delete</Button>
           </DialogActions>
         </Dialog>
+      }
       </Paper>
     );
   }

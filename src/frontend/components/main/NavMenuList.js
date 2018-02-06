@@ -13,20 +13,6 @@ import ReportIcon from 'material-ui-icons/Receipt'; // Report
 
 export const UserListItems = (
   <div>
-    <ListItem component={Link} to="/dashboard" button>
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Dashboard" />
-    </ListItem>
-
-    <ListItem component={Link} to="/admin-ingredients" button>
-      <ListItemIcon>
-        <AndroidIcon />
-      </ListItemIcon>
-      <ListItemText primary="Ingredients (Admin)" />
-    </ListItem>
-
     <ListItem component={Link} to="/register" button>
       <ListItemIcon>
         <AndroidIcon />
@@ -38,11 +24,23 @@ export const UserListItems = (
 
 export const MainListItems = (
   <div>
-    <ListItem component={Link} to="/user-ingredients" button>
+    {/* <ListItem component={Link} to="/user-ingredients" button>
       <ListItemIcon>
         <LocalPizzaIcon/>
       </ListItemIcon>
       <ListItemText primary="Ingredients (User)" />
+    </ListItem> */}
+    <ListItem component={Link} to="/dashboard" button>
+      <ListItemIcon>
+        <DashboardIcon />
+      </ListItemIcon>
+      <ListItemText primary="Dashboard" />
+    </ListItem>
+    <ListItem component={Link} to="/admin-ingredients" button>
+      <ListItemIcon>
+        <AndroidIcon />
+      </ListItemIcon>
+      <ListItemText primary="Ingredients (Admin)" />
     </ListItem>
     <ListItem component={Link} to="/orders" button>
       <ListItemIcon>

@@ -110,6 +110,7 @@ const styles = theme => ({
   },
 });
 
+
 class PersistentDrawer extends React.Component {
 
   constructor(props) {
@@ -118,6 +119,7 @@ class PersistentDrawer extends React.Component {
           open: false,
           anchor: 'left',
           loggedIn: (localStorage.getItem('user')!=null),
+          isAdmin: ((localStorage.getItem('user')!=null)?(localStorage.getItem('user').isAdmin):false),
         };
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
@@ -129,8 +131,17 @@ class PersistentDrawer extends React.Component {
     //this.setState({user:JSON.stringify(user)});
     //this.setState({ user:user });
     //localStorage.getItem('user') = user;
+    console.log("login");
+    console.log(key);
+    this.setState({isAdmin: key});
     this.setState({loggedIn: (localStorage.getItem('user')!=null)});
+
     //console.log(localStorage.getItem('user'));
+  }
+
+  componentDidMount(){
+    console.log("component did mount");
+    console.log(((localStorage.getItem('user')!=null)?(localStorage.getItem('user').isAdmin):false));
   }
 
   logout(){
@@ -155,7 +166,6 @@ class PersistentDrawer extends React.Component {
   render() {
     const { classes, theme } = this.props;
     const { anchor, open } = this.state;
-    const loggedIn = false;
     const drawer = (
       <Drawer
         type="persistent"
@@ -172,7 +182,7 @@ class PersistentDrawer extends React.Component {
             </IconButton>
           </div>
           <Divider />
-          <List className={classes.list}>{UserListItems}</List>
+          {this.state.isAdmin && <List className={classes.list}>{UserListItems}</List> }
           <Divider />
           <List className={classes.list}>{MainListItems}</List>
         </div>

@@ -32,6 +32,7 @@ import cookie from 'react-cookies';
 //var sessionId = (localStorage.getItem('user') == null) ? null: JSON.parse(localStorage.getItem('user'))._id;
 var sessionId = '';
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
+var isAdmin = '';
 
 const styles = theme => ({
   dialog: {
@@ -195,6 +196,11 @@ class Vendors extends React.PureComponent
     };
   }
 
+  componentWillMount(){
+    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+  }
+
   componentDidMount(){
     console.log(" MOUNT");
     this.loadAllVendors();
@@ -269,7 +275,7 @@ class Vendors extends React.PureComponent
           <IntegratedSorting />
           <IntegratedPaging />
 
-          <EditingState
+          {isAdmin && <EditingState
             editingRowIds={editingRowIds}
             onEditingRowIdsChange={this.changeEditingRowIds}
             rowChanges={rowChanges}
@@ -277,7 +283,7 @@ class Vendors extends React.PureComponent
             // addedRows={addedRows}
             // onAddedRowsChange={this.changeAddedRows}
             onCommitChanges={this.commitChanges}
-          />
+          /> }
 
           <DragDropProvider />
 
@@ -292,22 +298,26 @@ class Vendors extends React.PureComponent
           />
 
           <TableHeaderRow showSortingControls />
-          <TableEditRow
+
+          {isAdmin && <TableEditRow
             cellComponent={EditCell}
-          />
+          /> }
+          {isAdmin &&
           <TableEditColumn
             width={120}
             // showAddCommand={!addedRows.length}
             showEditCommand
             showDeleteCommand
             commandComponent={Command}
-          />
+          /> }
           <PagingPanel
             pageSizes={pageSizes}
           />
 
         </Grid>
-        <buttons.AddVendorButton/>
+
+        {isAdmin && <buttons.AddVendorButton/> }
+        {isAdmin &&
         <Dialog
           open={!!deletingRows.length}
           onClose={this.cancelDelete}
@@ -336,6 +346,7 @@ class Vendors extends React.PureComponent
             <Button onClick={this.deleteRows} color="secondary">Delete</Button>
           </DialogActions>
         </Dialog>
+      }
       </Paper>
     );
   }

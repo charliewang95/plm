@@ -2,8 +2,6 @@
 import React from 'react';
 import Paper from 'material-ui/Paper';
 import PropTypes from 'prop-types';
-
-
 import {
   FilteringState,
   IntegratedFiltering,EditingState,
@@ -41,12 +39,15 @@ import IngredientDetail from './IngredientDetail';
 
 
 //TODO: Get if it ADMIN
-var  isAdmin= true;
-const userId = "5a765f3d9de95bea24f905d9";
+var sessionId = "";
+const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
+var isAdmin = "";
+var userId = "";
+
+// const userId = "5a765f3d9de95bea24f905d9";
 // const sessionId = "5a63be959144b37a6136491e";
 // const sessionId = testConfig.sessionId;
-var sessionId = '';
-const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
+
 
 const Cell = (props)=>{
   return <Table.Cell {...props}
@@ -201,6 +202,7 @@ class Inventory extends React.PureComponent {
                  parseInt(this.state.addedQuantity), sessionId, function(res){
                     if (res.status == 400) {
                         alert(res.data);
+
                     }
                  });
             }
@@ -215,6 +217,12 @@ class Inventory extends React.PureComponent {
      }
    }
 
+   componentWillMount(){
+     userId = JSON.parse(localStorage.getItem('user'))._id;
+     isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+     sessionId = JSON.parse(localStorage.getItem('user'))._id;
+   }
+   
 // Initial loading of data
   componentDidMount() {
     this.loadInventory();
