@@ -31,10 +31,11 @@ function packIntoJson(email, username, password, isAdmin, loggedIn){
 /* add one user
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
+ * callback: a function
  */
-async function addUser(email, username, password, isAdmin, loggedIn, sessionId) {
+async function addUser(email, username, password, isAdmin, loggedIn, sessionId, callback) {
 	var newUser = packIntoJson(email, username, password, isAdmin, loggedIn);
-	return await userActions.addUser(newUser, sessionId);
+	return await userActions.addUser(newUser, sessionId, callback);
 };
 
 /**
@@ -86,7 +87,6 @@ async function authenticateAsync(username, password, callback){
 	userInfo.password = password;
     var res;
     await userActions.authenticateAsync(userInfo, function(res){
-        res = res;
         console.log(res);
         callback(res);
     });

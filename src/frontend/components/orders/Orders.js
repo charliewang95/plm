@@ -18,7 +18,8 @@ import testVendorData from '../vendors/dummyData.js';
 
 //TODO: get session Id
 const userId = "5a765f3d9de95bea24f905d9";
-const sessionId = testConfig.sessionId;
+// const sessionId = testConfig.sessionId;
+var sessionId = '';
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 
@@ -62,6 +63,7 @@ class Orders extends React.PureComponent{
      console.log(" LOAD ALL INGREDIENTS");
      var rawData = [];
     if(READ_FROM_DATABASE){
+      sessionId = JSON.parse(localStorage.getItem('user'))._id;
       rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
       console.log("data from DB " + JSON.stringify(rawData));
     }else{
@@ -84,32 +86,39 @@ class Orders extends React.PureComponent{
 
     this.setState({packageName:option.packageName});
     this.setState({ingredientId:option.value});
-    var ingredientDetails = "";
+    var ingredientDetails;
     //TODO: get vendors list for the selected ingredient
-//    try{
-//       ingredientDetails = await ingredientActions.getIngredientAsync(option.value,sessionId);
-//    }catch(e){
-//      console.log('An error passed to the front end!')
-//      alert(e);
-//    }
-    ingredientActions.getIngredientAsync(option.value,sessionId, function(res){
-        if (res.status == 400) {
-            alert(res.data);
-        } else {
-            ingredientDetails = res;
-             console.log("Vendors " + JSON.stringify(ingredientDetails.vendors));
+    try{
+       ingredientDetails = await ingredientActions.getIngredientAsync(option.value,sessionId);
+    }catch(e){
+      console.log('An error passed to the front end!')
+      alert(e);
+    }
+    console.log("Vendors " + JSON.stringify(ingredientDetails.vendors));
 
-                var parsedVendorOptions = [...ingredientDetails.vendors.map((row,index)=> ({
-                    value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
-                    price: row.price,
-                  })),
-                ];
-                console.log("Vendor options " + JSON.stringify(parsedVendorOptions));
-                this.setState({vendor_options:parsedVendorOptions});
-        }
-    })
-
-
+                    var parsedVendorOptions = [...ingredientDetails.vendors.map((row,index)=> ({
+                        value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
+                        price: row.price,
+                      })),
+                    ];
+                    console.log("Vendor options " + JSON.stringify(parsedVendorOptions));
+                    this.setState({vendor_options:parsedVendorOptions});
+//    ingredientActions.getIngredientAsync(option.value,sessionId, function(res){
+//        if (res.status == 400) {
+//            alert(res.data);
+//        } else {
+//            ingredientDetails = res;
+//             console.log("Vendors " + JSON.stringify(ingredientDetails.vendors));
+//
+//                var parsedVendorOptions = [...ingredientDetails.vendors.map((row,index)=> ({
+//                    value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
+//                    price: row.price,
+//                  })),
+//                ];
+//                console.log("Vendor options " + JSON.stringify(parsedVendorOptions));
+//                this.setState({vendor_options:parsedVendorOptions});
+//        }
+//    })
   }
 
 // event handler when a vendor is selected from the drop down

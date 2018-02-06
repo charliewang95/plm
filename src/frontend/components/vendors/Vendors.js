@@ -25,12 +25,14 @@ import dummyData from './dummyData.js';
 import * as vendorActions from '../../interface/vendorInterface.js';
 import * as buttons from './Buttons.js';
 
-import * as testConfig from '../../../resources/testConfig.js'
+import * as testConfig from '../../../resources/testConfig.js';
+import cookie from 'react-cookies';
 
 // TODO: get session Id from the user
-// const sessionId = testConfig.sessionId;
-const sessionId = "5a765f3d9de95bea24f905d9";
+//var sessionId = (localStorage.getItem('user') == null) ? null: JSON.parse(localStorage.getItem('user'))._id;
+var sessionId = '';
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
+var isAdmin = '';
 
 const styles = theme => ({
   dialog: {
@@ -194,6 +196,11 @@ class Vendors extends React.PureComponent
     };
   }
 
+  componentWillMount(){
+    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+  }
+
   componentDidMount(){
     console.log(" MOUNT");
     this.loadAllVendors();
@@ -205,6 +212,7 @@ class Vendors extends React.PureComponent
     var rawData = [];
     if(READ_FROM_DATABASE){
       //TODO: Initialize data
+      sessionId = JSON.parse(localStorage.getItem('user'))._id;
       rawData = await vendorActions.getAllVendorsAsync(sessionId);
       //commented out because collectively done after rawData is determined
       /*
@@ -267,7 +275,7 @@ class Vendors extends React.PureComponent
           <IntegratedSorting />
           <IntegratedPaging />
 
-          <EditingState
+          {isAdmin && <EditingState
             editingRowIds={editingRowIds}
             onEditingRowIdsChange={this.changeEditingRowIds}
             rowChanges={rowChanges}
@@ -275,7 +283,7 @@ class Vendors extends React.PureComponent
             // addedRows={addedRows}
             // onAddedRowsChange={this.changeAddedRows}
             onCommitChanges={this.commitChanges}
-          />
+          /> }
 
           <DragDropProvider />
 
@@ -290,22 +298,26 @@ class Vendors extends React.PureComponent
           />
 
           <TableHeaderRow showSortingControls />
-          <TableEditRow
+
+          {isAdmin && <TableEditRow
             cellComponent={EditCell}
-          />
+          /> }
+          {isAdmin &&
           <TableEditColumn
             width={120}
             // showAddCommand={!addedRows.length}
             showEditCommand
             showDeleteCommand
             commandComponent={Command}
-          />
+          /> }
           <PagingPanel
             pageSizes={pageSizes}
           />
 
         </Grid>
-        <buttons.AddVendorButton/>
+
+        {isAdmin && <buttons.AddVendorButton/> }
+        {isAdmin &&
         <Dialog
           open={!!deletingRows.length}
           onClose={this.cancelDelete}
@@ -334,6 +346,7 @@ class Vendors extends React.PureComponent
             <Button onClick={this.deleteRows} color="secondary">Delete</Button>
           </DialogActions>
         </Dialog>
+      }
       </Paper>
     );
   }

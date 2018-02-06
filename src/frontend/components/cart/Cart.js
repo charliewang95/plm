@@ -30,13 +30,11 @@ import Dialog, {
 
 
 // TODO: Get the user ID
-//const sessionId = "5a765f3d9de95bea24f905d9";
-const userId = "5a765f3d9de95bea24f905d9"
+
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
-//const sessionId = testConfig.sessionId;
-const sessionId = '5a765f3d9de95bea24f905d9';
-
+var userId = "";
+var sessionId = "";
 const Cell = (props) => {
   console.log(" CELL props value: " + props.value)
   return <Table.Cell {...props} />;
@@ -130,6 +128,8 @@ class Cart extends React.Component {
     var rawData = '';
     if(READ_FROM_DATABASE){
       // TODO: Initialize data
+      sessionId = JSON.parse(localStorage.getItem('user'))._id;
+      userId =  JSON.parse(localStorage.getItem('user'))._id;
       rawData = await cartActions.getAllCartsAsync(userId);
       console.log("rawData " + JSON.stringify(rawData));
     } else {
