@@ -107,7 +107,7 @@ var convertBulkImport = function(req, res, next, array, i, callback){
                 Vendor.findOne({codeUnique: vendorCode}, function(err, obj2){ //need to check if vendor already selling it
                     if (err) return next(err);
                     else if (!obj2) {
-                        res.status(400).send('Actions denied. Vendor does not exist. Ingredients above this point are successfully loaded.');
+                        res.status(400).send('Actions denied. Vendor '+vendorCode+' does not exist. Ingredients above this point are successfully loaded.');
                     } else {
                         var vendors = [];
                         var newVendor = new Object();
