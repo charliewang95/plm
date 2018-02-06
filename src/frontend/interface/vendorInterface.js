@@ -91,4 +91,4 @@ async function deleteVendor(vendorId, sessionId) {
 };
 
 //export functions above for use by other modules
-export { addVendor, getAllVendorsAsync, getVendorAsync, updateVendor, deleteVendor};
+export { addVendor, getAllVendorsAsync, getVendorAsync, updateVendor, deleteVendor, getAllVendorNamesCodesAsync};
