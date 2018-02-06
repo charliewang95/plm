@@ -43,7 +43,6 @@ const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 
-
 const styles = theme => ({
   lookupEditCell: {
     verticalAlign: 'top',
@@ -218,7 +217,6 @@ const EditCell = (props) => {
   // EDIT to make changes to the multi select things //
   /* CHANGE */
   if (props.column.name =='vendors') {
-    console.log("help");
     console.log(vendorsArray);
     return  <MultiSelectCell {...props} vendorsArray= {vendorsArray} onValueChange={props.onValueChange}/>;
   }else if (availableColumnValues){
@@ -262,6 +260,7 @@ class AdminIngredients extends React.PureComponent {
       pageSize: 0,
       pageSizes: [5, 10, 0],
       columnOrder: ['name', 'packageName', 'temperatureZone', 'vendors'],
+      options:[],
     };
 
     // console.log(" NAME : " + testData.tablePage.items[0].name);
@@ -282,6 +281,9 @@ class AdminIngredients extends React.PureComponent {
       })),
     });
     // this.changeRowChanges = rowChanges => this.setState({ rowChanges });
+    this.loadCodeNameArray = this.loadCodeNameArray.bind(this);
+    this.createMap = this.createMap.bind(this);
+
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
@@ -294,9 +296,11 @@ class AdminIngredients extends React.PureComponent {
 
         // TODO: Add checks for Values
         var vendors_string = "";
+        console.log(added[0]);
         for(var i =0; i < added[0].vendors.length; i++){
           var vendorObject = added[0].vendors[i];
-          var vendorName = this.state.idToNameMap.get(vendorObject.vendor);
+          var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
+          console.log(vendorName);
           var namePrice = vendorName + " / $" + vendorObject.price;
           vendors_string += namePrice;
           if(i!= (added[0].vendors).length -1){
@@ -339,7 +343,7 @@ class AdminIngredients extends React.PureComponent {
                 console.log("Is this changed?");
                 console.log(changed[rows[i].id].vendors[j]);
                 var vendorObject = changed[rows[i].id].vendors[j];
-                var vendorName = this.state.idToNameMap.get(vendorObject.vendor);
+                var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
                 var namePrice = vendorName + " / $" + vendorObject.price;
                 vendors_string += namePrice;
               //   vendors_string += changed[rows[i].id].vendors[j].value;
@@ -397,21 +401,35 @@ class AdminIngredients extends React.PureComponent {
   // }
 
   componentWillMount(){
+    this.loadCodeNameArray();
     this.loadAllIngredients();
+  }
+
+  componentDidMount(){
     this.createMap();
   }
 
-  createMap(){
+  async loadCodeNameArray(){
+   // var startingIndex = 0;
+    var rawData = [];
+    rawData = await vendorInterface.getAllVendorNamesCodesAsync(sessionId);
+    console.log("loadCodeNameArray was called");
+    console.log(rawData.data);
+    this.setState({options: rawData.data});
+  }
+
+  async createMap(){
+    var list = this.state.options;
     var map = new Map();
-    map.set("5a76b571c37e254b74f45b3e", "Vendor P");
-    map.set("5a76b5bfc37e254b74f45b40", "Vendor R")
-    map.set("5a76b607c37e254b74f45b42", "Target");
+    list.forEach(function(vendor){
+      map.set(vendor.codeUnique, vendor.name);
+    });
     this.setState({idToNameMap:map});
   }
 
   async loadAllIngredients(){
     var rawData = await ingredientInterface.getAllIngredientsAsync(sessionId);
-    console.log("rawData");
+    console.log("rawData asdfasdfasdf");
     console.log(rawData[0].vendors);
 
     var processedData=[];
@@ -426,10 +444,12 @@ class AdminIngredients extends React.PureComponent {
       var vendorArrayString = "";
       //loop through vendor
       console.log("This is the rawData");
+      console.log(rawData[i]);
       for (var j=0; j<rawData[i].vendors.length; j++){
-        console.log(rawData[i].vendors[j].vendorId);
-        //var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].vendorId);
-        var vendorName = rawData[i].vendors[j].vendorName;
+
+        var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].codeUnique);
+        console.log(vendorName);
+
         vendorArrayString+=vendorName + " / $" + rawData[i].vendors[j].price;
 
          if(i!= (rawData[i].vendors.length-1) ){
