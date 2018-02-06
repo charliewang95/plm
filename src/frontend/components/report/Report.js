@@ -56,16 +56,16 @@ export default class Demo extends React.PureComponent {
   async loadAllIngredients(){
       var rawData = [];
 
-    // try{
+    try{
        if(READ_FROM_DATABASE){
          rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
        }else{
          rawData = dummyData;
        }
-     // }catch(e){
-       // console.log("Error passed to front end");
-       // alert(e);
-     // }
+     }catch(e){
+       console.log("Error passed to front end");
+       alert(e);
+     }
      // adds integer values as row id
      var processedData = [...rawData.map((row, index)=> ({
          id: index,...row,
