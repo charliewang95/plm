@@ -35,6 +35,7 @@ const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 var userId = "";
 var sessionId = "";
+
 const Cell = (props) => {
   console.log(" CELL props value: " + props.value)
   return <Table.Cell {...props} />;
@@ -89,7 +90,7 @@ class Cart extends React.Component {
     this.deleteRows = () => {
       const rows = this.state.rows.slice();
 
-      this.state.deletingRows.forEach((rowId) => {
+      this.state.deletingRows.forEach(async (rowId) => {
         const index = rows.findIndex(row => row.id === rowId);
 
         if (index > -1) {
@@ -99,7 +100,8 @@ class Cart extends React.Component {
           console.log("Deleted Item: " + rows[index].ingredientName);
 
           //TODO: Call delete cart in back End
-          cartActions.deleteCart(cartId,sessionId);
+          await cartActions.deleteCart(cartId,sessionId);
+
           // Delete row from the cart table
           rows.splice(index, 1);
         }
@@ -110,11 +112,14 @@ class Cart extends React.Component {
     };
 
     // handle check out of carts
-    this.handleCheckOut = () => {
+    this.handleCheckOut = async () => {
       // TODO: send data to back End
-      console.log("checkout");
-      cartActions.checkoutCart(sessionId);
-      window.location.reload();
+      console.log("checkout" );
+      await cartActions.checkoutCart(sessionId);
+      this.setState({rows:[]});
+
+      // window.location.reload();
+
     };
 
   }
