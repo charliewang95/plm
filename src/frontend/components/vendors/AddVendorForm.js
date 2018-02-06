@@ -11,7 +11,7 @@ import { Redirect } from 'react-router'
 import * as testConfig from '../../../resources/testConfig.js'
 
 // TODO: get session Id from the user
-const sessionId = testConfig.sessionId;
+var sessionId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 const styles = {
@@ -37,6 +37,10 @@ class AddVendorForm extends React.Component{
     // this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.redirectToVendorsFrom = this.redirectToVendorsFrom.bind(this);
+  }
+
+  componentWillMount(){
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
   }
 
   vendorSuccessfullyAdded() {
@@ -65,7 +69,7 @@ class AddVendorForm extends React.Component{
 //    }
   const me = this;
   await vendorActions.addVendor(
-    
+
     this.state.name,this.state.contact,this.state.code,sessionId, function(res){
       if (res.status == 400) {
         alert(res.data);

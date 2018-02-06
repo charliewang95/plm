@@ -27,7 +27,9 @@ import dummyData from './dummyData';
 
 var sessionId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
-var  isAdmin= true;
+
+var isAdmin =  "";
+// JSON.parse(localStorage.getItem('user')).isAdmin;
 
 
 const Cell = (props)=>{
@@ -134,6 +136,10 @@ class Storage extends React.PureComponent {
         }
         this.commitChanges = this.commitChanges.bind(this);
       }
+
+  componentWillMount(){
+    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+  }
 
 
   componentDidMount() {

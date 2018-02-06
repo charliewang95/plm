@@ -78,7 +78,9 @@ class LoginPage extends React.Component{
         } else {
             console.log(res.data);
             localStorage.setItem('user', JSON.stringify(res.data));
-            temp.props.login(true, res.data);
+            console.log("hi" + JSON.parse(localStorage.getItem('user')).isAdmin);
+            var isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+            temp.props.login(isAdmin, res.data);
         }
     });
 //    var message = "";

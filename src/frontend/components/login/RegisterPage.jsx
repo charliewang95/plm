@@ -6,7 +6,8 @@ import { addUser } from '../../interface/userInterface.js';
 import * as testConfig from '../../../resources/testConfig.js'
 
 // TODO: get session Id from the user
-const sessionId = testConfig.sessionId;
+var sessionId = "";
+// const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 class RegisterPage extends React.Component {
@@ -32,9 +33,12 @@ class RegisterPage extends React.Component {
     this.userSuccessfullyAdded = this.userSuccessfullyAdded.bind(this);
   }
 
+  componentWillMount(){
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+  }
+
   userSuccessfullyAdded() {
     alert('User ' + this.state.user.username + ' is added successfully');
-
   }
 
 
@@ -61,8 +65,15 @@ class RegisterPage extends React.Component {
           alert('Username or email already exists');
         }else{
           me.userSuccessfullyAdded();
+          this.clearFields();
         }
       });
+  }
+
+  clearFields(){
+    this.setState({email:""});
+    this.setState({username:""});
+    this.setState({password:""});
   }
 
   /**
