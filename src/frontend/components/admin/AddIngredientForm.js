@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
-import PageBase from '../home/PageBase/PageBase';
+// import PageBase from '../home/PageBase/PageBase';
 import RaisedButton from 'material-ui/Button';
 import {Link} from 'react-router-dom';
 import Styles from  'react-select/dist/react-select.css';
@@ -86,8 +86,9 @@ class AddIngredientForm extends React.Component{
 
   render (){
     const { name, pkg, temperature, vendors } = this.state;
-    return (<PageBase title = 'Add Ingredients' navigation = '/Application Form'>
-            <form onSubmit={this.onFormSubmit}>
+    return (
+      // <PageBase title = 'Add Ingredients' navigation = '/Application Form'>
+            <form onSubmit={this.onFormSubmit} >
               <div style = {styles.buttons}>
                 <label> Ingredient Name </label>
                 <Select.Creatable
@@ -140,7 +141,7 @@ class AddIngredientForm extends React.Component{
                           primary={true}> SAVE </RaisedButton>
              </div>
            </form>
-         </PageBase>
+         // </PageBase>
     )
 	}
 };

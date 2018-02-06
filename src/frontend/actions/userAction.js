@@ -4,14 +4,14 @@ import * as genericActions from './genericCrudAction'
 //All the methods return the response on successful completion
 
 const baseUrl = '/users';
-const property = 'searchUser';
+const property = 'searchedUser';
 
 /* add one user
  * user: JSON object
  * sessionId: string
  */
-function addUser(user, sessionId) {
-	return genericActions.create(baseUrl, user, sessionId);
+async function addUser(user, sessionId) {
+	return await genericActions.create(baseUrl, user, sessionId);
 };
 
 /* 
@@ -28,8 +28,8 @@ function getAllUsers() {
  * get all users
  * sessionId: string, id of the current session
  */
-function getAllUsersAsync(sessionId){
-	return genericActions.getAllAsync(baseUrl, sessionId);
+async function getAllUsersAsync(sessionId){
+	return await genericActions.getAllAsync(baseUrl, sessionId);
 };
 
 /* 
@@ -48,8 +48,8 @@ function getUser(userId) {
  * ingredientId: string, the id of the ingredient
  * sessionId: string, id of the current session
  */
-function getUserAsync(userId, sessionId){
-	return genericActions.getByIdAsync(baseUrl, property, userId, sessionId);
+async function getUserAsync(userId, sessionId){
+	return await genericActions.getByIdAsync(baseUrl, property, userId, sessionId);
 };
 
 
@@ -59,8 +59,8 @@ function getUserAsync(userId, sessionId){
  * sessionId: string, id of the current session
  * user: JSON object representing the updated info about the user
  */
-function updateUser(userId, sessionId, user) {
-	return genericActions.updateById(baseUrl, property, userId, sessionId, user);
+async function updateUser(userId, sessionId, user) {
+	return await genericActions.updateById(baseUrl, property, userId, sessionId, user);
 };
 
 /* 
@@ -68,9 +68,32 @@ function updateUser(userId, sessionId, user) {
  * userId: string, the id of the user
  * sessionId: string, id of the current session
  */
-function deleteUser(userId, sessionId) {
-	return genericActions.deleteById(baseUrl, property, userId, sessionId);
+async function deleteUser(userId, sessionId) {
+	return await genericActions.deleteById(baseUrl, property, userId, sessionId);
 };
 
+/*
+ * function that checks if user could login with provided information
+ * user: JSON object containing email and password
+ */
+
+async function authenticateAsync(user, callback){
+    var completeUrl = '/users/authenticate';
+	try {
+      	const res = await axios.post(completeUrl, user);
+		console.log(res);
+		callback(res);
+    }
+    catch(e) {
+      console.log('there was an error');
+      console.log(e.response);
+      //TODO: different error message for different types of error
+      if (e.response.status == 400)
+        callback(e.response);
+      else
+        throw e;
+    }
+}
+
 //export functions above for use by other modules
-export { addUser, getAllUsersAsync, getUserAsync, updateUser, deleteUser};
+export { addUser, getAllUsersAsync, getUserAsync, updateUser, deleteUser, authenticateAsync};
