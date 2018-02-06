@@ -6,6 +6,14 @@ import Styles from  'react-select/dist/react-select.css';
 import TextField from 'material-ui/TextField';
 import {Card,CardHeader} from 'material-ui/Card';
 
+import classNames from 'classnames';
+import { withStyles } from 'material-ui/styles';
+import IconButton from 'material-ui/IconButton';
+import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
+import { FormControl, FormHelperText } from 'material-ui/Form';
+import Visibility from 'material-ui-icons/Visibility';
+import VisibilityOff from 'material-ui-icons/VisibilityOff';
+
 const styles = {
   buttons: {
     marginTop: 30,
@@ -16,17 +24,30 @@ const styles = {
   }
 };
 
-const SignUpForm = ({
-  onSubmit,
-  onChange,
-  errors,
-  user
-}) => (
-  <div>
+class SignUpForm extends React.Component{
+  constructor(props) {
+    super(props);
+    this.state = {
+      showPassword: false
+    };
+    this.handleClickShowPasssword = this.handleClickShowPasssword.bind(this);
+  };
+
+  handleMouseDownPassword(event){
+    event.preventDefault();
+  };
+
+  handleClickShowPasssword(){
+    this.setState({ showPassword: !this.state.showPassword });
+  };
+
+  render(){
+    return (
+<div>
     <label> Create a User </label>
-    {errors.summary && <p className="error-message">{errors.summary}</p>}
+    {this.props.errors.summary && <p className="error-message">{this.props.errors.summary}</p>}
       
-    <form action = "/" onSubmit={onSubmit}>
+    <form action = "/" onSubmit={this.props.onSubmit}>
 
       <TextField
         required
@@ -34,8 +55,8 @@ const SignUpForm = ({
         id="username"
         name='username'
         label="Username"
-        value={user.username}
-        onChange={onChange}
+        value={this.props.user.username}
+        onChange={this.props.onChange}
         margin="normal"
       />
       <TextField
@@ -44,20 +65,34 @@ const SignUpForm = ({
         id="email"
         name="email"
         label="E-mail"
-        value={user.email}
-        onChange = {onChange}
+        value={this.props.user.email}
+        onChange = {this.props.onChange}
         margin="normal"
       />
-      <TextField
-        required
-        fullWidth={true}
-        id="password"
-        name="password"
-        label="Password"
-        value={user.password}
-        onChange = {onChange}
-        margin="normal"
-      />
+
+      <FormControl fullWidth required>
+          <InputLabel htmlFor="password">Password</InputLabel>
+          <Input
+            id="password"
+            name="password"
+            label="Password"
+            
+            type={this.state.showPassword ? 'text' : 'password'}
+            value={this.props.user.password}
+            onChange={this.props.onChange}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={this.handleClickShowPasssword}
+                  onMouseDown={this.handleMouseDownPassword}
+                >
+                  {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+
       <div style={styles.buttons}>
         <RaisedButton raised color = "secondary"
           component = {Link} to = "/">Back To Dashboard</RaisedButton>
@@ -69,7 +104,10 @@ const SignUpForm = ({
       </div>
     </form>
   </div>
-);
+
+    )
+  }
+}
 
 SignUpForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
