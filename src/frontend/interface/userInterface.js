@@ -86,7 +86,6 @@ async function authenticateAsync(username, password, callback){
 	userInfo.password = password;
     var res;
     await userActions.authenticateAsync(userInfo, function(res){
-        res = res;
         console.log(res);
         callback(res);
     });

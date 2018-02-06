@@ -128,10 +128,11 @@ exports.authenticate = function(req, res, next) {
         else {
             if (user.authenticate(req.body.password)) {
                 user.update({loggedIn: true}, function(err, obj){
+                    console.log('correct. logged in');
                     res.send(user);
                 });
             } else {
-                //res.status(400);
+                res.status(400);
                 res.send("Incorrect password.");
             }
         }

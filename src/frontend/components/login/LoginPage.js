@@ -71,7 +71,7 @@ class LoginPage extends React.Component{
             message = res.data;
             alert(message);
         } else {
-
+            this.props.login(true, "success");
         }
     });
 //    var message = "";
