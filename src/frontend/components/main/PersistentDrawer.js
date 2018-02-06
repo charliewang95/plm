@@ -116,7 +116,7 @@ class PersistentDrawer extends React.Component {
   constructor(props) {
         super(props);
         this.state = {
-          open: false,
+          open: true,
           anchor: 'left',
           loggedIn: (localStorage.getItem('user')!=null),
           isAdmin: ((localStorage.getItem('user')!=null)?(localStorage.getItem('user').isAdmin):false),
@@ -133,6 +133,7 @@ class PersistentDrawer extends React.Component {
     //localStorage.getItem('user') = user;
     console.log("login");
     console.log(key);
+    this.handleDrawerOpen();
     this.setState({isAdmin: key});
     this.setState({loggedIn: (localStorage.getItem('user')!=null)});
 
@@ -146,6 +147,7 @@ class PersistentDrawer extends React.Component {
 
   logout(){
     localStorage.removeItem('user');
+    this.handleDrawerClose();
     this.setState({loggedIn: (localStorage.getItem('user')!=null)});
   }
 

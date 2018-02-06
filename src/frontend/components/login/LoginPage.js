@@ -13,6 +13,11 @@ import { Switch, Route } from 'react-router-dom';
 import PersistentDrawer from '../main/PersistentDrawer';
 import * as userActions from'../../interface/userInterface';
 import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
+import { FormControl, FormHelperText } from 'material-ui/Form';
+import Visibility from 'material-ui-icons/Visibility';
+import VisibilityOff from 'material-ui-icons/VisibilityOff';
+import IconButton from 'material-ui/IconButton';
+
 
 const styles = {
     buttons: {
@@ -47,10 +52,27 @@ class LoginPage extends React.Component{
       refrigerator:'',
       warehouse:'',
       fireRedirect: false,
+      showPassword: false,
       }
     // this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
+    this.handleClickShowPasssword = this.handleClickShowPasssword.bind(this);
+    this.registerOnClick = this.registerOnClick.bind(this);
+  }
+
+   handleClickShowPasssword(){
+    this.setState({ showPassword: !this.state.showPassword });
+  };
+
+    handleMouseDownPassword(event){
+    event.preventDefault();
+  };
+
+  registerOnClick(e){
+    e.preventDefault();
+    console.log("clicked");
+    alert("There is no register button. Please ask your admin to create an account for you.");
   }
 
   onFormSubmit(e) {
@@ -109,7 +131,6 @@ class LoginPage extends React.Component{
           image="https://t3.ftcdn.net/jpg/01/27/38/98/240_F_127389862_pMUoWAQMoKsq6QOrF8kq8S9KaXOCjlHP.jpg"
         />
             <form onSubmit={this.onFormSubmit}>
-
                 <TextField
                     required
                     fullWidth={true}
@@ -119,24 +140,37 @@ class LoginPage extends React.Component{
                     margin="normal"
                     validations={[required]}
                 />
-                <TextField
-                    required
-                    fullWidth={true}
-                    id="adornment-password"
+
+                <FormControl fullWidth required>
+                  <InputLabel htmlFor="password">Password</InputLabel>
+                  <Input
+                    id="password"
+                    name="password"
                     label="Password"
+                    
+                    type={this.state.showPassword ? 'text' : 'password'}
                     value={this.state.password}
-                    onChange = {(event) => this.setState({ password: event.target.value})}
-                    margin="normal"
-                    validations={[required]}
-                />
+                    onChange={(event) => this.setState({ password: event.target.value})}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={this.handleClickShowPasssword}
+                          onMouseDown={this.handleMouseDownPassword}
+                        >
+                          {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                        }
+                      />
+               </FormControl>
+
               <div style={styles.buttons}>
-                  <RaisedButton raised color = "primary"
-                    onClick={this.handleLogin} >LOGIN</RaisedButton>
+                  <RaisedButton raised color = "primary" onClick={this.handleLogin} >LOGIN</RaisedButton>
                   <RaisedButton raised
                             // component = {Link} to = "/storage"
                             color="secondary"
                             style={styles.saveButton}
-                            type="Submit"
+                            onClick={this.registerOnClick}
                             primary="true"> REGISTER </RaisedButton>
 
              </div>
