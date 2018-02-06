@@ -196,14 +196,16 @@ var validateCart = function(item, res, next, callback) { //check if checked out 
 var validateIngredient = function(item, res, next, callback) { //check if ingredient hsa vendors that doesn't exist
     var vendors = item.vendors;
     var counter = 0;
+    console.log(vendors);
     for (var i = 0; i<vendors.length; i++) {
         counter++;
         var vendor = vendors[i];
-        Vendor.findOne({codeUnique: vendor.code.toLowerCase()}, function(err, obj){
+        console.log(vendor);
+        Vendor.findOne({codeUnique: vendor.codeUnique.toLowerCase()}, function(err, obj){
             if (err) return next(err);
             else if (!obj){
                 res.status(400);
-                res.send('Vendor '+vendor.code+' does not exist.');
+                res.send('Vendor '+vendor.codeUnique+' does not exist.');
                 callback(err, false);
             }
             else if (counter == vendors.length) {
