@@ -35,6 +35,7 @@ import testData from './testIngredients';
 import SelectVendors from './SelectVendors';
 import * as ingredientInterface from '../../interface/ingredientInterface';
 import * as vendorInterface from '../../interface/vendorInterface';
+import * as uploadInterface from '../../interface/uploadInterface';
   // TODO: get the sessionId
 import * as testConfig from '../../../resources/testConfig.js'
 
@@ -415,6 +416,7 @@ class AdminIngredients extends React.PureComponent {
     this.changeColumnOrder = (order) => {
       this.setState({ columnOrder: order });
     };
+    this.uploadFile = this.uploadFile.bind(this);
   }
 
   // handleRowChange({rowChanges}){
@@ -532,6 +534,24 @@ class AdminIngredients extends React.PureComponent {
     this.setState({rows: finalData});
   }
 
+    async uploadFile(event) {
+        let file = event.target.files[0];
+        console.log(file);
+        
+        if (file) {
+          let form = new FormData();
+          form.append('file', file);
+          console.log(form);
+          const res = await uploadInterface.upload(form, sessionId);
+          console.log(res);
+          if(res == "SUCCESS") {
+            alert("File successfully uploaded!");
+          } else {
+            alert("File upload failed!");
+          }
+        }
+    }
+
   render() {
     const {
       classes,
@@ -552,6 +572,7 @@ class AdminIngredients extends React.PureComponent {
     } = this.state;
 
     return (
+      <div>
       <Paper>
         <Grid
           allowColumnResizing = {true}
@@ -642,6 +663,11 @@ class AdminIngredients extends React.PureComponent {
         </Dialog>
       }
       </Paper>
+      <p> bulk import </p>
+      <input type="file"
+        name="myFile"
+        onChange={this.uploadFile} />
+      </div>
     );
   }
 }
