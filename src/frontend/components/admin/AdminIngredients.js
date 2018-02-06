@@ -542,13 +542,24 @@ class AdminIngredients extends React.PureComponent {
           let form = new FormData();
           form.append('file', file);
           console.log(form);
-          const res = await uploadInterface.upload(form, sessionId);
-          console.log(res);
-          if(res == "SUCCESS") {
-            alert("File successfully uploaded!");
-          } else {
-            alert("File upload failed!");
-          }
+           await uploadInterface.upload(form, sessionId, function(res){
+                if (res.status == 400) {
+                    alert(res.data);
+                } else if (res.status == 500) {
+                    alert('Duplicate Key on Ingredients (different package not allowed)');
+                } else if (res.status == 200) {
+                    console.log(res);
+                    if(!alert(res.data))
+                        window.location.reload();
+                }
+           });
+
+//          console.log(res);
+//          if(res == "SUCCESS") {
+//            alert("File successfully uploaded!");
+//          } else {
+//            alert("File upload failed!");
+//          }
         }
     }
 
@@ -663,10 +674,10 @@ class AdminIngredients extends React.PureComponent {
         </Dialog>
       }
       </Paper>
-      <p> bulk import </p>
-      <input type="file"
+      {isAdmin && <p> Bulk Import </p>}
+      {isAdmin && <input type="file"
         name="myFile"
-        onChange={this.uploadFile} />
+        onChange={this.uploadFile} /> }
       </div>
     );
   }
