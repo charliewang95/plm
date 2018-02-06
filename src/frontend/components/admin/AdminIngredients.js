@@ -259,7 +259,7 @@ class AdminIngredients extends React.PureComponent {
       editingRowIds: [],
       addedRows: [],
       rowChanges: {},
-      currentPage: 0,
+      currentPage: 5,
       deletingRows: [],
       pageSize: 0,
       pageSizes: [5, 10, 0],
@@ -377,7 +377,7 @@ class AdminIngredients extends React.PureComponent {
                     console.log("sdfadfsdf");
                 }
             });
-      
+
           };
         };
         //TODO: send data to the back end
