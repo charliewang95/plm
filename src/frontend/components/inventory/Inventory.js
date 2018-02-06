@@ -170,7 +170,7 @@ class Inventory extends React.PureComponent {
 //            }
         inventoryActions.updateInventory(rows[i]._id, userId,
                 rows[i].ingredientId, rows[i].ingredientName,
-                rows[i].temperatureZone, rows[i].packageName, changed[rows[i].id].quantity, sessionId,function(res){
+                rows[i].temperatureZone, rows[i].packageName, Number(changed[rows[i].id].quantity), sessionId,function(res){
                     if (res.status == 400) {
                         alert(res.data);
                     } else if (res.status == 500) {
@@ -195,14 +195,20 @@ class Inventory extends React.PureComponent {
            console.log("Package " + rows[index].packageName);
            console.log("ingredientId " + rows[index].ingredientId);
 
-             try{
-               cartActions.addCart(userId, rows[index].ingredientId, rows[index].ingredientName,
-                  parseInt(this.state.addedQuantity), sessionId);
-              }catch(e){
-                console.log('An error passed to the front end!')
-                //TODO: error handling in the front end
-                alert(e);
-              }
+//             try{
+//               cartActions.addCart(userId, rows[index].ingredientId, rows[index].ingredientName,
+//                  parseInt(this.state.addedQuantity), sessionId);
+//              }catch(e){
+//                console.log('An error passed to the front end!')
+//                //TODO: error handling in the front end
+//                alert(e);
+//              }
+                cartActions.addCart(userId, rows[index].ingredientId, rows[index].ingredientName,
+                 parseInt(this.state.addedQuantity), sessionId, function(res){
+                    if (res.status == 400) {
+                        alert(res.data);
+                    }
+                 });
             }
           });
           this.setState({ rows, addingItemsToCart: [] });
@@ -213,15 +219,6 @@ class Inventory extends React.PureComponent {
        console.log("Changed Expanded RowIds ");
        this.setState({ expandedRowIds });
      }
-<<<<<<< HEAD
-   };
-
-   // Set state of the expandable rows
-   this.changeExpandedDetails = (expandedRowIds) => {
-     console.log("Changed Expanded RowIds "+expandedRowIds);
-     this.setState({ expandedRowIds });
-=======
->>>>>>> 46baf0fd267ef2ab140c6606b9044ffe0d124b51
    }
 
 // Initial loading of data
@@ -251,7 +248,7 @@ class Inventory extends React.PureComponent {
     handleIngredientQuantity(event){
     const re = /^[0-9\b]+$/;
         if (event.target.value == '' || re.test(event.target.value)) {
-           this.setState({addedQuantity: parseInt(event.target.value,10)})
+           this.setState({addedQuantity: event.target.value})
         }else{
           alert(" Quantity must be a number.");
         }

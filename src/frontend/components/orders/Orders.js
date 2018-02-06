@@ -86,21 +86,30 @@ class Orders extends React.PureComponent{
     this.setState({ingredientId:option.value});
     var ingredientDetails = "";
     //TODO: get vendors list for the selected ingredient
-    try{
-       ingredientDetails = await ingredientActions.getIngredientAsync(option.value,sessionId);
-    }catch(e){
-      console.log('An error passed to the front end!')
-      alert(e);
-    }
-    console.log("Vendors " + JSON.stringify(ingredientDetails.vendors));
+//    try{
+//       ingredientDetails = await ingredientActions.getIngredientAsync(option.value,sessionId);
+//    }catch(e){
+//      console.log('An error passed to the front end!')
+//      alert(e);
+//    }
+    ingredientActions.getIngredientAsync(option.value,sessionId, function(res){
+        if (res.status == 400) {
+            alert(res.data);
+        } else {
+            ingredientDetails = res;
+             console.log("Vendors " + JSON.stringify(ingredientDetails.vendors));
 
-    var parsedVendorOptions = [...ingredientDetails.vendors.map((row,index)=> ({
-        value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
-        price: row.price,
-      })),
-    ];
-    console.log("Vendor options " + JSON.stringify(parsedVendorOptions));
-    this.setState({vendor_options:parsedVendorOptions});
+                var parsedVendorOptions = [...ingredientDetails.vendors.map((row,index)=> ({
+                    value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
+                    price: row.price,
+                  })),
+                ];
+                console.log("Vendor options " + JSON.stringify(parsedVendorOptions));
+                this.setState({vendor_options:parsedVendorOptions});
+        }
+    })
+
+
   }
 
 // event handler when a vendor is selected from the drop down
@@ -128,17 +137,23 @@ class Orders extends React.PureComponent{
     console.log("quantity " + this.state.quantity);
     e.preventDefault();
     //TODO: Send data to back end
-    try{
-
-      const response = await orderActions.addOrder(userId,this.state.ingredientId,
-      this.state.vendorId,parseInt(this.state.quantity,10),this.state.price,sessionId);
-      this.setState({ fireRedirect: true });
-    }
-    catch (e){
-      console.log('An error passed to the front end!')
-      //TODO: error handling in the front end
-      alert(e);
-    }
+//    try{
+//
+//      const response = await orderActions.addOrder(userId,this.state.ingredientId,
+//      this.state.vendorId,parseInt(this.state.quantity,10),this.state.price,sessionId);
+//      this.setState({ fireRedirect: true });
+//    }
+//    catch (e){
+//      console.log('An error passed to the front end!')
+//      //TODO: error handling in the front end
+//      alert(e);
+//    }
+        orderActions.addOrder(userId,this.state.ingredientId,
+        this.state.vendorId,parseInt(this.state.quantity,10),this.state.price,sessionId,function(res){
+            if (res.status == 400) {
+                alert(res.data);
+            }
+        });
     this.clearFields();
   }
 

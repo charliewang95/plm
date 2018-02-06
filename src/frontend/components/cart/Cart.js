@@ -29,8 +29,8 @@ import Dialog, {
 
 
 // TODO: Get the user ID
-const sessionId = "5a765f3d9de95bea24f905d9";
-const userId = "5a765f3d9de95bea24f905d9"
+//const sessionId = "5a765f3d9de95bea24f905d9";
+const userId = "5a63be959144b37a6136491e"
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 //const sessionId = testConfig.sessionId;

@@ -107,7 +107,7 @@ class Storage extends React.PureComponent {
             const re = /^[0-9\b]+$/;
             var enteredQuantity = changed[rows[i].id].capacity;
                 if (re.test(enteredQuantity)) {
-                   rows[i].quantity = changed[rows[i].id].capacity;
+                   rows[i].capacity = changed[rows[i].id].capacity;
                 }else{
                   alert(" Quantity must be a number.");
                 }

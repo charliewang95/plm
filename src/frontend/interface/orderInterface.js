@@ -31,9 +31,12 @@ function packIntoJson(userId, ingredientId, vendorId, _package, price){
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-async function addOrder(userId, ingredientId, vendorId, _package, price, sessionId) {
+async function addOrder(userId, ingredientId, vendorId, _package, price, sessionId, callback) {
 	var newOrder = packIntoJson(userId, ingredientId, vendorId, _package, price);
-	return await orderActions.addOrder(newOrder, sessionId);
+	//return await orderActions.addOrder(newOrder, sessionId);
+	orderActions.addOrder(newOrder, sessionId, function(res){
+	    callback(res);
+	})
 }
 
 /**
@@ -59,9 +62,12 @@ async function getOrderAsync(orderId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-async function updateOrder(orderId, userId, ingredientId, vendorId, _package, price, sessionId) {
+async function updateOrder(orderId, userId, ingredientId, vendorId, _package, price, sessionId, callback) {
 	var updatedOrder = packIntoJson(userId, ingredientId, vendorId, _package, price);
-	return await orderActions.updateOrder(orderId, sessionId, updatedOrder);
+	//return await orderActions.updateOrder(orderId, sessionId, updatedOrder);
+	orderActions.updateOrder(orderId, sessionId, updatedOrder, function(res){
+	    callback(res);
+	});
 };
 
 /*

@@ -29,11 +29,14 @@ function packIntoJson(name, packageType, temperatureZone, vendors){
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-async function addIngredient(name, packageType, temperatureZone, vendors, sessionId) {
+async function addIngredient(name, packageType, temperatureZone, vendors, sessionId, callback) {
 	console.log("add ingredients");
 	console.log(vendors);
 	var newIngredient = packIntoJson(name, packageType, temperatureZone, vendors);
-	return await ingredientActions.addIngredient(newIngredient, sessionId);
+	//return await ingredientActions.addIngredient(newIngredient, sessionId);
+	ingredientActions.addIngredient(newIngredient, sessionId, function(res){
+	    callback(res);
+	})
 }
 
 /**
@@ -59,9 +62,12 @@ async function getIngredientAsync(ingredientId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-async function updateIngredient(ingredientId, name, packageType, temperatureZone, vendors, sessionId) {
+async function updateIngredient(ingredientId, name, packageType, temperatureZone, vendors, sessionId, callback) {
 	var updatedIngredient = packIntoJson(name, packageType, temperatureZone, vendors);
-	return await ingredientActions.updateIngredient(ingredientId, sessionId, updatedIngredient);
+	//return await ingredientActions.updateIngredient(ingredientId, sessionId, updatedIngredient);
+	ingredientActions.updateIngredient(ingredientId, sessionId, updatedIngredient, function(res){
+	    callback(res);
+	})
 };
 
 /*
