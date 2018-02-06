@@ -29,7 +29,14 @@ class RegisterPage extends React.Component {
 
     this.processForm = this.processForm.bind(this);
     this.changeUser = this.changeUser.bind(this);
+    this.userSuccessfullyAdded = this.userSuccessfullyAdded.bind(this);
   }
+
+  userSuccessfullyAdded() {
+    alert('User ' + this.state.user.username + ' is added successfully');
+
+  }
+
 
   /**
    * Process the form.
@@ -45,8 +52,17 @@ class RegisterPage extends React.Component {
 //        var user = JSON.parse(str);
 //        console.log(user);
     console.log("Creating user with the following information: " + JSON.stringify(this.state.user));
+    var me = this;
     addUser(this.state.user.email, this.state.user.username, this.state.user.password, false, false, sessionId,
-      (res)=>{console.log(res)});
+      (res)=>{
+        if (res.status == 400) {
+          alert(res.data);
+        } else if (res.status == 500) {
+          alert('Username or email already exists');
+        }else{
+          me.userSuccessfullyAdded();
+        }
+      });
   }
 
   /**
