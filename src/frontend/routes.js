@@ -11,23 +11,21 @@ import Vendors from './components/vendors/Vendors';
 import AddVendorForm from './components/vendors/AddVendorForm';
 import Cart from './components/cart/Cart';
 import Report from './components/report/Report';
-
-
 import Login from './components/login/LoginPage';
 import Register from './components/login/RegisterPage';
 
 const Routes = () => (
       <div>
 	      <Switch>
-		      <Route exact path="/" component={DashBoard} />
-		      <Route path="/dashboard" component={DashBoard} />
-		      <Route path="/admin-ingredients" component={AdminIngredients} />
-		      <Route path="/user-ingredients" component={UserIngredients} />
-		      <Route path="/inventory" component={Inventory} />
-		      <Route path="/orders" component={Orders} />
-		      <Route path="/storage" component={Storage} />
-		      <Route path="/login" component={Login} />
-		      <Route path="/register" component={Register} />
+		  <Route exact path="/" component={DashBoard} />
+		  <Route path="/dashboard" component={DashBoard} />
+		  <Route path="/admin-ingredients" component={AdminIngredients} />
+		  <Route path="/user-ingredients" component={UserIngredients} />
+		  <Route path="/inventory" component={Inventory} />
+		  <Route path="/orders" component={Orders} />
+		  <Route path="/storage" component={Storage} />
+		  <Route path="/login" component={Login} />
+		  <Route path="/register" component={Register} />
           <Route path="/vendors" component={Vendors} />
           <Route path="/addVendorForm" component={AddVendorForm} />
           <Route path="/cart" component={Cart} />
