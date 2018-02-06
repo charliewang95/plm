@@ -117,7 +117,7 @@ class PersistentDrawer extends React.Component {
   constructor(props) {
         super(props);
         this.state = {
-          open: true,
+          open: false,
           anchor: 'left',
           loggedIn: (localStorage.getItem('user')!=null),
           isAdmin: ((localStorage.getItem('user')!=null)?(localStorage.getItem('user').isAdmin):false),
