@@ -8,6 +8,10 @@ Real Producers is a Production Lifecycle Manager tool currently under developmen
 
 * Softwares needed to be installed: Node.js, Express.js, MongoDB 
 
+* To install Node.js: follow [these instructions](https://nodejs.org/en/download/package-manager/).
+
+* To install 
+
 * type "npm install"
 
 * type "mongod" to run the MongoDB instance
