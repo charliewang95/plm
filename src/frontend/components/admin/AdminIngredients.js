@@ -143,7 +143,7 @@ const availableValues = {
   // vendors: testData.tablePage.vendor_options,
 
   // TODO: Get the data from the back end
-  vendors: vendorInterface.getAllVendorsAsync(sessionId),
+  vendors: sessionId == "" ? null : vendorInterface.getAllVendorsAsync(sessionId),
   //vendors: testData.tablePage.vendor_options2,
 
 };

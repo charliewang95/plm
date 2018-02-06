@@ -163,7 +163,7 @@ class Storage extends React.PureComponent {
   }
 
   render() {
-    const {classes} = this.props;
+    // const {classes} = this.props;
     const { rows,columns ,editingRowIds,rowChanges,} = this.state;
 
     return (
@@ -203,8 +203,8 @@ class Storage extends React.PureComponent {
   }
 }
 
-Storage.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
+// Storage.propTypes = {
+//   classes: PropTypes.object.isRequired,
+// };
 
 export default Storage;
