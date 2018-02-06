@@ -111,8 +111,8 @@ https.createServer(
 
 
     https.createServer({
-      key: fs.readFileSync('/etc/ssl/certs/domain.key'),
-      cert: fs.readFileSync('/etc/ssl/private/chained.pem')
+      key: fs.readFileSync('./domain.key'),
+      cert: fs.readFileSync('./chained.pem')
     }, app).listen(config.port);
 
 //app.use(function (err, req, res, next) {
