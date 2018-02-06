@@ -13,7 +13,8 @@ const VENDORS = require('./dummyVendors');
 
 
 // TODO: get session Id from the user
-const sessionId = testConfig.sessionId;
+//const sessionId = testConfig.sessionId;
+const sessionId = '5a63be959144b37a6136491e';
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 
@@ -65,7 +66,15 @@ class SelectVendors extends Component {
     rawData = await vendorActions.getAllVendorNamesCodesAsync(sessionId);
     console.log("loadCodeNameArray was called");
     console.log(rawData.data);
-    this.setState({options: rawData.data});
+    var optionsArray = rawData.data.map(obj=>{
+    var temp = new Object();
+    temp.vendorName = obj.vendorName;
+    temp.label = obj.vendorName;
+    return temp;
+    })
+
+
+    this.setState({options: optionsArray});
   }
 
   async createMap(){
@@ -81,9 +90,9 @@ class SelectVendors extends Component {
     var newVendor = new Object();
     console.log("addVendor() was called");
     console.log(this.state.selectName);
-    var tempId = this.state.selectName.codeUnique;
+    var tempId = this.state.selectName.vendorName;
     var priceFloat = parseFloat(this.state.inputPrice);
-    newVendor = {codeUnique: tempId, price: priceFloat};
+    newVendor = {vendorName: tempId, price: priceFloat};
     console.log(newVendor);
     // var updateVendor = new Array(this.state.vendorsArray.slice(0));
     // updateVendor.push(newVendor);
@@ -118,7 +127,7 @@ class SelectVendors extends Component {
       // var updateVendor = this.state.vendorsArray.slice();
       // updateVendor[index].vendor = vendor.id;
       // this.setState({vendorsArray: updateVendor});
-      this.state.vendorsArray[index].codeUnique = vendor.codeUnique;
+      this.state.vendorsArray[index].vendorName = vendor.vendorName;
       this.setState({vendorsArray: this.state.vendorsArray});
       this.props.handleChange(this.state.vendorsArray);
     }
@@ -128,8 +137,11 @@ class SelectVendors extends Component {
     console.log("this is the price");
     var price = parseFloat(newPrice.target.value);
     console.log(typeof (price));
+
     var isEmpty = (!price || (price.length==0));
-    if(index>0 && !isEmpty){
+
+    console.log(index);
+    if(index>=0 && !isEmpty){
       // var updateVendor = this.state.vendorsArray.slice();
       // updateVendor[index].price = newPrice.target.value;
       // this.setState({vendorsArray: updateVendor});
@@ -158,8 +170,7 @@ class SelectVendors extends Component {
           placeholder="Select New Vendor"
           name="Vendor Name"
           options={this.state.options}
-          valueKey="codeUnique"
-          labelKey="name"
+          valueKey="vendorName"
           value={this.state.selectName} //value displayed
           onChange={this.updateName.bind(this)}
           />

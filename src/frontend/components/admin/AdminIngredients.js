@@ -39,7 +39,7 @@ import * as vendorInterface from '../../interface/vendorInterface';
 import * as testConfig from '../../../resources/testConfig.js'
 
 // TODO: get session Id from the user
-const sessionId = testConfig.sessionId;
+const sessionId = '5a63be959144b37a6136491e';
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 
@@ -299,7 +299,8 @@ class AdminIngredients extends React.PureComponent {
         console.log(added[0]);
         for(var i =0; i < added[0].vendors.length; i++){
           var vendorObject = added[0].vendors[i];
-          var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
+          //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
+          var vendorName = vendorObject.vendorName;
           console.log(vendorName);
           var namePrice = vendorName + " / $" + vendorObject.price;
           vendors_string += namePrice;
@@ -315,9 +316,14 @@ class AdminIngredients extends React.PureComponent {
         added[0].vendors = vendors_string;
         added[0].id = startingAddedId;
         rows = [...rows,added[0]];
-
+        console.log("********************************");
+        console.log(added[0].vendorsArray);
         // TODO: Send data to back end
-        ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone, added[0].vendorsArray, sessionId);
+        ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone, added[0].vendorsArray, sessionId, function(res){
+            if (res.status == 400) {
+                alert(res.data);
+            }
+        });
 
       }
 
@@ -345,7 +351,8 @@ class AdminIngredients extends React.PureComponent {
                 console.log("Is this changed?");
                 console.log(changed[rows[i].id].vendors[j]);
                 var vendorObject = changed[rows[i].id].vendors[j];
-                var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
+                //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
+                var vendorName = vendorObject.vendorName;
                 var namePrice = vendorName + " / $" + vendorObject.price;
                 vendors_string += namePrice;
               //   vendors_string += changed[rows[i].id].vendors[j].value;
@@ -356,7 +363,16 @@ class AdminIngredients extends React.PureComponent {
               rows[i].vendorsArray = changed[rows[i].id].vendors;
               rows[i].vendors = vendors_string;
             }
-            ingredientInterface.updateIngredient(rows[i].ingredientId, rows[i].name, rows[i].packageName, rows[i].temperatureZone, rows[i].vendorsArray, sessionId);
+            ingredientInterface.updateIngredient(rows[i].ingredientId, rows[i].name, rows[i].packageName, rows[i].temperatureZone, rows[i].vendorsArray, rows[i].moneySpent, rows[i].moneyProd, sessionId, function(res){
+                if (res.status == 400) {
+                    alert(res.data);
+                } else if (res.status == 500) {
+                    alert('Ingredient name and temperature zone combination already exists');
+                } else {
+
+                    console.log("sdfadfsdf");
+                }
+            });
       
           };
         };
@@ -458,8 +474,17 @@ class AdminIngredients extends React.PureComponent {
       //loop through vendor
       console.log("This is the rawData");
       console.log(rawData[i]);
+      var formatVendorsArray = new Array();
       for (var j=0; j<rawData[i].vendors.length; j++){
-        var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].codeUnique);
+        //var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].codeUnique);
+        var vendorName = rawData[i].vendors[j].vendorName;
+        var price = rawData[i].vendors[j].price;
+
+        var vendorObject = new Object();
+        vendorObject.vendorName = vendorName;
+        vendorObject.price = price;
+        formatVendorsArray.push(vendorObject);
+
         console.log(vendorName);
         vendorArrayString+=vendorName + " / $" + rawData[i].vendors[j].price;
         console.log("tired");
@@ -468,6 +493,7 @@ class AdminIngredients extends React.PureComponent {
             vendorArrayString+=', ';
           }
 
+
       }
 
       var singleData = new Object ();
@@ -475,7 +501,9 @@ class AdminIngredients extends React.PureComponent {
       singleData.name = rawData[i].name;
       singleData.packageName = rawData[i].packageName;
       singleData.temperatureZone = rawData[i].temperatureZone;
-      singleData.vendorsArray = rawData[i].vendors;
+      singleData.vendorsArray = formatVendorsArray;
+      singleData.moneySpent = rawData[i].moneySpent;
+      singleData.moneyProd = rawData[i].moneyProd;
       //singleData.vendorsArray = "";
       singleData.vendors = vendorArrayString;
       console.log("my id");
