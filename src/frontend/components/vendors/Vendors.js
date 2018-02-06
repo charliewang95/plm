@@ -28,7 +28,8 @@ import * as buttons from './Buttons.js';
 import * as testConfig from '../../../resources/testConfig.js'
 
 // TODO: get session Id from the user
-const sessionId = testConfig.sessionId;
+// const sessionId = testConfig.sessionId;
+const sessionId = "5a765f3d9de95bea24f905d9";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 const styles = theme => ({
@@ -156,10 +157,14 @@ class Vendors extends React.PureComponent
         if(vendorName &&  vendorContact && vendorId && vendorCode){
           vendorActions.updateVendor(vendorName,vendorContact,vendorCode,vendorId,sessionId,function(res){
             if (res.status == 400) {
-                alert(res.data);
-            } else if (res.status == 500) {
-                  alert('Vendor name or code already exists');
+              if(!alert(res.data)){
+                window.location.reload();
               }
+              }else if (res.status == 500) {
+                if(!alert("Vendor name or code already exists")){
+                  window.location.reload();
+                }
+            }
           });
         }
       };
