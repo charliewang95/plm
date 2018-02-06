@@ -37,8 +37,8 @@ import * as ingredientInterface from '../../interface/ingredientInterface';
 import * as vendorInterface from '../../interface/vendorInterface';
 import * as uploadInterface from '../../interface/uploadInterface';
   // TODO: get the sessionId
-import * as testConfig from '../../../resources/testConfig.js'
-
+import * as testConfig from '../../../resources/testConfig.js';
+import MyPdfViewer from './PdfViewer';
 // TODO: get session Id from the user
 
 // const sessionId = testConfig.sessionId;
@@ -269,7 +269,6 @@ class AdminIngredients extends React.PureComponent {
     };
 
     // console.log(" NAME : " + testData.tablePage.items[0].name);
-
     this.changeSorting = sorting => this.setState({ sorting });
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeAddedRows = addedRows => this.setState({
@@ -581,7 +580,7 @@ class AdminIngredients extends React.PureComponent {
       deletingRows,
       pageSize,
       pageSizes,
-      columnOrder,
+      columnOrder
     } = this.state;
 
     return (
@@ -676,11 +675,20 @@ class AdminIngredients extends React.PureComponent {
         </Dialog>
       }
       </Paper>
-      {isAdmin && <p> Bulk Import </p>}
+      {isAdmin && <p><font size="5">Bulk Import</font></p>}
       {isAdmin && <input type="file"
         name="myFile"
         onChange={this.uploadFile} /> }
+      {isAdmin && 
+      <div>
+        <br></br>
+        Click <a href="./FormatSpec.pdf" style={{color:"#000000",}}>HERE</a> for format specification
       </div>
+    }
+
+      </div>
+
+
     );
   }
 }

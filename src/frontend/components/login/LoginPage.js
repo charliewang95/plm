@@ -13,12 +13,13 @@ import { Switch, Route } from 'react-router-dom';
 import PersistentDrawer from '../main/PersistentDrawer';
 import * as userActions from'../../interface/userInterface';
 import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
-
-import { withStyles } from 'material-ui/styles';
-import IconButton from 'material-ui/IconButton';
 import { FormControl, FormHelperText } from 'material-ui/Form';
 import Visibility from 'material-ui-icons/Visibility';
 import VisibilityOff from 'material-ui-icons/VisibilityOff';
+
+
+import { withStyles } from 'material-ui/styles';
+import IconButton from 'material-ui/IconButton';
 
 const styles = {
     buttons: {
@@ -59,6 +60,21 @@ class LoginPage extends React.Component{
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.handleClickShowPasssword = this.handleClickShowPasssword.bind(this);
+    this.registerOnClick = this.registerOnClick.bind(this);
+  }
+
+   handleClickShowPasssword(){
+    this.setState({ showPassword: !this.state.showPassword });
+  };
+
+    handleMouseDownPassword(event){
+    event.preventDefault();
+  };
+
+  registerOnClick(e){
+    e.preventDefault();
+    console.log("clicked");
+    alert("There is no register button. Please ask your admin to create an account for you.");
   }
 
 handleMouseDownPassword(event){
@@ -125,7 +141,6 @@ handleMouseDownPassword(event){
           image="https://t3.ftcdn.net/jpg/01/27/38/98/240_F_127389862_pMUoWAQMoKsq6QOrF8kq8S9KaXOCjlHP.jpg"
         />
             <form onSubmit={this.onFormSubmit}>
-
                 <TextField
                     required
                     fullWidth={true}
@@ -136,41 +151,39 @@ handleMouseDownPassword(event){
                     validations={[required]}
                 />
 
-
-
                 <FormControl fullWidth required>
-          <InputLabel htmlFor="password">Password</InputLabel>
-          <Input
-            id="password"
-            name="password"
-            label="Password"
-            
-            type={this.state.showPassword ? 'text' : 'password'}
-            value={this.state.password}
-            onChange={(event) => this.setState({ password: event.target.value})}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={this.handleClickShowPasssword}
-                  onMouseDown={this.handleMouseDownPassword}
-                >
-                  {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-          />
-        </FormControl>
+                  <InputLabel htmlFor="password">Password</InputLabel>
+                  <Input
+                    id="password"
+                    name="password"
+                    label="Password"
+                    
+                    type={this.state.showPassword ? 'text' : 'password'}
+                    value={this.state.password}
+                    onChange={(event) => this.setState({ password: event.target.value})}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={this.handleClickShowPasssword}
+                          onMouseDown={this.handleMouseDownPassword}
+                        >
+                          {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                        }
+                      />
+               </FormControl>
 
               <div style={styles.buttons}>
-                  <RaisedButton raised color = "primary"
-                    onClick={this.handleLogin}
-                    primary="true"
-                    type="Submit" >LOGIN</RaisedButton>
+
+                  <RaisedButton raised color = "primary" onClick={this.handleLogin}
+                   primary="true" type="Submit" >LOGIN</RaisedButton>
                   <RaisedButton raised
-                    // component = {Link} to = "/storage"
-                    color="secondary"
-                    style={styles.saveButton}
-                    onClick = {()=> alert("We currently do not allow registering")}> REGISTER </RaisedButton>
+                            // component = {Link} to = "/storage"
+                            color="secondary"
+                            style={styles.saveButton}
+                            onClick={this.registerOnClick}
+                            > REGISTER </RaisedButton>
 
              </div>
            </form>

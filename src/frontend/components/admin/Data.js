@@ -8,9 +8,9 @@ const data = {
   ],
   
   temperature_options: [
-    { value: 'freezer', label: 'freezer' },
-    { value: 'room temperature', label: 'room temperature' },
-    { value: 'refrigerator', label: 'refrigerator' },
+    { value: 'freezer', label: 'frozen' },
+    { value: 'warehouse', label: 'room temperature' },
+    { value: 'refrigerator', label: 'refrigerated' },
   ]
 
 };
