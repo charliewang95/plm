@@ -544,9 +544,11 @@ class AdminIngredients extends React.PureComponent {
           console.log(form);
            await uploadInterface.upload(form, sessionId, function(res){
                 if (res.status == 400) {
-                    alert(res.data);
+                    if (!alert(res.data))
+                        window.location.reload();
                 } else if (res.status == 500) {
-                    alert('Duplicate Key on Ingredients (different package not allowed)');
+                    if (!alert('Duplicate Key on Ingredients (different package not allowed)'))
+                        window.location.reload();
                 } else if (res.status == 200) {
                     console.log(res);
                     if(!alert(res.data))
@@ -674,10 +676,10 @@ class AdminIngredients extends React.PureComponent {
         </Dialog>
       }
       </Paper>
-      <p> bulk import </p>
-      <input type="file"
+      {isAdmin && <p> Bulk Import </p>}
+      {isAdmin && <input type="file"
         name="myFile"
-        onChange={this.uploadFile} />
+        onChange={this.uploadFile} /> }
       </div>
     );
   }
