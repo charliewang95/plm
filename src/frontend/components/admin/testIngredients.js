@@ -37,7 +37,21 @@ const data = {
   /* Replace with the data from the back end -- filtered based on ingredients */
    vendor_options : ['target','wholefoods','li ming','panera','harris teeters'],
 
-   package_options: ['sack', 'pail', 'drum', 'supersack', 'truckload', 'railcar'],
+  package_options: ['sack', 'pail', 'drum', 'supersack', 'truckload', 'railcar'],
+
+   // package_options: [{value: 'sack', label: 'sack'},
+   //  {value: 'pail', label: 'pail'},
+   //  {value: 'drum', label: 'drum'},
+   //  {value: 'supersack', label: 'supersack'},
+   //  {value: 'truckload', label: 'truckload'},
+   //  {value: 'railcar', label: 'railcar'}],
+   
+
+  //  temperatureZone_options: [
+  //   { value: 'freezer', label: 'frozen' },
+  //   { value: 'warehouse', label: 'room temperature' },
+  //   { value: 'refrigerator', label: 'refrigerated' },
+  // ],
    temperatureZone_options:['freezer', 'refrigerator', 'warehouse'],
  },
 };

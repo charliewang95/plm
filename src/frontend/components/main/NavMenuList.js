@@ -10,12 +10,13 @@ import LocalPizzaIcon from 'material-ui-icons/LocalPizza'; //Ingredients
 import VendorsIcon from 'material-ui-icons/Group'; // Vendors
 import ShoppingCartIcon from 'material-ui-icons/ShoppingCart'; // Cart
 import ReportIcon from 'material-ui-icons/Receipt'; // Report
+import PersonAddIcon from 'material-ui-icons/PersonAdd';
 
 export const UserListItems = (
   <div>
     <ListItem component={Link} to="/register" button>
       <ListItemIcon>
-        <AndroidIcon />
+        <PersonAddIcon />
       </ListItemIcon>
       <ListItemText primary="Create User (Admin)" />
     </ListItem>
@@ -38,9 +39,9 @@ export const MainListItems = (
     </ListItem>
     <ListItem component={Link} to="/admin-ingredients" button>
       <ListItemIcon>
-        <AndroidIcon />
+        <LocalPizzaIcon />
       </ListItemIcon>
-      <ListItemText primary="Ingredients (Admin)" />
+      <ListItemText primary="Ingredients" />
     </ListItem>
     <ListItem component={Link} to="/orders" button>
       <ListItemIcon>
@@ -76,7 +77,7 @@ export const MainListItems = (
       <ListItemIcon>
         <ReportIcon />
       </ListItemIcon>
-      <ListItemText primary="Report" />
+      <ListItemText primary="Financial Report" />
     </ListItem>
   </div>
 );

@@ -45,10 +45,6 @@ const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 var isAdmin = "";
 var userId = "";
 
-// const userId = "5a765f3d9de95bea24f905d9";
-// const sessionId = "5a63be959144b37a6136491e";
-// const sessionId = testConfig.sessionId;
-
 
 const Cell = (props)=>{
   return <Table.Cell {...props}
@@ -106,6 +102,9 @@ const getRowId = row => row.id;
 const toLowerCase = value => String(value).toLowerCase();
 const temperatureZonePredicate = (value, filter) => toLowerCase(value).startsWith(toLowerCase(filter.value));
 
+const RowDetail =(props) =>{
+  return <IngredientDetail {...props} />;
+}
 
 class Inventory extends React.PureComponent {
 
@@ -245,6 +244,7 @@ class Inventory extends React.PureComponent {
       })),
     ];
     this.setState({rows:processedData});
+    console.log(" Finished Loading ");
   }
 
     handleIngredientQuantity(event){
@@ -285,16 +285,17 @@ class Inventory extends React.PureComponent {
           {/* <EditingState/> */}
 
           <IntegratedFiltering columnExtensions={integratedFilteringColumnExtensions} />
-          {/* <RowDetailState
+
+          <RowDetailState
                       expandedRowIds={expandedRowIds}
                       onExpandedRowIdsChange={this.changeExpandedDetails}
-                    /> */}
+                    />
           <Table cellComponent={Cell}/>
           <TableHeaderRow />
           <TableFilterRow />
-          {/*<TableRowDetail
+          <TableRowDetail
             contentComponent={RowDetail}
-          />*/}
+          />
 
           {isAdmin &&
             <TableEditRow
