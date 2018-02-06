@@ -39,6 +39,26 @@ async function addIngredient(name, packageType, temperatureZone, vendors, sessio
 	})
 }
 
+async function bulkImport(object) {
+    try {
+        const res = await axios.post('/ingredients/bulkImport', object);
+        const result = res.data;
+        console.log(result);
+        callback(res);
+    }
+    catch(e) {
+      console.log('there was an error');
+      console.log(e);
+      //TODO: different error message for different types of error
+      if (e.response.status == 400 || e.response.status == 500)
+        callback(e.response);
+      else {
+        console.log(e.response);
+        throw e;
+      }
+    }
+}
+
 /**
  * get all ingredients
  * sessionId: string, id of the current session
