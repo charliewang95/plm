@@ -1,8 +1,12 @@
 # Real Producers
 
-## Development Guide
+## Deployment Guide
 
 * see https://docs.google.com/document/d/133hE6fiWdzTy422DZaLxbFoZNf0cfrJk_3WeyeLLAfM/edit?usp=sharing
+
+## Developer Guide
+
+* see https://docs.google.com/document/d/1RgTQ27bdRb8LPWwH0axzr8eZSquyOJQLRVT44cJuwJ8/edit?usp=sharing
 
 ## To get it running
 
