@@ -113,31 +113,39 @@ var updateInventory = function(ingredientId, quantity, res, next, callback) {
     Inventory.findOneAndUpdate({ingredientId: ingredientId}, {quantity: quantity}, function(err, obj) {
         if (err) return next(err);
         else if (!obj){
-            Ingredient.findById(ingredientId, function(err, ingredient){
-                if (err) return next(err);
-                else if (!ingredient) {
-                    res.status(400).send("Ingredient does not exist");
-                }
-                else {
-                    var item = new Inventory();
-                    item.ingredientId = ingredientId;
-                    item.ingredientName = ingredient.name;
-                    item.temperatureZone = ingredient.temperatureZone;
-                    item.packageName = ingredient.packageName;
-                    item.quantity = quantity;
-                    item.save(function(err) {
-                        if (err) {
-                            return next(err);
-                        }
-                        else {
-                            callback(err, null);
-                        }
-                    });
-                }
-            });
+            if (quantity == 0) callback(0, null);
+            else {
+                Ingredient.findById(ingredientId, function(err, ingredient){
+                    if (err) return next(err);
+                    else if (!ingredient) {
+                        res.status(400).send("Ingredient does not exist");
+                    }
+                    else {
+                        var item = new Inventory();
+                        item.ingredientId = ingredientId;
+                        item.ingredientName = ingredient.name;
+                        item.temperatureZone = ingredient.temperatureZone;
+                        item.packageName = ingredient.packageName;
+                        item.quantity = quantity;
+                        item.save(function(err) {
+                            if (err) {
+                                return next(err);
+                            }
+                            else {
+                                callback(err, null);
+                            }
+                        });
+                    }
+                });
+            }
         }
         else {
-            callback(err, null);
+            if (quantity == 0) {
+                obj.remove(func);
+            }
+            else {
+                callback(err, null);
+            }
         }
     });
 }

@@ -300,7 +300,9 @@ class AdminIngredients extends React.PureComponent {
 
         // TODO: Add checks for Values
         var vendors_string = "";
-        console.log(added[0]);
+        if (added[0].vendors == null){
+            alert('Vendors must be filled');
+        } else {
         for(var i =0; i < added[0].vendors.length; i++){
           var vendorObject = added[0].vendors[i];
           //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
@@ -325,13 +327,15 @@ class AdminIngredients extends React.PureComponent {
         // TODO: Send data to back end
         ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone, added[0].vendorsArray, sessionId, function(res){
             if (res.status == 400) {
-                alert(res.data);
+                if (!alert(res.data))
+                    window.location.reload();
             } else if (res.status == 500) {
-              alert('Ingredient name already exists');
+                if (!alert('Cannot add ingredient (ingredient already exists/one or more fields are empty)'))
+                    window.location.reload();
           }
         });
 
-      }
+      }}
 
       if (changed) {
         console.log("changed " + Object.keys(changed));

@@ -194,8 +194,8 @@ class Orders extends React.PureComponent{
 
   calculate(){
     console.log("clicked!");
-    var packageWeight = this.packageWeight();
-    var tempTotal = this.state.quantity * this.state.price * packageWeight;
+    //var packageWeight = this.packageWeight();
+    var tempTotal = this.state.quantity * this.state.price;
     console.log(tempTotal);
     this.setState({total: tempTotal});
   }
