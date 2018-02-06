@@ -26,6 +26,13 @@ export const UserListItems = (
       </ListItemIcon>
       <ListItemText primary="Ingredients (Admin)" />
     </ListItem>
+
+    <ListItem component={Link} to="/register" button>
+      <ListItemIcon>
+        <AndroidIcon />
+      </ListItemIcon>
+      <ListItemText primary="Create User (Admin)" />
+    </ListItem>
   </div>
 );
 

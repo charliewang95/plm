@@ -44,7 +44,8 @@ import IngredientDetail from './IngredientDetail';
 var  isAdmin= true;
 const userId = "5a765f3d9de95bea24f905d9";
 // const sessionId = "5a63be959144b37a6136491e";
-const sessionId = testConfig.sessionId;
+// const sessionId = testConfig.sessionId;
+var sessionId = '';
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 const Cell = (props)=>{
@@ -225,6 +226,7 @@ class Inventory extends React.PureComponent {
     //TODO: Initialize data
     var rawData=[];
      if(READ_FROM_DATABASE){
+       sessionId = JSON.parse(localStorage.getItem('user'))._id;
        rawData = await inventoryActions.getAllInventoriesAsync(sessionId);
      } else {
       rawData = dummyData;
