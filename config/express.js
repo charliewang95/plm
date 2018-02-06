@@ -4,7 +4,9 @@ var config = require('./config'),
 	passport = require('passport'),
 	flash = require('connect-flash'),
 	session = require('express-session'),
-	multer = require('multer');
+	multer = require('multer'),
+	pdf = require('express-pdf'),
+	fs = require('fs');
 
 module.exports = function() {
 	var app = express();
@@ -15,7 +17,13 @@ module.exports = function() {
 	app.use(multer({
     	dest: "./uploads/"
 	}).any());
-	app.use(bodyParser.json());
+
+	app.get('/format-spec', function(request, response){
+  		var tempFile="./public/FormatSpec.pdf";
+  		fs.readFile(tempFile, function (err,data){
+     	response.contentType("application/pdf");
+     	response.send(data);
+  	});
 
 	app.use(session({
 		saveUninitialized: true,
@@ -44,7 +52,8 @@ module.exports = function() {
 	require('../server/routes/uploads.server.routes.js')(app);
 
 	app.use(express.static('./public'));
-	app.use('/format-spec', express.static(__dirname + '/public/FormatSpec.pdf'));
+	
 
+})
 	return app;
 };
