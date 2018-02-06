@@ -80,15 +80,16 @@ async function deleteUser(userId, sessionId) {
 async function authenticateAsync(user, callback){
     var completeUrl = '/users/authenticate';
 	try {
-      	const res = await axios.post(completeUrl, user);
+    const res = await axios.post(completeUrl, user);
 		console.log(res);
 		callback(res);
-    }
+    return;
+  }
     catch(e) {
       console.log('there was an error');
-      console.log(e.response);
+      console.log(e.status);
       //TODO: different error message for different types of error
-      if (e.response.status == 400)
+      if (e.response.status == 400 || e.response.status == 500)
         callback(e.response);
       else
         throw e;

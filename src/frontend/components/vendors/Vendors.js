@@ -25,10 +25,12 @@ import dummyData from './dummyData.js';
 import * as vendorActions from '../../interface/vendorInterface.js';
 import * as buttons from './Buttons.js';
 
-import * as testConfig from '../../../resources/testConfig.js'
+import * as testConfig from '../../../resources/testConfig.js';
+import cookie from 'react-cookies';
 
 // TODO: get session Id from the user
-const sessionId = testConfig.sessionId;
+//var sessionId = (localStorage.getItem('user') == null) ? null: JSON.parse(localStorage.getItem('user'))._id;
+var sessionId = '';
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 const styles = theme => ({
@@ -200,6 +202,7 @@ class Vendors extends React.PureComponent
     var rawData = [];
     if(READ_FROM_DATABASE){
       //TODO: Initialize data
+      sessionId = JSON.parse(localStorage.getItem('user'))._id;
       rawData = await vendorActions.getAllVendorsAsync(sessionId);
       //commented out because collectively done after rawData is determined
       /*

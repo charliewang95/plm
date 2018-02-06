@@ -23,7 +23,8 @@ import * as testConfig from '../../../resources/testConfig.js'
 import dummyData from './dummyData';
 
 //TODO: get user data
-const sessionId = testConfig.sessionId;
+// const sessionId = testConfig.sessionId;
+var sessionId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 var  isAdmin= true;
 const userId = "user";
@@ -143,6 +144,7 @@ class Storage extends React.PureComponent {
   async loadStorageInfo(){
     var rawData = [];
     if(READ_FROM_DATABASE){
+      sessionId = JSON.parse(localStorage.getItem('user'))._id;
       rawData = await storageActions.getAllStoragesAsync(sessionId);
     } else {
      rawData = dummyData;

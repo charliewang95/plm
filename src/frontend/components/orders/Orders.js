@@ -18,7 +18,8 @@ import testVendorData from '../vendors/dummyData.js';
 
 //TODO: get session Id
 const userId = "5a765f3d9de95bea24f905d9";
-const sessionId = testConfig.sessionId;
+// const sessionId = testConfig.sessionId;
+var sessionId = '';
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 
@@ -62,6 +63,7 @@ class Orders extends React.PureComponent{
      console.log(" LOAD ALL INGREDIENTS");
      var rawData = [];
     if(READ_FROM_DATABASE){
+      sessionId = JSON.parse(localStorage.getItem('user'))._id;
       rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
       console.log("data from DB " + JSON.stringify(rawData));
     }else{
