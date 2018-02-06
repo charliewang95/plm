@@ -85,17 +85,11 @@ Storage.findOne({temperatureZone: 'warehouse'}, function(err, obj){
     //reroute http to https
     // set up plain http server
     var http = require('http');
-    var httpServer = http.createServer();
-// set up a route to redirect http to https
-    httpServer.get('*', function(req, res) {  
-    res.redirect('https://' + req.headers.host + req.url);
+    http.createServer(function(req, res) {   
+        res.writeHead(301, {"Location": "https://" + req.headers['host'] + req.url});
+        res.end();
+    }).listen(80);
 
-    // Or, if you don't want to automatically detect the domain name from the request header, you can hard code it:
-    // res.redirect('https://example.com' + req.url);
-})
-
-// have it listen on 80
-httpServer.listen(80);
 
 // app.listen(config.port);
 
