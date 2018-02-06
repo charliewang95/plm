@@ -115,7 +115,7 @@ class PersistentDrawer extends React.Component {
         this.state = {
           open: false,
           anchor: 'left',
-          loggedIn: false,
+          loggedIn: true,
         };
         this.login = this.login.bind(this);
   }

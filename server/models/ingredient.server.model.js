@@ -3,7 +3,7 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 var VendorPriceSchema = new Schema({
-    code: {
+    codeUnique: {
         type: String,
         required: true
     },

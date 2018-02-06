@@ -169,10 +169,10 @@ var modifyIngredient = function(action, item, itemId, res, next, callback) {
     for (var i = 0; i<vendors.length; i++) {
         counter++;
         var vendor = vendors[i];
-        Vendor.findOne({codeUnique: vendor.code.toLowerCase()}, function(err, obj){
+        Vendor.findOne({codeUnique: vendor.codeUnique.toLowerCase()}, function(err, obj){
             if (err) next(err);
             else if (!obj) {
-                res.send('Vendor '+vendor.code+' does not exist.');
+                res.send('Vendor '+vendor.codeUnique+' does not exist.');
             }
             else {
                 var str = JSON.stringify(vendor).slice(0,-1)+',"vendorName":"'+obj.name+'","vendorId":"'+obj._id+'"}';

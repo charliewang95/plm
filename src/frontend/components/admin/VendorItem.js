@@ -14,6 +14,11 @@ class VendorItem extends Component {
     };
   }
 
+  componentDidMount(){
+    console.log("I am in vendoritem");
+    console.log(this.props.vendorsArray);
+  }
+
   render() {
     return (
     	<div>
@@ -24,8 +29,8 @@ class VendorItem extends Component {
           name="Vendor Name"
           options={this.props.options}
           labelKey="name"
-          valueKey="id"
-          value={vendor.vendor}
+          valueKey="codeUnique"
+          value={vendor.codeUnique}
           clearable = {false}
           onChange={(value)=>{this.props.updateId(value, index);}}
           />

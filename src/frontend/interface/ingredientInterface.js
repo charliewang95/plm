@@ -32,8 +32,8 @@ function packIntoJson(name, packageType, temperatureZone, vendors){
  */
 async function addIngredient(name, packageType, temperatureZone, vendors, sessionId) {
 	console.log("add ingredients");
-	console.log(vendors);
 	var newIngredient = packIntoJson(name, packageType, temperatureZone, vendors);
+	console.log(newIngredient);
 	return await ingredientActions.addIngredient(newIngredient, sessionId);
 }
 
