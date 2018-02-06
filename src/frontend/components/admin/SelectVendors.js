@@ -82,7 +82,8 @@ class SelectVendors extends Component {
     console.log("addVendor() was called");
     console.log(this.state.selectName);
     var tempId = this.state.selectName.codeUnique;
-    newVendor = {codeUnique: tempId, price: this.state.inputPrice};
+    var priceFloat = parseFloat(this.state.inputPrice);
+    newVendor = {codeUnique: tempId, price: priceFloat};
     console.log(newVendor);
     // var updateVendor = new Array(this.state.vendorsArray.slice(0));
     // updateVendor.push(newVendor);
@@ -124,8 +125,9 @@ class SelectVendors extends Component {
   }
 
   updatePrice (newPrice, index){
-    console.log(newPrice.target.value);
-    var price = newPrice.target.value;
+    console.log("this is the price");
+    var price = parseFloat(newPrice.target.value);
+    console.log(typeof (price));
     var isEmpty = (!price || (price.length==0));
     if(index>0 && !isEmpty){
       // var updateVendor = this.state.vendorsArray.slice();
