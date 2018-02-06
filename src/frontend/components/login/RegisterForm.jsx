@@ -7,6 +7,34 @@ import Button from 'material-ui/Button';
 import Check from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
 
+import { withStyles } from 'material-ui/styles';
+import MenuItem from 'material-ui/Menu/MenuItem';
+import RaisedButton from 'material-ui/Button';
+
+
+const styles = theme => ({
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: 200,
+  },
+  menu: {
+    width: 200,
+  },
+      buttons: {
+      marginTop: 30,
+      float: 'center'
+    },
+    saveButton: {
+      marginLeft: 5
+    }
+});
+
+
 const SignUpForm = ({
   onSubmit,
   onChange,
@@ -14,46 +42,56 @@ const SignUpForm = ({
   user,
 }) => (
   <Card className="container">
-    <form action="/" onSubmit={onSubmit}>
+    <form action="/" onSubmit={onSubmit} className="container">
       <h2 className="card-heading">Sign Up</h2>
 
       {errors.summary && <p className="error-message">{errors.summary}</p>}
 
       <div className="field-line">
         <TextField
-          floatingLabelText="Name"
+          hintText="Hint Text"
+          label="Userame"
           name="username"
           errorText={errors.username}
           onChange={onChange}
           value={user.username}
+          margin="normal"
         />
       </div>
 
       <div className="field-line">
         <TextField
-          floatingLabelText="Email"
+          label="Email"
           name="email"
           errorText={errors.email}
           onChange={onChange}
           value={user.email}
+          margin="normal"
         />
       </div>
 
       <div className="field-line">
         <TextField
-          floatingLabelText="Password"
+          label="Password"
           type="password"
           name="password"
           onChange={onChange}
           errorText={errors.password}
           value={user.password}
+          margin="normal"
         />
       </div>
 
       {/* TODO: add checkbox for isAdmin  */}
-
-      <div className="button-line">
-        <Button type="submit" label="Create New Account" primary >Create New Account</Button>
+      <div style={styles.buttons}>
+        <RaisedButton raised color = "secondary"
+          component = {Link} to = "/">CANCEL</RaisedButton>
+        <RaisedButton raised
+          color="primary"
+          // component = {Link} to = "/vendors" //commented out because it overrides onSubmit
+          style={styles.saveButton}
+          type="Submit"
+          primary="true"> Create </RaisedButton>
       </div>
 
     </form>

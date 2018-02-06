@@ -3,6 +3,12 @@ import PropTypes from 'prop-types';
 import RegisterForm from './RegisterForm.jsx';
 import { addUser } from '../../interface/userInterface.js';
 
+import * as testConfig from '../../../resources/testConfig.js'
+
+// TODO: get session Id from the user
+const sessionId = testConfig.sessionId;
+const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
+
 class RegisterPage extends React.Component {
 
   /**
@@ -38,10 +44,9 @@ class RegisterPage extends React.Component {
 //        str = str.slice(0,-1) + ', "isAdmin": true, '+'"loggedIn":false'+'}';
 //        var user = JSON.parse(str);
 //        console.log(user);
-
-    addUser(this.state.user.email, this.state.user.username, this.state.user.password, false, false, '5a63be959144b37a6136491e');
-
-
+    console.log("Creating user with the following information: " + JSON.stringify(this.state.user));
+    addUser(this.state.user.email, this.state.user.username, this.state.user.password, false, false, sessionId,
+      (res)=>{console.log(res)});
   }
 
   /**
@@ -51,12 +56,16 @@ class RegisterPage extends React.Component {
    */
   changeUser(event) {
     const field = event.target.name;
+    console.log("field is " + field);
     const user = this.state.user;
+    console.log("user before change is " + JSON.stringify(user));
     user[field] = event.target.value;
+    console.log("Changed user[field] to " + user[field]);
     console.log(user);
     this.setState({
       user
     });
+    console.log("user after change is " + JSON.stringify(user));
   }
 
   /**

@@ -31,19 +31,8 @@ const styles = theme => ({
   },
 });
 
-
-
-class TestingCard extends Component {
-
-  render() {
-     const { classes } = this.props;
-        
-    return (
-      <div>
-        <Card className={classes.card}>
-          <CardHeader title={cardConstants.WELCOME_MESSAGE}/>
-          <CardMedia className={classes.media} image="/box_of_veggie.jpg"/> 
-          <CardActions >
+/* What is originally inside <CardActions> for testing */
+/*
             <Button onClick={()=>ingredientInterface.addIngredient(
               dummyIngredient.sampleIngredient.name, dummyIngredient.sampleIngredient.package, 
               dummyIngredient.sampleIngredient.temperatureZone, dummyIngredient.sampleIngredient.vendors,
@@ -116,6 +105,20 @@ class TestingCard extends Component {
             <Button onClick={()=>userInterface.deleteUser(userId, sessionId)}>
               Delete User
             </Button>
+*/
+
+
+class TestingCard extends Component {
+
+  render() {
+     const { classes } = this.props;
+        
+    return (
+      <div>
+        <Card className={classes.card}>
+          <CardHeader title={cardConstants.WELCOME_MESSAGE}/>
+          <CardMedia className={classes.media} image="/box_of_veggie.jpg"/> 
+          <CardActions >
 
           </CardActions>
         </Card>
