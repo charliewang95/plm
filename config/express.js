@@ -3,9 +3,8 @@ var config = require('./config'),
 	bodyParser = require('body-parser'),
 	passport = require('passport'),
 	flash = require('connect-flash'),
-	session = require('express-session');
-	// axios = require('axios'),
-	//ReactEngine = require('react-engine');
+	session = require('express-session'),
+	multer = require('multer');
 
 module.exports = function() {
 	var app = express();
@@ -13,7 +12,9 @@ module.exports = function() {
 	app.use(bodyParser.urlencoded({
 		extended: true
 	}));
-
+	app.use(multer({
+    	dest: "./uploads/"
+	}).any());
 	app.use(bodyParser.json());
 
 	app.use(session({
@@ -25,7 +26,7 @@ module.exports = function() {
 //    var engine = ReactEngine.server.create();
 //    app.engine('.js', engine);
 
-    app.set('views', './server/view');
+    app.set('views', './server/views');
     app.set('view engine', 'ejs');
 
 	app.use(flash());
@@ -40,7 +41,7 @@ module.exports = function() {
 	require('../server/routes/orders.server.routes.js')(app);
 	require('../server/routes/inventories.server.routes.js')(app);
 	require('../server/routes/carts.server.routes.js')(app);
-
+	require('../server/routes/uploads.server.routes.js')(app);
 
 	app.use(express.static('./public'));
 

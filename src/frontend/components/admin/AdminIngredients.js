@@ -32,7 +32,21 @@ import { withStyles } from 'material-ui/styles';
 import Styles from  'react-select/dist/react-select.css';
 import ReactSelect from 'react-select';
 import testData from './testIngredients';
+import SelectVendors from './SelectVendors';
 import * as ingredientInterface from '../../interface/ingredientInterface';
+import * as vendorInterface from '../../interface/vendorInterface';
+import * as uploadInterface from '../../interface/uploadInterface';
+  // TODO: get the sessionId
+import * as testConfig from '../../../resources/testConfig.js'
+
+// TODO: get session Id from the user
+
+// const sessionId = testConfig.sessionId;
+var sessionId = "";
+
+
+const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
+var isAdmin = "";
 
 const styles = theme => ({
   lookupEditCell: {
@@ -122,50 +136,33 @@ Command.propTypes = {
   onExecute: PropTypes.func.isRequired,
 };
 
-// options for the drop down 
+// options for the drop down
 const availableValues = {
-  pkg: testData.tablePage.package_options,
-  temperature: testData.tablePage.temperature_options,
+  packageName: testData.tablePage.package_options,
+  temperatureZone: testData.tablePage.temperatureZone_options,
   // vendors: testData.tablePage.vendor_options,
 
   // TODO: Get the data from the back end
-  vendors: testData.tablePage.vendor_options2,
+  vendors: sessionId == "" ? null : vendorInterface.getAllVendorsAsync(sessionId),
+  //vendors: testData.tablePage.vendor_options2,
 
 };
 
-var variables = [];
 
 const MultiSelectCellBase = ({
-  multiVal, multi, availableColumnValues, value, onValueChange, classes,
+  onValueChange, vendorsArray, classes
 }) => (
-  <TableCell
-    className={classes.lookupEditCell}
-  >
-    <ReactSelect.Creatable
-        // type = "create"
-        multi={true}
-        options={availableColumnValues}
-        // onChange={(option) => {{value : option}};
-        onChange={(option) => {onValueChange(option); multiVal.push(option);}}
-        value = {value}
-        input={
-        <Input
-          classes={{ root: classes.inputRoot }}
-            id="select-multiple"
-        />
-      }
-    />
+  <TableCell className={classes.lookupEditCell}>
+
+     <SelectVendors initialArray={vendorsArray} handleChange={onValueChange}/>
     {/* </ReactSelect> */}
   </TableCell>
 );
 
 MultiSelectCellBase.propTypes = {
-  availableColumnValues: PropTypes.array.isRequired,
-  value: PropTypes.any,
   onValueChange: PropTypes.func.isRequired,
+  vendorsArray: PropTypes.any,
   classes: PropTypes.object.isRequired,
-  multi:PropTypes.bool.isRequired,
-  multiVal: PropTypes.array.isRequired,
 };
 
 MultiSelectCellBase.defaultProps = {
@@ -176,22 +173,20 @@ export const MultiSelectCell = withStyles(styles, { name: 'ControlledModeDemo' }
 
 
 const LookupEditCellBase = ({
-  availableColumnValues,value, onValueChange, classes,
+  availableColumnValues, value, onValueChange, classes,
 }) => (
   <TableCell
     className={classes.lookupEditCell}
   >
     <Select
       value={value}
-      onChange={(event)=> onValueChange(event.target.value)}
+      onChange={(event) => onValueChange(event.target.value)}
       input={
         <Input
           classes={{ root: classes.inputRoot }}
-          id="select-multiple"
         />
       }
     >
-      // Creates the menu */
       {availableColumnValues.map(item => (
         <MenuItem key={item} value={item}>{item}</MenuItem>
       ))}
@@ -204,15 +199,14 @@ LookupEditCellBase.propTypes = {
   onValueChange: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
-
 LookupEditCellBase.defaultProps = {
   value: undefined,
 };
-
 export const LookupEditCell = withStyles(styles, { name: 'ControlledModeDemo' })(LookupEditCellBase);
 
 
 const Cell = (props) => {
+  console.log(" CELL props value: " + props.value)
   return <Table.Cell {...props} />;
 };
 
@@ -223,13 +217,13 @@ Cell.propTypes = {
 const EditCell = (props) => {
   console.log('Options Choice ' + props.column.name);
   const availableColumnValues = availableValues[props.column.name];
+  const vendorsArray = props.row.vendorsArray;
 
   // EDIT to make changes to the multi select things //
   /* CHANGE */
   if (props.column.name =='vendors') {
-    console.log('Options ' + availableColumnValues);
-    return  <MultiSelectCell {...props} availableColumnValues={availableColumnValues}
-    multi = {true} multiVal = {[]}/>;
+    console.log(vendorsArray);
+    return  <MultiSelectCell {...props} vendorsArray= {vendorsArray} onValueChange={props.onValueChange}/>;
   }else if (availableColumnValues){
     return <LookupEditCell {...props} availableColumnValues={availableColumnValues}/>;
   }
@@ -244,51 +238,58 @@ const getRowId = row => row.id;
 
 
 class AdminIngredients extends React.PureComponent {
-
   constructor(props) {
-
     super(props);
-
     this.state = {
+      idToNameMap:{},
       columns: [
         { name: 'name', title: 'Name' },
-        { name: 'pkg', title: 'Package' },
-        { name: 'temperature', title: 'Temperature' },
+        { name: 'packageName', title: 'Package' },
+        { name: 'temperatureZone', title: 'Temperature Zone' },
         { name: 'vendors', title: 'Vendors/Price' },
       ],
 
       tableColumnExtensions: [
-        { columnName: 'package', align: 'right' },
+        { columnName: 'vendors', align: 'right' },
       ],
 
       // TODO: get data to display from back end
-      rows: testData.tablePage.items,
+      // rows: testData.tablePage.items,
+      rows:[],
       sorting: [],
       editingRowIds: [],
       addedRows: [],
       rowChanges: {},
-      currentPage: 0,
+      currentPage: 5,
       deletingRows: [],
       pageSize: 0,
       pageSizes: [5, 10, 0],
-      columnOrder: ['name', 'pkg', 'temperature', 'vendors'],
+      columnOrder: ['name', 'packageName', 'temperatureZone', 'vendors'],
+      options:[],
     };
 
-    console.log(" NAME : " + testData.tablePage.items[0].name);
+    // console.log(" NAME : " + testData.tablePage.items[0].name);
 
     this.changeSorting = sorting => this.setState({ sorting });
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeAddedRows = addedRows => this.setState({
       addedRows: addedRows.map(row => (Object.keys(row).length ? row : {
 
-        name: testData.tablePage.ingredient_options[0],
-        vendors: testData.tablePage.vendor_options[0],
-        temperature: testData.tablePage.temperature_options[0],
-        pkg:testData.tablePage.package_options[0],
+        /* TODO: Change this after getting the data from back End */
+        // name: testData.tablePage.ingredient_options[0],
+        // vendors: testData.tablePage.vendor_options[0],
+        //temperatureZone: testData.tablePage.temperatureZone_options[0],
+        //packageName:testData.tablePage.package_options[0],
+        temperatureZone: "",
+        packageName: "",
+        vendorsArray: [],
       })),
     });
     // this.changeRowChanges = rowChanges => this.setState({ rowChanges });
-    this.changeRowChanges = (rowChanges) => {this.handleRowChange({rowChanges})};
+    this.loadCodeNameArray = this.loadCodeNameArray.bind(this);
+    this.createMap = this.createMap.bind(this);
+
+    this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
     this.commitChanges = ({ added, changed, deleted }) => {
@@ -296,28 +297,40 @@ class AdminIngredients extends React.PureComponent {
       let { rows } = this.state;
 
       if (added) {
-        console.log(" added " + added);
-        console.log(" Keys " + Object.keys(added));
-        // console.log("Id " + added.row.id);
         const startingAddedId = (rows.length - 1) > 0 ? rows[rows.length - 1].id + 1 : 0;
-        console.log("Starting Id " + startingAddedId);
-
 
         // TODO: Add checks for Values
         var vendors_string = "";
-
+        console.log(added[0]);
         for(var i =0; i < added[0].vendors.length; i++){
-          vendors_string+=added[0].vendors[i].value;
+          var vendorObject = added[0].vendors[i];
+          //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
+          var vendorName = vendorObject.vendorName;
+          console.log(vendorName);
+          var namePrice = vendorName + " / $" + vendorObject.price;
+          vendors_string += namePrice;
+          console.log("this is I");
+          console.log(i);
           if(i!= (added[0].vendors).length -1){
-            vendors_string+=',';
+            vendors_string+=', ';
           }
         }
+        console.log("Added vendors");
+        added[0].vendorsArray = added[0].vendors;
+        console.log(added[0].vendorsArray);
         added[0].vendors = vendors_string;
         added[0].id = startingAddedId;
-
         rows = [...rows,added[0]];
-
+        console.log("********************************");
+        console.log(added[0].vendorsArray);
         // TODO: Send data to back end
+        ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone, added[0].vendorsArray, sessionId, function(res){
+            if (res.status == 400) {
+                alert(res.data);
+            } else if (res.status == 500) {
+              alert('Ingredient name already exists');
+          }
+        });
 
       }
 
@@ -330,27 +343,47 @@ class AdminIngredients extends React.PureComponent {
             if(changed[rows[i].id].name){
               rows[i].name = changed[rows[i].id].name;
             }
-            if(changed[rows[i].id].pkg){
-              rows[i].pkg = changed[rows[i].id].pkg;
+            if(changed[rows[i].id].packageName){
+              rows[i].packageName = changed[rows[i].id].packageName;
             }
 
-            if(changed[rows[i].id].temperature){
-              rows[i].temperature = changed[rows[i].id].temperature;
+            if(changed[rows[i].id].temperatureZone){
+              rows[i].temperatureZone = changed[rows[i].id].temperatureZone;
             }
-            var vendor_string = "";
+            var vendors_string = "";
 
             // parse vendors into a string
             if(changed[rows[i].id].vendors){
               for(var j = 0; j < (changed[rows[i].id].vendors).length ; j++){
-                vendor_string += changed[rows[i].id].vendors[j].value;
+                console.log("Is this changed?");
+                console.log(changed[rows[i].id].vendors[j]);
+                var vendorObject = changed[rows[i].id].vendors[j];
+                //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
+                var vendorName = vendorObject.vendorName;
+                var namePrice = vendorName + " / $" + vendorObject.price;
+                vendors_string += namePrice;
+              //   vendors_string += changed[rows[i].id].vendors[j].value;
                 if(j!= (changed[rows[i].id].vendors).length -1){
-                  vendor_string+=',';
+                  vendors_string+=', ';
                 }
               }
-              rows[i].vendors = vendor_string;
+              rows[i].vendorsArray = changed[rows[i].id].vendors;
+              rows[i].vendors = vendors_string;
             }
+            ingredientInterface.updateIngredient(rows[i].ingredientId, rows[i].name, rows[i].packageName, rows[i].temperatureZone, rows[i].vendorsArray, rows[i].moneySpent, rows[i].moneyProd, sessionId, function(res){
+                if (res.status == 400) {
+                    alert(res.data);
+                } else if (res.status == 500) {
+                    alert('Ingredient name already exists');
+                } else {
+
+                    console.log("sdfadfsdf");
+                }
+            });
+
           };
         };
+        //TODO: send data to the back end
       }
 
     this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
@@ -368,10 +401,13 @@ class AdminIngredients extends React.PureComponent {
           // This line removes the data from the rows
           //TODO: get the right data and send it to back end for delete
           var name = rows[index].name;
-          var pkg = rows[index].pkg;
-
+          var packageName = rows[index].packageName;
+          console.log("delete");
+          console.log(rows[index].ingredientId);
+          ingredientInterface.deleteIngredient(rows[index].ingredientId, sessionId);
           rows.splice(index, 1);
         }
+
       });
 
       this.setState({ rows, deletingRows: [] });
@@ -380,39 +416,154 @@ class AdminIngredients extends React.PureComponent {
     this.changeColumnOrder = (order) => {
       this.setState({ columnOrder: order });
     };
+    this.uploadFile = this.uploadFile.bind(this);
   }
 
-  handleRowChange({rowChanges}){
-    console.log("ROW CHANGES Keys: " + Object.keys(rowChanges));
+  // handleRowChange({rowChanges}){
+    // console.log("ROW CHANGES Keys: " + Object.keys(rowChanges));
 
-    console.log("RC" + rowChanges.id + rowChanges.name + rowChanges.pkg + rowChanges.vendors);
-    this.setState ({rowChanges: rowChanges});
+    // console.log("RC" + rowChanges.id + rowChanges.name + rowChanges.packageName + rowChanges.vendors);
+    // this.setState ({rowChanges: rowChanges});
+  // }
+
+  componentWillMount(){
+    this.loadCodeNameArray();
+    this.loadAllIngredients();
+    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
   }
 
-  loadAllIngredients(){
-    const sessionId = '5a6a5977f5ce6b254fe2a91f';
-    var rawData = ingredientInterface.getAllIngredientsAsync(sessionId);
-    var processedData = [];
+  componentDidMount(){
+    //this.createMap();
+  }
 
-    //loop through ingredient
-    for (var i = 0; i < rawData.length; i++) { 
+  async loadCodeNameArray(){
+   // var startingIndex = 0;
+    var rawData = [];
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    rawData = await vendorInterface.getAllVendorNamesCodesAsync(sessionId);
+    console.log("loadCodeNameArray was called");
+    console.log(rawData.data);
+
+    var list = rawData.data;
+    var map = new Map();
+     list.forEach(function(vendor){
+      map.set(vendor.codeUnique, vendor.name);
+    });
+    this.setState({idToNameMap:map});
+
+    this.setState({options: rawData.data});
+  }
+
+  async createMap(){
+    var list = this.state.options;
+    console.log("create map!");
+    console.log(list);
+    var map = new Map();
+    list.forEach(function(vendor){
+      map.set(vendor.codeUnique, vendor.name);
+    });
+    this.setState({idToNameMap:map});
+  }
+
+  async loadAllIngredients(){
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    var rawData = await ingredientInterface.getAllIngredientsAsync(sessionId);
+    if(rawData.length==0){
+      return
+    }
+    console.log("rawData asdfasdfasdf");
+    console.log(rawData[0].vendors);
+    var processedData=[];
+    //   var processedData = [...rawData.map((row, index)=> ({
+    //     id: startingIndex + index,...row,
+    //   })),
+    // ];
+
+    // //loop through ingredient
+    for (var i = 0; i < rawData.length; i++) {
       var vendorArrayString = "";
       //loop through vendor
-      for (var j=0; j<rawData.vendors.length; j++){
-        vendorArrayString+=rawData.vendors[j].name + "/ $" + rawData.vendors[j].price + ", ";
+      console.log("This is the rawData");
+      console.log(rawData[i]);
+      var formatVendorsArray = new Array();
+      for (var j=0; j<rawData[i].vendors.length; j++){
+        //var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].codeUnique);
+        var vendorName = rawData[i].vendors[j].vendorName;
+        var price = rawData[i].vendors[j].price;
+
+        var vendorObject = new Object();
+        vendorObject.vendorName = vendorName;
+        vendorObject.price = price;
+        formatVendorsArray.push(vendorObject);
+
+        console.log(vendorName);
+        vendorArrayString+=vendorName + " / $" + rawData[i].vendors[j].price;
+        console.log("tired");
+        console.log(i);
+         if(i!= (rawData[i].vendors.length-1) ){
+            vendorArrayString+=', ';
+          }
+
+
       }
-      var singleData = new Object ("id": i, "name": rawData.name, "pkg": "sack", "temperature": rawData.temperatureZone, "vendors" : vendorArrayString);
+
+      var singleData = new Object ();
+      // singleData.id = i;
+      singleData.name = rawData[i].name;
+      singleData.packageName = rawData[i].packageName;
+      singleData.temperatureZone = rawData[i].temperatureZone;
+      singleData.vendorsArray = formatVendorsArray;
+      singleData.moneySpent = rawData[i].moneySpent;
+      singleData.moneyProd = rawData[i].moneyProd;
+      //singleData.vendorsArray = "";
+      singleData.vendors = vendorArrayString;
+      console.log("my id");
+      singleData.ingredientId = rawData[i]._id;
+      console.log(singleData.ingredientId);
       processedData.push(singleData);
     }
-    this.setState({rows: processedData});
+
+
+    var finalData = [...processedData.map((row, index)=> ({
+        id: index,...row,
+      })),
+    ];
+
+    console.log("loadAllIngredients()");
+    console.log(finalData);
+    this.setState({rows: finalData});
   }
 
-  componentDidMount() {
-    this.loadAllIngredients();
-  }
-  // componentDidUpdate() {
-  //   this.loadAllIngredients();
-  // }
+    async uploadFile(event) {
+        let file = event.target.files[0];
+        console.log(file);
+        
+        if (file) {
+          let form = new FormData();
+          form.append('file', file);
+          console.log(form);
+           await uploadInterface.upload(form, sessionId, function(res){
+                if (res.status == 400) {
+                    if (!alert(res.data))
+                        window.location.reload();
+                } else if (res.status == 500) {
+                    if (!alert('Duplicate Key on Ingredients (different package not allowed)'))
+                        window.location.reload();
+                } else if (res.status == 200) {
+                    console.log(res);
+                    if(!alert(res.data))
+                        window.location.reload();
+                }
+           });
+
+//          console.log(res);
+//          if(res == "SUCCESS") {
+//            alert("File successfully uploaded!");
+//          } else {
+//            alert("File upload failed!");
+//          }
+        }
+    }
 
   render() {
     const {
@@ -434,6 +585,7 @@ class AdminIngredients extends React.PureComponent {
     } = this.state;
 
     return (
+      <div>
       <Paper>
         <Grid
           allowColumnResizing = {true}
@@ -455,7 +607,7 @@ class AdminIngredients extends React.PureComponent {
           <IntegratedSorting />
           <IntegratedPaging />
 
-          <EditingState
+          {isAdmin && <EditingState
             editingRowIds={editingRowIds}
             onEditingRowIdsChange={this.changeEditingRowIds}
             rowChanges={rowChanges}
@@ -463,7 +615,7 @@ class AdminIngredients extends React.PureComponent {
             addedRows={addedRows}
             onAddedRowsChange={this.changeAddedRows}
             onCommitChanges={this.commitChanges}
-          />
+          />}
 
           <DragDropProvider />
 
@@ -478,22 +630,23 @@ class AdminIngredients extends React.PureComponent {
           />
 
           <TableHeaderRow showSortingControls />
-          <TableEditRow
+
+          {isAdmin && <TableEditRow
             cellComponent={EditCell}
-          />
-          <TableEditColumn
+          /> }
+          {isAdmin && <TableEditColumn
             width={120}
             showAddCommand={!addedRows.length}
             showEditCommand
             showDeleteCommand
             commandComponent={Command}
-          />
+          />}
           <PagingPanel
             pageSizes={pageSizes}
           />
         </Grid>
 
-        <Dialog
+        {isAdmin && <Dialog
           open={!!deletingRows.length}
           onClose={this.cancelDelete}
           classes={{ paper: classes.dialog }}
@@ -521,7 +674,13 @@ class AdminIngredients extends React.PureComponent {
             <Button onClick={this.deleteRows} color="secondary">Delete</Button>
           </DialogActions>
         </Dialog>
+      }
       </Paper>
+      {isAdmin && <p> Bulk Import </p>}
+      {isAdmin && <input type="file"
+        name="myFile"
+        onChange={this.uploadFile} /> }
+      </div>
     );
   }
 }
