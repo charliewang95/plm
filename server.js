@@ -71,6 +71,7 @@ Storage.findOne({temperatureZone: 'warehouse'}, function(err, obj){
  var fs = require('fs'),
     https = require('https');
 
+
     https.createServer({
       key: fs.readFileSync('key.pem'),
       cert: fs.readFileSync('cert.pem')
@@ -80,6 +81,15 @@ Storage.findOne({temperatureZone: 'warehouse'}, function(err, obj){
     //  console.error(err.stack);
     //  res.status(901).send('Admin required');
 //})
+
+    //reroute http to https
+    // set up plain http server
+    var http = require('http');
+    http.createServer(function(req, res) {   
+        res.writeHead(301, {"Location": "https://" + req.headers['host'] + req.url});
+        res.end();
+    }).listen(80);
+
 
 // app.listen(config.port);
 

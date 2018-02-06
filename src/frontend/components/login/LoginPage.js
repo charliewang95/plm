@@ -14,6 +14,12 @@ import PersistentDrawer from '../main/PersistentDrawer';
 import * as userActions from'../../interface/userInterface';
 import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
 
+import { withStyles } from 'material-ui/styles';
+import IconButton from 'material-ui/IconButton';
+import { FormControl, FormHelperText } from 'material-ui/Form';
+import Visibility from 'material-ui-icons/Visibility';
+import VisibilityOff from 'material-ui-icons/VisibilityOff';
+
 const styles = {
     buttons: {
       marginTop: 30,
@@ -47,11 +53,21 @@ class LoginPage extends React.Component{
       refrigerator:'',
       warehouse:'',
       fireRedirect: false,
+      showPassword: false
       }
     // this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
+    this.handleClickShowPasssword = this.handleClickShowPasssword.bind(this);
   }
+
+handleMouseDownPassword(event){
+    event.preventDefault();
+  };
+
+  handleClickShowPasssword(){
+    this.setState({ showPassword: !this.state.showPassword });
+  };
 
   onFormSubmit(e) {
     console.log("SUBMIT");
@@ -119,6 +135,52 @@ class LoginPage extends React.Component{
                     margin="normal"
                     validations={[required]}
                 />
+
+
+
+                <FormControl fullWidth required>
+          <InputLabel htmlFor="password">Password</InputLabel>
+          <Input
+            id="password"
+            name="password"
+            label="Password"
+            
+            type={this.state.showPassword ? 'text' : 'password'}
+            value={this.state.password}
+            onChange={(event) => this.setState({ password: event.target.value})}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={this.handleClickShowPasssword}
+                  onMouseDown={this.handleMouseDownPassword}
+                >
+                  {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+
+              <div style={styles.buttons}>
+                  <RaisedButton raised color = "primary"
+                    onClick={this.handleLogin} >LOGIN</RaisedButton>
+                  <RaisedButton raised
+                            // component = {Link} to = "/storage"
+                            color="secondary"
+                            style={styles.saveButton}
+                            type="Submit"
+                            primary="true"
+                            onClick = {()=> alert("We currently do not allow registering")}> REGISTER </RaisedButton>
+
+             </div>
+           </form>
+           </Card>
+         </div>
+
+    )
+	}
+};
+/*
                 <TextField
                     required
                     fullWidth={true}
@@ -129,24 +191,6 @@ class LoginPage extends React.Component{
                     margin="normal"
                     validations={[required]}
                 />
-              <div style={styles.buttons}>
-                  <RaisedButton raised color = "primary"
-                    onClick={this.handleLogin} >LOGIN</RaisedButton>
-                  <RaisedButton raised
-                            // component = {Link} to = "/storage"
-                            color="secondary"
-                            style={styles.saveButton}
-                            type="Submit"
-                            primary="true"> REGISTER </RaisedButton>
-
-             </div>
-           </form>
-           </Card>
-         </div>
-
-    )
-	}
-};
-
+                */
 
 export default LoginPage;
