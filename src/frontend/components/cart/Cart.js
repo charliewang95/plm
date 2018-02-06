@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Paper from 'material-ui/Paper';
 import PropTypes from 'prop-types';
@@ -116,6 +117,7 @@ class Cart extends React.Component {
       // TODO: send data to back End
       console.log("checkout");
       cartActions.checkoutCart(sessionId);
+      window.location.reload();
     };
 
   }

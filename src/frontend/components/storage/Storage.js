@@ -115,20 +115,12 @@ class Storage extends React.PureComponent {
             console.log("id " + rows[i]._id);
             console.log("zone " + rows[i].temperatureZone);
             console.log("capacity " + rows[i].capacity);
-
-            //TODO: Update the Storage
-//            try{
-//              storageActions.updateStorage(rows[i]._id,
-//                rows[i].temperatureZone, rows[i].capacity,sessionId);
-//            }catch(e){
-//              console.log('An error passed to the front end!')
-//              //TODO: error handling in the front end
-//              alert(e);
-//            }
             storageActions.updateStorage(rows[i]._id,
                 rows[i].temperatureZone, rows[i].capacity,sessionId, function(res){
                     if (res.status == 400) {
-                        alert(res.data);
+                      if(!alert(res.data)){
+                        window.location.reload();
+                      }
                     }
                });
           }

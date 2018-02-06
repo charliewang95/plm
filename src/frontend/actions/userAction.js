@@ -9,9 +9,10 @@ const property = 'searchedUser';
 /* add one user
  * user: JSON object
  * sessionId: string
+ * callback: a function
  */
-async function addUser(user, sessionId) {
-	return await genericActions.create(baseUrl, user, sessionId);
+async function addUser(user, sessionId, callback) {
+	return await genericActions.create(baseUrl, user, sessionId, callback);
 };
 
 /* 

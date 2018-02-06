@@ -3,6 +3,12 @@ import PropTypes from 'prop-types';
 import RegisterForm from './RegisterForm.jsx';
 import { addUser } from '../../interface/userInterface.js';
 
+import * as testConfig from '../../../resources/testConfig.js'
+
+// TODO: get session Id from the user
+const sessionId = testConfig.sessionId;
+const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
+
 class RegisterPage extends React.Component {
 
   /**
@@ -23,7 +29,14 @@ class RegisterPage extends React.Component {
 
     this.processForm = this.processForm.bind(this);
     this.changeUser = this.changeUser.bind(this);
+    this.userSuccessfullyAdded = this.userSuccessfullyAdded.bind(this);
   }
+
+  userSuccessfullyAdded() {
+    alert('User ' + this.state.user.username + ' is added successfully');
+
+  }
+
 
   /**
    * Process the form.
@@ -38,10 +51,18 @@ class RegisterPage extends React.Component {
 //        str = str.slice(0,-1) + ', "isAdmin": true, '+'"loggedIn":false'+'}';
 //        var user = JSON.parse(str);
 //        console.log(user);
-
-    addUser(this.state.user.email, this.state.user.username, this.state.user.password, false, false, '5a63be959144b37a6136491e');
-
-
+    console.log("Creating user with the following information: " + JSON.stringify(this.state.user));
+    var me = this;
+    addUser(this.state.user.email, this.state.user.username, this.state.user.password, false, false, sessionId,
+      (res)=>{
+        if (res.status == 400) {
+          alert(res.data);
+        } else if (res.status == 500) {
+          alert('Username or email already exists');
+        }else{
+          me.userSuccessfullyAdded();
+        }
+      });
   }
 
   /**
@@ -51,12 +72,16 @@ class RegisterPage extends React.Component {
    */
   changeUser(event) {
     const field = event.target.name;
+    console.log("field is " + field);
     const user = this.state.user;
+    console.log("user before change is " + JSON.stringify(user));
     user[field] = event.target.value;
+    console.log("Changed user[field] to " + user[field]);
     console.log(user);
     this.setState({
       user
     });
+    console.log("user after change is " + JSON.stringify(user));
   }
 
   /**

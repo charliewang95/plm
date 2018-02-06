@@ -11,8 +11,6 @@ import Vendors from './components/vendors/Vendors';
 import AddVendorForm from './components/vendors/AddVendorForm';
 import Cart from './components/cart/Cart';
 import Report from './components/report/Report';
-
-
 import Login from './components/login/LoginPage';
 import Register from './components/login/RegisterPage';
 

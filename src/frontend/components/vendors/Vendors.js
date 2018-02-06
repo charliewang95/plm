@@ -158,10 +158,14 @@ class Vendors extends React.PureComponent
         if(vendorName &&  vendorContact && vendorId && vendorCode){
           vendorActions.updateVendor(vendorName,vendorContact,vendorCode,vendorId,sessionId,function(res){
             if (res.status == 400) {
-                alert(res.data);
-            } else if (res.status == 500) {
-                  alert('Vendor name or code already exists');
+              if(!alert(res.data)){
+                window.location.reload();
               }
+              }else if (res.status == 500) {
+                if(!alert("Vendor name or code already exists")){
+                  window.location.reload();
+                }
+            }
           });
         }
       };
