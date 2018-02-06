@@ -81,12 +81,14 @@ var validateOrder = function(item, res, next, callback) { //check if exceed capa
                         }
                         else {
                             for (var i=0; i<inventories.length; i++) {
-                                quantity+=inventories[i].quantity;
+                                if (inventories[i].packageName != 'truckload' && inventories[i].packageName != 'railcar')
+                                    quantity+=inventories[i].quantity;
                                 if (inventories[i].ingredientId.toString() == ingredientId.toString()) {
                                     oldQuantity = inventories[i].quantity;
                                 }
                             }
                         }
+
                         newQuantity = item.pounds + quantity;
                         if (newQuantity > capacity && obj1.packageName != 'truckload' && obj1.packageName != 'railcar') {
                             res.status(400);
