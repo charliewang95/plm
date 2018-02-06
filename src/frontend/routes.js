@@ -17,19 +17,19 @@ import Register from './components/login/RegisterPage';
 const Routes = () => (
       <div>
 	      <Switch>
-		  <Route exact path="/" component={DashBoard} />
-		  <Route path="/dashboard" component={DashBoard} />
-		  <Route path="/admin-ingredients" component={AdminIngredients} />
-		  <Route path="/user-ingredients" component={UserIngredients} />
-		  <Route path="/inventory" component={Inventory} />
-		  <Route path="/orders" component={Orders} />
-		  <Route path="/storage" component={Storage} />
-		  <Route path="/login" component={Login} />
-		  <Route path="/register" component={Register} />
-          <Route path="/vendors" component={Vendors} />
-          <Route path="/addVendorForm" component={AddVendorForm} />
-          <Route path="/cart" component={Cart} />
-          <Route path="/report" component={Report} />
+		      <Route exact path="/" component={DashBoard} />
+		      <Route path="/dashboard" component={DashBoard} />
+		      <Route path="/admin-ingredients" component={AdminIngredients} />
+		      <Route path="/user-ingredients" component={UserIngredients} />
+		      <Route path="/inventory" component={Inventory} />
+		      <Route path="/orders" component={Orders} />
+		      <Route path="/storage" component={Storage} />
+		      <Route path="/login" component={Login} />
+		      <Route path="/register" component={Register} />
+	          <Route path="/vendors" component={Vendors} />
+	          <Route path="/addVendorForm" component={AddVendorForm} />
+	          <Route path="/cart" component={Cart} />
+	          <Route path="/report" component={Report} />
 		  </Switch>
       </div>
 

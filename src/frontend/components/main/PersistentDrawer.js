@@ -17,6 +17,8 @@ import ChevronRightIcon from 'material-ui-icons/ChevronRight';
 import { UserListItems, MainListItems } from './NavMenuList';
 import Routes from '../../routes.js';
 import Login from '../login/LoginPage';
+import cookie from 'react-cookies';
+import Button from 'material-ui/Button';
 
 const drawerWidth = 240;
 
@@ -115,17 +117,25 @@ class PersistentDrawer extends React.Component {
         this.state = {
           open: false,
           anchor: 'left',
-
-          // set to true once you log in
-
-          loggedIn: true,
+          loggedIn: (localStorage.getItem('user')!=null),
         };
         this.login = this.login.bind(this);
+        this.logout = this.logout.bind(this);
   }
 
-  login(key, message){
-    alert(message.toString());
-    this.setState({loggedIn:key});
+  login(key, user){
+    //alert(message.toString());
+    //this.setState({loggedIn:key});
+    //this.setState({user:JSON.stringify(user)});
+    //this.setState({ user:user });
+    //localStorage.getItem('user') = user;
+    this.setState({loggedIn: (localStorage.getItem('user')!=null)});
+    //console.log(localStorage.getItem('user'));
+  }
+
+  logout(){
+    localStorage.removeItem('user');
+    this.setState({loggedIn: (localStorage.getItem('user')!=null)});
   }
 
   handleDrawerOpen = () => {
@@ -199,6 +209,7 @@ class PersistentDrawer extends React.Component {
               <Typography type="title" color="inherit" noWrap>
                 Real Producer
               </Typography>
+              <Button color="inherit" onClick={this.logout}>Logout</Button>
             </Toolbar>
           </AppBar>}
           {before}

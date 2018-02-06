@@ -19,7 +19,8 @@ import * as testConfig from '../../../resources/testConfig.js';
 
 
 const userId = "5a765f3d9de95bea24f905d9";
-const sessionId = testConfig.sessionId;
+// const sessionId = testConfig.sessionId;
+var sessionId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 
@@ -58,6 +59,7 @@ export default class Demo extends React.PureComponent {
 
     try{
        if(READ_FROM_DATABASE){
+         sessionId = JSON.parse(localStorage.getItem('user'))._id;
          rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
        }else{
          rawData = dummyData;
