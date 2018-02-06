@@ -19,6 +19,12 @@ import VisibilityOff from 'material-ui-icons/VisibilityOff';
 import IconButton from 'material-ui/IconButton';
 
 
+import { withStyles } from 'material-ui/styles';
+import IconButton from 'material-ui/IconButton';
+import { FormControl, FormHelperText } from 'material-ui/Form';
+import Visibility from 'material-ui-icons/Visibility';
+import VisibilityOff from 'material-ui-icons/VisibilityOff';
+
 const styles = {
     buttons: {
       marginTop: 30,
@@ -52,7 +58,7 @@ class LoginPage extends React.Component{
       refrigerator:'',
       warehouse:'',
       fireRedirect: false,
-      showPassword: false,
+      showPassword: false
       }
     // this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -74,6 +80,14 @@ class LoginPage extends React.Component{
     console.log("clicked");
     alert("There is no register button. Please ask your admin to create an account for you.");
   }
+
+handleMouseDownPassword(event){
+    event.preventDefault();
+  };
+
+  handleClickShowPasssword(){
+    this.setState({ showPassword: !this.state.showPassword });
+  };
 
   onFormSubmit(e) {
     console.log("SUBMIT");
@@ -181,6 +195,17 @@ class LoginPage extends React.Component{
     )
 	}
 };
-
+/*
+                <TextField
+                    required
+                    fullWidth={true}
+                    id="adornment-password"
+                    label="Password"
+                    value={this.state.password}
+                    onChange = {(event) => this.setState({ password: event.target.value})}
+                    margin="normal"
+                    validations={[required]}
+                />
+                */
 
 export default LoginPage;

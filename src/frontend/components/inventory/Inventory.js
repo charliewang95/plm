@@ -33,6 +33,7 @@ import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
 import * as cartActions from '../../interface/cartInterface';
 import * as inventoryActions from '../../interface/inventoryInterface';
+import * as ingredientActions from '../../interface/ingredientInterface';
 import * as testConfig from '../../../resources/testConfig.js'
 import IngredientDetail from './IngredientDetail';
 
@@ -44,10 +45,6 @@ const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 var isAdmin = "";
 var userId = "";
 
-// const userId = "5a765f3d9de95bea24f905d9";
-// const sessionId = "5a63be959144b37a6136491e";
-// const sessionId = testConfig.sessionId;
-
 
 const Cell = (props)=>{
   return <Table.Cell {...props}
@@ -57,6 +54,7 @@ const Cell = (props)=>{
           }}
         />
 };
+
 
 
 Cell.propTypes = {
@@ -104,8 +102,8 @@ const getRowId = row => row.id;
 const toLowerCase = value => String(value).toLowerCase();
 const temperatureZonePredicate = (value, filter) => toLowerCase(value).startsWith(toLowerCase(filter.value));
 
-const RowDetail = (props)=>{
-return <IngredientDetail {...props}/>;
+const RowDetail =(props) =>{
+  return <IngredientDetail {...props} />;
 }
 
 class Inventory extends React.PureComponent {
@@ -222,7 +220,7 @@ class Inventory extends React.PureComponent {
      isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
      sessionId = JSON.parse(localStorage.getItem('user'))._id;
    }
-   
+
 // Initial loading of data
   componentDidMount() {
     this.loadInventory();
@@ -246,6 +244,7 @@ class Inventory extends React.PureComponent {
       })),
     ];
     this.setState({rows:processedData});
+    console.log(" Finished Loading ");
   }
 
     handleIngredientQuantity(event){
@@ -260,7 +259,7 @@ class Inventory extends React.PureComponent {
 
   render() {
     // const { rows, columns, integratedFilteringColumnExtensions } = this.state;
-    const {classes,} = this.props;
+    // const {classes,} = this.props;
     const { rows, columns,editingRowIds,
       rowChanges,tableColumnExtensions,
       integratedFilteringColumnExtensions,addingItemsToCart,addedQuantity,expandedRowIds} = this.state;
@@ -274,16 +273,19 @@ class Inventory extends React.PureComponent {
         >
           {/* <FilteringState defaultFilters={[{ columnName: 'temperatureZone', value: 'frozen' }]} /> */}
           <FilteringState/>
-          {isAdmin &&
+
             <EditingState
               editingRowIds={editingRowIds}
               onEditingRowIdsChange={this.changeEditingRowIds}
               rowChanges={rowChanges}
               onRowChangesChange={this.changeRowChanges}
               onCommitChanges={this.commitChanges}
-            />}
+            />
+
+          {/* <EditingState/> */}
 
           <IntegratedFiltering columnExtensions={integratedFilteringColumnExtensions} />
+
           <RowDetailState
                       expandedRowIds={expandedRowIds}
                       onExpandedRowIdsChange={this.changeExpandedDetails}
@@ -291,18 +293,26 @@ class Inventory extends React.PureComponent {
           <Table cellComponent={Cell}/>
           <TableHeaderRow />
           <TableFilterRow />
-          {/*<TableRowDetail
+          <TableRowDetail
             contentComponent={RowDetail}
-          />*/}
+          />
+
           {isAdmin &&
             <TableEditRow
               cellComponent={EditCell}
             />
           }
-          {isAdmin &&
-            <TableEditColumn
+
+            {isAdmin && <TableEditColumn
               width={120}
               showEditCommand
+              showDeleteCommand
+              commandComponent={Command}
+            />}
+
+            {!isAdmin && <TableEditColumn
+              width={120}
+              // showEditCommand
               showDeleteCommand
               commandComponent={Command}
             />}
@@ -341,7 +351,7 @@ class Inventory extends React.PureComponent {
                 label="Enter Quantity (lbs)"
                 fullWidth = {false}
                 onChange={(event) => this.handleIngredientQuantity(event)}
-                verticalSpacing= "desnse"
+                // verticalSpacing= "desnse"
                 style={{
                 marginLeft: 20,
                 martginRight: 20
@@ -358,8 +368,8 @@ class Inventory extends React.PureComponent {
   }
 }
 
-Inventory.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
+// Inventory.propTypes = {
+//   classes: PropTypes.object.isRequired,
+// };
 
 export default Inventory;

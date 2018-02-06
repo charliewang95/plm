@@ -35,8 +35,8 @@ export default class Demo extends React.PureComponent {
       rows: [],
       sorting:[],
       currentPage: 0,
-      pageSize: 0,
-      pageSizes: [5, 10, 20],
+      pageSize: 5,
+      pageSizes: [5, 10, 0],
       columnOrder: ['name', 'moneySpent', 'moneyProd'],
     };
     this.changeSorting = sorting => this.setState({ sorting });

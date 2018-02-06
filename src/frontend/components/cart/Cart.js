@@ -72,8 +72,8 @@ class Cart extends React.Component {
       rowChanges: {},
       deletingRows: [],
       currentPage: 0,
-      pageSize: 0,
-      pageSizes: [5, 10, 20],
+      pageSize: 5,
+      pageSizes: [5, 10, 0],
     };
 
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
@@ -146,7 +146,7 @@ class Cart extends React.Component {
 
 
   render() {
-    const {classes} = this.props;
+    // const {classes} = this.props;
     const { rows, columns,rowChanges,deletingRows,currentPage,
       pageSize,pageSizes } = this.state;
     return (
@@ -234,8 +234,8 @@ class Cart extends React.Component {
   }
 }
 
-Cart.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
+// Cart.propTypes = {
+//   classes: PropTypes.object.isRequired,
+// };
 
 export default Cart;

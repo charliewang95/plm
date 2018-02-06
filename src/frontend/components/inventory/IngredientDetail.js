@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React  from 'react';
 import * as ingredientActions from '../../interface/ingredientInterface';
 import * as testConfig from '../../../resources/testConfig.js'
 import {
@@ -10,55 +10,62 @@ import {
 
 import Paper from 'material-ui/Paper';
 
-//TODO: Set sessionId
-const sessionId = testConfig.sessionId;
-const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
-const RowDetail = ({ row }) => (
-  console.log("row" + row.ingredientName),
-  // TODO: Call the ingredient interface to get details for the ingredient
+var sessionId = "";
 
-  <div>Details for {row.ingredientName} from {row.temperatureZone}</div>
-);
+class IngredientDetail extends React.PureComponent {
 
-const dummyData = {_id: "ID1", name: "pepper",packageName: "sack",temperatureZone: "warehouse",
-                    vendors: [{code: "ID1", price: "10"},{code: "ID2", price: "15"}],
-                    moneySpent:"500", moneyProd: "400"};
+  constructor(props){
+    super(props);
+    this.state={
+      rowDetail:"",
+      vendorString:"",
+    };
+  }
 
-const IngredientDetail = ({row}) => {
-  console.log("Details for " + row.ingredientName + " " + row.ingredientId);
-  var ingredientDetail = "";
-  //state={ingredientDetail: ""};
-  if(READ_FROM_DATABASE){
-     try{
-        // TODO: load ingredient details from the backend
-        console.log(row.ingredientId);
-        ingredientActions.getIngredientAsync(row.ingredientId,sessionId, function(obj){
-            ingredientDetail = obj;
-        });
-//        ingredientDetail = helper(row.ingredientId,sessionId);
-       }catch(e){
-         console.log(" Error sent to front end");
-         alert(e);
-       }
-   }else{
-    ingredientDetail = dummyData;
+  componentDidMount(){
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    this.loadIngredientDetail();
+  }
+
+  async loadIngredientDetail (){
+    var row = this.props.row;
+    try{
+      var detail = await ingredientActions.getIngredientAsync(row.ingredientId,sessionId);
+     }catch(e){
+       console.log(" Error sent to front end");
+       alert(e);
      }
-    console.log(" Ingredient Details " + JSON.stringify(ingredientDetail));
-    console.log(" Money Spent " + ingredientDetail.moneySpent);
-    console.log(" Money Prod " + ingredientDetail.moneyProd);
+    console.log(" Ingredient Details " + JSON.stringify(detail));
+    console.log(" Money Spent " + detail.moneySpent);
+    console.log(" Money Prod " + detail.moneyProd);
     var vendorString = ""
+
+    // console.log(" Vendors " + JSON.stringify(detail.vendors));
+
+    for(var i = 0; i < detail.vendors.length;i++){
+      vendorString += detail.vendors[i].vendorName + ' / $ ' + detail.vendors[i].price;
+      if( i != detail.vendors.length-1){
+        vendorString+=" , ";
+      }
+    }
 
     console.log("vendorString " + vendorString);
 
-  return (
-      <div>
-        <div> MoneySpent (Orders): {ingredientDetail.moneySpent} </div>
-        <div> MoneySpent (Production): {ingredientDetail.moneyProd}  </div>
-       </div>
-  );
+    this.setState({rowDetail:detail});
+    this.setState({vendorString: vendorString});
+
+  }
+      render(){
+        const{rowDetail} = this.props;
+      return (
+          <div>
+            <div> MoneySpent (Orders) :  {parseFloat(this.state.rowDetail.moneySpent)} </div>
+            <div> MoneySpent (Production) :  {parseFloat(this.state.rowDetail.moneyProd)}  </div>
+            <div> Vendors/Price:  {this.state.vendorString}  </div>
+           </div>
+      );
+    }
 };
-
-
 
 export default IngredientDetail;
