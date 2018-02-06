@@ -119,9 +119,9 @@ class Storage extends React.PureComponent {
                 if (!re.test(enteredQuantity)) {
                   alert(" Quantity must be a number.");
                 }
-//                else {
-//                    rows[i].capacity = enteredQuantity;
-//                }
+                else {
+                    rows[i].capacity = enteredQuantity;
+                }
             console.log("id " + rows[i]._id);
             console.log("zone " + rows[i].temperatureZone);
 
@@ -135,9 +135,9 @@ class Storage extends React.PureComponent {
                           window.location.reload();
                           console.log(oldCap);
                         }
-                      } else {
-                        oldRow.capacity = enteredQuantity;
-                        temp.setState({rows:rows});
+//                      } else {
+//                        oldRow.capacity = enteredQuantity;
+//                        temp.setState({rows:rows});
                       }
                   });
               }
