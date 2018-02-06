@@ -2,7 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3862f87b-362e-4c1c-a738-cd70a2ba3d34" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/server/utils/validator.js" afterPath="$PROJECT_DIR$/server/utils/validator.js" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/components/admin/AdminIngredients.js" afterPath="$PROJECT_DIR$/src/frontend/components/admin/AdminIngredients.js" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/components/cart/Cart.js" afterPath="$PROJECT_DIR$/src/frontend/components/cart/Cart.js" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/components/dashboard/testing/TestingCard.js" afterPath="$PROJECT_DIR$/src/frontend/components/dashboard/testing/TestingCard.js" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/components/inventory/Inventory.js" afterPath="$PROJECT_DIR$/src/frontend/components/inventory/Inventory.js" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/components/login/LoginPage.js" afterPath="$PROJECT_DIR$/src/frontend/components/login/LoginPage.js" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/components/login/RegisterPage.jsx" afterPath="$PROJECT_DIR$/src/frontend/components/login/RegisterPage.jsx" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/components/main/NavMenuList.js" afterPath="$PROJECT_DIR$/src/frontend/components/main/NavMenuList.js" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/components/main/PersistentDrawer.js" afterPath="$PROJECT_DIR$/src/frontend/components/main/PersistentDrawer.js" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/components/report/Report.js" afterPath="$PROJECT_DIR$/src/frontend/components/report/Report.js" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/components/storage/Storage.js" afterPath="$PROJECT_DIR$/src/frontend/components/storage/Storage.js" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/components/vendors/AddVendorForm.js" afterPath="$PROJECT_DIR$/src/frontend/components/vendors/AddVendorForm.js" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/components/vendors/Vendors.js" afterPath="$PROJECT_DIR$/src/frontend/components/vendors/Vendors.js" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -13,11 +24,51 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="modifierCreateUpdate.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="modifierCreateUpdate.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/utils/modifierCreateUpdate.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="619">
-              <caret line="76" column="17" lean-forward="true" selection-start-line="76" selection-start-column="17" selection-end-line="76" selection-end-column="17" />
+            <state relative-caret-position="414">
+              <caret line="59" column="52" lean-forward="false" selection-start-line="59" selection-start-column="52" selection-end-line="59" selection-end-column="52" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RegisterPage.jsx" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/frontend/components/login/RegisterPage.jsx">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-873">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RegisterForm.jsx" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/frontend/components/login/RegisterForm.jsx">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="731">
+              <caret line="91" column="13" lean-forward="false" selection-start-line="82" selection-start-column="12" selection-end-line="91" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LoginPage.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/frontend/components/login/LoginPage.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="407">
+              <caret line="126" column="47" lean-forward="false" selection-start-line="126" selection-start-column="47" selection-end-line="126" selection-end-column="47" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TestingCard.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/frontend/components/dashboard/testing/TestingCard.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="448">
+              <caret line="118" column="39" lean-forward="false" selection-start-line="118" selection-start-column="39" selection-end-line="118" selection-end-column="39" />
               <folding />
             </state>
           </provider>
@@ -28,26 +79,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="135">
               <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AdminIngredients.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/frontend/components/admin/AdminIngredients.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="319" column="43" lean-forward="false" selection-start-line="319" selection-start-column="43" selection-end-line="319" selection-end-column="43" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ingredientInterface.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/frontend/interface/ingredientInterface.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="146">
-              <caret line="37" column="22" lean-forward="false" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -93,22 +124,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Vendors.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/frontend/components/vendors/Vendors.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="212" column="59" lean-forward="false" selection-start-line="212" selection-start-column="59" selection-end-line="212" selection-end-column="59" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>sessionId</find>
-      <find>onChange</find>
       <find>Actions</find>
       <find>changed</find>
       <find>action</find>
@@ -134,12 +153,15 @@
       <find>loadCodeNameArray</find>
       <find>options</find>
       <find>codeUnique</find>
-      <find>console.log</find>
       <find>addingre</find>
       <find>updatePrice</find>
+      <find>console.log</find>
+      <find>welcome</find>
+      <find>WELCOME_MESSAGE</find>
     </findStrings>
     <replaceStrings>
       <replace />
+      <replace>//////console.log</replace>
     </replaceStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/server</dir>
@@ -156,7 +178,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/frontend/routes.js" />
         <option value="$PROJECT_DIR$/src/frontend/components/login/RegisterForm.jsx" />
         <option value="$PROJECT_DIR$/server/models/vendor.server.model.js" />
         <option value="$PROJECT_DIR$/server/utils/postProcessor.js" />
@@ -188,7 +209,6 @@
         <option value="$PROJECT_DIR$/src/frontend/actions/orderAction.js" />
         <option value="$PROJECT_DIR$/src/frontend/actions/ingredientAction.js" />
         <option value="$PROJECT_DIR$/src/frontend/components/orders/Orders.js" />
-        <option value="$PROJECT_DIR$/src/frontend/components/login/LoginPage.js" />
         <option value="$PROJECT_DIR$/src/frontend/interface/userInterface.js" />
         <option value="$PROJECT_DIR$/src/frontend/components/storage/Storage.js" />
         <option value="$PROJECT_DIR$/src/frontend/actions/userAction.js" />
@@ -204,9 +224,11 @@
         <option value="$PROJECT_DIR$/server/controllers/ingredients.server.controller.js" />
         <option value="$PROJECT_DIR$/src/frontend/components/admin/AdminIngredients.js" />
         <option value="$PROJECT_DIR$/server/utils/utils.js" />
-        <option value="$PROJECT_DIR$/server/utils/modifierCreateUpdate.js" />
         <option value="$PROJECT_DIR$/src/frontend/components/admin/SelectVendors.js" />
         <option value="$PROJECT_DIR$/server/utils/validator.js" />
+        <option value="$PROJECT_DIR$/src/frontend/components/login/LoginPage.js" />
+        <option value="$PROJECT_DIR$/server/utils/modifierCreateUpdate.js" />
+        <option value="$PROJECT_DIR$/src/frontend/components/dashboard/testing/TestingCard.js" />
       </list>
     </option>
   </component>
@@ -595,21 +617,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/server/controllers/test.csv" />
-    <entry file="file://$PROJECT_DIR$/server/models/storage.server.model.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="80" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/utils/postProcessor.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="594">
-          <caret line="90" column="61" lean-forward="false" selection-start-line="90" selection-start-column="61" selection-end-line="90" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/models/user.server.model.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
@@ -642,6 +649,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="540">
           <caret line="36" column="42" lean-forward="false" selection-start-line="36" selection-start-column="42" selection-end-line="37" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -663,6 +671,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="540">
           <caret line="36" column="9" lean-forward="false" selection-start-line="36" selection-start-column="9" selection-end-line="36" selection-end-column="9" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -677,6 +686,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
           <caret line="13" column="0" lean-forward="true" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -684,6 +694,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="630">
           <caret line="42" column="0" lean-forward="true" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -691,6 +702,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="750">
           <caret line="50" column="7" lean-forward="true" selection-start-line="5" selection-start-column="4" selection-end-line="50" selection-end-column="7" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -706,6 +718,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="609">
           <caret line="60" column="21" lean-forward="false" selection-start-line="60" selection-start-column="21" selection-end-line="60" selection-end-column="21" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -713,6 +726,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
           <caret line="5" column="14" lean-forward="false" selection-start-line="5" selection-start-column="14" selection-end-line="5" selection-end-column="14" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -748,6 +762,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="525">
           <caret line="35" column="125" lean-forward="false" selection-start-line="35" selection-start-column="125" selection-end-line="35" selection-end-column="125" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -807,14 +822,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/frontend/components/login/LoginPage.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="294">
-          <caret line="67" column="34" lean-forward="false" selection-start-line="67" selection-start-column="34" selection-end-line="67" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/frontend/interface/userInterface.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="612">
@@ -840,6 +847,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="612">
           <caret line="130" column="51" lean-forward="false" selection-start-line="130" selection-start-column="51" selection-end-line="130" selection-end-column="51" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -854,6 +862,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="7" column="72" lean-forward="false" selection-start-line="7" selection-start-column="72" selection-end-line="7" selection-end-column="72" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -884,6 +893,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
           <caret line="5" column="79" lean-forward="false" selection-start-line="5" selection-start-column="79" selection-end-line="5" selection-end-column="79" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -922,6 +932,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="795">
           <caret line="53" column="8" lean-forward="false" selection-start-line="53" selection-start-column="8" selection-end-line="53" selection-end-column="8" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -949,10 +960,42 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/frontend/components/login/RegisterPage.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-873">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/frontend/components/login/RegisterForm.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="731">
+          <caret line="91" column="13" lean-forward="false" selection-start-line="82" selection-start-column="12" selection-end-line="91" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/frontend/components/login/LoginPage.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="407">
+          <caret line="126" column="47" lean-forward="false" selection-start-line="126" selection-start-column="47" selection-end-line="126" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/server/utils/modifierCreateUpdate.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="619">
-          <caret line="76" column="17" lean-forward="true" selection-start-line="76" selection-start-column="17" selection-end-line="76" selection-end-column="17" />
+        <state relative-caret-position="414">
+          <caret line="59" column="52" lean-forward="false" selection-start-line="59" selection-start-column="52" selection-end-line="59" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/frontend/components/dashboard/testing/TestingCard.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="448">
+          <caret line="118" column="39" lean-forward="false" selection-start-line="118" selection-start-column="39" selection-end-line="118" selection-end-column="39" />
           <folding />
         </state>
       </provider>

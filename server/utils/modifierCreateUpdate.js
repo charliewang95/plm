@@ -57,6 +57,7 @@ var modifyOrder = function(item, res, next, callback) { //add number of pounds t
                             price = vendor.price;
                             str = str.slice(0,-1)+',"price":'+price+',"totalPrice":'+price*pounds+'}';
                             var moneySpent = ingredient.moneySpent;
+                            console.log(price*pounds);
                             ingredient.update({moneySpent: moneySpent + price*pounds}, function(err, obj) {
                                 if (err) return next(err);
                                 else {
