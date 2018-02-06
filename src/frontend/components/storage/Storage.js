@@ -24,10 +24,11 @@ import dummyData from './dummyData';
 
 //TODO: get user data
 // const sessionId = testConfig.sessionId;
+
 var sessionId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 var  isAdmin= true;
-const userId = "user";
+
 
 const Cell = (props)=>{
   return <Table.Cell {...props}
@@ -95,39 +96,45 @@ class Storage extends React.PureComponent {
       this.setState({ rowChanges });
     }
 
-    this.commitChanges = ({ changed}) => {
+    this.commitChanges = async ({ changed}) => {
+      var THIS = this;
       let { rows } = this.state;
 
       console.log(JSON.stringify(rows));
       console.log("changed " + JSON.stringify(changed));
 
       if(changed){
+
         for(var i = 0; i < rows.length;i++){
           console.log( " Changed Id " + changed[rows[i].id]);
           if(changed[rows[i].id]){
             const re = /^[0-9\b]+$/;
             var enteredQuantity = changed[rows[i].id].capacity;
                 if (re.test(enteredQuantity)) {
-                   rows[i].capacity = changed[rows[i].id].capacity;
+                    rows[i].capacity = changed[rows[i].id].capacity;
                 }else{
                   alert(" Quantity must be a number.");
                 }
             console.log("id " + rows[i]._id);
             console.log("zone " + rows[i].temperatureZone);
             console.log("capacity " + rows[i].capacity);
-            storageActions.updateStorage(rows[i]._id,
+
+            await storageActions.updateStorage(rows[i]._id,
                 rows[i].temperatureZone, rows[i].capacity,sessionId, function(res){
                     if (res.status == 400) {
-                      if(!alert(res.data)){
-                        window.location.reload();
+                      //Reload window when cancelled
+                        if(!alert(res.data)){
+                          window.location.reload();
+                        }
                       }
-                    }
-               });
+                  });
+              }
+            }
           }
         }
+        this.commitChanges = this.commitChanges.bind(this);
       }
-    }
-  }
+
 
   componentDidMount() {
     this.loadStorageInfo();
@@ -151,7 +158,7 @@ class Storage extends React.PureComponent {
 
   render() {
     const {classes} = this.props;
-    const { rows, columns ,editingRowIds,rowChanges} = this.state;
+    const { rows,columns ,editingRowIds,rowChanges,} = this.state;
 
     return (
       <Paper>
