@@ -135,16 +135,21 @@ var readWithUserAccess = function(req, res, next, model, userId, itemId) {
 };
 
 var update = function(req, res, next, model, itemId) {
+
+    console.log("updating, modifying");
     modifierCreateUpdate.modify('update', model, req.body, itemId, res, next, function(err, obj){
         if (err) {
             return next(err);
         }
         else if (obj) {
+            console.log("updating, modified");
+            console.log("updating, validating");
             validator.validate(model, obj, res, next, function(err, valid){
                 if (err) {
                     return next(err);
                 }
                 else if (valid) {
+                    console.log("updating, validated");
                     model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
                         if (err) {
                             return next(err);

@@ -28,11 +28,13 @@ import Dialog, {
 } from 'material-ui/Dialog';
 
 
-
 // TODO: Get the user ID
-const userId = "5a63be959144b37a6136491e";
+//const sessionId = "5a765f3d9de95bea24f905d9";
+const userId = "5a63be959144b37a6136491e"
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
-const sessionId = testConfig.sessionId;
+
+//const sessionId = testConfig.sessionId;
+const sessionId = '5a63be959144b37a6136491e';
 
 const Cell = (props) => {
   console.log(" CELL props value: " + props.value)
@@ -123,13 +125,15 @@ class Cart extends React.Component {
 
   async loadCartData(){
     var startingIndex = 0;
-    var rawData = dummyData;
+    var rawData = '';
     if(READ_FROM_DATABASE){
       // TODO: Initialize data
       rawData = await cartActions.getAllCartsAsync(userId);
+      console.log("rawData " + JSON.stringify(rawData));
     } else {
       rawData = dummyData;
     }
+
     var processedData = [...rawData.map((row, index)=> ({
         id: startingIndex + index,...row,
       })),

@@ -10,8 +10,11 @@ const property = 'ingredient';
  * ingredient: JSON object
  * sessionId: string, id of the current session
  */
-async function addIngredient(ingredient, sessionId) {
-	return await genericActions.create(baseUrl,ingredient,sessionId);
+async function addIngredient(ingredient, sessionId, callback) {
+	//return await genericActions.create(baseUrl,ingredient,sessionId);
+	genericActions.create(baseUrl,ingredient,sessionId, function(res){
+	    callback(res);
+	})
 };
 
 /* 
@@ -58,8 +61,11 @@ async function getIngredientAsync(ingredientId, sessionId){
  * sessionId: string, id of the current session
  * ingredient: JSON object representing the updated info about the ingredient
  */
-async function updateIngredient(ingredientId, sessionId, ingredient) {
-	return await genericActions.updateById(baseUrl, property, ingredientId, sessionId, ingredient);
+async function updateIngredient(ingredientId, sessionId, ingredient, callback) {
+	//return await genericActions.updateById(baseUrl, property, ingredientId, sessionId, ingredient);
+	genericActions.updateById(baseUrl, property, ingredientId, sessionId, ingredient, function(res){
+	    callback(res);
+	});
 };
 
 /* 

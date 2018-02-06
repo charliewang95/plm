@@ -38,7 +38,6 @@ import * as vendorInterface from '../../interface/vendorInterface';
   // TODO: get the sessionId
 import * as testConfig from '../../../resources/testConfig.js'
 
-
 // TODO: get session Id from the user
 const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
@@ -460,8 +459,7 @@ class AdminIngredients extends React.PureComponent {
       console.log("This is the rawData");
       console.log(rawData[i]);
       for (var j=0; j<rawData[i].vendors.length; j++){
-        var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].codeUnique);
-        console.log(vendorName);
+        var vendorName = rawData[i].vendors[j].vendorName;
         vendorArrayString+=vendorName + " / $" + rawData[i].vendors[j].price;
         console.log("tired");
         console.log(i);

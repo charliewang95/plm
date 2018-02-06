@@ -10,8 +10,11 @@ const property = 'cart';
  * cart: JSON object following cart.server.model.js
  * sessionId: string, id of the current session
  */
-async function addCart(cart, sessionId) {
-	return await genericActions.create(baseUrl,cart,sessionId);
+async function addCart(cart, sessionId, callback) {
+	//return await genericActions.create(baseUrl,cart,sessionId);
+	genericActions.create(baseUrl,cart,sessionId, function(res){
+	    callback(res);
+	})
 };
 
 /* 
@@ -38,8 +41,11 @@ async function getCartAsync(cartId, sessionId){
  * sessionId: string, id of the current session
  * cart: JSON object representing the updated info about the cart
  */
-async function updateCart(cartId, sessionId, cart) {
-	return await genericActions.updateById(baseUrl, property, cartId, sessionId, cart);
+async function updateCart(cartId, sessionId, cart, callback) {
+	//return await genericActions.updateById(baseUrl, property, cartId, sessionId, cart);
+	genericActions.updateById(baseUrl, property, cartId, sessionId, cart, function(res){
+	    callback(res);
+	})
 };
 
 /* 

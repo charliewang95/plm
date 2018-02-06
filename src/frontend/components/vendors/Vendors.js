@@ -154,7 +154,13 @@ class Vendors extends React.PureComponent
         var ingredients = "";
         // TODO: Call updateVendor function to backend
         if(vendorName &&  vendorContact && vendorId && vendorCode){
-          vendorActions.updateVendor(vendorName,vendorContact,vendorCode,vendorId,sessionId);
+          vendorActions.updateVendor(vendorName,vendorContact,vendorCode,vendorId,sessionId,function(res){
+            if (res.status == 400) {
+                alert(res.data);
+            } else if (res.status == 500) {
+                  alert('Vendor name or code already exists');
+              }
+          });
         }
       };
       // Delete pop up

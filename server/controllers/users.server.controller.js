@@ -122,17 +122,17 @@ exports.authenticate = function(req, res, next) {
         console.log(req.body);
         if (err) return next(err);
         else if (!user) {
-            //res.status(400);
-            res.send("Error. This email is not linked to any account");
+            res.status(400);
+            res.send("Username does not exist");
         }
         else {
             if (user.authenticate(req.body.password)) {
-                // user.update({loggedIn: true}, function(err, obj){
-                res.send(user);
-                // });
+                user.update({loggedIn: true}, function(err, obj){
+                    res.send(user);
+                });
             } else {
                 //res.status(400);
-                res.send("Error. Incorrect password.");
+                res.send("Incorrect password.");
             }
         }
     });

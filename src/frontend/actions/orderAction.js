@@ -10,8 +10,11 @@ const property = 'order';
  * order: JSON object following order.server.model.js
  * sessionId: string, id of the current session
  */
-async function addOrder(order, sessionId) {
-	return await genericActions.create(baseUrl,order,sessionId);
+async function addOrder(order, sessionId, callback) {
+	//return await genericActions.create(baseUrl,order,sessionId);
+	genericActions.create(baseUrl,order,sessionId, function(res){
+	    callback(res);
+	})
 };
 
 /* 
@@ -38,8 +41,11 @@ async function getOrderAsync(orderId, sessionId){
  * sessionId: string, id of the current session
  * order: JSON object representing the updated info about the order
  */
-async function updateOrder(orderId, sessionId, order) {
-	return await genericActions.updateById(baseUrl, property, orderId, sessionId, order);
+async function updateOrder(orderId, sessionId, order, callback) {
+	//return await genericActions.updateById(baseUrl, property, orderId, sessionId, order);
+	genericActions.updateById(baseUrl, property, orderId, sessionId, order, function(res){
+	    callback(res);
+	})
 };
 
 /* 

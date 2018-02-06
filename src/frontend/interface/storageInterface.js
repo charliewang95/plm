@@ -55,9 +55,11 @@ async function getStorageAsync(storageId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-async function updateStorage(storageId, temperatureZone, capacity, sessionId) {
+async function updateStorage(storageId, temperatureZone, capacity, sessionId, callback) {
 	var updatedStorage = packIntoJson(temperatureZone, capacity);
-	return await storageActions.updateStorage(storageId, sessionId, updatedStorage);
+	storageActions.updateStorage(storageId, sessionId, updatedStorage, function(res){
+	    callback(res);
+	});
 };
 
 /*
