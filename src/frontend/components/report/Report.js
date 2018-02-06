@@ -18,7 +18,7 @@ import * as ingredientActions from '../../interface/ingredientInterface';
 import * as testConfig from '../../../resources/testConfig.js';
 
 
-const userId = "ID1";
+const userId = "5a765f3d9de95bea24f905d9";
 const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 

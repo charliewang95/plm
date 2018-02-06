@@ -42,6 +42,7 @@ import IngredientDetail from './IngredientDetail';
 //TODO: Get if it ADMIN
 var  isAdmin= true;
 const userId = "5a63be959144b37a6136491e";
+// const sessionId = "5a63be959144b37a6136491e";
 const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
@@ -50,7 +51,8 @@ const Cell = (props)=>{
     style={{
             whiteSpace: "normal",
             wordWrap: "break-word"
-          }}/>
+          }}
+        />
 };
 
 
@@ -60,7 +62,9 @@ Cell.propTypes = {
 
 const EditCell = (props) => {
   if(props.column.name == 'quantity'){
-    return <TableEditRow.Cell {...props} />;
+    return <TableEditRow.Cell {...props}
+            required
+            />;
   };
   return <Cell {...props} />;
 };
@@ -146,8 +150,14 @@ class Inventory extends React.PureComponent {
         for(var i = 0; i < rows.length;i++){
           console.log( " Changed Id " + changed[rows[i].id]);
           if(changed[rows[i].id]){
-            rows[i].quantity = changed[rows[i].id].quantity;
-
+            // Validate
+            const re = /^[0-9\b]+$/;
+            var enteredQuantity = changed[rows[i].id].quantity;
+                if (re.test(enteredQuantity)) {
+                   rows[i].quantity = changed[rows[i].id].quantity;
+                }else{
+                  alert(" Quantity must be a number.");
+                }
             //TODO: Update the inventory
 //            try{
 //              inventoryActions.updateInventory(rows[i]._id, userId,
@@ -180,34 +190,39 @@ class Inventory extends React.PureComponent {
          const index = rows.findIndex(row => row.id === rowId);
          if (index > -1) {
 
-           //TODO: Send data to both the inventory
+           //TODO: Send data to cart
            console.log("Name" + rows[index].ingredientName);
            console.log("Package " + rows[index].packageName);
            console.log("ingredientId " + rows[index].ingredientId);
 
-              // TODO: Send in the ingredientName once it is updated in the interface
-             //TODO: Send data to the cart
              try{
                cartActions.addCart(userId, rows[index].ingredientId, rows[index].ingredientName,
-                  this.state.addedQuantity, sessionId);
+                  parseInt(this.state.addedQuantity), sessionId);
               }catch(e){
                 console.log('An error passed to the front end!')
                 //TODO: error handling in the front end
                 alert(e);
               }
-         }
-       });
-       this.setState({ rows, addingItemsToCart: [] });
+            }
+          });
+          this.setState({ rows, addingItemsToCart: [] });
+       }
+     };
+     // Set state of the expandable rows
+     this.changeExpandedDetails = (expandedRowIds) => {
+       console.log("Changed Expanded RowIds ");
+       this.setState({ expandedRowIds });
      }
+<<<<<<< HEAD
    };
 
    // Set state of the expandable rows
    this.changeExpandedDetails = (expandedRowIds) => {
      console.log("Changed Expanded RowIds "+expandedRowIds);
      this.setState({ expandedRowIds });
+=======
+>>>>>>> 46baf0fd267ef2ab140c6606b9044ffe0d124b51
    }
-
- }
 
 // Initial loading of data
   componentDidMount() {
@@ -232,6 +247,16 @@ class Inventory extends React.PureComponent {
     ];
     this.setState({rows:processedData});
   }
+
+    handleIngredientQuantity(event){
+    const re = /^[0-9\b]+$/;
+        if (event.target.value == '' || re.test(event.target.value)) {
+           this.setState({addedQuantity: parseInt(event.target.value,10)})
+        }else{
+          alert(" Quantity must be a number.");
+        }
+    }
+
 
   render() {
     // const { rows, columns, integratedFilteringColumnExtensions } = this.state;
@@ -315,7 +340,7 @@ class Inventory extends React.PureComponent {
                 id="quantity"
                 label="Enter Quantity (lbs)"
                 fullWidth = {false}
-                onChange={(event) => this.setState({ addedQuantity: event.target.value})}
+                onChange={(event) => this.handleIngredientQuantity(event)}
                 verticalSpacing= "desnse"
                 style={{
                 marginLeft: 20,

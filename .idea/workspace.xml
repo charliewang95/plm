@@ -2,26 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3862f87b-362e-4c1c-a738-cd70a2ba3d34" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/config/init.js" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/server.js" afterPath="$PROJECT_DIR$/server.js" />
-      <change beforePath="$PROJECT_DIR$/server/controllers/ingredients.server.controller.js" afterPath="$PROJECT_DIR$/server/controllers/ingredients.server.controller.js" />
-      <change beforePath="$PROJECT_DIR$/server/models/ingredient.server.model.js" afterPath="$PROJECT_DIR$/server/models/ingredient.server.model.js" />
-      <change beforePath="$PROJECT_DIR$/server/models/inventory.server.model.js" afterPath="$PROJECT_DIR$/server/models/inventory.server.model.js" />
-      <change beforePath="$PROJECT_DIR$/server/utils/validator.js" afterPath="$PROJECT_DIR$/server/utils/validator.js" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/actions/genericCrudAction.js" afterPath="$PROJECT_DIR$/src/frontend/actions/genericCrudAction.js" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/actions/inventoryAction.js" afterPath="$PROJECT_DIR$/src/frontend/actions/inventoryAction.js" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/actions/storageAction.js" afterPath="$PROJECT_DIR$/src/frontend/actions/storageAction.js" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/actions/vendorAction.js" afterPath="$PROJECT_DIR$/src/frontend/actions/vendorAction.js" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/components/cart/Cart.js" afterPath="$PROJECT_DIR$/src/frontend/components/cart/Cart.js" />
       <change beforePath="$PROJECT_DIR$/src/frontend/components/inventory/Inventory.js" afterPath="$PROJECT_DIR$/src/frontend/components/inventory/Inventory.js" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/components/orders/Orders.js" afterPath="$PROJECT_DIR$/src/frontend/components/orders/Orders.js" />
+      <change beforePath="$PROJECT_DIR$/src/frontend/components/report/Report.js" afterPath="$PROJECT_DIR$/src/frontend/components/report/Report.js" />
       <change beforePath="$PROJECT_DIR$/src/frontend/components/storage/Storage.js" afterPath="$PROJECT_DIR$/src/frontend/components/storage/Storage.js" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/components/vendors/AddVendorForm.js" afterPath="$PROJECT_DIR$/src/frontend/components/vendors/AddVendorForm.js" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/components/vendors/Vendors.js" afterPath="$PROJECT_DIR$/src/frontend/components/vendors/Vendors.js" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/interface/ingredientInterface.js" afterPath="$PROJECT_DIR$/src/frontend/interface/ingredientInterface.js" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/interface/inventoryInterface.js" afterPath="$PROJECT_DIR$/src/frontend/interface/inventoryInterface.js" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/interface/orderInterface.js" afterPath="$PROJECT_DIR$/src/frontend/interface/orderInterface.js" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/interface/storageInterface.js" afterPath="$PROJECT_DIR$/src/frontend/interface/storageInterface.js" />
-      <change beforePath="$PROJECT_DIR$/src/frontend/interface/vendorInterface.js" afterPath="$PROJECT_DIR$/src/frontend/interface/vendorInterface.js" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -45,8 +31,18 @@
       <file leaf-file-name="Inventory.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/frontend/components/inventory/Inventory.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="478">
-              <caret line="167" column="23" lean-forward="true" selection-start-line="167" selection-start-column="23" selection-end-line="167" selection-end-column="23" />
+            <state relative-caret-position="448">
+              <caret line="178" column="19" lean-forward="false" selection-start-line="178" selection-start-column="19" selection-end-line="178" selection-end-column="19" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Cart.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/frontend/components/cart/Cart.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="510">
+              <caret line="34" column="0" lean-forward="true" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -66,13 +62,13 @@
         <entry file="file://$PROJECT_DIR$/src/frontend/components/vendors/Vendors.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="474">
-              <caret line="161" column="15" lean-forward="true" selection-start-line="161" selection-start-column="15" selection-end-line="161" selection-end-column="15" />
+              <caret line="161" column="15" lean-forward="false" selection-start-line="161" selection-start-column="15" selection-end-line="161" selection-end-column="15" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="validator.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="validator.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/utils/validator.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="432">
@@ -86,7 +82,7 @@
         <entry file="file://$PROJECT_DIR$/src/frontend/components/vendors/AddVendorForm.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="415">
-              <caret line="64" column="13" lean-forward="true" selection-start-line="64" selection-start-column="13" selection-end-line="64" selection-end-column="13" />
+              <caret line="64" column="13" lean-forward="false" selection-start-line="64" selection-start-column="13" selection-end-line="64" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -95,8 +91,8 @@
       <file leaf-file-name="Storage.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/frontend/components/storage/Storage.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="630">
-              <caret line="125" column="21" lean-forward="true" selection-start-line="125" selection-start-column="21" selection-end-line="125" selection-end-column="21" />
+            <state relative-caret-position="-558">
+              <caret line="117" column="38" lean-forward="false" selection-start-line="117" selection-start-column="38" selection-end-line="117" selection-end-column="38" />
               <folding />
             </state>
           </provider>
@@ -180,7 +176,6 @@
         <option value="$PROJECT_DIR$/src/frontend/components/orders/Orders.js" />
         <option value="$PROJECT_DIR$/src/frontend/components/report/Report.js" />
         <option value="$PROJECT_DIR$/src/frontend/components/inventory/IngredientDetail.js" />
-        <option value="$PROJECT_DIR$/src/frontend/components/cart/Cart.js" />
         <option value="$PROJECT_DIR$/src/frontend/components/login/LoginForm.js" />
         <option value="$PROJECT_DIR$/server/routes/ingredients.server.routes.js" />
         <option value="$PROJECT_DIR$/server/utils/utils.js" />
@@ -200,7 +195,6 @@
         <option value="$PROJECT_DIR$/config/mongoose.js" />
         <option value="$PROJECT_DIR$/config/express.js" />
         <option value="$PROJECT_DIR$/server.js" />
-        <option value="$PROJECT_DIR$/src/frontend/components/storage/Storage.js" />
         <option value="$PROJECT_DIR$/server/controllers/ingredients.server.controller.js" />
         <option value="$PROJECT_DIR$/server/models/ingredient.server.model.js" />
         <option value="$PROJECT_DIR$/src/frontend/components/vendors/AddVendorForm.js" />
@@ -210,8 +204,10 @@
         <option value="$PROJECT_DIR$/src/frontend/actions/vendorAction.js" />
         <option value="$PROJECT_DIR$/src/frontend/actions/inventoryAction.js" />
         <option value="$PROJECT_DIR$/src/frontend/interface/inventoryInterface.js" />
-        <option value="$PROJECT_DIR$/src/frontend/components/inventory/Inventory.js" />
         <option value="$PROJECT_DIR$/server/utils/validator.js" />
+        <option value="$PROJECT_DIR$/src/frontend/components/storage/Storage.js" />
+        <option value="$PROJECT_DIR$/src/frontend/components/inventory/Inventory.js" />
+        <option value="$PROJECT_DIR$/src/frontend/components/cart/Cart.js" />
       </list>
     </option>
   </component>
@@ -632,14 +628,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/frontend/components/cart/Cart.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="129">
-          <caret line="35" column="43" lean-forward="false" selection-start-line="35" selection-start-column="43" selection-end-line="35" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/frontend/components/login/Login.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -880,14 +868,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/frontend/components/storage/Storage.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="125" column="21" lean-forward="true" selection-start-line="125" selection-start-column="21" selection-end-line="125" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/frontend/interface/cartInterface.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="452">
@@ -963,7 +943,7 @@
     <entry file="file://$PROJECT_DIR$/src/frontend/components/vendors/AddVendorForm.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="415">
-          <caret line="64" column="13" lean-forward="true" selection-start-line="64" selection-start-column="13" selection-end-line="64" selection-end-column="13" />
+          <caret line="64" column="13" lean-forward="false" selection-start-line="64" selection-start-column="13" selection-end-line="64" selection-end-column="13" />
           <folding />
         </state>
       </provider>
@@ -971,7 +951,7 @@
     <entry file="file://$PROJECT_DIR$/src/frontend/components/vendors/Vendors.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="474">
-          <caret line="161" column="15" lean-forward="true" selection-start-line="161" selection-start-column="15" selection-end-line="161" selection-end-column="15" />
+          <caret line="161" column="15" lean-forward="false" selection-start-line="161" selection-start-column="15" selection-end-line="161" selection-end-column="15" />
           <folding />
         </state>
       </provider>
@@ -984,18 +964,34 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/frontend/components/inventory/Inventory.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="478">
-          <caret line="167" column="23" lean-forward="true" selection-start-line="167" selection-start-column="23" selection-end-line="167" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/utils/validator.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="432">
           <caret line="241" column="33" lean-forward="false" selection-start-line="241" selection-start-column="33" selection-end-line="241" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/frontend/components/storage/Storage.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-558">
+          <caret line="117" column="38" lean-forward="false" selection-start-line="117" selection-start-column="38" selection-end-line="117" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/frontend/components/inventory/Inventory.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="448">
+          <caret line="178" column="19" lean-forward="false" selection-start-line="178" selection-start-column="19" selection-end-line="178" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/frontend/components/cart/Cart.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="34" column="0" lean-forward="true" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
           <folding />
         </state>
       </provider>
