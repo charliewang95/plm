@@ -163,13 +163,13 @@ handleMouseDownPassword(event){
 
               <div style={styles.buttons}>
                   <RaisedButton raised color = "primary"
-                    onClick={this.handleLogin} >LOGIN</RaisedButton>
+                    onClick={this.handleLogin}
+                    primary="true" >LOGIN</RaisedButton>
                   <RaisedButton raised
                             // component = {Link} to = "/storage"
                             color="secondary"
                             style={styles.saveButton}
                             type="Submit"
-                            primary="true"
                             onClick = {()=> alert("We currently do not allow registering")}> REGISTER </RaisedButton>
 
              </div>
