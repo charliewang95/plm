@@ -35,6 +35,7 @@ import testData from './testIngredients';
 import SelectVendors from './SelectVendors';
 import * as ingredientInterface from '../../interface/ingredientInterface';
 import * as vendorInterface from '../../interface/vendorInterface';
+import * as uploadInterface from '../../interface/uploadInterface';
   // TODO: get the sessionId
 import * as testConfig from '../../../resources/testConfig.js'
 
@@ -495,15 +496,21 @@ class AdminIngredients extends React.PureComponent {
     this.setState({rows: finalData});
   }
 
-      uploadFile(event) {
+    async uploadFile(event) {
         let file = event.target.files[0];
         console.log(file);
         
         if (file) {
-          let data = new FormData();
-          data.append('file', file);
-          console.log(data);
-          // axios.post('/files', data)...
+          let form = new FormData();
+          form.append('file', file);
+          console.log(form);
+          const res = await uploadInterface.upload(form, sessionId);
+          console.log(res);
+          if(res == "SUCCESS") {
+            alert("File successfully uploaded!");
+          } else {
+            alert("File upload failed!");
+          }
         }
     }
 
