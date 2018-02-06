@@ -1,4 +1,9 @@
 # Real Producers
+
+## Introduction
+
+Real Producers is a Production Lifecycle Manager tool currently under development. It manages all the relevant data on food import from vendors and outport to production. 
+
 ## To get it running
 
 * Softwares needed to be installed: Node.js, Express.js, MongoDB 
