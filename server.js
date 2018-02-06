@@ -8,6 +8,9 @@ var config = require('./config/config'),
 var db = mongoose(),
 	app = express(),
 	passport = passport();
+
+var multer = require('multer');
+
 //app.use(function(req, res, next) {
 // res.setHeader('Access-Control-Allow-Origin', '*');
 // res.setHeader('Access-Control-Allow-Credentials', 'true');
