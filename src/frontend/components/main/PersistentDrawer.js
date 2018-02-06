@@ -20,6 +20,7 @@ import Login from '../login/LoginPage';
 import cookie from 'react-cookies';
 import Button from 'material-ui/Button';
 import {Link} from 'react-router-dom';
+import ExitToApp from 'material-ui-icons/ExitToApp';
 
 const drawerWidth = 240;
 
@@ -65,7 +66,7 @@ const styles = theme => ({
   },
   drawerPaper: {
     position: 'relative',
-  //  height: '100%',
+    height: '100%',
     width: drawerWidth,
   },
   drawerHeader: {
@@ -109,6 +110,12 @@ const styles = theme => ({
   'contentShift-right': {
     marginRight: 0,
   },
+  flex: {
+    flex: 1,
+  },
+  icon:{
+    marginRight: 5,
+  }
 });
 
 
@@ -219,10 +226,10 @@ class PersistentDrawer extends React.Component {
               >
                 <MenuIcon />
               </IconButton>
-              <Typography type="title" color="inherit" noWrap>
+              <Typography type="title" className={classes.flex} color="inherit" noWrap>
                 Real Producer
               </Typography>
-              <Button color="inherit" onClick={this.logout} component={Link} to="/">Logout</Button>
+              <Button raised color="secondary" onClick={this.logout} component={Link} to="/"><ExitToApp className={classes.icon}/> Logout</Button>
             </Toolbar>
           </AppBar>}
           {before}
