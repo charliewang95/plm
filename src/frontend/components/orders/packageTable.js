@@ -11,7 +11,7 @@ const styles = theme => ({
     //overflowX: 'auto',
   },
   table: {
-    width: 500,
+    width: 415,
   },
 });
 

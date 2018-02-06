@@ -676,7 +676,7 @@ class AdminIngredients extends React.PureComponent {
         </Dialog>
       }
       </Paper>
-      {isAdmin && <p> Bulk Import </p>}
+      {isAdmin && <p><font size="5">Bulk Import</font></p>}
       {isAdmin && <input type="file"
         name="myFile"
         onChange={this.uploadFile} /> }
