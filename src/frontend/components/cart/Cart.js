@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Paper from 'material-ui/Paper';
 import PropTypes from 'prop-types';
@@ -30,11 +31,11 @@ import Dialog, {
 
 // TODO: Get the user ID
 //const sessionId = "5a765f3d9de95bea24f905d9";
-const userId = "5a63be959144b37a6136491e"
+const userId = "5a765f3d9de95bea24f905d9"
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 //const sessionId = testConfig.sessionId;
-const sessionId = '5a63be959144b37a6136491e';
+const sessionId = '5a765f3d9de95bea24f905d9';
 
 const Cell = (props) => {
   console.log(" CELL props value: " + props.value)
@@ -115,6 +116,7 @@ class Cart extends React.Component {
       // TODO: send data to back End
       console.log("checkout");
       cartActions.checkoutCart(sessionId);
+      window.location.reload();
     };
 
   }

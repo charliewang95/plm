@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Paper from 'material-ui/Paper';
 import PropTypes from 'prop-types';
@@ -41,7 +42,7 @@ import IngredientDetail from './IngredientDetail';
 
 //TODO: Get if it ADMIN
 var  isAdmin= true;
-const userId = "5a63be959144b37a6136491e";
+const userId = "5a765f3d9de95bea24f905d9";
 // const sessionId = "5a63be959144b37a6136491e";
 const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
@@ -140,7 +141,7 @@ class Inventory extends React.PureComponent {
 
     this.cancelItemOnCart = () => this.setState({ addingItemsToCart: [] });
 
-    this.commitChanges = ({ changed,deleted}) => {
+    this.commitChanges = async({ changed,deleted}) => {
       let { rows } = this.state;
 
       console.log(JSON.stringify(rows));
@@ -151,6 +152,7 @@ class Inventory extends React.PureComponent {
           console.log( " Changed Id " + changed[rows[i].id]);
           if(changed[rows[i].id]){
             // Validate
+            // var initialQuantity = "";
             const re = /^[0-9\b]+$/;
             var enteredQuantity = changed[rows[i].id].quantity;
                 if (re.test(enteredQuantity)) {
@@ -158,23 +160,14 @@ class Inventory extends React.PureComponent {
                 }else{
                   alert(" Quantity must be a number.");
                 }
-            //TODO: Update the inventory
-//            try{
-//              inventoryActions.updateInventory(rows[i]._id, userId,
-//                rows[i].ingredientId, rows[i].ingredientName,
-//                rows[i].temperatureZone, rows[i].packageName, changed[rows[i].id].quantity, sessionId);
-//            }catch(e){
-//              console.log('An error passed to the front end!')
-//              //TODO: error handling in the front end
-//              alert(e);
-//            }
-        inventoryActions.updateInventory(rows[i]._id, userId,
+                //TODO: update the inventory
+        await inventoryActions.updateInventory(rows[i]._id, userId,
                 rows[i].ingredientId, rows[i].ingredientName,
                 rows[i].temperatureZone, rows[i].packageName, Number(changed[rows[i].id].quantity), sessionId,function(res){
                     if (res.status == 400) {
-                        alert(res.data);
-                    } else if (res.status == 500) {
-                          alert('Ingredient and package combination already exists');
+                        if(!alert(res.data)){
+                          window.location.reload();
+                        }
                       }
                 });
         }
