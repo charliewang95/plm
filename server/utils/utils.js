@@ -1,37 +1,41 @@
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
-var modifier = require('./modifier');
+var modifierCreateUpdate = require('./modifierCreateUpdate');
+//var modifierDelete = require('./modifierDelete');
 var validator = require('./validator');
 var postProcessor = require('./postProcessor');
 
-exports.getErrorMessage = function(err) {
-    var message = '';
-    if (err.code) {
-        switch (err.code) {
-            case 11000:
-            case 11001:
-                message = 'Ingredient already exists';
-                break;
-            default:
-                message = 'Something went wrong';
-        }
-    }
-    else {
-        for (var errName in err.errors) {
-            if (err.errors[errName].message)
-                message = err.errors[errName].message;
-        }
-    }
-
-    return message;
-};
-
 exports.doWithAccess = function(req, res, next, model, action, userId, itemId, AdminRequired) {
+    //back-door for ease of testing
+//    console.log('10');
+//     console.log(req.body);
+//    if(userId == 'real-producers-root'){
+//        if (action == 'create') create(req, res, next, model);
+//            else if (action == 'list') list(req, res, next, model);
+//            else if (action == 'listPartial') listPartial(req, res, next, model, userId);
+//            else if (action == 'update') update(req, res, next, model, itemId);
+//            else if (action == 'updateWithUserAccess') update(req, res, next, model, userId, itemId);
+//            else if (action == 'delete') deleteWithoutUserAccess(req, res, next, model, itemId);
+//            else if (action == 'deleteWithUserAccess') deleteWithUserAccess(req, res, next, model, userId, itemId);
+//            else if (action == 'deleteAllWithUserAccess') deleteAllWithUserAccess(req, res, next, model, userId);
+//            else if (action == 'read') read(req, res, next, model, itemId);
+//            else if (action == 'readWithUserAccess') readWithUserAccess(req, res, next, model, userId, itemId);
+//            else {
+//                res.status(400);
+//                res.send('Something went wrong');
+//            }
+//        return;
+//    }
+    //actual content
     User.findById(userId, function(err, user) {
         if (err) next(err);
         else if (!user) {
             res.status(401);
             res.send('User does not exist');
+        }
+        else if (!user.loggedIn) {
+            res.status(403);
+            res.send('User is not logged in');
         }
         else if (AdminRequired && !user.isAdmin) {
             res.status(403);
@@ -42,10 +46,10 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             else if (action == 'list') list(req, res, next, model);
             else if (action == 'listPartial') listPartial(req, res, next, model, userId);
             else if (action == 'update') update(req, res, next, model, itemId);
-            else if (action == 'updateWithUserAccess') update(req, res, next, model, userId, itemId);
+            else if (action == 'updateWithUserAccess') updateWithUserAccess(req, res, next, model, userId, itemId);
             else if (action == 'delete') deleteWithoutUserAccess(req, res, next, model, itemId);
             else if (action == 'deleteWithUserAccess') deleteWithUserAccess(req, res, next, model, userId, itemId);
-            else if (action == 'deleteAllWithUserAccess') deleteAllWithUserAccess(req, res, next, model, userId);
+            //else if (action == 'deleteAllWithUserAccess') deleteAllWithUserAccess(req, res, next, model, userId);
             else if (action == 'read') read(req, res, next, model, itemId);
             else if (action == 'readWithUserAccess') readWithUserAccess(req, res, next, model, userId, itemId);
             else {
@@ -80,36 +84,41 @@ var listPartial = function(req, res, next, model, itemId) {
 
 var create = function(req, res, next, model) {
 	var item = new model(req.body);
+	console.log('85');
+	console.log(req.body);
 	var modifiedItem;
-    modifier.modify(model, item, res, next, function(err, obj){
+	console.log("creating, modifying");
+    modifierCreateUpdate.modify('create', model, item, '', res, next, function(err, obj){
         if (err) {
             return next(err);
         }
-        else if (obj) {
+        else if (obj){
+            console.log("creating, modified");
+            console.log("creating, validating");
             modifiedItem = new model(obj);
+            console.log(modifiedItem);
             validator.validate(model, modifiedItem, res, next, function(err, valid){
                 if (err) {
                     return next(err);
                 }
                 else if (valid) {
-                   modifiedItem.save(function(err) {
-                       if (err) {
-                           return next(err);
-                       }
-                       else {
-                           res.json(modifiedItem);
-                       }
-                   });
-                }
-                else {
-                    res.status(400);
-                    res.send('Validation failed');
+                    console.log("creating, validated");
+                    console.log("creating, saving");
+                    modifiedItem.save(function(err) {
+                        if (err) {
+                            return next(err);
+                        }
+                        else {
+                            console.log("creating, saved");
+                            res.json(modifiedItem);
+                        }
+                    });
                 }
             });
         }
         else {
             res.status(400);
-            res.send('Something went wrong');
+            res.send("Object doesn't exist");
         }
     });
 };
@@ -137,52 +146,69 @@ var readWithUserAccess = function(req, res, next, model, userId, itemId) {
 };
 
 var update = function(req, res, next, model, itemId) {
-    modifier.modify(model, req.body, res, next, function(err, obj){
+
+    console.log("updating, modifying");
+    modifierCreateUpdate.modify('update', model, req.body, itemId, res, next, function(err, obj){
         if (err) {
             return next(err);
         }
         else if (obj) {
+            console.log("updating, modified");
+            console.log("updating, validating");
             validator.validate(model, obj, res, next, function(err, valid){
                 if (err) {
                     return next(err);
                 }
                 else if (valid) {
+                    console.log("updating, validated");
+                    console.log("updating, updating");
                     model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
                         if (err) {
                             return next(err);
                         }
-                        else {
+                        else if (obj2){
+                            console.log("updating, updated");
                             res.json(obj);
+                        } else {
+                            res.status(400);
+                            res.send("Object doesn't exist");
                         }
                     });
-                }
-                else {
-                    res.status(400);
-                    res.send('Validation failed');
                 }
             });
         }
         else {
              res.status(400);
-             res.send('Something went wrong');
+             res.send("Object doesn't exist");
         }
     });
 };
 
-var updateWithUserAccess = function(req, res, next, model, userId, itemId) { //no modifier
-    model.findOne({_id: itemId, userId: userId}, function(err, item1) {
+var updateWithUserAccess = function(req, res, next, model, userId, itemId) {
+    model.findOne({_id: itemId, userId: userId}, function(err, obj) {
         if (err) {
             return next(err);
         }
-        else {
-            model.findByIdAndUpdate(itemId, req.body, function(err, item2) {
+        else if (obj) {
+            validator.validate(model, req.body, res, next, function(err, valid){
                 if (err) {
                     return next(err);
                 }
-                else {
-                    res.json(item2);
+                else if (valid) {
+                    model.findByIdAndUpdate(itemId, req.body, function(err, obj2) {
+                        if (err) {
+                            return next(err);
+                        }
+                        else {
+                            res.json(req.body);
+                        }
+                    });
                 }
             });
+        }
+        else {
+             res.status(400);
+             res.send("Object doesn't exist");
         }
     });
 };
@@ -198,33 +224,28 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId) {
                     return next(err);
                 }
                 else {
+                    postProcessor.process(model, item, itemId, res, next);
                     res.json(item);
                 }
-            })
+            });
         }
     });
 };
 
-var deleteAllWithUserAccess = function(req, res, next, model, userId) {
-    model.find({userId: userId}, function(err, items) {
+var deleteWithUserAccess = function(req, res, next, model, userId, itemId) {
+    model.find({userId: userId, _id: itemId}, function(err, items) {
         if (err) {
             return next(err);
         }
         else {
-            for (var i = 0; i < items.length; i++) {
-                items[i].remove(function(err) {
-                    if (err) {
-                        return next(err);
-                    }
-                });
-                postProcessor.process(model, items[i], res, next, function(err, obj){
-                    if (err) return next(err);
-                    else {
-
-                    }
-                })
-            }
-            res.json(items);
+            item.remove(function(err) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    res.json(item);
+                }
+            });
         }
     });
 };

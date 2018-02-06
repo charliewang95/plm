@@ -7,6 +7,12 @@ import UserIngredients from './components/ingredients/UserIngredients';
 import Inventory from './components/inventory/Inventory';
 import Orders from './components/orders/Orders';
 import Storage from './components/storage/Storage';
+import Vendors from './components/vendors/Vendors';
+import AddVendorForm from './components/vendors/AddVendorForm';
+import Cart from './components/cart/Cart';
+import Report from './components/report/Report';
+import Login from './components/login/LoginPage';
+import Register from './components/login/RegisterPage';
 
 const Routes = () => (
       <div>
@@ -18,6 +24,12 @@ const Routes = () => (
 		      <Route path="/inventory" component={Inventory} />
 		      <Route path="/orders" component={Orders} />
 		      <Route path="/storage" component={Storage} />
+		      <Route path="/login" component={Login} />
+		      <Route path="/register" component={Register} />
+	          <Route path="/vendors" component={Vendors} />
+	          <Route path="/addVendorForm" component={AddVendorForm} />
+	          <Route path="/cart" component={Cart} />
+	          <Route path="/report" component={Report} />
 		  </Switch>
       </div>
 

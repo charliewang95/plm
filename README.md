@@ -11,6 +11,9 @@
 
 * Hint: to run locally, remove the .env file if it exists 
 
+## Testing
+* Testing variables are configured in `src/resources/testConfig.js`. Many front-end component imports the file for now.
+
 ## To deploy on Servers
 
 __ Note: Mongodb is alreayd running on servers as a service. This means you do not need to run mongodb separately when you want to start the server__
@@ -21,7 +24,9 @@ __ Note: Mongodb is alreayd running on servers as a service. This means you do n
 
 ### Production server
 
-* Go to plm by running `cd pcm`, then run `sudo npm run start-https`. To view the content, go to https://real-producers.colab.duke.edu in your browser
+* The production server is kept running by the following command `sudo nohup npm run start-https >/dev/null 2>&1 &`. This prevents the process from hanging up after the user who typed this command logs out from the ssh session.
+
+* To update content in the production server, do `cd pcm`, then simply run `git pull`. To view the content, go to https://real-producers.colab.duke.edu in your browser
 
 ### To use https on servers:
 

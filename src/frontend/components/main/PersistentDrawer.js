@@ -15,8 +15,12 @@ import MenuIcon from 'material-ui-icons/Menu';
 import ChevronLeftIcon from 'material-ui-icons/ChevronLeft';
 import ChevronRightIcon from 'material-ui-icons/ChevronRight';
 import { UserListItems, MainListItems } from './NavMenuList';
-
 import Routes from '../../routes.js';
+import Login from '../login/LoginPage';
+import cookie from 'react-cookies';
+import Button from 'material-ui/Button';
+import {Link} from 'react-router-dom';
+
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -107,11 +111,44 @@ const styles = theme => ({
   },
 });
 
+
 class PersistentDrawer extends React.Component {
-  state = {
-    open: false,
-    anchor: 'left',
-  };
+
+  constructor(props) {
+        super(props);
+        this.state = {
+          open: false,
+          anchor: 'left',
+          loggedIn: (localStorage.getItem('user')!=null),
+          isAdmin: ((localStorage.getItem('user')!=null)?(localStorage.getItem('user').isAdmin):false),
+        };
+        this.login = this.login.bind(this);
+        this.logout = this.logout.bind(this);
+  }
+
+  login(key, user){
+    //alert(message.toString());
+    //this.setState({loggedIn:key});
+    //this.setState({user:JSON.stringify(user)});
+    //this.setState({ user:user });
+    //localStorage.getItem('user') = user;
+    console.log("login");
+    console.log(key);
+    this.setState({isAdmin: key});
+    this.setState({loggedIn: (localStorage.getItem('user')!=null)});
+
+    //console.log(localStorage.getItem('user'));
+  }
+
+  componentDidMount(){
+    console.log("component did mount");
+    console.log(((localStorage.getItem('user')!=null)?(localStorage.getItem('user').isAdmin):false));
+  }
+
+  logout(){
+    localStorage.removeItem('user');
+    this.setState({loggedIn: (localStorage.getItem('user')!=null)});
+  }
 
   handleDrawerOpen = () => {
     this.setState({ open: true });
@@ -130,7 +167,6 @@ class PersistentDrawer extends React.Component {
   render() {
     const { classes, theme } = this.props;
     const { anchor, open } = this.state;
-
     const drawer = (
       <Drawer
         type="persistent"
@@ -147,7 +183,7 @@ class PersistentDrawer extends React.Component {
             </IconButton>
           </div>
           <Divider />
-          <List className={classes.list}>{UserListItems}</List>
+          {this.state.isAdmin && <List className={classes.list}>{UserListItems}</List> }
           <Divider />
           <List className={classes.list}>{MainListItems}</List>
         </div>
@@ -166,7 +202,7 @@ class PersistentDrawer extends React.Component {
     return (
       <div className={classes.root}>
         <div className={classes.appFrame}>
-          <AppBar
+          {this.state.loggedIn && <AppBar
             className={classNames(classes.appBar, {
               [classes.appBarShift]: open,
               [classes[`appBarShift-${anchor}`]]: open,
@@ -184,8 +220,9 @@ class PersistentDrawer extends React.Component {
               <Typography type="title" color="inherit" noWrap>
                 Real Producer
               </Typography>
+              <Button color="inherit" onClick={this.logout} component={Link} to="/">Logout</Button>
             </Toolbar>
-          </AppBar>
+          </AppBar>}
           {before}
           <main
             className={classNames(classes.content, classes[`content-${anchor}`], {
@@ -193,7 +230,8 @@ class PersistentDrawer extends React.Component {
               [classes[`contentShift-${anchor}`]]: open,
             })}
           >
-            <Routes/>
+            {this.state.loggedIn && <Routes/>}
+            {!this.state.loggedIn && <Login login={this.login}/>}
           </main>
           {after}
         </div>
