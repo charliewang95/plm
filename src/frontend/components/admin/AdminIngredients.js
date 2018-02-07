@@ -37,7 +37,10 @@ import * as ingredientInterface from '../../interface/ingredientInterface';
 import * as vendorInterface from '../../interface/vendorInterface';
 import * as uploadInterface from '../../interface/uploadInterface';
   // TODO: get the sessionId
-import * as testConfig from '../../../resources/testConfig.js'
+import * as testConfig from '../../../resources/testConfig.js';
+import MyPdfViewer from './PdfViewer';
+import {Link} from 'react-router-dom';
+import Snackbar from 'material-ui/Snackbar';
 
 // TODO: get session Id from the user
 
@@ -60,6 +63,9 @@ const styles = theme => ({
   },
   inputRoot: {
     width: '100%',
+  },
+  button: {
+    margin: theme.spacing.unit,
   },
 });
 
@@ -233,6 +239,21 @@ EditCell.propTypes = {
   column: PropTypes.shape({ name: PropTypes.string }).isRequired,
 };
 
+// const SnackBarBase=({message}) => (
+//     <Snackbar
+//               anchorOrigin={{vertical: 'top', horizontal:'right' }}
+//               // open={open}
+//               onClose={this.handleClose}
+//               SnackbarContentProps={{
+//                 'aria-describedby': 'message-id',
+//               }}
+//               message={<span id="message-id">{message}</span>}
+//             />
+//           );
+//
+// export const SnackBarPop = withStyles(styles, { name: 'snackbar' })(SnackBarBase);
+
+
 
 const getRowId = row => row.id;
 
@@ -262,14 +283,13 @@ class AdminIngredients extends React.PureComponent {
       rowChanges: {},
       currentPage: 5,
       deletingRows: [],
-      pageSize: 0,
+      pageSize: 5,
       pageSizes: [5, 10, 0],
       columnOrder: ['name', 'packageName', 'temperatureZone', 'vendors'],
       options:[],
     };
 
     // console.log(" NAME : " + testData.tablePage.items[0].name);
-
     this.changeSorting = sorting => this.setState({ sorting });
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeAddedRows = addedRows => this.setState({
@@ -292,7 +312,8 @@ class AdminIngredients extends React.PureComponent {
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
-    this.commitChanges = ({ added, changed, deleted }) => {
+
+    this.commitChanges = async ({ added, changed, deleted }) => {
       console.log("Commit Changes");
       let { rows } = this.state;
 
@@ -301,7 +322,9 @@ class AdminIngredients extends React.PureComponent {
 
         // TODO: Add checks for Values
         var vendors_string = "";
-        console.log(added[0]);
+        if (added[0].vendors == null){
+            alert('Vendors must be filled');
+        } else {
         for(var i =0; i < added[0].vendors.length; i++){
           var vendorObject = added[0].vendors[i];
           //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
@@ -315,24 +338,32 @@ class AdminIngredients extends React.PureComponent {
             vendors_string+=', ';
           }
         }
+
         console.log("Added vendors");
         added[0].vendorsArray = added[0].vendors;
         console.log(added[0].vendorsArray);
         added[0].vendors = vendors_string;
         added[0].id = startingAddedId;
-        rows = [...rows,added[0]];
+
         console.log("********************************");
         console.log(added[0].vendorsArray);
         // TODO: Send data to back end
-        ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone, added[0].vendorsArray, sessionId, function(res){
+        var temp = this;
+        await ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone, added[0].vendorsArray, sessionId, function(res){
             if (res.status == 400) {
-                alert(res.data);
+                if (!alert(res.data))
+                    //window.location.reload();
+                    temp.setState({rows:rows});
+
             } else if (res.status == 500) {
-              alert('Ingredient name already exists');
+                if (!alert('Cannot add ingredient (ingredient already exists/one or more fields are empty)'))
+                    window.location.reload();
+          }else{
+            alert(" New Ingredient Successfully added! ");
           }
         });
 
-      }
+      }}
 
       if (changed) {
         console.log("changed " + Object.keys(changed));
@@ -376,8 +407,9 @@ class AdminIngredients extends React.PureComponent {
                 } else if (res.status == 500) {
                     alert('Ingredient name already exists');
                 } else {
-
+                    // SnackBarPop("Row was successfully added!");
                     console.log("sdfadfsdf");
+                    alert(" Ingredient Successfully edited! ");
                 }
             });
 
@@ -406,6 +438,9 @@ class AdminIngredients extends React.PureComponent {
           console.log(rows[index].ingredientId);
           ingredientInterface.deleteIngredient(rows[index].ingredientId, sessionId);
           rows.splice(index, 1);
+
+          //Alert the user
+          alert(" Ingredient successfully deleted ! ");
         }
 
       });
@@ -523,7 +558,6 @@ class AdminIngredients extends React.PureComponent {
       processedData.push(singleData);
     }
 
-
     var finalData = [...processedData.map((row, index)=> ({
         id: index,...row,
       })),
@@ -537,7 +571,7 @@ class AdminIngredients extends React.PureComponent {
     async uploadFile(event) {
         let file = event.target.files[0];
         console.log(file);
-        
+
         if (file) {
           let form = new FormData();
           form.append('file', file);
@@ -581,7 +615,7 @@ class AdminIngredients extends React.PureComponent {
       deletingRows,
       pageSize,
       pageSizes,
-      columnOrder,
+      columnOrder
     } = this.state;
 
     return (
@@ -592,6 +626,7 @@ class AdminIngredients extends React.PureComponent {
           rows={rows}
           columns={columns}
           getRowId={getRowId}
+
         >
           <SortingState
             sorting={sorting}
@@ -676,11 +711,24 @@ class AdminIngredients extends React.PureComponent {
         </Dialog>
       }
       </Paper>
+    {/* <Paper styles = {{color : "#42f4d9"}} > */}
       {isAdmin && <p><font size="5">Bulk Import</font></p>}
       {isAdmin && <input type="file"
         name="myFile"
         onChange={this.uploadFile} /> }
+      {isAdmin &&
+      <div>
+        <br></br>
+        Click <a href="./FormatSpec.pdf" style={{color:"#000000",}}>HERE</a> for format specification
       </div>
+    }
+
+      <Button raised color="primary"
+      component={Link} to="/orders"
+      style = {{marginLeft: 380, marginBottom: 30}}
+      > ORDER INGREDIENTS</Button>
+
+    </div>
     );
   }
 }

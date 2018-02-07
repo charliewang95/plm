@@ -35,16 +35,18 @@ class SelectVendors extends Component {
     this.updatePrice = this.updatePrice.bind(this);
     this.loadVendorsArray = this.loadVendorsArray.bind(this);
     this.loadCodeNameArray = this.loadCodeNameArray.bind(this);
-    this.createMap = this.createMap.bind(this);
+//    this.createMap = this.createMap.bind(this);
+    this.resetArray = this.resetArray.bind(this);
   }
 
   componentWillMount(){
     this.loadCodeNameArray();
     this.loadVendorsArray();
+  //  this.resetArray();
   }
 
   componentDidMount(){
-    this.createMap();
+  //  this.createMap();
     console.log("componentDidMount()");
     console.log(this.state.options);
   }
@@ -72,21 +74,60 @@ class SelectVendors extends Component {
     temp.label = obj.vendorName;
     return temp;
     })
+    var ans = optionsArray;
+    for(var i=0; i<this.props.initialArray.length; i++){
+      console.log("initialArray");
+      console.log(this.props.initialArray);
 
+      ans = ans.filter(option=>option.vendorName!=this.props.initialArray[i].vendorName);
 
-    this.setState({options: optionsArray});
+    //  var index = optionsArray.map(item=>{item.vendorName; console.log(item.vendorName);}).indexOf(this.props.initialArray[i].vendorName);
+      console.log(ans);
+    //  optionsArray.splice(index, 1);
+    }
+    this.setState({options: ans});
   }
 
-  async createMap(){
-    var list = this.state.options;
-    var map = new Map();
-    list.forEach(function(vendor){
-      map.set(vendor.codeUnique, vendor.name);
-    });
-    this.setState({idToNameMap:map});
+  resetArray(name, action){
+    var ans = [];
+     if(action=="delete"){
+       var obj = new Object();
+       obj.vendorName = name;
+       obj.label = name;
+       this.state.options.push(obj);
+       console.log("what's up");
+       console.log(this.state.options);
+       this.setState({options:this.state.options});
+     } else{
+       ans = this.state.options.filter(option=>option.vendorName!=name);
+       this.setState({options:ans});
+     }
   }
+
+  // resetArray(){
+  //   this.state.vendorsArray.forEach((vendor)=>{
+  //     var index = this.state.options.map(item=>item.vendorName).indexOf(vendor.vendorName);
+  //     this.state.options.splice(index, 1);
+  //   });
+  //
+  //   this.setState({options:this.state.options});
+  //   //
+  //   // var index = this.state.options.map(item=>item.vendorName).indexOf(name);
+  //   // this.state.options.splice(index, 1);
+  //   // this.setState({options:this.state.options});
+  // }
+
+  // async createMap(){
+  //   var list = this.state.options;
+  //   var map = new Map();
+  //   list.forEach(function(vendor){
+  //     map.set(vendor.codeUnique, vendor.name);
+  //   });
+  //   this.setState({idToNameMap:map});
+  // }
 
   addVendor(){
+
     var newVendor = new Object();
     console.log("addVendor() was called");
     console.log(this.state.selectName);
@@ -100,13 +141,14 @@ class SelectVendors extends Component {
     // console.log( updateVendor);
     this.state.vendorsArray.push(newVendor);
     this.setState({vendorsArray:this.state.vendorsArray});
+    this.resetArray(tempId, "add");
     this.setState({inputPrice : 0});
     this.setState({selectName: ""})
     console.log(this.state.vendorsArray);
     this.props.handleChange(this.state.vendorsArray);
   }
 
-  deleteVendor(index){
+  deleteVendor(index, name){
     if (index !== -1) {
       console.log("delete");
       // var updateVendor = this.state.vendorsArray.slice();
@@ -116,6 +158,7 @@ class SelectVendors extends Component {
       // this.setState({vendorsArray: updateVendor});
       this.state.vendorsArray.splice(index, 1);
       this.setState({vendorsArray:this.state.vendorsArray});
+      this.resetArray(name, "delete");
       this.props.handleChange(this.state.vendorsArray);
     }
 
