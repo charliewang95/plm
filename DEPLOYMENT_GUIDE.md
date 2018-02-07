@@ -34,3 +34,30 @@ The system is being developed at this GitHub repo: <https://github.com/charliewa
 
 ### Configure the firewall for your server (adopted from <https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-ubuntu-14-04>)
 
+* You may also need to configure the firewall of your server, either to allow the server to communicate to the outside world or enhance its security. The following steps allow you to configure the UFW, or Uncomplicated Firewall, for your server.
+
+1. If UFW is not installed, install it by running `sudo apt-get install ufw`
+
+2. If your server has IPv6 enabled, ensure that UFW is configured to support IPv6 so that it will manage firewall rules for IPv6 in addition to IPv4. Open the UFW configuration by typing `sudo nano /etc/default/ufw`. Then, make sure the value of `IPV6` is equal to `yes`. It should look like this:
+
+	```
+	...
+	IPV6=yes
+	...
+	```
+
+	Save and quit.
+
+3. Check the status of UFW by typing `sudo ufw status verbose`
+
+4. Configure your UFW by specifying the type of connection and its policy. Some examples are given below
+	
+	```
+	sudo ufw allow ssh   # allow ssh connections
+	sudo ufw allow http  # allow http connections on port 80
+	sudo ufw allow https # allow https connections on port 443
+	```
+
+5. Enable the UFW by typing `sudo ufw enable`
+
+* For more options regarding setting your firewall, refer to the link above.
