@@ -283,7 +283,7 @@ class AdminIngredients extends React.PureComponent {
       rowChanges: {},
       currentPage: 5,
       deletingRows: [],
-      pageSize: 5,
+      pageSize: 10,
       pageSizes: [5, 10, 0],
       columnOrder: ['name', 'packageName', 'temperatureZone', 'vendors'],
       options:[],
@@ -357,10 +357,12 @@ class AdminIngredients extends React.PureComponent {
 
             } else if (res.status == 500) {
                 if (!alert('Cannot add ingredient (ingredient already exists/one or more fields are empty)'))
-                    window.location.reload();
+                    //window.location.reload();
+                    temp.setState({rows:rows});
           }else{
-            alert(" New Ingredient Successfully added! ");
+            rows = [...rows,added[0]];
             temp.setState({rows:rows});
+            alert(" New Ingredient Successfully added! ");
           }
         });
 
