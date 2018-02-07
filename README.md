@@ -1,6 +1,5 @@
 # Real Producers
 
-
 ## Deployment Guide
 
 * see https://docs.google.com/document/d/133hE6fiWdzTy422DZaLxbFoZNf0cfrJk_3WeyeLLAfM/edit?usp=sharing
@@ -11,6 +10,9 @@
 
 ## To get it running
 
+* run "npm install"
+
+* run "npm start" to run the front-end
 
 ## Introduction
 
@@ -62,6 +64,7 @@ __ Note: Mongodb is already running on servers as a service. This means you do n
 ### Troubleshooting
 
 * If you see permission denied when trying to run commands in the plm directory, run "sudo chmod -R 777 ." inside the directory and the problem should go away
+
 
 * If you cannot connect to the remote server in the browser, check the .env file to make sure that 
 
