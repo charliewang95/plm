@@ -14,9 +14,29 @@
 
 * run "npm start" to run the front-end
 
-* run "node server.js" to run the back-end. __Note: Make sure Mongodb is running__
+## Introduction
+
+Real Producers is a Production Lifecycle Manager tool currently under development. It manages all the relevant data on food import from vendors and outport to production. 
+
+## To install everything
+
+* Softwares needed to be installed: Node.js, Express.js, MongoDB 
+
+* To install Node.js: follow [these instructions](https://nodejs.org/en/download/package-manager/).
+
+* To install MongoDB: follow [the instructions](https://nodejs.org/en/download/package-manager/) on the official website.
+
+## To run the server
+
+* In the folder with server.js file, type "npm install --save"
+
+* type "mongod" to run the MongoDB instance
 
 * run "npm run start-dev" to run both ends at the same time. The front end will be listening on port 443 (default https port), and the back-end on port 1337
+
+* run "npm start" to run just the front-end
+
+* run "node server.js" to run just the back-end.
 
 * Hint: to run locally, remove the .env file if it exists 
 
@@ -25,11 +45,11 @@
 
 ## To deploy on Servers
 
-__ Note: Mongodb is alreayd running on servers as a service. This means you do not need to run mongodb separately when you want to start the server__
+__ Note: Mongodb is already running on servers as a service. This means you do not need to run mongodb separately when you want to start the server__
 
 ### Test Server
 
-* Go to ~/../plm by running `cd ~/../pcm`, then run `sudo npm run start-https`. To view the content, go to https://real-producers-test.colab.duke.edu in your browser
+* On the test server shell, go to ~/../plm by running `cd ~/../pcm`, then run `sudo npm run start-https`. To view the content, go to https://real-producers-test.colab.duke.edu in your browser
 
 ### Production server
 
@@ -44,6 +64,7 @@ __ Note: Mongodb is alreayd running on servers as a service. This means you do n
 ### Troubleshooting
 
 * If you see permission denied when trying to run commands in the plm directory, run "sudo chmod -R 777 ." inside the directory and the problem should go away
+
 
 * If you cannot connect to the remote server in the browser, check the .env file to make sure that 
 

@@ -182,8 +182,10 @@ async function updateById(url, propertyName, objectId, sessionId, newObject, cal
         const result = res.data;
         console.log(result);
         callback(res);
+        return;
     }
     catch(e) {
+        console.log(newObject);
       console.log('there was an error');
       console.log(e);
       //TODO: different error message for different types of error

@@ -43,12 +43,12 @@ export const MainListItems = (
       </ListItemIcon>
       <ListItemText primary="Ingredients" />
     </ListItem>
-    <ListItem component={Link} to="/orders" button>
+    {/* <ListItem component={Link} to="/orders" button>
       <ListItemIcon>
         <AttachMoneyIcon />
       </ListItemIcon>
       <ListItemText primary="Orders" />
-    </ListItem>
+    </ListItem> */}
     <ListItem component={Link} to="/inventory" button>
       <ListItemIcon>
         <InventoryIcon/>

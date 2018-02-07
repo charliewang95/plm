@@ -233,7 +233,7 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId) {
 };
 
 var deleteWithUserAccess = function(req, res, next, model, userId, itemId) {
-    model.find({userId: userId, _id: itemId}, function(err, items) {
+    model.findOne({userId: userId, _id: itemId}, function(err, item) {
         if (err) {
             return next(err);
         }

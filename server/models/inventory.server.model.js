@@ -12,10 +12,12 @@ var InventorySchema = new Schema({
 	    type: mongoose.Schema.Types.ObjectId,
 	    ref: 'Ingredient',
         required: true,
+        unique: true
 	},
 	ingredientName: {
 	    type: String,
-	    required: true
+	    required: true,
+	    unique: true
 	},
 	temperatureZone: {
         type: String,
@@ -34,6 +36,6 @@ var InventorySchema = new Schema({
     }
 });
 
-InventorySchema.index({ ingredientId: 1, packageName: 1}, { unique: true });
+//InventorySchema.index({ ingredientId: 1, packageName: 1}, { unique: true });
 
 mongoose.model('Inventory', InventorySchema);
