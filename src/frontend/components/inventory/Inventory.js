@@ -168,8 +168,8 @@ class Inventory extends React.PureComponent {
                           //window.location.reload();
                           temp.setState({rows:rows});
                         }
-                      } else {
-                        rows[i].quantity = changed[rows[i].id].quantity;
+                      }else{
+                        alert(" Inventory successfully updated! ");
                       }
                 });
         }
@@ -190,20 +190,16 @@ class Inventory extends React.PureComponent {
            console.log("Package " + rows[index].packageName);
            console.log("ingredientId " + rows[index].ingredientId);
 
-//             try{
-//               cartActions.addCart(userId, rows[index].ingredientId, rows[index].ingredientName,
-//                  parseInt(this.state.addedQuantity), sessionId);
-//              }catch(e){
-//                console.log('An error passed to the front end!')
-//                //TODO: error handling in the front end
-//                alert(e);
-//              }
                 cartActions.addCart(userId, rows[index].ingredientId, rows[index].ingredientName,
                  parseInt(this.state.addedQuantity), sessionId, function(res){
                     if (res.status == 400) {
                         alert(res.data);
-                    } else if (res.status == 500) {
+                    }
+                  else if (res.status == 500) {
                         alert("Ingredient already in cart");
+                    }else{
+                      // Display saying it was added to production
+                      alert("Successfully checked out ingredients to production! ");
                     }
                  });
             }
@@ -254,6 +250,7 @@ class Inventory extends React.PureComponent {
     const re = /^[0-9\b]+$/;
         if (event.target.value == '' || re.test(event.target.value)) {
            this.setState({addedQuantity: event.target.value})
+           
         }else{
           alert(" Quantity must be a number.");
         }
