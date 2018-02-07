@@ -165,11 +165,12 @@ class Inventory extends React.PureComponent {
                 rows[i].temperatureZone, rows[i].packageName, Number(changed[rows[i].id].quantity), sessionId,function(res){
                     if (res.status == 400) {
                         if(!alert(res.data)){
-                          //window.location.reload();
-                          temp.setState({rows:rows});
+                          window.location.reload();
+                          //temp.setState({rows:rows});
                         }
                       }else{
                         alert(" Inventory successfully updated! ");
+                        temp.setState({rows:rows});
                       }
                 });
         }

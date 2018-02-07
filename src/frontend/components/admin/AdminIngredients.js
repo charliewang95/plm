@@ -360,6 +360,7 @@ class AdminIngredients extends React.PureComponent {
                     window.location.reload();
           }else{
             alert(" New Ingredient Successfully added! ");
+            temp.setState({rows:rows});
           }
         });
 
