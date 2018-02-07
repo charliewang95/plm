@@ -143,7 +143,7 @@ class Orders extends React.PureComponent{
         alert(" Quantity must be a number.");
       }
   }
- 
+
  componentDidUpdate(){
   this.calculate();
  }
@@ -168,10 +168,12 @@ class Orders extends React.PureComponent{
 //      //TODO: error handling in the front end
 //      alert(e);
 //    }
-        orderActions.addOrder(userId,this.state.ingredientId,
+        await orderActions.addOrder(userId,this.state.ingredientId,
         this.state.vendorId,parseInt(this.state.quantity,10),this.state.price,sessionId,function(res){
             if (res.status == 400) {
                 alert(res.data);
+            }else{
+              alert(" Ingredient ordered successfully! Please check the inventory to see the updated amount.")
             }
         });
     this.clearFields();
@@ -194,8 +196,8 @@ class Orders extends React.PureComponent{
 
   calculate(){
     console.log("clicked!");
-    var packageWeight = this.packageWeight();
-    var tempTotal = this.state.quantity * this.state.price * packageWeight;
+    //var packageWeight = this.packageWeight();
+    var tempTotal = this.state.quantity * this.state.price;
     console.log(tempTotal);
     this.setState({total: tempTotal});
   }

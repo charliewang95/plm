@@ -26,8 +26,8 @@ User.findOne({username: 'admin'}, function(err, obj){
     if (!obj) {
         var admin = new User();
         admin.username = 'admin';
-        admin.password = 'PassworD';
-        admin.email = 'random@duke.edu';
+        admin.password = 'whatismongoose';
+        admin.email = 'admin@realproducers.net';
         admin.isAdmin = true;
         admin.loggedIn = false;
         admin.save(function(err){

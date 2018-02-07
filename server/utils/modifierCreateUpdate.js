@@ -38,6 +38,7 @@ exports.modify = function(action, model, item, itemId, res, next, callback) {
 };
 
 var modifyOrder = function(item, res, next, callback) { //add number of pounds to order
+    var num = item.packageNum;
     Order.getNumPounds(item.ingredientId, item.packageNum, res, next, function(err, pounds){
         if (err) {
             return next(err);
@@ -55,10 +56,10 @@ var modifyOrder = function(item, res, next, callback) { //add number of pounds t
                         if (vendor.vendorId.toString() === item.vendorId.toString()) {
                             fail = false;
                             price = vendor.price;
-                            str = str.slice(0,-1)+',"price":'+price+',"totalPrice":'+price*pounds+'}';
+                            str = str.slice(0,-1)+',"price":'+price+',"totalPrice":'+price*num+'}';
                             var moneySpent = ingredient.moneySpent;
-                            console.log(price*pounds);
-                            ingredient.update({moneySpent: moneySpent + price*pounds}, function(err, obj) {
+                            console.log(price*num);
+                            ingredient.update({moneySpent: moneySpent + price*num}, function(err, obj) {
                                 if (err) return next(err);
                                 else {
                                     callback(err, JSON.parse(str));

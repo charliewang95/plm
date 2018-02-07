@@ -376,7 +376,7 @@ class AdminIngredients extends React.PureComponent {
       rowChanges: {},
       currentPage: 0,
       deletingRows: [],
-      pageSize: 0,
+      pageSize: 5,
       pageSizes: [5, 10, 0],
       columnOrder: ['name', 'pkg', 'temperature', 'vendors'],
     };

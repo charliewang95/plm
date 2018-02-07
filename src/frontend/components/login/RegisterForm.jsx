@@ -68,7 +68,7 @@ class SignUpForm extends React.Component{
         onChange = {this.props.onChange}
         margin="normal"
       />
-
+<br/><br/>
       <FormControl fullWidth required>
           <InputLabel htmlFor="password">Password</InputLabel>
           <Input

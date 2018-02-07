@@ -13,17 +13,23 @@ exports.process = function(model, item, itemId, res, next) {
     if (model == Vendor) {
         processVendor(itemId, res, next);
     }
-//    else if (model == Storage) {
-//        validateStorage(item, res, next, function(err, obj){
-//            if (err) return next(err);
-//            else {
-//                callback(err, obj);
-//            }
-//        });
-//    }
+    else if (model == Ingredient) {
+        processIngredient(item, res, next);
+    }
     else if (model == Cart) {
         processCart(item, res, next);
     }
+};
+
+var processIngredient = function(item, res, next) {
+    Inventory.remove({ingredientId: item._id}, function(err){
+        if (err) return next(err);
+        else {
+            Cart.remove({ingredientId: item._id}, function(err){
+                if (err) return next(err);
+            })
+        }
+    })
 };
 
 var processCart = function(item, res, next) { //
@@ -52,6 +58,11 @@ var processCart = function(item, res, next) { //
 var updateInventory = function(ingredientId, quantity, res, next, callback) {
     Inventory.findOneAndUpdate({ingredientId: ingredientId}, {quantity: quantity}, function(err, obj) {
         if (err) return next(err);
+        else if (quantity == 0){
+            obj.remove(function(err){
+                callback(err);
+            });
+        }
         else {
             callback(err);
         }

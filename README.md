@@ -1,5 +1,17 @@
 # Real Producers
 
+
+## Deployment Guide
+
+* see https://docs.google.com/document/d/133hE6fiWdzTy422DZaLxbFoZNf0cfrJk_3WeyeLLAfM/edit?usp=sharing
+
+## Developer Guide
+
+* see https://docs.google.com/document/d/1RgTQ27bdRb8LPWwH0axzr8eZSquyOJQLRVT44cJuwJ8/edit?usp=sharing
+
+## To get it running
+
+
 ## Introduction
 
 Real Producers is a Production Lifecycle Manager tool currently under development. It manages all the relevant data on food import from vendors and outport to production. 

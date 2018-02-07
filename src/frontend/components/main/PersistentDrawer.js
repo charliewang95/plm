@@ -174,6 +174,7 @@ class PersistentDrawer extends React.Component {
   };
 
   render() {
+    console.log("isAdmin ", this.state.isAdmin);
     const { classes, theme } = this.props;
     const { anchor, open } = this.state;
     const drawer = (
