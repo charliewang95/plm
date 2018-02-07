@@ -1,9 +1,8 @@
 # Real Producers
 
-
 ## Deployment Guide
 
-* see https://docs.google.com/document/d/133hE6fiWdzTy422DZaLxbFoZNf0cfrJk_3WeyeLLAfM/edit?usp=sharing
+* see DEPLOYMENT_GUIDE.md
 
 ## Developer Guide
 
@@ -11,6 +10,9 @@
 
 ## To get it running
 
+* run "npm install"
+
+* run "npm start" to run the front-end
 
 ## Introduction
 
@@ -63,7 +65,8 @@ __ Note: Mongodb is already running on servers as a service. This means you do n
 
 * If you see permission denied when trying to run commands in the plm directory, run "sudo chmod -R 777 ." inside the directory and the problem should go away
 
-* If you cannot connect to the remote server in the browser, check the .env file to make sure that 
+
+* If you cannot connect to the remote server in the browser, open the .env file (if it is not already there, create one) and have the following line: `HOST=real-producers.colab.duke.edu (for production server)` or `HOST=real-producers-test.colab.duke.edu` (for test server). On the contrary, if you are trying to run the server locally and access it via localhost, then remove the .env file if there is one.
 
 ## Design rules
 * Every url that is passed as argument should not end with '/'
