@@ -2,7 +2,7 @@
 
 ## Deployment Guide
 
-* see https://docs.google.com/document/d/133hE6fiWdzTy422DZaLxbFoZNf0cfrJk_3WeyeLLAfM/edit?usp=sharing
+* see DEPLOYMENT_GUIDE.md
 
 ## Developer Guide
 
