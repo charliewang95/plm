@@ -51,7 +51,9 @@ const AddVendorButton=()=>{
   return(
     <Tooltip title="Add Vendor">
       <Link to = "/addVendorForm">
-        <Button fab color="secondary">
+        <Button
+          fab color="secondary"
+          styles = {{marginLeft: 50, marginBottom:50}}>
           <AddIcon />
         </Button>
       </Link>

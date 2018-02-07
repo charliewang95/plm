@@ -39,6 +39,9 @@ import * as uploadInterface from '../../interface/uploadInterface';
   // TODO: get the sessionId
 import * as testConfig from '../../../resources/testConfig.js';
 import MyPdfViewer from './PdfViewer';
+import {Link} from 'react-router-dom';
+import Snackbar from 'material-ui/Snackbar';
+
 // TODO: get session Id from the user
 
 // const sessionId = testConfig.sessionId;
@@ -60,6 +63,9 @@ const styles = theme => ({
   },
   inputRoot: {
     width: '100%',
+  },
+  button: {
+    margin: theme.spacing.unit,
   },
 });
 
@@ -233,6 +239,21 @@ EditCell.propTypes = {
   column: PropTypes.shape({ name: PropTypes.string }).isRequired,
 };
 
+// const SnackBarBase=({message}) => (
+//     <Snackbar
+//               anchorOrigin={{vertical: 'top', horizontal:'right' }}
+//               // open={open}
+//               onClose={this.handleClose}
+//               SnackbarContentProps={{
+//                 'aria-describedby': 'message-id',
+//               }}
+//               message={<span id="message-id">{message}</span>}
+//             />
+//           );
+//
+// export const SnackBarPop = withStyles(styles, { name: 'snackbar' })(SnackBarBase);
+
+
 
 const getRowId = row => row.id;
 
@@ -262,7 +283,7 @@ class AdminIngredients extends React.PureComponent {
       rowChanges: {},
       currentPage: 5,
       deletingRows: [],
-      pageSize: 0,
+      pageSize: 5,
       pageSizes: [5, 10, 0],
       columnOrder: ['name', 'packageName', 'temperatureZone', 'vendors'],
       options:[],
@@ -336,11 +357,10 @@ class AdminIngredients extends React.PureComponent {
 
             } else if (res.status == 500) {
                 if (!alert('Cannot add ingredient (ingredient already exists/one or more fields are empty)'))
-//                    window.location.reload();
-                        temp.setState({rows:rows});
-            } else {
-                rows = [...rows,added[0]];
-            }
+                    window.location.reload();
+          }else{
+            alert(" New Ingredient Successfully added! ");
+          }
         });
 
       }}
@@ -387,8 +407,9 @@ class AdminIngredients extends React.PureComponent {
                 } else if (res.status == 500) {
                     alert('Ingredient name already exists');
                 } else {
-
+                    // SnackBarPop("Row was successfully added!");
                     console.log("sdfadfsdf");
+                    alert(" Ingredient Successfully edited! ");
                 }
             });
 
@@ -417,6 +438,9 @@ class AdminIngredients extends React.PureComponent {
           console.log(rows[index].ingredientId);
           ingredientInterface.deleteIngredient(rows[index].ingredientId, sessionId);
           rows.splice(index, 1);
+
+          //Alert the user
+          alert(" Ingredient successfully deleted ! ");
         }
 
       });
@@ -534,7 +558,6 @@ class AdminIngredients extends React.PureComponent {
       processedData.push(singleData);
     }
 
-
     var finalData = [...processedData.map((row, index)=> ({
         id: index,...row,
       })),
@@ -548,7 +571,7 @@ class AdminIngredients extends React.PureComponent {
     async uploadFile(event) {
         let file = event.target.files[0];
         console.log(file);
-        
+
         if (file) {
           let form = new FormData();
           form.append('file', file);
@@ -603,6 +626,7 @@ class AdminIngredients extends React.PureComponent {
           rows={rows}
           columns={columns}
           getRowId={getRowId}
+
         >
           <SortingState
             sorting={sorting}
@@ -687,20 +711,24 @@ class AdminIngredients extends React.PureComponent {
         </Dialog>
       }
       </Paper>
+    {/* <Paper styles = {{color : "#42f4d9"}} > */}
       {isAdmin && <p><font size="5">Bulk Import</font></p>}
       {isAdmin && <input type="file"
         name="myFile"
         onChange={this.uploadFile} /> }
-      {isAdmin && 
+      {isAdmin &&
       <div>
         <br></br>
         Click <a href="./FormatSpec.pdf" style={{color:"#000000",}}>HERE</a> for format specification
       </div>
     }
 
-      </div>
+      <Button raised color="primary"
+      component={Link} to="/orders"
+      style = {{marginLeft: 380, marginBottom: 30}}
+      > ORDER INGREDIENTS</Button>
 
-
+    </div>
     );
   }
 }

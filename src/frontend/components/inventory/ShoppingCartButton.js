@@ -12,15 +12,15 @@ let iconStyles = {
 
 const ShoppingCartButton=({ onExecute })=>{
   return(
-    <Tooltip title="Add to Cart">
-      {/* <Link to = "/addVendorForm"> */}
+    // <Tooltip title="Add to Cart">
+      // {/* <Link to = "/addVendorForm"> */}
         <Button fab mini color="secondary" size="small" onClick={onExecute}>
           <ShoppingCartIcon style={iconStyles}/>
         </Button>
-      {/* </Link> */}
-    </Tooltip>
+      // {/* </Link> */}
+    // </Tooltip>
   );
-}
+};
 ShoppingCartButton.propTypes = {
   onExecute: PropTypes.func.isRequired,
 };

@@ -135,9 +135,8 @@ class Storage extends React.PureComponent {
                           window.location.reload();
                           console.log(oldCap);
                         }
-//                      } else {
-//                        oldRow.capacity = enteredQuantity;
-//                        temp.setState({rows:rows});
+                      }else{
+                        alert(" Storage capacity updated successfully! ");
                       }
                   });
               }
