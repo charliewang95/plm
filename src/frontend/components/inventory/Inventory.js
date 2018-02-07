@@ -141,6 +141,7 @@ class Inventory extends React.PureComponent {
 
     this.cancelItemOnCart = () => this.setState({ addingItemsToCart: [] });
 
+    var temp = this;
     this.commitChanges = async({ changed,deleted}) => {
       let { rows } = this.state;
 
@@ -159,7 +160,7 @@ class Inventory extends React.PureComponent {
                   alert(" Quantity must be a number.");
                 }
                 //TODO: update the inventory
-         var temp = this;
+
         await inventoryActions.updateInventory(rows[i]._id, userId,
                 rows[i].ingredientId, rows[i].ingredientName,
                 rows[i].temperatureZone, rows[i].packageName, Number(changed[rows[i].id].quantity), sessionId,function(res){
@@ -169,7 +170,8 @@ class Inventory extends React.PureComponent {
                           temp.setState({rows:rows});
                         }
                       }else{
-                        alert(" Inventory successfully updated! ");
+                        if (!alert(" Inventory successfully updated! "))
+                            window.location.reload();
                       }
                 });
         }
