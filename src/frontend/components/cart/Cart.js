@@ -73,7 +73,7 @@ class Cart extends React.Component {
       rowChanges: {},
       deletingRows: [],
       currentPage: 0,
-      pageSize: 5,
+      pageSize: 10,
       pageSizes: [5, 10, 0],
     };
 
