@@ -37,6 +37,9 @@
     "express-pdf": "^1.2.2",
     "express-session": "^1.15.6",
     "foreman": "^2.0.0-1",
+    "greenlock-express": "^2.0.12",
+    "letsencrypt": "^2.1.8",
+    "letsencrypt-express": "^2.0.6",
     "material-ui": "1.0.0-beta.30",
     "material-ui-datatables": "^0.18.2",
     "material-ui-icons": "^1.0.0-beta.17",
@@ -64,6 +67,7 @@
     "react-slick": "^0.12.5",
     "react-tap-event-plugin": "^2.0.1",
     "react-view-engine": "0.0.1",
+    "redirect-https": "^1.1.4",
     "redux": "^3.7.2",
     "redux-form": "^7.2.1",
     "redux-form-material-ui": "^5.0.0-beta.2"
