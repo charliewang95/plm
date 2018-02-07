@@ -98,8 +98,9 @@ class Storage extends React.PureComponent {
       this.setState({ rowChanges });
     }
 
+    var temp = this;
     this.commitChanges = async ({ changed}) => {
-      var THIS = this;
+
       let { rows } = this.state;
 
       console.log(JSON.stringify(rows));
@@ -108,25 +109,31 @@ class Storage extends React.PureComponent {
       if(changed){
 
         for(var i = 0; i < rows.length;i++){
+
           console.log( " Changed Id " + changed[rows[i].id]);
           if(changed[rows[i].id]){
             const re = /^[0-9\b]+$/;
+            var oldRow = rows[i];
+            var oldCap = rows[i].capacity;
             var enteredQuantity = changed[rows[i].id].capacity;
-                if (re.test(enteredQuantity)) {
-                    rows[i].capacity = changed[rows[i].id].capacity;
-                }else{
+                if (!re.test(enteredQuantity)) {
                   alert(" Quantity must be a number.");
+                }
+                else {
+                    rows[i].capacity = enteredQuantity;
                 }
             console.log("id " + rows[i]._id);
             console.log("zone " + rows[i].temperatureZone);
-            console.log("capacity " + rows[i].capacity);
 
             await storageActions.updateStorage(rows[i]._id,
-                rows[i].temperatureZone, Number(rows[i].capacity), sessionId, function(res){
+                rows[i].temperatureZone, Number(enteredQuantity), sessionId, function(res){
                     if (res.status == 400) {
+
+                    console.log(rows);
                       //Reload window when cancelled
                         if(!alert(res.data)){
                           window.location.reload();
+                          console.log(oldCap);
                         }
                       }else{
                         alert(" Storage capacity updated successfully! ");

@@ -312,7 +312,8 @@ class AdminIngredients extends React.PureComponent {
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
-    this.commitChanges = ({ added, changed, deleted }) => {
+
+    this.commitChanges = async ({ added, changed, deleted }) => {
       console.log("Commit Changes");
       let { rows } = this.state;
 
@@ -337,19 +338,23 @@ class AdminIngredients extends React.PureComponent {
             vendors_string+=', ';
           }
         }
+
         console.log("Added vendors");
         added[0].vendorsArray = added[0].vendors;
         console.log(added[0].vendorsArray);
         added[0].vendors = vendors_string;
         added[0].id = startingAddedId;
-        rows = [...rows,added[0]];
+
         console.log("********************************");
         console.log(added[0].vendorsArray);
         // TODO: Send data to back end
-        ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone, added[0].vendorsArray, sessionId, function(res){
+        var temp = this;
+        await ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone, added[0].vendorsArray, sessionId, function(res){
             if (res.status == 400) {
                 if (!alert(res.data))
-                    window.location.reload();
+                    //window.location.reload();
+                    temp.setState({rows:rows});
+
             } else if (res.status == 500) {
                 if (!alert('Cannot add ingredient (ingredient already exists/one or more fields are empty)'))
                     window.location.reload();
