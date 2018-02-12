@@ -156,7 +156,7 @@ var updateInventory = function(ingredientId, space, numUnit, res, next, callback
 var validateStorage = function(item, res, next, callback) { //check if capacity below inventory quantity
     //var ingredientId = item.ingredientId;
     var temperatureZone = item.temperatureZone;
-    var temperatureZoneUsed, capacity, quantity = 0;
+    var temperatureZoneUsed, capacity, space = 0;
     Inventory.find({temperatureZone: temperatureZone}, function(err1, items){
         if (err1) return next(err1);
         else if (!item) {
@@ -178,11 +178,11 @@ var validateStorage = function(item, res, next, callback) { //check if capacity 
 //                            quantity = obj2.quantity;
 //                        }
                 if (inventory.packageName != 'truckload' && inventory.packageName != 'railcar')
-                    quantity+=inventory.quantity;
+                    space+=inventory.space;
             }
-            if (item.capacity < quantity) {
+            if (item.capacity < space) {
                 res.status(400);
-                res.send("Capacity -- "+item.capacity+" will be exceeded by current quantity "+ quantity +" for "+temperatureZone);
+                res.send("Capacity -- "+item.capacity+" sqft will be exceeded by current space "+ space +" sqft for "+temperatureZone);
             }
 //                    });
 //                }
@@ -242,7 +242,7 @@ var validateIngredient = function(item, res, next, callback) { //check if ingred
 
 var validateInventory = function(item, res, next, callback) { //check if ingredient haa vendors that doesn't exist
     var ingredientId = item.ingredientId;
-    var quantity = item.quantity;
+    var space = item.space;
     var packageName = item.packageName;
     var temperatureZone = item.temperatureZone;
     var capacity;
@@ -254,20 +254,20 @@ var validateInventory = function(item, res, next, callback) { //check if ingredi
         }
         else {
             var capacity = storage.capacity;
-            var currentQuantity = 0;
+            var currentSpace = 0;
             Inventory.find({temperatureZone: temperatureZone}, function(err, items){
                 for (var i = 0; i < items.length; i++) {
                     var inventory = items[i];
                     if (inventory.packageName != 'truckload' && inventory.packageName != 'railcar')
-                        currentQuantity+=inventory.quantity;
+                        currentSpace+=inventory.space;
                     if (inventory.ingredientId == ingredientId && inventory.packageName == packageName)
-                        currentQuantity-=inventory.quantity;
+                        currentSpace-=inventory.space;
                 }
-                var newQuantity = 0;
-                newQuantity = quantity + currentQuantity;
-                if (capacity < newQuantity) {
+                var newSpace = 0;
+                newSpace = space + currentSpace;
+                if (capacity < newSpace) {
                     res.status(400);
-                    res.send("Capacity -- "+capacity+" will be exceeded by current quantity "+ newQuantity +" for "+temperatureZone);
+                    res.send("Capacity -- "+capacity+" sqft will be exceeded by current quantity "+ newQuantity +" sqft for "+temperatureZone);
                 }
                 else callback(err, true);
             })
