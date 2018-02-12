@@ -56,7 +56,7 @@ exports.validate = function(model, item, res, next, callback) {
 var validateOrder = function(item, res, next, callback) { //check if exceed capacity
     var ingredientId = item.ingredientId;
     var ingredientName, temperatureZone, capacity;
-    var quantity = 0, newQuantity = 0, oldQuantity = 0;
+    var space = 0, newSpace = 0, oldSpace = 0, oldNumUnit = 0;
     Ingredient.findById(ingredientId, function(err1, obj1){
         if (err1) return next(err1);
         else if (!obj1) {
@@ -77,25 +77,26 @@ var validateOrder = function(item, res, next, callback) { //check if exceed capa
                     Inventory.find({temperatureZone: temperatureZone}, function(err3, inventories){
                         if (err3) return next(err3);
                         else if (!inventories) {
-                            quantity = 0;
+                            space = 0;
                         }
                         else {
                             for (var i=0; i<inventories.length; i++) {
                                 if (inventories[i].packageName != 'truckload' && inventories[i].packageName != 'railcar')
-                                    quantity+=inventories[i].quantity;
+                                    space+=inventories[i].space;
                                 if (inventories[i].ingredientId.toString() == ingredientId.toString()) {
-                                    oldQuantity = inventories[i].quantity;
+                                    oldSpace = inventories[i].space;
+                                    oldNumUnit = inventories[i].numUnit;
                                 }
                             }
                         }
 
-                        newQuantity = item.pounds + quantity;
-                        if (newQuantity > capacity && obj1.packageName != 'truckload' && obj1.packageName != 'railcar') {
+                        newSpace = item.space + space;
+                        if (newSpace > capacity && obj1.packageName != 'truckload' && obj1.packageName != 'railcar') {
                             res.status(400);
                             res.send("Capacity -- "+capacity+" pounds will be exceeded. Your existed storage is "+quantity+" pounds.");
                         }
                         else {
-                            updateInventory(ingredientId, oldQuantity+item.pounds, res, next, function(err4, obj4){
+                            updateInventory(ingredientId, oldSpace+item.space, oldNumUnit+item.numUnit, res, next, function(err4, obj4){
                                 if (err4) return next(err4);
                                 else {
                                     callback(err4, true);
@@ -109,11 +110,11 @@ var validateOrder = function(item, res, next, callback) { //check if exceed capa
     });
 };
 
-var updateInventory = function(ingredientId, quantity, res, next, callback) {
-    Inventory.findOneAndUpdate({ingredientId: ingredientId}, {quantity: quantity}, function(err, obj) {
+var updateInventory = function(ingredientId, space, numUnit, res, next, callback) {
+    Inventory.findOneAndUpdate({ingredientId: ingredientId}, {space: space, numUnit: numUnit}, function(err, obj) {
         if (err) return next(err);
         else if (!obj){
-            if (quantity == 0) callback(0, null);
+            if (space == 0) callback(0, null);
             else {
                 Ingredient.findById(ingredientId, function(err, ingredient){
                     if (err) return next(err);
@@ -126,7 +127,9 @@ var updateInventory = function(ingredientId, quantity, res, next, callback) {
                         item.ingredientName = ingredient.name;
                         item.temperatureZone = ingredient.temperatureZone;
                         item.packageName = ingredient.packageName;
-                        item.quantity = quantity;
+                        item.space = space;
+                        item.nativeUnit = ingredient.nativeUnit;
+                        item.numUnit = numUnit;
                         item.save(function(err) {
                             if (err) {
                                 return next(err);
@@ -140,7 +143,7 @@ var updateInventory = function(ingredientId, quantity, res, next, callback) {
             }
         }
         else {
-            if (quantity == 0) {
+            if (space == 0 && obj.packageName != 'truckload' && obj.packageName != 'railcar') {
                 obj.remove(func);
             }
             else {
