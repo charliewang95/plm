@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
     User = require('mongoose').model('User'),
     Ingredient = require('mongoose').model('Ingredient'),
+    Formula = require('mongoose').model('Formula'),
 	Schema = mongoose.Schema;
 
 var CartSchema = new Schema({
@@ -8,12 +9,12 @@ var CartSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-	ingredientId: {
+	formulaId: {
 		type: mongoose.Schema.Types.ObjectId,
-        ref: 'Ingredient',
+        ref: 'Formula',
         required: true
 	},
-	ingredientName: {
+	formulaName: {
         type: String,
         required: true
     },

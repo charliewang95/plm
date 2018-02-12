@@ -39,12 +39,12 @@ exports.modify = function(action, model, item, itemId, res, next, callback) {
 
 var modifyOrder = function(item, res, next, callback) { //add number of pounds to order
     var num = item.packageNum;
-    Order.getNumPounds(item.ingredientId, item.packageNum, res, next, function(err, pounds){
+    Order.getNumSpaceAndNumUnits(item.ingredientId, item.packageNum, res, next, function(err, space, numUnit){
         if (err) {
             return next(err);
         }
         else {
-            var str = JSON.stringify(item).slice(0,-1)+',"pounds":'+pounds+'}';
+            var str = JSON.stringify(item).slice(0,-1)+',"space":'+space+',"numUnit":'+numUnit+'}';
             var price;
             var fail = true;
             Ingredient.findById(item.ingredientId, function(err, ingredient){
