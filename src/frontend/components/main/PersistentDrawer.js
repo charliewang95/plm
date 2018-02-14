@@ -21,6 +21,8 @@ import cookie from 'react-cookies';
 import Button from 'material-ui/Button';
 import {Link} from 'react-router-dom';
 import ExitToApp from 'material-ui-icons/ExitToApp';
+import {MenuList} from 'material-ui/Menu';
+import MainList from './MainList'
 
 const drawerWidth = 240;
 
@@ -195,7 +197,7 @@ class PersistentDrawer extends React.Component {
           <Divider />
           {this.state.isAdmin && <List className={classes.list}>{UserListItems}</List> }
           <Divider />
-          <List className={classes.list}>{MainListItems}</List>
+          <MainList> </MainList>
         </div>
       </Drawer>
     );

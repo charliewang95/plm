@@ -11,6 +11,22 @@ import VendorsIcon from 'material-ui-icons/Group'; // Vendors
 import ShoppingCartIcon from 'material-ui-icons/ShoppingCart'; // Cart
 import ReportIcon from 'material-ui-icons/Receipt'; // Report
 import PersonAddIcon from 'material-ui-icons/PersonAdd';
+import PropTypes from 'prop-types';
+import { MenuList, MenuItem } from 'material-ui/Menu';
+import { withStyles } from 'material-ui/styles';
+
+const styles = theme => ({
+  menuItem: {
+    '&:focus': {
+      backgroundColor: theme.palette.primary.main,
+      '& $primary, & $icon': {
+        color: theme.palette.common.white,
+      },
+    },
+  },
+  primary: {},
+  icon: {},
+});
 
 export const UserListItems = (
   <div>
@@ -23,6 +39,8 @@ export const UserListItems = (
   </div>
 );
 
+
+//deprecated, moved to MainList.js
 export const MainListItems = (
   <div>
     {/* <ListItem component={Link} to="/user-ingredients" button>
@@ -81,3 +99,4 @@ export const MainListItems = (
     </ListItem>
   </div>
 );
+
