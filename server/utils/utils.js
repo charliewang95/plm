@@ -1,9 +1,11 @@
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
+var Log = mongoose.model('Log');
 var modifierCreateUpdate = require('./modifierCreateUpdate');
 //var modifierDelete = require('./modifierDelete');
 var validator = require('./validator');
 var postProcessor = require('./postProcessor');
+var logger = require('./logger');
 
 exports.doWithAccess = function(req, res, next, model, action, userId, itemId, AdminRequired) {
     //back-door for ease of testing
@@ -27,6 +29,7 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
 //        return;
 //    }
     //actual content
+    //console.log(date.getFullYear()+"/"+date.getMonth()+"/"+date.getDate()+" "+date.getHours()+":"+date.getMinutes());
     User.findById(userId, function(err, user) {
         if (err) next(err);
         else if (!user) {
@@ -42,16 +45,17 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             res.send('Admin access required');
         }
         else {
-            if (action == 'create') create(req, res, next, model);
-            else if (action == 'list') list(req, res, next, model);
-            else if (action == 'listPartial') listPartial(req, res, next, model, userId);
-            else if (action == 'update') update(req, res, next, model, itemId);
-            else if (action == 'updateWithUserAccess') updateWithUserAccess(req, res, next, model, userId, itemId);
-            else if (action == 'delete') deleteWithoutUserAccess(req, res, next, model, itemId);
-            else if (action == 'deleteWithUserAccess') deleteWithUserAccess(req, res, next, model, userId, itemId);
+
+            if (action == 'create') create(req, res, next, model, user.username);
+            else if (action == 'list') list(req, res, next, model, user.username);
+            else if (action == 'listPartial') listPartial(req, res, next, model, userId, user.username);
+            else if (action == 'update') update(req, res, next, model, itemId, user.username);
+            else if (action == 'updateWithUserAccess') updateWithUserAccess(req, res, next, model, userId, itemId, user.username);
+            else if (action == 'delete') deleteWithoutUserAccess(req, res, next, model, itemId, user.username);
+            else if (action == 'deleteWithUserAccess') deleteWithUserAccess(req, res, next, model, userId, itemId, user.username);
             //else if (action == 'deleteAllWithUserAccess') deleteAllWithUserAccess(req, res, next, model, userId);
-            else if (action == 'read') read(req, res, next, model, itemId);
-            else if (action == 'readWithUserAccess') readWithUserAccess(req, res, next, model, userId, itemId);
+            else if (action == 'read') read(req, res, next, model, itemId, user.username);
+            else if (action == 'readWithUserAccess') readWithUserAccess(req, res, next, model, userId, itemId, user.username);
             else {
                 res.status(400);
                 res.send('Something went wrong');
@@ -60,7 +64,7 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
     });
 }
 
-var list = function(req, res, next, model) {
+var list = function(req, res, next, model, username) {
 	model.find({}, function(err, items) {
 		if (err) {
 			return next(err);
@@ -71,7 +75,7 @@ var list = function(req, res, next, model) {
 	});
 };
 
-var listPartial = function(req, res, next, model, itemId) {
+var listPartial = function(req, res, next, model, itemId, username) {
 	model.find({userId: itemId}, function(err, items) {
 		if (err) {
 			return next(err);
@@ -82,7 +86,7 @@ var listPartial = function(req, res, next, model, itemId) {
 	});
 };
 
-var create = function(req, res, next, model) {
+var create = function(req, res, next, model, username) {
 	var item = new model(req.body);
 	console.log(req.body);
 	var modifiedItem;
@@ -109,6 +113,7 @@ var create = function(req, res, next, model) {
                         }
                         else {
                             console.log("creating, saved");
+                            logger.log(username, 'create', modifiedItem, model);
                             res.json(modifiedItem);
                         }
                     });
@@ -122,7 +127,7 @@ var create = function(req, res, next, model) {
     });
 };
 
-var read = function(req, res, next, model, itemId) {
+var read = function(req, res, next, model, itemId, username) {
     model.findById(itemId, function(err, item) {
         if (err) {
             return next(err);
@@ -133,7 +138,7 @@ var read = function(req, res, next, model, itemId) {
     });
 };
 
-var readWithUserAccess = function(req, res, next, model, userId, itemId) {
+var readWithUserAccess = function(req, res, next, model, userId, itemId, username) {
     model.findOne({_id: itemId, userId: userId}, function(err, item) {
         if (err) {
             return next(err);
@@ -144,7 +149,7 @@ var readWithUserAccess = function(req, res, next, model, userId, itemId) {
     });
 };
 
-var update = function(req, res, next, model, itemId) {
+var update = function(req, res, next, model, itemId, username) {
 
     console.log("updating, modifying");
     modifierCreateUpdate.modify('update', model, req.body, itemId, res, next, function(err, obj){
@@ -167,6 +172,7 @@ var update = function(req, res, next, model, itemId) {
                         }
                         else if (obj2){
                             console.log("updating, updated");
+                            logger.log(username, 'update', obj, model);
                             res.json(obj);
                         } else {
                             res.status(400);
@@ -183,7 +189,7 @@ var update = function(req, res, next, model, itemId) {
     });
 };
 
-var updateWithUserAccess = function(req, res, next, model, userId, itemId) {
+var updateWithUserAccess = function(req, res, next, model, userId, itemId, username) {
     model.findOne({_id: itemId, userId: userId}, function(err, obj) {
         if (err) {
             return next(err);
@@ -199,6 +205,7 @@ var updateWithUserAccess = function(req, res, next, model, userId, itemId) {
                             return next(err);
                         }
                         else {
+                            logger.log(username, 'update', obj, model);
                             res.json(req.body);
                         }
                     });
@@ -212,7 +219,7 @@ var updateWithUserAccess = function(req, res, next, model, userId, itemId) {
     });
 };
 
-var deleteWithoutUserAccess = function(req, res, next, model, itemId) {
+var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) {
     model.findOne({_id: itemId}, req.body, function(err, item) {
         if (err) {
             return next(err);
@@ -224,6 +231,7 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId) {
                 }
                 else {
                     postProcessor.process(model, item, itemId, res, next);
+                    logger.log(username, 'delete', item, model);
                     res.json(item);
                 }
             });
@@ -231,7 +239,7 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId) {
     });
 };
 
-var deleteWithUserAccess = function(req, res, next, model, userId, itemId) {
+var deleteWithUserAccess = function(req, res, next, model, userId, itemId, username) {
     model.findOne({userId: userId, _id: itemId}, function(err, item) {
         if (err) {
             return next(err);
@@ -242,6 +250,7 @@ var deleteWithUserAccess = function(req, res, next, model, userId, itemId) {
                     return next(err);
                 }
                 else {
+                    logger.log(username, 'delete', item, model);
                     res.json(item);
                 }
             });

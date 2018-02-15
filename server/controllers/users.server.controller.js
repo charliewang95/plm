@@ -126,7 +126,7 @@ exports.authenticate = function(req, res, next) {
             res.send("Username does not exist");
         }
         else {
-            if (user.authenticate(req.body.password)) {
+            if (user.authenticate(req.body.password, user.salt)) {
                 user.update({loggedIn: true}, function(err, obj){
                     res.json(user);
                 });

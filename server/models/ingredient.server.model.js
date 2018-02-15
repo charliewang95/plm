@@ -18,7 +18,8 @@ var VendorPriceSchema = new Schema({
     },
     price: {
         type: Number,
-        required: true
+        required: true,
+        min: [0, 'Price cannot be negative'],
     }
 });
 mongoose.model('VendorPrice', VendorPriceSchema);
@@ -54,7 +55,8 @@ var IngredientSchema = new Schema({
     },
     numUnitPerPackage: {
         type: Number,
-        required: true
+        required: true,
+        min: [0, 'Number cannot be negative'],
     },
     vendors : [VendorPriceSchema]
 });

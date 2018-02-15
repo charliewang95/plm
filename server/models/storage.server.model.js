@@ -17,7 +17,14 @@ var StorageSchema = new Schema({
 	capacity: { // in pounds
 	    type: Number,
 	    required: true
-	}
+	},
+	currentEmptySpace: {
+	    type: Number
+	},
+	currentOccupiedSpace: {
+        type: Number
+    },
+
 });
 //StorageSchema.index({ ingredientId: 1, temperatureZone: 1}, { unique: true });
 

@@ -79,5 +79,11 @@ export const MainListItems = (
       </ListItemIcon>
       <ListItemText primary="Financial Report" />
     </ListItem>
+    <ListItem component={Link} to="/log" button>
+      <ListItemIcon>
+        <ReportIcon />
+      </ListItemIcon>
+      <ListItemText primary="Logs" />
+    </ListItem>
   </div>
 );
