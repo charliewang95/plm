@@ -184,6 +184,9 @@ handleMouseDownPassword(event){
                             style={styles.saveButton}
                             onClick={this.registerOnClick}
                             > REGISTER </RaisedButton>
+                  <RaisedButton raised
+                                href = "https://www.google.com"
+                  > Duke Log In </RaisedButton>    
 
              </div>
            </form>
