@@ -41,6 +41,8 @@ Storage.findOne({temperatureZone: 'freezer'}, function(err, obj){
         var storage = new Storage();
         storage.temperatureZone = 'freezer';
         storage.capacity = 20000;
+        storage.currentEmptySpace = 20000;
+        storage.currentOccupiedSpace = 0;
         storage.save(function(err){
             //console.log(admin);
         });
@@ -52,6 +54,8 @@ Storage.findOne({temperatureZone: 'refrigerator'}, function(err, obj){
         var storage = new Storage();
         storage.temperatureZone = 'refrigerator';
         storage.capacity = 20000;
+        storage.currentEmptySpace = 20000;
+        storage.currentOccupiedSpace = 0;
         storage.save(function(err){
             //console.log(admin);
         });
@@ -63,6 +67,8 @@ Storage.findOne({temperatureZone: 'warehouse'}, function(err, obj){
         var storage = new Storage();
         storage.temperatureZone = 'warehouse';
         storage.capacity = 20000;
+        storage.currentEmptySpace = 20000;
+        storage.currentOccupiedSpace = 0;
         storage.save(function(err){
             //console.log(admin);
         });

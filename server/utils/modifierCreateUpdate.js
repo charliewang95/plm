@@ -59,12 +59,12 @@ var modifyOrder = function(item, res, next, callback) { //add number of pounds t
                             str = str.slice(0,-1)+',"price":'+price+',"totalPrice":'+price*num+'}';
                             var moneySpent = ingredient.moneySpent;
                             console.log(price*num);
-                            ingredient.update({moneySpent: moneySpent + price*num}, function(err, obj) {
-                                if (err) return next(err);
-                                else {
+//                            ingredient.update({moneySpent: moneySpent + price*num}, function(err, obj) {
+//                                if (err) return next(err);
+//                                else {
                                     callback(err, JSON.parse(str));
-                                }
-                            });
+//                                }
+//                            });
                         }
                     }
                     if (fail)

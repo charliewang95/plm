@@ -25,6 +25,10 @@ import * as logActions from '../../interface/logInterface';
 
 //TODO: get user data
 // const sessionId = testConfig.sessionId;
+var pickerStyle = {
+  color: 'white',
+  width: '160px'
+};
 
 var sessionId = "";
 
@@ -193,12 +197,12 @@ class Log extends React.PureComponent {
       <Paper>
       <div>Filter by Timespan </div>
       <br/>
-      <DatePickerInput
+      <DatePickerInput style={pickerStyle}
           onChange={this.handleStartDateChange}
           value={this.state.startDate}
           className='my-custom-datepicker-component'
       />
-      <DatePickerInput
+      <DatePickerInput style={pickerStyle}
             onChange={this.handleEndDateChange}
             value={this.state.endDate}
             className='my-custom-datepicker-component'

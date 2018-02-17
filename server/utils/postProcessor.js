@@ -19,6 +19,9 @@ exports.process = function(model, item, itemId, res, next) {
     else if (model == Cart) {
         processCart(item, res, next);
     }
+    else if (model == Storage) {
+        processStorage(item, itemId, res, next);
+    }
 };
 
 var processIngredient = function(item, res, next) {
@@ -112,4 +115,13 @@ var processVendor = function(itemId, res, next) {
             }
         }
     });
-}
+};
+
+var processStorage = function(item, itemId, res, next) {
+    console.log('changing empty space');
+    var newLeft = item.capacity - item.currentOccupiedSpace;
+    console.log(newLeft);
+    Storage.findByIdAndUpdate(itemId, {currentEmptySpace: newLeft}, function(err, obj) {
+        if (err) return next(err);
+    });
+};

@@ -19,10 +19,12 @@ var StorageSchema = new Schema({
 	    required: true
 	},
 	currentEmptySpace: {
-	    type: Number
+	    type: Number,
+	    default: 0
 	},
 	currentOccupiedSpace: {
-        type: Number
+        type: Number,
+        default: 0
     },
 
 });

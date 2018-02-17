@@ -85,6 +85,8 @@ class Storage extends React.PureComponent {
       columns: [
         { name: 'temperatureZone', title: 'Temperature Zone' },
         { name: 'capacity', title: 'Capacity (lbs)' },
+        { name: 'currentOccupiedSpace', title: 'Space Occupied (lbs)' },
+        { name: 'currentEmptySpace', title: 'Space Left (lbs)' },
       ],
       rows:[],
       editingRowIds: [],
@@ -102,7 +104,7 @@ class Storage extends React.PureComponent {
     this.commitChanges = async ({ changed}) => {
 
       let { rows } = this.state;
-
+      var temp = this;
       console.log(JSON.stringify(rows));
       console.log("changed " + JSON.stringify(changed));
 
@@ -126,7 +128,7 @@ class Storage extends React.PureComponent {
             console.log("zone " + rows[i].temperatureZone);
 
             await storageActions.updateStorage(rows[i]._id,
-                rows[i].temperatureZone, Number(enteredQuantity), sessionId, function(res){
+                rows[i].temperatureZone, Number(enteredQuantity), rows[i].currentOccupiedSpace, sessionId, function(res){
                     if (res.status == 400) {
 
                     console.log(rows);
@@ -136,6 +138,7 @@ class Storage extends React.PureComponent {
                           console.log(oldCap);
                         }
                       }else{
+                        temp.loadStorageInfo();
                         alert(" Storage capacity updated successfully! ");
                       }
                   });

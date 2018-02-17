@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var Log = mongoose.model('Log');
+var Storage = mongoose.model('Storage');
 var modifierCreateUpdate = require('./modifierCreateUpdate');
 //var modifierDelete = require('./modifierDelete');
 var validator = require('./validator');
@@ -173,7 +174,10 @@ var update = function(req, res, next, model, itemId, username) {
                         else if (obj2){
                             console.log("updating, updated");
                             logger.log(username, 'update', obj, model);
-                            res.json(obj);
+                            if (model == Storage) {
+                                postProcessor.process(model, obj, itemId, res, next);
+                            }
+                            res.json(obj2);
                         } else {
                             res.status(400);
                             res.send("Object doesn't exist");
