@@ -63,6 +63,11 @@ class LoginPage extends React.Component{
     this.registerOnClick = this.registerOnClick.bind(this);
   }
 
+  componentDidMount(){
+    console.log("Component did mount")
+    console.log(window.location.hash);
+  };
+
    handleClickShowPasssword(){
     this.setState({ showPassword: !this.state.showPassword });
   };
@@ -185,7 +190,14 @@ handleMouseDownPassword(event){
                             onClick={this.registerOnClick}
                             > REGISTER </RaisedButton>
                   <RaisedButton raised
-                                href = "https://www.google.com"
+                                href = "https://oauth.oit.duke.edu/oauth/authorize.php?
+                                response_type=token&
+                                redirect_uri=https%3A%2F%2Flocalhost&
+                                scope=basic&
+                                state=1129&
+                                client_id=production-life-manager&
+                                client_secret=6JdHfn%wwI1LhBUR@@H1BXZqPkJ+ZgKI@xKR#goNGPr!nUehM=
+                                "
                   > Duke Log In </RaisedButton>    
 
              </div>
