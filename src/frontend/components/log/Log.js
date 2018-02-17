@@ -1,5 +1,7 @@
 import React from 'react';
 import Paper from 'material-ui/Paper';
+import { DatePicker, DatePickerInput } from 'rc-datepicker';
+import 'rc-datepicker/lib/style.css';
 import PropTypes from 'prop-types';
 
 import {
@@ -29,13 +31,12 @@ var sessionId = "";
 var isAdmin =  "";
 // JSON.parse(localStorage.getItem('user')).isAdmin;
 
-
 const Cell = (props)=>{
   return <Table.Cell {...props}
     style={{
-            whiteSpace: "normal",
-            wordWrap: "break-word"
-          }}/>
+        whiteSpace: "normal",
+        wordWrap: "break-word"
+      }}/>
 };
 
 Cell.propTypes = {
@@ -72,6 +73,11 @@ Cell.propTypes = {
 //  onExecute: PropTypes.func.isRequired,
 //};
 
+const datePredicate = (value, filter) => {
+    console.log(value);
+    value > this.state.startDate
+}
+
 const getRowId = row => row.id;
 
 class Log extends React.PureComponent {
@@ -84,54 +90,63 @@ class Log extends React.PureComponent {
         { name: 'action', title: 'Action' },
         { name: 'model', title: 'Model' },
         { name: 'item', title: 'Entity' },
-        { name: 'date', title: 'Date' },
+        { name: 'date', title: 'Timestamp' },
+      ],
+      integratedFilteringColumnExtensions: [
+        { columnName: 'date', predicate: datePredicate },
       ],
       rows:[],
+      dates: [],
+      startDate: new Date(2018, 0, 1, 0, 0, 0, 0),
+      endDate: new Date(2018, 11, 31, 23, 59, 59, 0),
+      //filters: [{ columnName: 'date', value: this.startDate }],
       //editingRowIds: [],
       //rowChanges: {},
     };
 
-    //this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
+    this.handleStartDateChange = this.handleStartDateChange.bind(this);
+    this.handleEndDateChange = this.handleEndDateChange.bind(this);
+    //this.changeFilters = filters => this.setState({ filters });
+   }
 
-//    this.changeRowChanges = (rowChanges) => {
-//      console.log(" ROW CHANGES: ");
-//      this.setState({ rowChanges });
-//    }
+  handleStartDateChange(date) {
+      this.setState({
+        startDate: date
+      }, function(){
+        console.log(this.state.startDate);
+        var newRows = [];
+        for (var i = 0; i<this.state.rows.length; i++) {
+            if (Number(this.state.rows[i].date.slice(0,4))>date.getFullYear() ||
+                Number(this.state.rows[i].date.slice(0,4))==date.getFullYear() && (Number(this.state.rows[i].date.slice(5,7))>date.getMonth()+1 ||
+                Number(this.state.rows[i].date.slice(5,7))==date.getMonth()+1 && Number(this.state.rows[i].date.slice(8,10))>=date.getDate())) {
+                newRows.push(this.state.rows[i]);
+            }
+        }
+        this.setState({
+            rows: newRows
+        });
+      });
 
-//    var temp = this;
-//    this.commitChanges = async ({ changed}) => {
-//
-//      let { rows } = this.state;
-//
-//      console.log(JSON.stringify(rows));
-//      console.log("changed " + JSON.stringify(changed));
-//
-//      if(changed){
-//
-//        for(var i = 0; i < rows.length;i++){
-//
-//          console.log( " Changed Id " + changed[rows[i].id]);
-//          if(changed[rows[i].id]){
-//            const re = /^[0-9\b]+$/;
-//            var oldRow = rows[i];
-//            var oldCap = rows[i].capacity;
-//            var enteredQuantity = changed[rows[i].id].capacity;
-//                if (!re.test(enteredQuantity)) {
-//                  alert(" Quantity must be a number.");
-//                }
-//                else {
-//                    rows[i].capacity = enteredQuantity;
-//                }
-//            console.log("id " + rows[i]._id);
-//            console.log("zone " + rows[i].temperatureZone);
-//
-//
-//              }
-//            }
-//          }
-//        }
-//        this.commitChanges = this.commitChanges.bind(this);
-      }
+  };
+
+  handleEndDateChange(date) {
+      this.setState({
+        endDate: date
+      }, function(){
+        console.log(this.state.endDate);
+            var newRows = [];
+            for (var i = 0; i<this.state.rows.length; i++) {
+                if (Number(this.state.rows[i].date.slice(0,4))<date.getFullYear() ||
+                    Number(this.state.rows[i].date.slice(0,4))==date.getFullYear() && (Number(this.state.rows[i].date.slice(5,7))<date.getMonth()+1 ||
+                    Number(this.state.rows[i].date.slice(5,7))==date.getMonth()+1 && Number(this.state.rows[i].date.slice(8,10))<=date.getDate())) {
+                    newRows.push(this.state.rows[i]);
+                }
+            }
+            this.setState({
+                rows: newRows
+            });
+      });
+  }
 
   componentWillMount(){
     isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
@@ -146,20 +161,49 @@ class Log extends React.PureComponent {
       var rawData = [];
       sessionId = JSON.parse(localStorage.getItem('user'))._id;
       rawData = await logActions.getAllLogsAsync(sessionId);
+      var tempDates = [];
+       for (var i = 0; i<rawData.length; i++) {
+           var date = rawData[i].date;
 
-   var processedData = [...rawData.map((row, index)=> ({
-       id:index,...row,
-     })),
-   ];
-   this.setState({rows:processedData});
+           var year = date.slice(0, 4);
+           var month = date.slice(5, 7);
+           var day = date.slice(8, 10);
+           var hours = date.slice(11, 13);
+           var minutes = date.slice(14, 16);
+           var seconds = date.slice(17, 19);
+           var milliseconds = date.slice(20, 22);
+           tempDates[i] = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
+           rawData[i].date = date.replace('T',' ').replace('Z',' ');
+       }
+
+       var processedData = [...rawData.map((row, index)=> ({
+           id:index,...row,
+         })),
+       ];
+
+       this.setState({dates:tempDates});
+       this.setState({rows:processedData});
   }
 
   render() {
     // const {classes} = this.props;
-    const { rows,columns} = this.state;
+    const { integratedFilteringColumnExtensions, rows,columns, dates, startDate, endDate, filters} = this.state;
 
     return (
       <Paper>
+      <div>Filter by Timespan </div>
+      <br/>
+      <DatePickerInput
+          onChange={this.handleStartDateChange}
+          value={this.state.startDate}
+          className='my-custom-datepicker-component'
+      />
+      <DatePickerInput
+            onChange={this.handleEndDateChange}
+            value={this.state.endDate}
+            className='my-custom-datepicker-component'
+        />
+
         <Grid
           allowColumnResizing = {true}
           rows={rows}

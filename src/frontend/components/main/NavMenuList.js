@@ -10,6 +10,7 @@ import LocalPizzaIcon from 'material-ui-icons/LocalPizza'; //Ingredients
 import VendorsIcon from 'material-ui-icons/Group'; // Vendors
 import ShoppingCartIcon from 'material-ui-icons/ShoppingCart'; // Cart
 import ReportIcon from 'material-ui-icons/Receipt'; // Report
+import BugReportIcon from 'material-ui-icons/BugReport'; // Report
 import PersonAddIcon from 'material-ui-icons/PersonAdd';
 
 export const UserListItems = (
@@ -81,7 +82,7 @@ export const MainListItems = (
     </ListItem>
     <ListItem component={Link} to="/log" button>
       <ListItemIcon>
-        <ReportIcon />
+        <BugReportIcon />
       </ListItemIcon>
       <ListItemText primary="Logs" />
     </ListItem>
