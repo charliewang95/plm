@@ -43,6 +43,7 @@ module.exports = function() {
 	require('../server/routes/carts.server.routes.js')(app);
 	require('../server/routes/uploads.server.routes.js')(app);
 	require('../server/routes/logs.server.routes.js')(app);
+	require('../server/routes/formulas.server.routes.js')(app);
 
 	app.use(express.static('./public'));
 
