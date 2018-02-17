@@ -21,6 +21,8 @@ import VisibilityOff from 'material-ui-icons/VisibilityOff';
 import { withStyles } from 'material-ui/styles';
 import IconButton from 'material-ui/IconButton';
 
+const queryString = require('query-string');
+
 const styles = {
     buttons: {
       marginTop: 30,
@@ -65,7 +67,17 @@ class LoginPage extends React.Component{
 
   componentDidMount(){
     console.log("Component did mount")
-    console.log(window.location.hash);
+    const hash = window.location.hash;
+    console.log("Hash:")
+    console.log(hash);
+    if(hash==""){
+      console.log("No hash is provided")
+    } else{
+      const parsed = queryString.parse(hash);
+      console.log("parsedHash:")
+      console.log(parsed);
+    }
+    
   };
 
    handleClickShowPasssword(){
