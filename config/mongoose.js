@@ -12,6 +12,7 @@ module.exports = function() {
 	require('../server/models/inventory.server.model');
 	require('../server/models/formula.server.model');
 	require('../server/models/cart.server.model');
+	require('../server/models/dukeUser.server.model');
 
 	return db;
 };

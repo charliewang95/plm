@@ -42,7 +42,7 @@ module.exports = function() {
 	require('../server/routes/inventories.server.routes.js')(app);
 	require('../server/routes/carts.server.routes.js')(app);
 	require('../server/routes/uploads.server.routes.js')(app);
-
+	require('../server/routes/dukeUsers.server.routes.js')(app);
 	app.use(express.static('./public'));
 
 	return app;

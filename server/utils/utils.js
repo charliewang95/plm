@@ -58,7 +58,29 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             }
         }
     });
-}
+};
+
+exports.bypassAndDo = function(req, res, next, model, action, itemId) {
+    console.log('bypassed check');
+    console.log(req.body);
+    if (action == 'create') create(req, res, next, model);
+    // else if (action == 'list') list(req, res, next, model);
+    // else if (action == 'listPartial') listPartial(req, res, next, model, userId);
+    // else if (action == 'update') update(req, res, next, model, itemId);
+    // else if (action == 'updateWithUserAccess') update(req, res, next, model, userId, itemId);
+    // else if (action == 'delete') deleteWithoutUserAccess(req, res, next, model, itemId);
+    // else if (action == 'deleteWithUserAccess') deleteWithUserAccess(req, res, next, model, userId, itemId);
+    // else if (action == 'deleteAllWithUserAccess') deleteAllWithUserAccess(req, res, next, model, userId);
+    // else if (action == 'read') read(req, res, next, model, itemId);
+    // else if (action == 'readWithUserAccess') readWithUserAccess(req, res, next, model, userId, itemId);
+    else {
+        res.status(400);
+        res.send('Something went wrong');
+    }
+    return;
+};
+
+
 
 var list = function(req, res, next, model) {
 	model.find({}, function(err, items) {

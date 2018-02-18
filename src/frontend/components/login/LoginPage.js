@@ -11,7 +11,7 @@ import Typography from 'material-ui/Typography';
 import Card, {CardMedia} from 'material-ui/Card';
 import { Switch, Route } from 'react-router-dom';
 import PersistentDrawer from '../main/PersistentDrawer';
-import * as userActions from'../../interface/userInterface';
+import * as userActions from '../../interface/userInterface';
 import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
 import { FormControl, FormHelperText } from 'material-ui/Form';
 import Visibility from 'material-ui-icons/Visibility';
@@ -22,6 +22,7 @@ import { withStyles } from 'material-ui/styles';
 import IconButton from 'material-ui/IconButton';
 
 import axios from 'axios';
+import * as dukeUserActions from  '../../interface/dukeUserInterface';
 const queryString = require('query-string');
 
 const styles = {
@@ -98,6 +99,46 @@ class LoginPage extends React.Component{
       console.log(dukeUser);
       const netId = dukeUser.netid;
       console.log("netId: " + netId);
+      const username = netId;
+      const email = dukeUser.mail;
+      console.log("email: " + email);
+      //automate log-in
+      var temp = this;
+      // add user to DukeUser Database if user does not exist previously
+      var userAdded = false;
+      await dukeUserActions.addDukeUserAsync(email, username, false, false, false, (res) =>{
+        console.log(res);
+        if (res.status == 400) {
+            // message = res.data;
+            // alert(message);
+            localStorage.removeItem('user');
+        } else {
+            console.log(res.data);
+            localStorage.setItem('user', JSON.stringify(res.data));
+            localStorage.setItem('fromDukeOAuth', true);
+            // console.log("hi" + JSON.parse(localStorage.getItem('user')).isAdmin);
+            var isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+            userAdded = true;
+            //also add another field called "DukeLogin"
+            temp.props.login(isAdmin, res.data);
+        }
+        });
+      console.log("userAdded: " + userAdded);
+      // userActions.authenticateAsync(this.state.username, this.state.password, function(res){
+      //   console.log(res);
+      //   if (res.status == 400) {
+      //       message = res.data;
+      //       alert(message);
+      //       localStorage.removeItem('user');
+      //   } else {
+      //       console.log(res.data);
+      //       localStorage.setItem('user', JSON.stringify(res.data));
+      //       console.log("hi" + JSON.parse(localStorage.getItem('user')).isAdmin);
+      //       var isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+      //       //also add another field called "DukeLogin"
+      //       temp.props.login(isAdmin, res.data);
+      //   }
+      // });
     }
     
   };
