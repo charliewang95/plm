@@ -21,6 +21,7 @@ import VisibilityOff from 'material-ui-icons/VisibilityOff';
 import { withStyles } from 'material-ui/styles';
 import IconButton from 'material-ui/IconButton';
 
+import axios from 'axios';
 const queryString = require('query-string');
 
 const styles = {
@@ -65,7 +66,20 @@ class LoginPage extends React.Component{
     this.registerOnClick = this.registerOnClick.bind(this);
   }
 
-  componentDidMount(){
+  async getDukeUser(client_id, token){
+    const dukeUser = await axios.get('https://api.colab.duke.edu/identity/v1/', {
+        headers: {
+         'x-api-key': client_id,
+          'Authorization': `Bearer ${token}`
+        }
+      })
+    console.log(dukeUser);
+    const dukeUserData = dukeUser.data;
+    console.log(dukeUserData);
+    return dukeUserData;
+  };
+
+  async componentDidMount(){
     console.log("Component did mount")
     const hash = window.location.hash;
     console.log("Hash:")
@@ -76,6 +90,14 @@ class LoginPage extends React.Component{
       const parsed = queryString.parse(hash);
       console.log("parsedHash:")
       console.log(parsed);
+      const client_id = "production-life-manager";
+      const token = parsed["access_token"];
+      console.log("client_id: " + client_id);
+      console.log("token: " + token);
+      const dukeUser = await this.getDukeUser(client_id, token);
+      console.log(dukeUser);
+      const netId = dukeUser.netid;
+      console.log("netId: " + netId);
     }
     
   };
