@@ -20,6 +20,13 @@ export const UserListItems = (
       </ListItemIcon>
       <ListItemText primary="Create User (Admin)" />
     </ListItem>
+
+     <ListItem component={Link} to="/admin-users" button>
+      <ListItemIcon>
+        <PersonAddIcon />
+      </ListItemIcon>
+      <ListItemText primary="Users (Admin)" />
+    </ListItem>
   </div>
 );
 

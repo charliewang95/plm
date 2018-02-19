@@ -13,6 +13,7 @@ import Cart from './components/cart/Cart';
 import Report from './components/report/Report';
 import Login from './components/login/LoginPage';
 import Register from './components/login/RegisterPage';
+import AdminUserPage from './components/admin/users/userPage'
 
 const Routes = () => (
       <div>
@@ -30,6 +31,7 @@ const Routes = () => (
 	          <Route path="/addVendorForm" component={AddVendorForm} />
 	          <Route path="/cart" component={Cart} />
 	          <Route path="/report" component={Report} />
+	          <Route path="/admin-users" component={AdminUserPage} />
 		  </Switch>
       </div>
 
