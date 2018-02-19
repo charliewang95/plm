@@ -74,53 +74,54 @@ class LoginPage extends React.Component{
           'Authorization': `Bearer ${token}`
         }
       })
-    console.log(dukeUser);
+    // console.log(dukeUser);
     const dukeUserData = dukeUser.data;
-    console.log(dukeUserData);
+    // console.log(dukeUserData);
     return dukeUserData;
   };
 
   async componentDidMount(){
     //redirects if hash exisits
-    console.log("Component did mount")
+    // console.log("Component did mount")
     const hash = window.location.hash;
-    console.log("Hash:")
-    console.log(hash);
+    // console.log("Hash:")
+    // console.log(hash);
     if(hash==""){
-      console.log("No hash is provided")
+      // console.log("No hash is provided")
     } else{
       const parsed = queryString.parse(hash);
-      console.log("parsedHash:")
-      console.log(parsed);
+      // console.log("parsedHash:")
+      // console.log(parsed);
       const client_id = "production-life-manager";
       const token = parsed["access_token"];
-      console.log("client_id: " + client_id);
-      console.log("token: " + token);
+      // console.log("client_id: " + client_id);
+      // console.log("token: " + token);
       const dukeUser = await this.getDukeUser(client_id, token);
-      console.log(dukeUser);
+      // console.log(dukeUser);
       const netId = dukeUser.netid;
-      console.log("netId: " + netId);
+      // console.log("netId: " + netId);
       const username = netId;
       const email = dukeUser.mail;
-      console.log("email: " + email);
+      // console.log("email: " + email);
       //automate log-in
       var temp = this;
       // add user to DukeUser Database if user does not exist previously
       var userAdded = false;
       await dukeUserActions.addDukeUserAsync(email, username, false, false, false, (res) =>{
-        console.log(res);
+        // console.log(res);
         if (res.status == 400) {
             // message = res.data;
             // alert(message);
             sessionStorage.removeItem('user');
         } else {
           if (res.status == 200){
-            console.log(res.data);
+            // console.log(res.data);
             sessionStorage.setItem('user', JSON.stringify(res.data));
             sessionStorage.setItem('fromDukeOAuth', true);
             // console.log("hi" + JSON.parse(sessionStorage.getItem('user')).isAdmin);
             var isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
             userAdded = true;
+            console.log("calling login()")
             temp.props.login(isAdmin, res.data);
           };
         }
