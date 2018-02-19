@@ -121,27 +121,11 @@ class LoginPage extends React.Component{
             // console.log("hi" + JSON.parse(sessionStorage.getItem('user')).isAdmin);
             var isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
             userAdded = true;
-            //also add another field called "DukeLogin"
             temp.props.login(isAdmin, res.data);
           };
         }
         });
       console.log("userAdded: " + userAdded);
-      // userActions.authenticateAsync(this.state.username, this.state.password, function(res){
-      //   console.log(res);
-      //   if (res.status == 400) {
-      //       message = res.data;
-      //       alert(message);
-      //       sessionStorage.removeItem('user');
-      //   } else {
-      //       console.log(res.data);
-      //       sessionStorage.setItem('user', JSON.stringify(res.data));
-      //       console.log("hi" + JSON.parse(sessionStorage.getItem('user')).isAdmin);
-      //       var isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
-      //       //also add another field called "DukeLogin"
-      //       temp.props.login(isAdmin, res.data);
-      //   }
-      // });
     }
     
   };
@@ -200,18 +184,6 @@ handleMouseDownPassword(event){
             temp.props.login(isAdmin, res.data);
         }
     });
-//    var message = "";
-//    var success = false;
-//    console.log(res);
-//    if(res.username){
-//      console.log("Hi");
-//      success = true;
-//    }else{
-//      console.log("I was entered");
-//      console.log(res.data);
-//      message = "Failed";
-//    }
-//    this.props.login(success, message);
   }
 
 
@@ -288,17 +260,5 @@ handleMouseDownPassword(event){
     )
 	}
 };
-/*
-                <TextField
-                    required
-                    fullWidth={true}
-                    id="adornment-password"
-                    label="Password"
-                    value={this.state.password}
-                    onChange = {(event) => this.setState({ password: event.target.value})}
-                    margin="normal"
-                    validations={[required]}
-                />
-                */
 
 export default LoginPage;
