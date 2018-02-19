@@ -81,6 +81,7 @@ class LoginPage extends React.Component{
   };
 
   async componentDidMount(){
+    //redirects if hash exisits
     console.log("Component did mount")
     const hash = window.location.hash;
     console.log("Hash:")
@@ -189,9 +190,11 @@ handleMouseDownPassword(event){
             message = res.data;
             alert(message);
             sessionStorage.removeItem('user');
+            sessionStorage.removeItem('fromDukeOAuth');
         } else {
             console.log(res.data);
             sessionStorage.setItem('user', JSON.stringify(res.data));
+            sessionStorage.setItem('fromDukeOAuth', false);
             console.log("hi" + JSON.parse(sessionStorage.getItem('user')).isAdmin);
             var isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
             temp.props.login(isAdmin, res.data);
