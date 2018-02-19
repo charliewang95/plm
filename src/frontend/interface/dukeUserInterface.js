@@ -28,6 +28,7 @@ function packIntoJson(email, username, isAdmin, isManager, loggedIn){
 };
 
 /* add one dukeUser
+ * if a duke user exists with the same username(netid), update it instead
  * for arguments see packIntoJson
  * callback: a function
  */

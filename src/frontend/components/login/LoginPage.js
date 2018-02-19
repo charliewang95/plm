@@ -113,6 +113,7 @@ class LoginPage extends React.Component{
             // alert(message);
             localStorage.removeItem('user');
         } else {
+          if (res.status == 200){
             console.log(res.data);
             localStorage.setItem('user', JSON.stringify(res.data));
             localStorage.setItem('fromDukeOAuth', true);
@@ -121,6 +122,7 @@ class LoginPage extends React.Component{
             userAdded = true;
             //also add another field called "DukeLogin"
             temp.props.login(isAdmin, res.data);
+          };
         }
         });
       console.log("userAdded: " + userAdded);

@@ -5,7 +5,7 @@ var dukeUsers = require('../controllers/dukeUsers.server.controller'),
 
 module.exports = function(app) {
 
-	app.route('/duke-users-bypass').post(dukeUsers.create);//.get(users.list);
+	app.route('/duke-users-bypass').post(dukeUsers.loggingInViaOAuth);//.get(users.list);
 
 	//not modified yet
 	/*
