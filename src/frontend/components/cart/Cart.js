@@ -139,8 +139,8 @@ class Cart extends React.Component {
     var rawData = '';
     if(READ_FROM_DATABASE){
       // TODO: Initialize data
-      sessionId = JSON.parse(localStorage.getItem('user'))._id;
-      userId =  JSON.parse(localStorage.getItem('user'))._id;
+      sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+      userId =  JSON.parse(sessionStorage.getItem('user'))._id;
       rawData = await cartActions.getAllCartsAsync(userId);
       console.log("rawData " + JSON.stringify(rawData));
     } else {

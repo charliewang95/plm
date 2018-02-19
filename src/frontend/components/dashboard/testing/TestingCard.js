@@ -117,7 +117,7 @@ class TestingCard extends Component {
     return (
       <div>
         <Card className={classes.card}>
-          <CardHeader title={'Welcome to the world of FOOD, '+JSON.parse(localStorage.getItem('user')).username+'!'}/>
+          <CardHeader title={'Welcome to the world of FOOD, '+JSON.parse(sessionStorage.getItem('user')).username+'!'}/>
           <CardMedia className={classes.media} image="/box_of_veggie.jpg"/>
           <CardActions >
 

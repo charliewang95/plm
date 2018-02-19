@@ -111,14 +111,14 @@ class LoginPage extends React.Component{
         if (res.status == 400) {
             // message = res.data;
             // alert(message);
-            localStorage.removeItem('user');
+            sessionStorage.removeItem('user');
         } else {
           if (res.status == 200){
             console.log(res.data);
-            localStorage.setItem('user', JSON.stringify(res.data));
-            localStorage.setItem('fromDukeOAuth', true);
-            // console.log("hi" + JSON.parse(localStorage.getItem('user')).isAdmin);
-            var isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+            sessionStorage.setItem('user', JSON.stringify(res.data));
+            sessionStorage.setItem('fromDukeOAuth', true);
+            // console.log("hi" + JSON.parse(sessionStorage.getItem('user')).isAdmin);
+            var isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
             userAdded = true;
             //also add another field called "DukeLogin"
             temp.props.login(isAdmin, res.data);
@@ -131,12 +131,12 @@ class LoginPage extends React.Component{
       //   if (res.status == 400) {
       //       message = res.data;
       //       alert(message);
-      //       localStorage.removeItem('user');
+      //       sessionStorage.removeItem('user');
       //   } else {
       //       console.log(res.data);
-      //       localStorage.setItem('user', JSON.stringify(res.data));
-      //       console.log("hi" + JSON.parse(localStorage.getItem('user')).isAdmin);
-      //       var isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+      //       sessionStorage.setItem('user', JSON.stringify(res.data));
+      //       console.log("hi" + JSON.parse(sessionStorage.getItem('user')).isAdmin);
+      //       var isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
       //       //also add another field called "DukeLogin"
       //       temp.props.login(isAdmin, res.data);
       //   }
@@ -188,12 +188,12 @@ handleMouseDownPassword(event){
         if (res.status == 400) {
             message = res.data;
             alert(message);
-            localStorage.removeItem('user');
+            sessionStorage.removeItem('user');
         } else {
             console.log(res.data);
-            localStorage.setItem('user', JSON.stringify(res.data));
-            console.log("hi" + JSON.parse(localStorage.getItem('user')).isAdmin);
-            var isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+            sessionStorage.setItem('user', JSON.stringify(res.data));
+            console.log("hi" + JSON.parse(sessionStorage.getItem('user')).isAdmin);
+            var isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
             temp.props.login(isAdmin, res.data);
         }
     });

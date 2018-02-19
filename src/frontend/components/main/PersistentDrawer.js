@@ -126,8 +126,8 @@ class PersistentDrawer extends React.Component {
         this.state = {
           open: false,
           anchor: 'left',
-          loggedIn: (localStorage.getItem('user')!=null),
-          isAdmin: ((localStorage.getItem('user')!=null)?(localStorage.getItem('user').isAdmin):false),
+          loggedIn: (sessionStorage.getItem('user')!=null),
+          isAdmin: ((sessionStorage.getItem('user')!=null)?(sessionStorage.getItem('user').isAdmin):false),
         };
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
@@ -138,25 +138,25 @@ class PersistentDrawer extends React.Component {
     //this.setState({loggedIn:key});
     //this.setState({user:JSON.stringify(user)});
     //this.setState({ user:user });
-    //localStorage.getItem('user') = user;
+    //sessionStorage.getItem('user') = user;
     console.log("login");
     console.log(key);
     this.handleDrawerOpen();
     this.setState({isAdmin: key});
-    this.setState({loggedIn: (localStorage.getItem('user')!=null)});
+    this.setState({loggedIn: (sessionStorage.getItem('user')!=null)});
 
-    //console.log(localStorage.getItem('user'));
+    //console.log(sessionStorage.getItem('user'));
   }
 
   componentDidMount(){
     console.log("component did mount");
-    console.log(((localStorage.getItem('user')!=null)?(localStorage.getItem('user').isAdmin):false));
+    console.log(((sessionStorage.getItem('user')!=null)?(sessionStorage.getItem('user').isAdmin):false));
   }
 
   logout(){
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('user');
     this.handleDrawerClose();
-    this.setState({loggedIn: (localStorage.getItem('user')!=null)});
+    this.setState({loggedIn: (sessionStorage.getItem('user')!=null)});
   }
 
   handleDrawerOpen = () => {

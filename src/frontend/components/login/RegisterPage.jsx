@@ -34,7 +34,7 @@ class RegisterPage extends React.Component {
   }
 
   componentWillMount(){
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
   }
 
   userSuccessfullyAdded() {
