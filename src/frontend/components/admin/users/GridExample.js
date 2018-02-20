@@ -7,8 +7,9 @@ import {
   IntegratedFiltering,
 } from '@devexpress/dx-react-grid'; //for filtering
 import {
-  // State or Local Processing Plugins
-} from '@devexpress/dx-react-grid';
+	SortingState,
+	IntegratedSorting
+} from '@devexpress/dx-react-grid'; // for sorting
 import {
   Grid,
   Table,
@@ -30,12 +31,15 @@ export default class SampleTable extends React.PureComponent {
       			{ username: 'sampleUser', email: 'user@duke.edu', privelege: 'user' },
      			{ username: 'sampleManager', email: 'manager@duke.edu', privelege: 'manager' },
       			{ username: 'sampleAdmin', email: 'admin@duke.edu', privelege: 'admin'},
-      		]
+      		],
+      		sorting: [{ columnName: 'username', direction: 'asc' }],
       	}
+
+      	this.changeSorting = sorting => this.setState( {sorting} );
 	}
 
 	render() {
-		const { rows, columns } = this.state;
+		const { rows, columns, sorting } = this.state;
 		return(
 			<Grid
 				rows={rows}
@@ -43,8 +47,13 @@ export default class SampleTable extends React.PureComponent {
 			>
 				<FilteringState defaultFilters={[]} />
 				<IntegratedFiltering />
+				<SortingState
+					sorting={sorting}
+					onSortingChange={this.changeSorting}
+				/>
+				<IntegratedSorting />
 				<Table />
-				<TableHeaderRow />
+				<TableHeaderRow showSortingControls />
 				<TableFilterRow />
 			</Grid>
 		);
