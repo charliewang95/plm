@@ -38,6 +38,12 @@ export const MainListItems = (
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItem>
+    <ListItem component={Link} to="/vendors" button>
+        <ListItemIcon>
+          <VendorsIcon />
+        </ListItemIcon>
+        <ListItemText primary="Vendors" />
+      </ListItem>
     <ListItem component={Link} to="/admin-ingredients" button>
       <ListItemIcon>
         <LocalPizzaIcon />
@@ -62,11 +68,11 @@ export const MainListItems = (
       </ListItemIcon>
       <ListItemText primary="Storage" />
     </ListItem>
-    <ListItem component={Link} to="/vendors" button>
+    <ListItem component={Link} to="/formula" button>
       <ListItemIcon>
         <VendorsIcon />
       </ListItemIcon>
-      <ListItemText primary="Vendors" />
+      <ListItemText primary="Formulas" />
     </ListItem>
     <ListItem component={Link} to="/cart" button>
       <ListItemIcon>

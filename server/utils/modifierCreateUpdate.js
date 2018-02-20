@@ -189,7 +189,7 @@ var helperIngredient = function(vendors, i, res, next, array, callback) {
         Vendor.findOne({name: vendor.vendorName}, function(err, obj){
             if (err) next(err);
             else if (!obj) {
-                res.send('Vendor '+vendor.codeUnique+' does not exist.');
+                res.send('Vendor '+vendor.vendorName+' does not exist.');
             }
             else {
 //                console.log(i);
