@@ -84,7 +84,6 @@ var listPartial = function(req, res, next, model, itemId) {
 
 var create = function(req, res, next, model) {
 	var item = new model(req.body);
-	console.log('85');
 	console.log(req.body);
 	var modifiedItem;
 	console.log("creating, modifying");

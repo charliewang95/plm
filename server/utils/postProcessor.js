@@ -34,7 +34,7 @@ var processIngredient = function(item, res, next) {
 
 var processCart = function(item, res, next) { //
     var ingredientId = item.ingredientId;
-    var quantity;
+    var newSpace;
     Inventory.findOne({ingredientId: ingredientId}, function(err, obj){
         if (err) return next(err);
         else if (!obj) {
@@ -42,23 +42,21 @@ var processCart = function(item, res, next) { //
             res.send("Ingredient doesn't exist in inventory");
         }
         else {
-            quantity = obj.quantity - item.quantity;
-            updateInventory(ingredientId, quantity, res, next, function(err, obj2){
+            newSpace = obj.space - item.space;
+            updateInventory(ingredientId, newSpace, res, next, function(err){
                 if (err) return next(err);
                 else {
-                    updateIngredient(ingredientId, item.quantity, obj.quantity, res, next, function(err, obj3){
-                        if (err) return next(err);
-                    });
+                    updateIngredient(ingredientId, item.space, obj.space, res, next);
                 }
             });
         }
     });
 };
 
-var updateInventory = function(ingredientId, quantity, res, next, callback) {
-    Inventory.findOneAndUpdate({ingredientId: ingredientId}, {quantity: quantity}, function(err, obj) {
+var updateInventory = function(ingredientId, newSpace, res, next, callback) {
+    Inventory.findOneAndUpdate({ingredientId: ingredientId}, {space: newSpace}, function(err, obj) {
         if (err) return next(err);
-        else if (quantity == 0){
+        else if (newSpace == 0){
             obj.remove(function(err){
                 callback(err);
             });
@@ -69,7 +67,7 @@ var updateInventory = function(ingredientId, quantity, res, next, callback) {
     });
 };
 
-var updateIngredient = function(ingredientId, cartQuantity, oldQuantity, res, next, callback) {
+var updateIngredient = function(ingredientId, cartQuantity, oldQuantity, res, next) {
     Ingredient.findById(ingredientId, function(err, ingredient){
         if (err) return next(err);
         else if (!ingredient) {
