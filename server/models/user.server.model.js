@@ -29,7 +29,7 @@ var UserSchema = new Schema({
 	},
 	isManager: {
 	    type: Boolean,
-	    //required: true
+	    required: true
 	},
 	loggedIn: {
 	    type: Boolean,

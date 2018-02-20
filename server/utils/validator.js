@@ -8,6 +8,8 @@ var Inventory = mongoose.model('Inventory');
 var Cart = mongoose.model('Cart');
 
 exports.validate = function(model, item, res, next, callback) {
+
+    console.log(item);
     if (model == Order) {
         validateOrder(item, res, next, function(err, obj){
             if (err) return next(err);

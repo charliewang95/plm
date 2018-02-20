@@ -24,7 +24,7 @@ class SelectIngredients extends Component {
     super(props)
     this.state = {
       selectName: "",
-      inputPrice: 0,
+      inputQuantity: 0,
       options: [],
       ingredientsArray: this.props.initialArray,
       idToNameMap: {}, //id = key, name=value
@@ -32,7 +32,7 @@ class SelectIngredients extends Component {
     this.updateId = this.updateId.bind(this);
     this.deleteIngredient = this.deleteIngredient.bind(this);
     this.addIngredient = this.addIngredient.bind(this);
-    this.updatePrice = this.updatePrice.bind(this);
+    this.updateQuantity = this.updateQuantity.bind(this);
     this.loadIngredientsArray = this.loadIngredientsArray.bind(this);
     this.loadCodeNameArray = this.loadCodeNameArray.bind(this);
 //    this.createMap = this.createMap.bind(this);
@@ -40,7 +40,7 @@ class SelectIngredients extends Component {
   }
 
   componentWillMount(){
-    //this.loadCodeNameArray();
+    this.loadCodeNameArray();
     this.loadIngredientsArray();
   //  this.resetArray();
   }
@@ -65,7 +65,7 @@ class SelectIngredients extends Component {
   async loadCodeNameArray(){
    // var startingIndex = 0;
     var rawData = [];
-    //rawData = await ingredientActions.getAllIngredientNamesCodesAsync(sessionId);
+    rawData = await ingredientActions.getAllIngredientNamesAsync(sessionId);
     console.log("loadCodeNameArray was called");
     console.log(rawData.data);
     var optionsArray = rawData.data.map(obj=>{
@@ -132,8 +132,8 @@ class SelectIngredients extends Component {
     console.log("addIngredient() was called");
     console.log(this.state.selectName);
     var tempId = this.state.selectName.ingredientName;
-    var priceFloat = parseFloat(this.state.inputPrice);
-    newIngredient = {ingredientName: tempId, price: priceFloat};
+    var quantityFloat = parseFloat(this.state.inputQuantity);
+    newIngredient = {ingredientName: tempId, quantity: quantityFloat};
     console.log(newIngredient);
     // var updateIngredient = new Array(this.state.ingredientsArray.slice(0));
     // updateIngredient.push(newIngredient);
@@ -142,7 +142,7 @@ class SelectIngredients extends Component {
     this.state.ingredientsArray.push(newIngredient);
     this.setState({ingredientsArray:this.state.ingredientsArray});
     this.resetArray(tempId, "add");
-    this.setState({inputPrice : 0});
+    this.setState({inputQuantity : 0});
     this.setState({selectName: ""})
     console.log(this.state.ingredientsArray);
     this.props.handleChange(this.state.ingredientsArray);
@@ -176,26 +176,26 @@ class SelectIngredients extends Component {
     }
   }
 
-  updatePrice (newPrice, index){
-    console.log("this is the price");
-    var price = parseFloat(newPrice.target.value);
-    console.log(typeof (price));
+  updateQuantity (newQuantity, index){
+    console.log("this is the quantity");
+    var quantity = parseFloat(newQuantity.target.value);
+    console.log(typeof (quantity));
 
-    var isEmpty = (!price || (price.length==0));
+    var isEmpty = (!quantity || (quantity.length==0));
 
     console.log(index);
     if(index>=0 && !isEmpty){
       // var updateIngredient = this.state.ingredientsArray.slice();
-      // updateIngredient[index].price = newPrice.target.value;
+      // updateIngredient[index].quantity = newQuantity.target.value;
       // this.setState({ingredientsArray: updateIngredient});
-      this.state.ingredientsArray[index].price = price;
+      this.state.ingredientsArray[index].quantity = quantity;
       this.setState({ingredientsArray: this.state.ingredientsArray});
       this.props.handleChange(this.state.ingredientsArray);
     }
   }
 
-  updatePriceHere(newPrice){
-    this.setState({inputPrice: newPrice.target.value});
+  updateQuantityHere(newQuantity){
+    this.setState({inputQuantity: newQuantity.target.value});
   }
 
   updateName(value){
@@ -219,7 +219,7 @@ class SelectIngredients extends Component {
           />
         </Grid>
         <Grid item sm={3}>
-          <TextField value={this.state.inputPrice} onChange={(value)=>{this.updatePriceHere(value);}}/>
+          <TextField value={this.state.inputQuantity} onChange={(value)=>{this.updateQuantityHere(value);}}/>
         </Grid>
         <Grid item sm={1}>
           <IconButton aria-label="Add" onClick={()=>{this.addIngredient();}}>
@@ -227,7 +227,7 @@ class SelectIngredients extends Component {
           </IconButton>
         </Grid>
       </Grid>
-      <IngredientItem idToNameMap = {this.state.idToNameMap} ingredientsArray={this.state.ingredientsArray} deleteIngredient={this.deleteIngredient} updateId={this.updateId} updatePrice={this.updatePrice} options={this.state.options} />
+      <IngredientItem idToNameMap = {this.state.idToNameMap} ingredientsArray={this.state.ingredientsArray} deleteIngredient={this.deleteIngredient} updateId={this.updateId} updateQuantity={this.updateQuantity} options={this.state.options} />
       </div>
     );
   }

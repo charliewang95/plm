@@ -32,9 +32,9 @@ import SelectIngredients from './SelectIngredients';
 
 import Styles from  'react-select/dist/react-select.css';
 import ReactSelect from 'react-select';
-import * as ingredientInterface from '../../interface/ingredientInterface';
-import * as uploadInterface from '../../interface/uploadInterface';
 import * as formulaInterface from '../../interface/formulaInterface';
+import * as uploadInterface from '../../interface/uploadInterface';
+import * as ingredientInterface from '../../interface/ingredientInterface';
   // TODO: get the sessionId
 import * as testConfig from '../../../resources/testConfig.js';
 import MyPdfViewer from '../admin/PdfViewer';
@@ -148,7 +148,7 @@ const availableValues = {
   // ingredients: testData.tablePage.ingredient_options,
 
   // TODO: Get the data from the back end
-  ingredients: sessionId == "" ? null : ingredientInterface.getAllIngredientsAsync(sessionId),
+  formulas: sessionId == "" ? null : formulaInterface.getAllFormulasAsync(sessionId),
   //ingredients: testData.tablePage.ingredient_options2,
 
 };
@@ -329,8 +329,8 @@ class AdminIngredients extends React.PureComponent {
           //var ingredientName = this.state.idToNameMap.get(ingredientObject.codeUnique);
           var ingredientName = ingredientObject.ingredientName;
           console.log(ingredientName);
-          var namePrice = ingredientName + " / $" + ingredientObject.price;
-          ingredients_string += namePrice;
+          var nameQuantity = ingredientName + " / " + ingredientObject.quantity;
+          ingredients_string += nameQuantity;
           console.log("this is I");
           console.log(i);
           if(i!= (added[0].ingredients).length -1){
@@ -348,20 +348,20 @@ class AdminIngredients extends React.PureComponent {
         console.log(added[0].ingredientsArray);
         // TODO: Send data to back end
         var temp = this;
-        await ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone, added[0].ingredientsArray, sessionId, function(res){
+        await formulaInterface.addFormula(added[0].name, added[0].description, added[0].unitsProvided, added[0].ingredientsArray, sessionId, function(res){
             if (res.status == 400) {
                 if (!alert(res.data))
                     //window.location.reload();
                     temp.setState({rows:rows});
 
             } else if (res.status == 500) {
-                if (!alert('Cannot add ingredient (ingredient already exists/one or more fields are empty)'))
+                if (!alert('Formula already exist'))
                     //window.location.reload();
                     temp.setState({rows:rows});
           }else{
             rows = [...rows,added[0]];
             temp.setState({rows:rows});
-            alert(" New Ingredient Successfully added! ");
+            alert(" New Formula Successfully added! ");
           }
         });
 
@@ -376,12 +376,12 @@ class AdminIngredients extends React.PureComponent {
             if(changed[rows[i].id].name){
               rows[i].name = changed[rows[i].id].name;
             }
-            if(changed[rows[i].id].packageName){
-              rows[i].packageName = changed[rows[i].id].packageName;
+            if(changed[rows[i].id].description){
+              rows[i].description = changed[rows[i].id].description;
             }
 
-            if(changed[rows[i].id].temperatureZone){
-              rows[i].temperatureZone = changed[rows[i].id].temperatureZone;
+            if(changed[rows[i].id].unitsProvided){
+              rows[i].unitsProvided = changed[rows[i].id].unitsProvided;
             }
             var ingredients_string = "";
 
@@ -393,8 +393,8 @@ class AdminIngredients extends React.PureComponent {
                 var ingredientObject = changed[rows[i].id].ingredients[j];
                 //var ingredientName = this.state.idToNameMap.get(ingredientObject.codeUnique);
                 var ingredientName = ingredientObject.ingredientName;
-                var namePrice = ingredientName + " / $" + ingredientObject.price;
-                ingredients_string += namePrice;
+                var nameQuantity = ingredientName + " / $" + ingredientObject.quantity;
+                ingredients_string += nameQuantity;
               //   ingredients_string += changed[rows[i].id].ingredients[j].value;
                 if(j!= (changed[rows[i].id].ingredients).length -1){
                   ingredients_string+=', ';
@@ -403,7 +403,7 @@ class AdminIngredients extends React.PureComponent {
               rows[i].ingredientsArray = changed[rows[i].id].ingredients;
               rows[i].ingredients = ingredients_string;
             }
-            ingredientInterface.updateIngredient(rows[i].ingredientId, rows[i].name, rows[i].packageName, rows[i].temperatureZone, rows[i].ingredientsArray, rows[i].moneySpent, rows[i].moneyProd, sessionId, function(res){
+            formulaInterface.updateFormula(rows[i].formulaId, rows[i].name, rows[i].description, rows[i].unitsProvided, rows[i].ingredientsArray, sessionId, function(res){
                 if (res.status == 400) {
                     alert(res.data);
                 } else if (res.status == 500) {
@@ -437,12 +437,12 @@ class AdminIngredients extends React.PureComponent {
           var name = rows[index].name;
           var packageName = rows[index].packageName;
           console.log("delete");
-          console.log(rows[index].ingredientId);
-          ingredientInterface.deleteIngredient(rows[index].ingredientId, sessionId);
+          console.log(rows[index].formulaId);
+          formulaInterface.deleteFormula(rows[index].formulaId, sessionId);
           rows.splice(index, 1);
 
           //Alert the user
-          alert(" Ingredient successfully deleted ! ");
+          alert(" Formula successfully deleted ! ");
         }
 
       });
@@ -477,7 +477,7 @@ class AdminIngredients extends React.PureComponent {
    // var startingIndex = 0;
     var rawData = [];
     sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    //rawData = await ingredientInterface.getAllIngredientNamesCodesAsync(sessionId);
+    //rawData = await formulaInterface.getAllIngredientNamesCodesAsync(sessionId);
     console.log("loadCodeNameArray was called");
     console.log(rawData.data);
 
@@ -552,8 +552,8 @@ class AdminIngredients extends React.PureComponent {
       //singleData.ingredientsArray = "";
       singleData.ingredients = ingredientArrayString;
       console.log("my id");
-      singleData.ingredientId = rawData[i]._id;
-      console.log(singleData.ingredientId);
+      singleData.formulaId = rawData[i]._id;
+      console.log(singleData.formulaId);
       processedData.push(singleData);
     }
 

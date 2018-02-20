@@ -7,24 +7,35 @@ var Converter = require("csvtojson").Converter;
 var converter = new Converter({});
 
 exports.create = function(req, res, next) {
-    utils.doWithAccess(req, res, next, Ingredient, 'create', req.params.userId, '', true);
+    utils.doWithAccess(req, res, next, Ingredient, 'create', req.params.userId, '', true, true);
 };
 
 exports.list = function(req, res, next) {
-    utils.doWithAccess(req, res, next, Ingredient, 'list', req.params.userId, '', false);
+    utils.doWithAccess(req, res, next, Ingredient, 'list', req.params.userId, '', false, false);
 };
 
 exports.read = function(req, res, next) {
-	utils.doWithAccess(req, res, next, Ingredient, 'read', req.params.userId, req.params.ingredientId, false);
+	utils.doWithAccess(req, res, next, Ingredient, 'read', req.params.userId, req.params.ingredientId, false, false);
 };
 
 exports.update = function(req, res, next) {
-	utils.doWithAccess(req, res, next, Ingredient, 'update', req.params.userId, req.params.ingredientId, true);
+	utils.doWithAccess(req, res, next, Ingredient, 'update', req.params.userId, req.params.ingredientId, true, true);
 };
 
 exports.delete = function(req, res, next) {
-    utils.doWithAccess(req, res, next, Ingredient, 'delete', req.params.userId, req.params.ingredientId, true);
+    utils.doWithAccess(req, res, next, Ingredient, 'delete', req.params.userId, req.params.ingredientId, true, true);
 };
+
+exports.listNames = function(req, res, next) {
+    Ingredient.aggregate([
+        { "$project": {
+            "_id": 0,
+            "ingredientName": "$name"
+        }}
+    ], function(err, ingredients){
+        res.json(ingredients);
+    })
+}
 
 exports.bulkImportIngredients = function(req, res, next, contents, callback) {
     console.log(contents);

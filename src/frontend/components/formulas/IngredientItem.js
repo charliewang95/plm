@@ -46,7 +46,7 @@ class IngredientItem extends Component {
           // <RemoveCircleIcon />
           // </IconButton>
           <Button onClick={()=>{this.props.deleteIngredient(index, ingredient.ingredientName);}} variant="raised" color="primary">
-        {ingredient.ingredientName} : {ingredient.price}
+        {ingredient.ingredientName} : {ingredient.quantity}
         <Delete/>
       </Button>
 

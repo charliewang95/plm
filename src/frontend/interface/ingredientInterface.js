@@ -5,6 +5,7 @@
 //and calls actions to send the actual requests
 import * as dummyIngredient from '../dummyDatas/ingredient.js'
 import * as ingredientActions from '../actions/ingredientAction'
+import axios from 'axios'
 
 /**
 takes in various properties of ingredient,
@@ -76,6 +77,10 @@ async function getIngredientAsync(ingredientId, sessionId) {
 	return await ingredientActions.getIngredientAsync(ingredientId, sessionId);
 };
 
+async function getAllIngredientNamesAsync(sessionId) {
+   const res = await axios.get('/ingredients/ingredientNames/user/'+sessionId);
+   return res;
+}
 /*
  * update one ingredient
  * ingredientId: string, the id of the ingredient
@@ -100,4 +105,4 @@ async function deleteIngredient(ingredientId, sessionId) {
 };
 
 //export functions above for use by other modules
-export { addIngredient, getAllIngredientsAsync, getIngredientAsync, updateIngredient, deleteIngredient};
+export { addIngredient, getAllIngredientsAsync, getIngredientAsync, updateIngredient, deleteIngredient, getAllIngredientNamesAsync};

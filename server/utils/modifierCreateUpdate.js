@@ -8,6 +8,7 @@ var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
 var Inventory = mongoose.model('Inventory');
 var Cart = mongoose.model('Cart');
+var Formula = mongoose.model('Formula');
 
 exports.modify = function(action, model, item, itemId, res, next, callback) {
     if (model == Order) {
@@ -28,6 +29,14 @@ exports.modify = function(action, model, item, itemId, res, next, callback) {
     }
     else if (model == Ingredient) {
         modifyIngredient(action, item, itemId, res, next, function(err, obj){
+            if (err) next(err);
+            else {
+                callback(err, obj);
+            }
+        });
+    }
+    else if (model == Formula) {
+        modifyFormula(action, item, itemId, res, next, function(err, obj){
             if (err) next(err);
             else {
                 callback(err, obj);
@@ -165,9 +174,7 @@ var modifyVendor = function(action, item, itemId, res, next, callback) { //add u
 };
 
 var modifyIngredient = function(action, item, itemId, res, next, callback) {
-    var counter = 0;
     var vendors = item.vendors;
-    var vendor;
     if (vendors == null || vendors.length == 0){
         callback(0, item);
     } else {
@@ -199,6 +206,43 @@ var helperIngredient = function(vendors, i, res, next, array, callback) {
                 array.push(newVendor);
 
                 helperIngredient(vendors, i+1, res, next, array, callback);
+            }
+        });
+    }
+};
+
+var modifyFormula = function(action, item, itemId, res, next, callback) { //add unique lowercase code to check code uniqueness
+    var ingredients = item.ingredients;
+    if (ingredients == null || ingredients.length == 0){
+        callback(0, item);
+    } else {
+        var newIngredients = [];
+        helperFormula(ingredients, 0, res, next, newIngredients, function(err, obj){
+            item.ingredients = obj;
+            callback(0, item);
+        })
+    }
+};
+
+var helperFormula = function(ingredients, i, res, next, array, callback) {
+    if (i == ingredients.length) {
+        callback(0, array);
+    } else {
+        ingredient = ingredients[i];
+//        console.log(vendor);
+        var newIngredient;
+        Ingredient.findOne({name: ingredient.ingredientName}, function(err, obj){
+            if (err) next(err);
+            else if (!obj) {
+                res.send('Ingredient '+ingredient.ingredientName+' does not exist.');
+            }
+            else {
+//                console.log(i);
+                var str = JSON.stringify(ingredient).slice(0,-1)+',"ingredientId":"'+obj._id+'"}';
+                newIngredient = JSON.parse(str);
+                array.push(newIngredient);
+                console.log(newIngredient);
+                helperFormula(ingredients, i+1, res, next, array, callback);
             }
         });
     }
