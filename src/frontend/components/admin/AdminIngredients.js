@@ -1,12 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  FilteringState,
+  IntegratedFiltering,
+} from '@devexpress/dx-react-grid';
+import {
   SortingState, EditingState, PagingState,
   IntegratedPaging, IntegratedSorting,
 } from '@devexpress/dx-react-grid';
 import {
   Grid,
-  Table, TableHeaderRow, TableEditRow, TableEditColumn,
+  Table, TableFilterRow, TableHeaderRow, TableEditRow, TableEditColumn,
   PagingPanel, DragDropProvider, TableColumnReordering,
 } from '@devexpress/dx-react-grid-material-ui';
 import Paper from 'material-ui/Paper';
@@ -129,6 +133,16 @@ const commandComponents = {
   cancel: CancelButton,
 };
 
+const FilterCell = (props) => {
+  if(props.column.name=='viewDetails'){
+    return <Table.Cell />
+  }
+  return <TableFilterRow.Cell {...props} />
+}
+FilterCell.propTypes = {
+  column: PropTypes.shape({ name: PropTypes.string }).isRequired,
+};
+
 const Command = ({ id, onExecute }) => {
   const CommandButton = commandComponents[id];
   return (
@@ -211,8 +225,16 @@ LookupEditCellBase.defaultProps = {
 export const LookupEditCell = withStyles(styles, { name: 'ControlledModeDemo' })(LookupEditCellBase);
 
 
+
 const Cell = (props) => {
-  console.log(" CELL props value: " + props.value)
+  console.log(" CELL props value: ");
+  console.log(props);
+  if(props.column.name=='viewDetails'){
+    return  <Button raised color="primary"
+      component={Link} to={{pathname: '/ingredient-details', state:{details: props.row} }}
+      style = {{marginTop: 5, marginLeft: 5}}
+      > VIEW DETAILS</Button>
+  }
   return <Table.Cell {...props} />;
 };
 
@@ -230,6 +252,8 @@ const EditCell = (props) => {
   if (props.column.name =='vendors') {
     console.log(vendorsArray);
     return  <MultiSelectCell {...props} vendorsArray= {vendorsArray} onValueChange={props.onValueChange}/>;
+  } if(props.column.name =='viewDetails'){
+    return <Table.Cell {...props} />
   }else if (availableColumnValues){
     return <LookupEditCell {...props} availableColumnValues={availableColumnValues}/>;
   }
@@ -268,10 +292,13 @@ class AdminIngredients extends React.PureComponent {
         { name: 'packageName', title: 'Package' },
         { name: 'temperatureZone', title: 'Temperature Zone' },
         { name: 'vendors', title: 'Vendors/Price' },
+        { name: 'nativeUnit', title: 'Native Unit' },
+        { name: 'numUnitPerPackage', title: 'Unit/package' },
+        { name: 'viewDetails', key: 'detail', title: ''},
       ],
 
       tableColumnExtensions: [
-        { columnName: 'vendors', align: 'right' },
+        { columnName: 'viewDetails', align: 'right', width: 150},
       ],
 
       // TODO: get data to display from back end
@@ -285,7 +312,7 @@ class AdminIngredients extends React.PureComponent {
       deletingRows: [],
       pageSize: 10,
       pageSizes: [5, 10, 0],
-      columnOrder: ['name', 'packageName', 'temperatureZone', 'vendors'],
+      columnOrder: ['name', 'temperatureZone', 'packageName', 'numUnitPerPackage', 'nativeUnit', 'vendors', 'viewDetails'],
       options:[],
     };
 
@@ -349,7 +376,9 @@ class AdminIngredients extends React.PureComponent {
         console.log(added[0].vendorsArray);
         // TODO: Send data to back end
         var temp = this;
-        await ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone, added[0].vendorsArray, sessionId, function(res){
+        
+        await ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone, 
+          added[0].vendorsArray, 0, 0, added[0].nativeUnit, added[0].numUnitPerPackage, sessionId, function(res){
             if (res.status == 400) {
                 if (!alert(res.data))
                     //window.location.reload();
@@ -372,7 +401,8 @@ class AdminIngredients extends React.PureComponent {
         console.log("changed " + Object.keys(changed));
 
         for(var i =0; i < rows.length; i++){
-          // Accessing the changes made to the rows and displaying them
+          // Accessing the changes made to the rows and displaying them=
+
           if(changed[rows[i].id]){
             if(changed[rows[i].id].name){
               rows[i].name = changed[rows[i].id].name;
@@ -380,9 +410,19 @@ class AdminIngredients extends React.PureComponent {
             if(changed[rows[i].id].packageName){
               rows[i].packageName = changed[rows[i].id].packageName;
             }
-
             if(changed[rows[i].id].temperatureZone){
               rows[i].temperatureZone = changed[rows[i].id].temperatureZone;
+            }
+            if(changed[rows[i].id].nativeUnit){
+              rows[i].nativeUnit = changed[rows[i].id].nativeUnit;
+            }
+            if(changed[rows[i].id].numUnitPerPackage){
+              const re = /^[0-9\b]+$/;
+              if(re.test(changed[rows[i].id].numUnitPerPackage)){
+                rows[i].numUnitPerPackage = changed[rows[i].id].numUnitPerPackage;
+              }else{
+                alert("Quantity must be a number!");
+              }
             }
             var vendors_string = "";
 
@@ -404,7 +444,10 @@ class AdminIngredients extends React.PureComponent {
               rows[i].vendorsArray = changed[rows[i].id].vendors;
               rows[i].vendors = vendors_string;
             }
-            ingredientInterface.updateIngredient(rows[i].ingredientId, rows[i].name, rows[i].packageName, rows[i].temperatureZone, rows[i].vendorsArray, rows[i].moneySpent, rows[i].moneyProd, sessionId, function(res){
+
+            ingredientInterface.updateIngredient(rows[i].ingredientId, rows[i].name, rows[i].packageName, 
+              rows[i].temperatureZone, rows[i].vendorsArray, rows[i].moneySpent, rows[i].moneyProd, 
+              rows[i].nativeUnit, rows[i].numUnitPerPackage, sessionId, function(res){
                 if (res.status == 400) {
                     alert(res.data);
                 } else if (res.status == 500) {
@@ -553,6 +596,8 @@ class AdminIngredients extends React.PureComponent {
       singleData.vendorsArray = formatVendorsArray;
       singleData.moneySpent = rawData[i].moneySpent;
       singleData.moneyProd = rawData[i].moneyProd;
+      singleData.nativeUnit = rawData[i].nativeUnit;
+      singleData.numUnitPerPackage = rawData[i].numUnitPerPackage;
       //singleData.vendorsArray = "";
       singleData.vendors = vendorArrayString;
       console.log("my id");
@@ -631,6 +676,8 @@ class AdminIngredients extends React.PureComponent {
           getRowId={getRowId}
 
         >
+        <FilteringState/>
+          <IntegratedFiltering />
           <SortingState
             sorting={sorting}
             onSortingChange={this.changeSorting}
@@ -657,6 +704,7 @@ class AdminIngredients extends React.PureComponent {
 
           <DragDropProvider />
 
+
           <Table
             columnExtensions={tableColumnExtensions}
             cellComponent={Cell}
@@ -668,7 +716,7 @@ class AdminIngredients extends React.PureComponent {
           />
 
           <TableHeaderRow showSortingControls />
-
+          <TableFilterRow cellComponent={FilterCell}/>
           {isAdmin && <TableEditRow
             cellComponent={EditCell}
           /> }

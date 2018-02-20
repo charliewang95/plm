@@ -8,7 +8,7 @@ import AddCircleIcon from 'material-ui-icons/AddCircle';
 import VendorItem from './VendorItem';
 import * as vendorActions from '../../interface/vendorInterface.js';
 import * as testConfig from '../../../resources/testConfig.js';
-
+import Tooltip from 'material-ui/Tooltip';
 const VENDORS = require('./dummyVendors');
 
 
@@ -223,7 +223,11 @@ class SelectVendors extends Component {
         </Grid>
         <Grid item sm={1}>
           <IconButton aria-label="Add" onClick={()=>{this.addVendor();}}>
-            <AddCircleIcon />
+            {this.state.selectName && (this.state.inputPrice>0) && 
+               <Tooltip id="tooltip-top" title="Press to add vendor" placement="top-start">
+                  <AddCircleIcon />
+               </Tooltip>
+            }
           </IconButton>
         </Grid>
       </Grid>
