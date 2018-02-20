@@ -6,6 +6,7 @@ import RegisterForm from './RegisterForm.jsx';
 import { addUser } from '../../../interface/userInterface.js';
 
 import * as testConfig from '../../../../resources/testConfig.js'
+import GridExample from './GridExample'
 
 // TODO: get session Id from the user
 var sessionId = "";
@@ -102,12 +103,16 @@ class RegisterPage extends React.Component {
    */
   render() {
     return (
-      <RegisterForm
-        onSubmit={this.processForm}
-        onChange={this.changeUser}
-        errors={this.state.errors}
-        user={this.state.user}
-      />
+      <div>
+        <RegisterForm
+          onSubmit={this.processForm}
+          onChange={this.changeUser}
+          errors={this.state.errors}
+          user={this.state.user}
+        />
+
+        <GridExample />
+      </div>
     );
   }
 

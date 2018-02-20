@@ -153,7 +153,7 @@ class PersistentDrawer extends React.Component {
     console.log(sessionStorage.getItem('user'));
     const user = JSON.parse(sessionStorage.getItem('user'));
     console.log(typeof user);
-    const isAdmin = user["isAdmin"];
+    const isAdmin = user == null ? false : user["isAdmin"];
     console.log("user is admin: " + isAdmin);
   }
 
@@ -181,7 +181,7 @@ class PersistentDrawer extends React.Component {
     //copied from login() to make sure refreshing does not result in incorrect rendering
     const user = JSON.parse(sessionStorage.getItem('user'));
     console.log(typeof user);
-    const isAdmin = user["isAdmin"];
+    const isAdmin = user == null ? false : user["isAdmin"];
     console.log("user is admin: " + isAdmin);
     //
     const { classes, theme } = this.props;
