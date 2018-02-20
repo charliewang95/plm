@@ -96,6 +96,7 @@ var validateOrder = function(item, res, next, callback) { //check if exceed capa
                             res.send("Capacity -- "+capacity+" pounds will be exceeded. Your existed storage is "+quantity+" pounds.");
                         }
                         else {
+                            storage.update({})
                             updateInventory(ingredientId, oldSpace+item.space, oldNumUnit+item.numUnit, res, next, function(err4, obj4){
                                 if (err4) return next(err4);
                                 else {

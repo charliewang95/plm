@@ -28,6 +28,7 @@ var InventorySchema = new Schema({
     },
     space: { //in sqft
         type: Number,
+        min: [0, 'Inventory quantity cannot be negative'],
         //required: true
     },
     nativeUnit: { //in sqft
@@ -36,6 +37,7 @@ var InventorySchema = new Schema({
     },
     numUnit: {
         type: Number,
+        min: [0, 'Inventory quantity cannot be negative'],
         //required: true
     }
 });

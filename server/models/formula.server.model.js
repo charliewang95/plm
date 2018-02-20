@@ -24,6 +24,10 @@ var FormulaSchema = new Schema({
     description: {
         type: String,
     },
+    unitsProvided: {
+        type: Number,
+        required: true
+    },
     ingredients : [IngredientQuantitySchema]
 });
 
