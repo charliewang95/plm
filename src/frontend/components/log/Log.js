@@ -100,6 +100,7 @@ class Log extends React.PureComponent {
         { columnName: 'date', predicate: datePredicate },
       ],
       rows:[],
+      unchangedRows: [],
       dates: [],
       startDate: new Date(2018, 0, 1, 0, 0, 0, 0),
       endDate: new Date(2018, 11, 31, 23, 59, 59, 0),
@@ -119,11 +120,11 @@ class Log extends React.PureComponent {
       }, function(){
         console.log(this.state.startDate);
         var newRows = [];
-        for (var i = 0; i<this.state.rows.length; i++) {
-            if (Number(this.state.rows[i].date.slice(0,4))>date.getFullYear() ||
-                Number(this.state.rows[i].date.slice(0,4))==date.getFullYear() && (Number(this.state.rows[i].date.slice(5,7))>date.getMonth()+1 ||
-                Number(this.state.rows[i].date.slice(5,7))==date.getMonth()+1 && Number(this.state.rows[i].date.slice(8,10))>=date.getDate())) {
-                newRows.push(this.state.rows[i]);
+        for (var i = 0; i<this.state.unchangedRows.length; i++) {
+            if (Number(this.state.unchangedRows[i].date.slice(0,4))>date.getFullYear() ||
+                Number(this.state.unchangedRows[i].date.slice(0,4))==date.getFullYear() && (Number(this.state.unchangedRows[i].date.slice(5,7))>date.getMonth()+1 ||
+                Number(this.state.unchangedRows[i].date.slice(5,7))==date.getMonth()+1 && Number(this.state.unchangedRows[i].date.slice(8,10))>=date.getDate())) {
+                newRows.push(this.state.unchangedRows[i]);
             }
         }
         this.setState({
@@ -139,11 +140,11 @@ class Log extends React.PureComponent {
       }, function(){
         console.log(this.state.endDate);
             var newRows = [];
-            for (var i = 0; i<this.state.rows.length; i++) {
-                if (Number(this.state.rows[i].date.slice(0,4))<date.getFullYear() ||
-                    Number(this.state.rows[i].date.slice(0,4))==date.getFullYear() && (Number(this.state.rows[i].date.slice(5,7))<date.getMonth()+1 ||
-                    Number(this.state.rows[i].date.slice(5,7))==date.getMonth()+1 && Number(this.state.rows[i].date.slice(8,10))<=date.getDate())) {
-                    newRows.push(this.state.rows[i]);
+            for (var i = 0; i<this.state.unchangedRows.length; i++) {
+                if (Number(this.state.unchangedRows[i].date.slice(0,4))<date.getFullYear() ||
+                    Number(this.state.unchangedRows[i].date.slice(0,4))==date.getFullYear() && (Number(this.state.unchangedRows[i].date.slice(5,7))<date.getMonth()+1 ||
+                    Number(this.state.unchangedRows[i].date.slice(5,7))==date.getMonth()+1 && Number(this.state.unchangedRows[i].date.slice(8,10))<=date.getDate())) {
+                    newRows.push(this.state.unchangedRows[i]);
                 }
             }
             this.setState({
@@ -187,11 +188,12 @@ class Log extends React.PureComponent {
 
        this.setState({dates:tempDates});
        this.setState({rows:processedData});
+       this.setState({unchangedRows:processedData});
   }
 
   render() {
     // const {classes} = this.props;
-    const { integratedFilteringColumnExtensions, rows,columns, dates, startDate, endDate, filters} = this.state;
+    const { integratedFilteringColumnExtensions, rows,columns, dates, startDate, endDate, filters, unchangedRows} = this.state;
 
     return (
       <Paper>
