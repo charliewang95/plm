@@ -42,11 +42,15 @@ const styles = {
       float: 'center'
     },
     quantity:{
-      width: 50
+      width: 90
+    },
+    formControl: {
+      width: 400
     }
   };
 
-const sessionId = JSON.parse(localStorage.getItem('user'))._id;
+var sessionId = "";
+
 
 class AddIngredientForm extends React.Component{
 
@@ -122,7 +126,7 @@ class AddIngredientForm extends React.Component{
   onFormSubmit(e) {
 
     e.preventDefault();
-
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
     ingredientInterface.updateIngredient(this.state.ingredientId, this.state.name, this.state.packageName, 
               this.state.temperatureZone, this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, 
               this.state.nativeUnit, this.state.numUnitPerPackage, sessionId, function(res){
@@ -147,7 +151,7 @@ class AddIngredientForm extends React.Component{
     const { name, packageName, temperatureZone, vendors } = this.state;
     return (
       // <PageBase title = 'Add Ingredients' navigation = '/Application Form'>
-      <form onSubmit={this.onFormSubmit} >
+      <form onSubmit={this.onFormSubmit} style={styles.formControl}>
         <p><font size="6">Basic Information</font></p>
         {(this.state.numUnit!=0)? <Chip label="In Stock"/> : ''}
           <FormGroup>
@@ -159,8 +163,8 @@ class AddIngredientForm extends React.Component{
               onChange={this.handleChange('name')}
               margin="normal"
             />
-            <FormControl style={styles.formControl}>
-              <InputLabel htmlFor="temperatureZone">temperatureZone</InputLabel>
+            <FormControl>
+              <InputLabel htmlFor="temperatureZone">Temperature</InputLabel>
               <Select
                 value={this.state.temperatureZone}
                 onChange={this.handleChange('temperatureZone')}
@@ -183,6 +187,7 @@ class AddIngredientForm extends React.Component{
               onChange={this.handleChange('numUnitPerPackage')}
               margin="normal"
               disabled = {this.state.isDisabled}
+              style={styles.quantity}
             />
             <TextField
               id="nativeUnit"
@@ -191,6 +196,7 @@ class AddIngredientForm extends React.Component{
               onChange={this.handleChange('nativeUnit')}
               margin="normal"
               disabled = {this.state.isDisabled}
+              style={styles.quantity}
             />
              per
             <FormControl style={styles.packageName}>
@@ -209,7 +215,6 @@ class AddIngredientForm extends React.Component{
                 <MenuItem value={'drum'}>Drum</MenuItem>
                 <MenuItem value={'supersack'}>Supersack</MenuItem>
               </Select>
-              <FormHelperText>{this.state.numUnitPerPackage} {this.state.nativeUnit} / {this.state.packageName} </FormHelperText>
             </FormControl>
             <FormGroup>
             {this.state.isDisabled && <TextField
@@ -219,7 +224,7 @@ class AddIngredientForm extends React.Component{
               margin="normal"
               disabled = {this.state.isDisabled}
             />}
-            {(!this.state.isDisabled) &&<SelectVendors initialArray={this.state.vendorsArray} handleChange={this.updateVendors}/>}
+            {(!this.state.isDisabled) && <SelectVendors initialArray={this.state.vendorsArray} handleChange={this.updateVendors}/>}
             </FormGroup>
               <p><font size="6">Inventory Information</font></p>
               <FormGroup>

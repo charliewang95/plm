@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import TextField from 'material-ui/TextField';
-import { FormControl, FormHelperText } from 'material-ui/Form';
-import Select from 'react-select';
+//import Select from 'react-select';
 import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
 import AddCircleIcon from 'material-ui-icons/AddCircle';
@@ -9,6 +8,12 @@ import VendorItem from './VendorItem';
 import * as vendorActions from '../../interface/vendorInterface.js';
 import * as testConfig from '../../../resources/testConfig.js';
 import Tooltip from 'material-ui/Tooltip';
+import Select from 'material-ui/Select';
+import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
+import { FormControl, FormGroup, FormHelperText } from 'material-ui/Form';
+import { MenuItem } from 'material-ui/Menu';
+
+
 const VENDORS = require('./dummyVendors');
 
 
@@ -35,6 +40,7 @@ class SelectVendors extends Component {
     this.updatePrice = this.updatePrice.bind(this);
     this.loadVendorsArray = this.loadVendorsArray.bind(this);
     this.loadCodeNameArray = this.loadCodeNameArray.bind(this);
+//    this.updateName = this.updateName.bind(this);
 //    this.createMap = this.createMap.bind(this);
     this.resetArray = this.resetArray.bind(this);
   }
@@ -95,7 +101,7 @@ class SelectVendors extends Component {
        obj.vendorName = name;
        obj.label = name;
        this.state.options.push(obj);
-       console.log("what's up");
+       console.log('qqqqqq');
        console.log(this.state.options);
        this.setState({options:this.state.options});
      } else{
@@ -131,7 +137,7 @@ class SelectVendors extends Component {
     var newVendor = new Object();
     console.log("addVendor() was called");
     console.log(this.state.selectName);
-    var tempId = this.state.selectName.vendorName;
+    var tempId = this.state.selectName;
     var priceFloat = parseFloat(this.state.inputPrice);
     newVendor = {vendorName: tempId, price: priceFloat};
     console.log(newVendor);
@@ -198,39 +204,59 @@ class SelectVendors extends Component {
     this.setState({inputPrice: newPrice.target.value});
   }
 
-  updateName(value){
-    console.log("updateName");
-    console.log(value);
-    this.setState({selectName: value});
-  }
+  // updateName(value){
+  //   console.log("updateName");
+  //   console.log(value);
+  //   this.setState({selectName: value});
+  // }
+
+   handleChange = name => event => {
+    console.log("handling changes:");
+    console.log(event.target.value);
+    this.setState({
+      [name]: event.target.value,
+    });
+  };
 
   render() {
     return (
     	<div>
-      <Grid container spacing={16}>
-        <Grid item sm={7}>
-         <Select
-          placeholder="Select New Vendor"
-          name="Vendor Name"
-          options={this.state.options}
-          valueKey="vendorName"
-          value={this.state.selectName} //value displayed
-          onChange={this.updateName.bind(this)}
+          <p>Select a Vendor to be added:</p>
+          <FormControl style={{marginLeft: 20, width:150}}>
+            <InputLabel htmlFor="vendorName">Vendor</InputLabel>
+            <Select
+             disabled={this.state.options.length==0}
+             value={this.state.selectName}
+             onChange={this.handleChange('selectName')}
+             inputProps={{
+              name: 'vendorName',
+              id: 'vendorName',
+             }}>
+            {this.state.options.map((vendor, index)=>(<MenuItem key={index} value={vendor.vendorName}>{vendor.vendorName}</MenuItem>))}
+            </Select>
+         </FormControl>
+       
+ <FormControl style={{marginLeft:10}}>
+   
+          <InputLabel htmlFor="amount">Price</InputLabel>
+          <Input
+            style={{width:50}}
+            id="adornment-amount"
+            onChange={(value)=>{this.updatePriceHere(value);}}
+            value={this.state.inputPrice}
+            startAdornment={<InputAdornment position="start">$</InputAdornment>}
           />
-        </Grid>
-        <Grid item sm={3}>
-          <TextField value={this.state.inputPrice} onChange={(value)=>{this.updatePriceHere(value);}}/>
-        </Grid>
-        <Grid item sm={1}>
-          <IconButton aria-label="Add" onClick={()=>{this.addVendor();}}>
-            {this.state.selectName && (this.state.inputPrice>0) && 
+
+ </FormControl>
+ {this.state.selectName && (this.state.inputPrice>0) && 
+ <IconButton aria-label="Add" onClick={()=>{this.addVendor();}}>
                <Tooltip id="tooltip-top" title="Press to add vendor" placement="top-start">
-                  <AddCircleIcon />
+                  <AddCircleIcon/>
                </Tooltip>
-            }
-          </IconButton>
-        </Grid>
-      </Grid>
+          </IconButton>}
+ <br/>
+ <p>Current Vendors: </p>
+
       <VendorItem idToNameMap = {this.state.idToNameMap} vendorsArray={this.state.vendorsArray} deleteVendor={this.deleteVendor} updateId={this.updateId} updatePrice={this.updatePrice} options={this.state.options} />
       </div>
     );

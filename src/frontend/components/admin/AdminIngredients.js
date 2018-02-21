@@ -134,9 +134,6 @@ const commandComponents = {
 };
 
 const FilterCell = (props) => {
-  if(props.column.name=='viewDetails'){
-    return <Table.Cell />
-  }
   return <TableFilterRow.Cell {...props} />
 }
 FilterCell.propTypes = {
@@ -229,11 +226,10 @@ export const LookupEditCell = withStyles(styles, { name: 'ControlledModeDemo' })
 const Cell = (props) => {
   console.log(" CELL props value: ");
   console.log(props);
-  if(props.column.name=='viewDetails'){
-    return  <Button raised color="primary"
-      component={Link} to={{pathname: '/ingredient-details', state:{details: props.row} }}
-      style = {{marginTop: 5, marginLeft: 5}}
-      > VIEW DETAILS</Button>
+  if(props.column.name=='name'){
+    return <Table.Cell {...props}>
+    <Link to={{pathname: '/ingredient-details', state:{details: props.row} }}>{props.row.name}</Link>
+    </Table.Cell>
   }
   return <Table.Cell {...props} />;
 };
@@ -252,8 +248,6 @@ const EditCell = (props) => {
   if (props.column.name =='vendors') {
     console.log(vendorsArray);
     return  <MultiSelectCell {...props} vendorsArray= {vendorsArray} onValueChange={props.onValueChange}/>;
-  } if(props.column.name =='viewDetails'){
-    return <Table.Cell {...props} />
   }else if (availableColumnValues){
     return <LookupEditCell {...props} availableColumnValues={availableColumnValues}/>;
   }
@@ -294,11 +288,6 @@ class AdminIngredients extends React.PureComponent {
         { name: 'vendors', title: 'Vendors/Price' },
         { name: 'nativeUnit', title: 'Native Unit' },
         { name: 'numUnitPerPackage', title: 'Unit/package' },
-        { name: 'viewDetails', key: 'detail', title: ''},
-      ],
-
-      tableColumnExtensions: [
-        { columnName: 'viewDetails', align: 'right', width: 150},
       ],
 
       // TODO: get data to display from back end
@@ -312,7 +301,7 @@ class AdminIngredients extends React.PureComponent {
       deletingRows: [],
       pageSize: 10,
       pageSizes: [5, 10, 0],
-      columnOrder: ['name', 'temperatureZone', 'packageName', 'numUnitPerPackage', 'nativeUnit', 'vendors', 'viewDetails'],
+      columnOrder: ['name', 'temperatureZone', 'packageName', 'numUnitPerPackage', 'nativeUnit', 'vendors'],
       options:[],
     };
 
@@ -723,7 +712,6 @@ class AdminIngredients extends React.PureComponent {
           {isAdmin && <TableEditColumn
             width={120}
             showAddCommand={!addedRows.length}
-            showEditCommand
             showDeleteCommand
             commandComponent={Command}
           />}
