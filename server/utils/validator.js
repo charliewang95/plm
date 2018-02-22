@@ -8,14 +8,10 @@ var Inventory = mongoose.model('Inventory');
 var Cart = mongoose.model('Cart');
 
 exports.validate = function(model, item, res, next, callback) {
-
     console.log(item);
 //    if (model == Order) {
-//        validateOrder(item, res, next, function(err, obj){
-//            if (err) return next(err);
-//            else {
-//                callback(err, obj);
-//            }
+//        validateOrders(item, res, next, function(){
+//            callback();
 //        });
 //    }
     if (model == Storage) {
@@ -55,109 +51,7 @@ exports.validate = function(model, item, res, next, callback) {
     }
 };
 
-var validateOrder = function(item, res, next, callback) { //check if exceed capacity
-    var ingredientId = item.ingredientId;
-    var ingredientName, temperatureZone, capacity;
-    var space = 0, newSpace = 0, oldSpace = 0, oldNumUnit = 0;
-    Ingredient.findById(ingredientId, function(err1, obj1){
-        if (err1) return next(err1);
-        else if (!obj1) {
-            res.status(400);
-            res.send("Ingredient doesn't exist");
-        }
-        else {
-            ingredientName = obj1.name;
-            temperatureZone = obj1.temperatureZone;
-            Storage.findOne({temperatureZone: temperatureZone}, function(err2, storage){
-                if (err2) return next(err2);
-                else if (!obj1) {
-                    res.status(400);
-                    res.send("Storage capacity needs to be set for "+temperatureZone);
-                }
-                else {
-                    capacity = storage.capacity;
-                    Inventory.find({temperatureZone: temperatureZone}, function(err3, inventories){
-                        if (err3) return next(err3);
-                        else if (!inventories) {
-                            space = 0;
-                        }
-                        else {
-                            for (var i=0; i<inventories.length; i++) {
-                                if (inventories[i].packageName != 'truckload' && inventories[i].packageName != 'railcar')
-                                    space+=inventories[i].space;
-                                if (inventories[i].ingredientId.toString() == ingredientId.toString()) {
-                                    oldSpace = inventories[i].space;
-                                    oldNumUnit = inventories[i].numUnit;
-                                }
-                            }
-                        }
-
-                        newSpace = item.space + space;
-                        if (newSpace > capacity && obj1.packageName != 'truckload' && obj1.packageName != 'railcar') {
-                            res.status(400);
-                            res.send("Capacity -- "+capacity+" pounds will be exceeded. Your existed storage is "+quantity+" pounds.");
-                        }
-                        else {
-                            storage.update({})
-                            updateInventory(ingredientId, oldSpace+item.space, oldNumUnit+item.numUnit, res, next, function(err4, obj4){
-                                if (err4) return next(err4);
-                                else {
-                                    callback(err4, true);
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-        }
-    });
-};
-
-var updateInventory = function(ingredientId, space, numUnit, res, next, callback) {
-    Inventory.findOneAndUpdate({ingredientId: ingredientId}, {space: space, numUnit: numUnit}, function(err, obj) {
-        if (err) return next(err);
-        else if (!obj){
-            if (space == 0) callback(0, null);
-            else {
-                Ingredient.findById(ingredientId, function(err, ingredient){
-                    if (err) return next(err);
-                    else if (!ingredient) {
-                        res.status(400).send("Ingredient does not exist");
-                    }
-                    else {
-                        var item = new Inventory();
-                        item.ingredientId = ingredientId;
-                        item.ingredientName = ingredient.name;
-                        item.temperatureZone = ingredient.temperatureZone;
-                        item.packageName = ingredient.packageName;
-                        item.space = space;
-                        item.nativeUnit = ingredient.nativeUnit;
-                        item.numUnit = numUnit;
-                        item.save(function(err) {
-                            if (err) {
-                                return next(err);
-                            }
-                            else {
-                                callback(err, null);
-                            }
-                        });
-                    }
-                });
-            }
-        }
-        else {
-            if (space == 0 && obj.packageName != 'truckload' && obj.packageName != 'railcar') {
-                obj.remove(func);
-            }
-            else {
-                callback(err, null);
-            }
-        }
-    });
-}
-
 var validateStorage = function(item, res, next, callback) { //check if capacity below inventory quantity
-    //var ingredientId = item.ingredientId;
     var temperatureZone = item.temperatureZone;
     var temperatureZoneUsed, capacity, space = 0;
     Inventory.find({temperatureZone: temperatureZone}, function(err1, items){
@@ -169,17 +63,6 @@ var validateStorage = function(item, res, next, callback) { //check if capacity 
         else {
             for (var i = 0; i < items.length; i++) {
                 var inventory = items[i];
-//                temperatureZoneUsed = storage.temperatureZone;
-//                if (temperatureZoneUsed.toLowerCase() == item.temperatureZone.toLowerCase()){
-//                    Inventory.findOne({ingredientId: ingredientId}, function(err2, obj2){
-//                        if (err2) return next(err2);
-//                        else if (!obj2) {
-//                            quantity = 0;
-//                        }
-//                        else {
-//                            console.log(err2);
-//                            quantity = obj2.quantity;
-//                        }
                 if (inventory.packageName != 'truckload' && inventory.packageName != 'railcar')
                     space+=inventory.space;
             }
@@ -187,11 +70,6 @@ var validateStorage = function(item, res, next, callback) { //check if capacity 
                 res.status(400);
                 res.send("Capacity -- "+item.capacity+" sqft will be exceeded by current space "+ space +" sqft for "+temperatureZone);
             }
-//                    });
-//                }
-//                else {
-//                    callback(err1, true); // not stored at this temperature; change at will
-//                }
             else callback(err1, true);
         }
     });
