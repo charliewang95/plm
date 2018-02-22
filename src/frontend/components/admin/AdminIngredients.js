@@ -77,8 +77,8 @@ const AddButton = ({ onExecute }) => (
   <div style={{ textAlign: 'center' }}>
     <Button
       color="primary"
-      onClick={onExecute}
-      title="Create new row"
+      title="Create New Ingredient"
+      component={Link} to={{pathname: '/ingredient-details', state:{isCreateNew: true} }}
     >
       New
     </Button>
@@ -142,6 +142,8 @@ FilterCell.propTypes = {
 
 const Command = ({ id, onExecute }) => {
   const CommandButton = commandComponents[id];
+  console.log("this is a command");
+  console.log(commandComponents[id]);
   return (
     <CommandButton
       onExecute={onExecute}
@@ -738,6 +740,7 @@ class AdminIngredients extends React.PureComponent {
                 <Table
                   columnExtensions={tableColumnExtensions}
                   cellComponent={Cell}
+                  order={columnOrder}
                 />
                 <TableHeaderRow />
               </Grid>

@@ -38,42 +38,27 @@ class VendorItem extends Component {
   }
 
   render() {
-     const { classes } = this.props;
     return (
-    	<div style={{marginLeft:10}}>
-   
+    	<div style={{marginLeft:20}}>
       {this.props.vendorsArray && this.props.vendorsArray.map((vendor,index)=>(
-
-          <div>
-          
-
-     {vendor.vendorName}
-       <FormControl >
-       
-          <Input
-            id="adornment-amount"
-            value={vendor.price}
-            style={{marginLeft: 10, width:50}}
-            startAdornment={<InputAdornment position="start">$</InputAdornment>}
-          />
-        </FormControl>
-        <IconButton aria-label="Delete" onClick={()=>{this.props.deleteVendor(index, vendor.vendorName);}}>
-  
-          <RemoveCircleIcon />
+        <div key="index">
+        {vendor.vendorName}
+         <FormControl >
+            <Input
+              id="adornment-amount"
+              value={vendor.price}
+              style={{marginLeft: 10, width:50}}
+              startAdornment={<InputAdornment position="start">$</InputAdornment>}
+            />
+          </FormControl>
+          <IconButton aria-label="Delete" onClick={()=>{this.props.deleteVendor(index, vendor.vendorName);}}>
+            <RemoveCircleIcon />
           </IconButton>
-
-        
-
         </div>
       ))}
-
       </div>
     );
   }
 }
-
-VendorItem.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 export default VendorItem

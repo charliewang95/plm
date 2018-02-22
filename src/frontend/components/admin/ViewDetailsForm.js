@@ -39,10 +39,11 @@ const styles = {
     },
     packageName:{
       marginLeft: 10,
-      float: 'center'
+      float: 'center',
+      width: 100,
     },
     quantity:{
-      width: 90
+      width: 100
     },
     formControl: {
       width: 400
@@ -56,30 +57,35 @@ class AddIngredientForm extends React.Component{
 
   constructor(props) {
     super(props);
-    const details = props.location.state.details;
+    var dummyObject = new Object();
+    const details = (props.location.state.details)?(props.location.state.details):dummyObject;
+    console.log(details);
+    const isCreateNew = props.location.state.isCreateNew;
     this.state = {
   		vendors: [],
       vendorString: "",
       vendorsArray: (details.vendorsArray)?(details.vendorsArray):[],
   		value:undefined,
-      ingredientId: details.ingredientId,
-      name:details.name,
-      packageName:details.packageName,
-      temperatureZone:details.temperatureZone,
+      ingredientId: (details.ingredientId)?(details.ingredientId):'',
+      name:(details.name)?(details.name):'',
+      packageName:(details.packageName)?(details.packageName):'',
+      temperatureZone:(details.temperatureZone)?(details.temperatureZone):'',
       multi : 'false',
-      nativeUnit: details.nativeUnit,
-      numUnitPerPackage: details.numUnitPerPackage,
-      isDisabled: true,
+      nativeUnit: (details.nativeUnit)?(details.nativeUnit):'',
+      numUnitPerPackage: (details.numUnitPerPackage)?(details.numUnitPerPackage):'',
+      isDisabled: (isCreateNew) ? false: true,
       numUnit: 0,
       space: 0,
       moneySpent: (details.moneySpent)?(details.moneySpent) : 0,
       moneyProd: (details.moneyProd) ? (details.moneyProd): 0,
       price: 0,
+      isCreateNew: (isCreateNew)
       }
     this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.updateVendors = this.updateVendors.bind(this);
     this.computeVendorString = this.computeVendorString.bind(this);
+    this.isValid = this.isValid.bind(this);
   }
 
   handleOnChange (option) {
@@ -93,9 +99,9 @@ class AddIngredientForm extends React.Component{
   	};
 
   handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value,
-    });
+      this.setState({
+        [name]: event.target.value,
+      });
   };
 
   updateVendors(updatedArray){
@@ -123,29 +129,65 @@ class AddIngredientForm extends React.Component{
     this.computeVendorString();
   }
 
+  isValid(){
+    const re = /^[0-9\b]+$/;
+      if (this.state.numUnitPerPackage == 0 || this.state.numUnitPerPackage == '' || !re.test(this.state.numUnitPerPackage)) {
+        alert("Quantity must be a positive number.");
+        return false;
+      }
+    if(this.state.temperatureZone==null || this.state.temperatureZone==''){
+      alert("Please fill out temperature.");
+      return false;
+    }else if(this.state.packageName==null || this.state.packageName==''){
+      alert("Please fill out package.");
+      return false;
+    }
+    else if(this.state.vendorsArray.length==0 || this.state.vendorsArray == null){
+      alert("Please add a vendor.");
+      return false;
+    }
+    return true;
+  }
+
   onFormSubmit(e) {
 
     e.preventDefault();
     sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    ingredientInterface.updateIngredient(this.state.ingredientId, this.state.name, this.state.packageName, 
-              this.state.temperatureZone, this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, 
-              this.state.nativeUnit, this.state.numUnitPerPackage, sessionId, function(res){
-                if (res.status == 400) {
-                    alert(res.data);
-                } else if (res.status == 500) {
-                    alert('Ingredient name already exists');
-                } else {
-                    // SnackBarPop("Row was successfully added!");
-                    alert(" Ingredient Successfully edited! ");
-                }
-            });
+    
+    if(this.isValid() && this.state.isCreateNew){
+      ingredientInterface.addIngredient(this.state.name, this.state.packageName, this.state.temperatureZone,
+        this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, this.state.nativeUnit, 
+        this.state.numUnitPerPackage, sessionId, function(res){
+                  if (res.status == 400) {
+                      alert(res.data);
+                  } else if (res.status == 500) {
+                      alert('Ingredient name already exists');
+                  } else {
+                      // SnackBarPop("Row was successfully added!");
+                      alert(" Ingredient Successfully added! ");
+                  }
+              });
+    }else{
+      ingredientInterface.updateIngredient(this.state.ingredientId, this.state.name, this.state.packageName, 
+                this.state.temperatureZone, this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, 
+                this.state.nativeUnit, this.state.numUnitPerPackage, sessionId, function(res){
+                  if (res.status == 400) {
+                      alert(res.data);
+                  } else if (res.status == 500) {
+                      alert('Ingredient name already exists');
+                  } else {
+                      // SnackBarPop("Row was successfully added!");
+                      alert(" Ingredient Successfully edited! ");
+                  }
+              });
+    }
       // Call function to send data to backend
 
     }
 
     handleNewOptionClick(option){
       console.log("New Option was clicked: " + option.value);
-    }
+  }
 
   render (){
     const { name, packageName, temperatureZone, vendors } = this.state;
@@ -162,6 +204,7 @@ class AddIngredientForm extends React.Component{
               value={this.state.name}
               onChange={this.handleChange('name')}
               margin="normal"
+              required
             />
             <FormControl>
               <InputLabel htmlFor="temperatureZone">Temperature</InputLabel>
@@ -173,6 +216,7 @@ class AddIngredientForm extends React.Component{
                   id: 'temperatureZone',
                 }}
                 disabled = {this.state.isDisabled}
+                required
               >
                 <MenuItem value={'freezer'}>Frozen</MenuItem>
                 <MenuItem value={'warehouse'}>Room Temperature</MenuItem>
@@ -188,6 +232,7 @@ class AddIngredientForm extends React.Component{
               margin="normal"
               disabled = {this.state.isDisabled}
               style={styles.quantity}
+              required
             />
             <TextField
               id="nativeUnit"
@@ -197,11 +242,13 @@ class AddIngredientForm extends React.Component{
               margin="normal"
               disabled = {this.state.isDisabled}
               style={styles.quantity}
+              required
             />
              per
             <FormControl style={styles.packageName}>
               <InputLabel htmlFor="packageName">Package</InputLabel>
               <Select
+                style={{verticalAlign: 'bottom'}}
                 value={this.state.packageName}
                 onChange={this.handleChange('packageName')}
                 inputProps={{
@@ -209,6 +256,7 @@ class AddIngredientForm extends React.Component{
                   id: 'packageName',
                 }}
                 disabled = {this.state.isDisabled}
+                required
               >
                 <MenuItem value={'sack'}>Sack</MenuItem>
                 <MenuItem value={'pail'}>Pail</MenuItem>
@@ -223,6 +271,7 @@ class AddIngredientForm extends React.Component{
               value={this.state.vendorString}
               margin="normal"
               disabled = {this.state.isDisabled}
+              required
             />}
             {(!this.state.isDisabled) && <SelectVendors initialArray={this.state.vendorsArray} handleChange={this.updateVendors}/>}
             </FormGroup>
@@ -231,7 +280,7 @@ class AddIngredientForm extends React.Component{
                 <TextField
                   disabled = {this.state.isDisabled}
                   id="numUnit"
-                  label="Current Quantity in native unit"
+                  label={"Current Quantity " + "(" + this.state.nativeUnit +")"}
                   value={this.state.numUnit}
                   onChange={this.handleChange('numUnit')}
                   margin="normal"
@@ -239,12 +288,14 @@ class AddIngredientForm extends React.Component{
                 <TextField
                   disabled = {this.state.isDisabled}
                   id="space"
-                  label="Space Occupied"
+                  label="Space Occupied (sqft)"
                   value={this.state.space}
                   onChange={this.handleChange('space')}
                   margin="normal"
                 />
               </FormGroup>
+              {!this.state.isCreateNew &&
+              <div>
               <p><font size="6">Financial Information</font></p>
               <FormGroup>
                 <TextField
@@ -268,7 +319,7 @@ class AddIngredientForm extends React.Component{
                   value={this.state.price}
                   margin="normal"
                 />
-              </FormGroup>
+              </FormGroup></div>}
               <div style={styles.buttons}>
                 {(this.state.isDisabled) && <RaisedButton raised color = "secondary" onClick={()=>{this.setState({isDisabled:false});}} >EDIT</RaisedButton>}
                 {(!this.state.isDisabled) && <RaisedButton raised
@@ -276,7 +327,7 @@ class AddIngredientForm extends React.Component{
                           // className=classes.button
                           style={styles.saveButton}
                           type="Submit"
-                          primary={true}> SAVE </RaisedButton>}
+                          primary={true}> {(this.state.isCreateNew)? 'ADD' : 'SAVE'} </RaisedButton>}
                 <RaisedButton color="default"
       component={Link} to='/admin-ingredients'
       style = {{marginTop: 5, marginLeft: 5}}

@@ -235,9 +235,7 @@ class SelectVendors extends Component {
             {this.state.options.map((vendor, index)=>(<MenuItem key={index} value={vendor.vendorName}>{vendor.vendorName}</MenuItem>))}
             </Select>
          </FormControl>
-       
- <FormControl style={{marginLeft:10}}>
-   
+         <FormControl style={{marginLeft:10}}>
           <InputLabel htmlFor="amount">Price</InputLabel>
           <Input
             style={{width:50}}
@@ -246,17 +244,16 @@ class SelectVendors extends Component {
             value={this.state.inputPrice}
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
           />
-
- </FormControl>
- {this.state.selectName && (this.state.inputPrice>0) && 
- <IconButton aria-label="Add" onClick={()=>{this.addVendor();}}>
+         </FormControl>
+         {this.state.selectName && (this.state.inputPrice>0) && 
+         <IconButton aria-label="Add" onClick={()=>{this.addVendor();}}>
                <Tooltip id="tooltip-top" title="Press to add vendor" placement="top-start">
-                  <AddCircleIcon/>
+                  <AddCircleIcon color="primary"/> 
                </Tooltip>
-          </IconButton>}
+        </IconButton>}
  <br/>
- <p>Current Vendors: </p>
 
+      
       <VendorItem idToNameMap = {this.state.idToNameMap} vendorsArray={this.state.vendorsArray} deleteVendor={this.deleteVendor} updateId={this.updateId} updatePrice={this.updatePrice} options={this.state.options} />
       </div>
     );
