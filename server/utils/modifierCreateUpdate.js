@@ -175,6 +175,9 @@ var modifyVendor = function(action, item, itemId, res, next, callback) { //add u
 
 var modifyIngredient = function(action, item, itemId, res, next, callback) {
     var vendors = item.vendors;
+    var ingredientName = item.name;
+    var str = JSON.stringify(item).slice(0,-1)+',"nameUnique":"'+ingredientName.toLowerCase()+'"}';
+    item = JSON.parse(str);
     if (vendors == null || vendors.length == 0){
         callback(0, item);
     } else {

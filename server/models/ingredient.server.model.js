@@ -30,6 +30,10 @@ var IngredientSchema = new Schema({
         required: true,
         unique: true
     },
+    nameUnique: {
+        type: String,
+        unique: true
+    },
     packageName: {
         type: String,
         enum: ['sack', 'pail', 'drum', 'supersack', 'truckload', 'railcar'],
@@ -51,11 +55,11 @@ var IngredientSchema = new Schema({
     },
     nativeUnit: {
         type: String,
-        required: true
+        //required: true
     },
     numUnitPerPackage: {
         type: Number,
-        required: true,
+        //required: true,
         min: [0, 'Number cannot be negative'],
     },
     vendors : [VendorPriceSchema]
