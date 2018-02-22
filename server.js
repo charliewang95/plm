@@ -29,6 +29,7 @@ User.findOne({username: 'admin'}, function(err, obj){
         admin.password = 'whatismongoose';
         admin.email = 'admin@realproducers.net';
         admin.isAdmin = true;
+        admin.isManager = true;
         admin.loggedIn = false;
         admin.save(function(err){
             //console.log(admin);

@@ -8,7 +8,7 @@ var validator = require('./validator');
 var postProcessor = require('./postProcessor');
 var logger = require('./logger');
 
-exports.doWithAccess = function(req, res, next, model, action, userId, itemId, AdminRequired) {
+exports.doWithAccess = function(req, res, next, model, action, userId, itemId, AdminRequired, ManagerRequired) {
     //back-door for ease of testing
 //    console.log('10');
 //     console.log(req.body);
@@ -44,6 +44,10 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
         else if (AdminRequired && !user.isAdmin) {
             res.status(403);
             res.send('Admin access required');
+        }
+        else if (ManagerRequired && !user.isManager) {
+            res.status(403);
+            res.send('Manager access required');
         }
         else {
 
