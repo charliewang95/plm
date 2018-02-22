@@ -96,5 +96,15 @@ async function deleteFormula(formulaId, sessionId) {
 	return await formulaActions.deleteFormula(formulaId, sessionId);
 };
 
+async function checkoutFormula(formulaId, quantity, sessionId) {
+     // TODO: call something
+     // if doesn't have enough, send back json with res.status == 407
+     // [{
+     //      ingredientName,
+     //      delta,
+     // }]
+};
+
+
 //export functions above for use by other modules
-export { addFormula, getAllFormulasAsync, getFormulaAsync, updateFormula, deleteFormula};
+export { addFormula, getAllFormulasAsync, getFormulaAsync, updateFormula, deleteFormula, checkoutFormula};
