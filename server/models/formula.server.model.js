@@ -8,6 +8,10 @@ var IngredientQuantitySchema = new Schema({
         ref: 'Ingredient',
         required: true
     },
+    ingredientName: {
+        type: String,
+        required: true
+    },
     quantity: {
         type: Number,
         required: true
@@ -23,6 +27,10 @@ var FormulaSchema = new Schema({
     },
     description: {
         type: String,
+    },
+    unitsProvided: {
+        type: Number,
+        required: true
     },
     ingredients : [IngredientQuantitySchema]
 });

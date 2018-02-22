@@ -1,0 +1,28 @@
+var Ingredient = require('mongoose').model('Ingredient');
+var Vendor = require('mongoose').model('Vendor');
+var User = require('mongoose').model('User');
+var Formula = require('mongoose').model('Formula');
+var utils = require('../utils/utils');
+var fs = require('fs');
+var Converter = require("csvtojson").Converter;
+var converter = new Converter({});
+
+exports.create = function(req, res, next) {
+    utils.doWithAccess(req, res, next, Formula, 'create', req.params.userId, '', true);
+};
+
+exports.list = function(req, res, next) {
+    utils.doWithAccess(req, res, next, Formula, 'list', req.params.userId, '', false);
+};
+
+exports.read = function(req, res, next) {
+	utils.doWithAccess(req, res, next, Formula, 'read', req.params.userId, req.params.ingredientId, false);
+};
+
+exports.update = function(req, res, next) {
+	utils.doWithAccess(req, res, next, Formula, 'update', req.params.userId, req.params.ingredientId, true);
+};
+
+exports.delete = function(req, res, next) {
+    utils.doWithAccess(req, res, next, Formula, 'delete', req.params.userId, req.params.ingredientId, true);
+};
