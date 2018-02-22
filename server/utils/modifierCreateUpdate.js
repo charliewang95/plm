@@ -48,38 +48,41 @@ exports.modify = function(action, model, item, itemId, res, next, callback) {
 
 var modifyOrder = function(item, res, next, callback) { //add number of pounds to order
     var num = item.packageNum;
-    Order.getNumSpaceAndNumUnits(item.ingredientId, item.packageNum, res, next, function(err, space, numUnit){
+    Order.getNumSpaceAndNumUnits(item.ingredientName, item.packageNum, res, next, function(err, space, numUnit){
         if (err) {
             return next(err);
         }
         else {
-            var str = JSON.stringify(item).slice(0,-1)+',"space":'+space+',"numUnit":'+numUnit+'}';
-            var price;
-            var fail = true;
-            Ingredient.findById(item.ingredientId, function(err, ingredient){
-                if (err) return next(err);
-                else {
-                    var vendors = ingredient.vendors;
-                    for (var i = 0; i < vendors.length; i++) {
-                        var vendor = vendors[i];
-                        if (vendor.vendorId.toString() === item.vendorId.toString()) {
-                            fail = false;
-                            price = vendor.price;
-                            str = str.slice(0,-1)+',"price":'+price+',"totalPrice":'+price*num+'}';
-                            var moneySpent = ingredient.moneySpent;
-                            console.log(price*num);
+            var str = JSON.stringify(item).slice(0,-1)+',"space":'+space+',"numUnit":'+numUnit+',"totalPrice":'+item.price*item.packageNum+'}';
+            callback(err, JSON.parse(str));
+//            var price;
+//            var fail = true;
+//            Ingredient.findById(item.ingredientId, function(err, ingredient){
+//                if (err) return next(err);
+//                else {
+//
+//
+//                    var vendors = ingredient.vendors;
+//                    for (var i = 0; i < vendors.length; i++) {
+//                        var vendor = vendors[i];
+//                        if (vendor.vendorId.toString() === item.vendorId.toString()) {
+//                            fail = false;
+//                            price = vendor.price;
+//                            str = str.slice(0,-1)+',"price":'+price+',"totalPrice":'+price*num+'}';
+//                            var moneySpent = ingredient.moneySpent;
+//                            console.log(price*num);
 //                            ingredient.update({moneySpent: moneySpent + price*num}, function(err, obj) {
 //                                if (err) return next(err);
 //                                else {
-                                    callback(err, JSON.parse(str));
+//                                    callback(err, JSON.parse(str));
 //                                }
 //                            });
-                        }
-                    }
-                    if (fail)
-                        res.status(400).send("Vendor doesn't sell this ingredient or vendor doesn't exist");
-                }
-            });
+//                        }
+//                    }
+//                    if (fail)
+//                        res.status(400).send("Vendor doesn't sell this ingredient or vendor doesn't exist");
+//                }
+//            });
         }
     });
 };
@@ -215,6 +218,8 @@ var helperIngredient = function(vendors, i, res, next, array, callback) {
 };
 
 var modifyFormula = function(action, item, itemId, res, next, callback) { //add unique lowercase code to check code uniqueness
+    var str = JSON.stringify(ingredient).slice(0,-1)+',"nameUnique":"'+item.name.toLowerCase()+'"}';
+    item = JSON.parse(str);
     var ingredients = item.ingredients;
     if (ingredients == null || ingredients.length == 0){
         callback(0, item);
@@ -241,10 +246,10 @@ var helperFormula = function(ingredients, i, res, next, array, callback) {
             }
             else {
 //                console.log(i);
-                var str = JSON.stringify(ingredient).slice(0,-1)+',"ingredientId":"'+obj._id+'"}';
-                newIngredient = JSON.parse(str);
-                array.push(newIngredient);
-                console.log(newIngredient);
+//                var str = JSON.stringify(ingredient).slice(0,-1)+',"ingredientId":"'+obj._id+'"}';
+//                newIngredient = JSON.parse(str);
+//                array.push(newIngredient);
+//                console.log(newIngredient);
                 helperFormula(ingredients, i+1, res, next, array, callback);
             }
         });

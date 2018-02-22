@@ -3,11 +3,11 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 var IngredientQuantitySchema = new Schema({
-    ingredientId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Ingredient',
-        required: true
-    },
+//    ingredientId: {
+//        type: mongoose.Schema.Types.ObjectId,
+//        ref: 'Ingredient',
+//        required: true
+//    },
     ingredientName: {
         type: String,
         required: true
@@ -21,6 +21,11 @@ mongoose.model('IngredientQuantity', IngredientQuantitySchema);
 
 var FormulaSchema = new Schema({
     name: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    nameUnique: {
         type: String,
         required: true,
         unique: true

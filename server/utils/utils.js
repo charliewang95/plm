@@ -58,7 +58,7 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             else if (action == 'updateWithUserAccess') updateWithUserAccess(req, res, next, model, userId, itemId, user.username);
             else if (action == 'delete') deleteWithoutUserAccess(req, res, next, model, itemId, user.username);
             else if (action == 'deleteWithUserAccess') deleteWithUserAccess(req, res, next, model, userId, itemId, user.username);
-            //else if (action == 'deleteAllWithUserAccess') deleteAllWithUserAccess(req, res, next, model, userId);
+            else if (action == 'deleteAllWithUserAccess') deleteAllWithUserAccess(req, res, next, model, userId);
             else if (action == 'read') read(req, res, next, model, itemId, user.username);
             else if (action == 'readWithUserAccess') readWithUserAccess(req, res, next, model, userId, itemId, user.username);
             else {
@@ -249,6 +249,25 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) 
 
 var deleteWithUserAccess = function(req, res, next, model, userId, itemId, username) {
     model.findOne({userId: userId, _id: itemId}, function(err, item) {
+        if (err) {
+            return next(err);
+        }
+        else {
+            item.remove(function(err) {
+                if (err) {
+                    return next(err);
+                }
+                else {
+                    logger.log(username, 'delete', item, model);
+                    res.json(item);
+                }
+            });
+        }
+    });
+};
+
+var deleteAllWithUserAccess = function(req, res, next, model, userId, itemId, username) {
+    model.find({userId: userId,}, function(err, items) {
         if (err) {
             return next(err);
         }

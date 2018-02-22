@@ -55,12 +55,22 @@ var IngredientSchema = new Schema({
     },
     nativeUnit: {
         type: String,
-        //required: true
+        required: true
     },
     numUnitPerPackage: {
         type: Number,
-        //required: true,
+        required: true,
         min: [0, 'Number cannot be negative'],
+    },
+    numUnit: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    space: {
+        type: Number,
+        required: true,
+        default: 0
     },
     vendors : [VendorPriceSchema]
 });

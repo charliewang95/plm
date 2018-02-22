@@ -10,15 +10,15 @@ var Cart = mongoose.model('Cart');
 exports.validate = function(model, item, res, next, callback) {
 
     console.log(item);
-    if (model == Order) {
-        validateOrder(item, res, next, function(err, obj){
-            if (err) return next(err);
-            else {
-                callback(err, obj);
-            }
-        });
-    }
-    else if (model == Storage) {
+//    if (model == Order) {
+//        validateOrder(item, res, next, function(err, obj){
+//            if (err) return next(err);
+//            else {
+//                callback(err, obj);
+//            }
+//        });
+//    }
+    if (model == Storage) {
         validateStorage(item, res, next, function(err, obj){
             if (err) return next(err);
             else {
