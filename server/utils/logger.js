@@ -14,6 +14,7 @@ exports.log = function(username, action, item, model){
     var log = new Log();
     log.username = username;
     log.action = action;
+    log.itemId = item._id.toString();
     log.model = model.collection.collectionName;
     log.date = new Date();
 

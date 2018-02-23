@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var Log = mongoose.model('Log');
 var Storage = mongoose.model('Storage');
+var Formula = mongoose.model('Formula');
 var Ingredient = mongoose.model('Ingredient');
 var modifierCreateUpdate = require('./modifierCreateUpdate');
 //var modifierDelete = require('./modifierDelete');
@@ -36,7 +37,8 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             else if (action == 'updateWithUserAccess') updateWithUserAccess(req, res, next, model, userId, itemId, user.username);
             else if (action == 'delete') deleteWithoutUserAccess(req, res, next, model, itemId, user.username);
             else if (action == 'deleteWithUserAccess') deleteWithUserAccess(req, res, next, model, userId, itemId, user.username);
-            else if (action == 'deleteAllWithUserAccess') deleteAllWithUserAccess(req, res, next, model, userId);
+            else if (action == 'checkoutOrders') checkoutOrders(req, res, next, model, userId, user.username);
+            else if (action == 'checkoutFormula') checkoutFormula(req, res, next, model, user.username);
             else if (action == 'read') read(req, res, next, model, itemId, user.username);
             else if (action == 'readWithUserAccess') readWithUserAccess(req, res, next, model, userId, itemId, user.username);
             else {
@@ -265,7 +267,7 @@ var deleteWithUserAccess = function(req, res, next, model, userId, itemId, usern
     });
 };
 
-var deleteAllWithUserAccess = function(req, res, next, model, userId) {
+var checkoutOrders = function(req, res, next, model, userId, username) {
     model.find({userId: userId}, function(err, items) {
         if (err) {
             return next(err);
@@ -275,6 +277,7 @@ var deleteAllWithUserAccess = function(req, res, next, model, userId) {
                 console.log("Orders validated.");
                 res.send(items);
                 postProcessor.process(model, items, '', res, next);
+                logger.log(username, 'checkout', user, model);
                 updateStorage(wSpace, rSpace, fSpace);
             });
         }
@@ -327,7 +330,7 @@ var validateOrdersHelper = function(i, items, res, next, wSpace, rSpace, fSpace,
         }
         var space = order.space;
         Ingredient.findOne({nameUnique: order.ingredientName.toLowerCase()}, function(err, obj){
-            if (err) next(err);
+            if (err) return next(err);
             else if (!obj) {
                 res.status(400).send('Ingredient '+order.ingredientName+' does not exist.');
                 return;
@@ -348,7 +351,7 @@ var validateOrdersHelper = function(i, items, res, next, wSpace, rSpace, fSpace,
 
 var checkSpaces = function(res, next, wSpace, rSpace, fSpace, callback) {
     Storage.find({}, function(err, objs){
-        if (err) next(err);
+        if (err) return next(err);
         else {
             for (var i = 0; i < objs.length; i++) {
                 var obj = objs[i];
@@ -374,3 +377,88 @@ var checkSpaces = function(res, next, wSpace, rSpace, fSpace, callback) {
         }
     });
 };
+
+var checkoutFormula = function(req, res, next, model, username) {
+    var formulaId = req.params.formulaId;
+    var quantity = req.params.quantity;
+    Formula.findById(formulaId, function(err, formula){
+        if (err) return next(err);
+        else if (!formula){
+            return res.status(400).send('Formula does not exist');
+        } else {
+            var unitsProvided = formula.unitsProvided;
+            if (quantity < unitsProvided) {
+                return res.status(400).send('The amount provided must be at least '+unitsProvided+'.');
+            } else {
+                var multiplier = quantity/unitsProvided;
+                var ingredients = formula.ingredients;
+                checkIngredientHelper(req, res, next, multiplier, 0, ingredients, [], function(array){
+                    if (array.length == 0) {
+                        logger.log(username, 'checkout', formula, model);
+                        updateIngredientHelper(req, res, next, multiplier, ingredients, 0, function() {
+                            return res.send('Got it');
+                        });
+                    }
+                    else return res.status(406).json(array);
+                });
+            }
+        }
+    });
+};
+
+var checkIngredientHelper = function(req, res, next, multiplier, i, ingredients, missingIngredientArray, callback) {
+    if (i == ingredients.length) {
+        callback(missingIngredientArray);
+    } else {
+        var ingredientQuantity = ingredients[i];
+        var totalAmountNeeded = multiplier*ingredientQuantity.quantity;
+        Ingredient.findOne({nameUnique: ingredientQuantity.ingredientName.toLowerCase()}, function(err, ingredient){
+            if (err) return next(err);
+            else if (!ingredient) return res.status(400).send('Ingredient '+ingredientQuantity.ingredientName+' does not exist.');
+            else {
+                if (totalAmountNeeded > ingredient.numUnit) {
+                    var ingredientDelta = new Object();
+                    ingredientDelta.ingredientName = ingredientQuantity.ingredientName;
+                    ingredientDelta.delta = totalAmountNeeded - ingredient.numUnit;
+                    missingIngredientArray.push(ingredientDelta);
+                    console.log(totalAmountNeeded+' '+ingredient.numUnit);
+                }
+                checkIngredientHelper(req, res, next, multiplier, i+1, ingredients, missingIngredientArray, callback);
+            }
+        });
+    }
+}
+
+var updateIngredientHelper = function(req, res, next, multiplier, ingredients, i, callback) {
+    if (i == ingredients.length) {
+        callback();
+    } else {
+        var ingredientQuantity = ingredients[i];
+        Ingredient.findOne({nameUnique: ingredientQuantity.ingredientName.toLowerCase()}, function(err, ingredient){
+            var numUnit = ingredient.numUnit;
+            var newNumUnit = numUnit - ingredientQuantity.quantity*multiplier;
+            var remainingPackages = Math.ceil(newNumUnit/ingredient.numUnitPerPackage);
+            Ingredient.getPackageSpace(ingredient.packageName, function(retSpace){
+                var newSpace = remainingPackages * retSpace;
+                ingredient.update({numUnit: newNumUnit, space: newSpace}, function(err, obj){
+                    if (err) return next(err);
+                    else {
+                        Storage.findOne({temperatureZone: ingredient.temperatureZone}, function(err, storage){
+                            var capacity = storage.capacity;
+                            var capacityEmpty = storage.currentEmptySpace;
+                            var capacityOccupied = storage.currentOccupiedSpace;
+                            var subSpace = retSpace*Math.ceil(ingredientQuantity.quantity*multiplier/ingredient.numUnitPerPackage);
+                            storage.update({currentOccupiedSpace: capacityOccupied-subSpace, currentEmptySpace: capacity-capacityOccupied+subSpace}, function(err, obj){
+                                if (err) return next(err);
+                                else {
+                                    console.log(subSpace+' '+retSpace+' '+ingredientQuantity.quantity*multiplier/ingredient.numUnitPerPackage);
+                                    updateIngredientHelper(req, res, next, multiplier, ingredients, i+1, callback);
+                                }
+                            });
+                        });
+                    }
+                });
+            });
+        });
+    }
+}

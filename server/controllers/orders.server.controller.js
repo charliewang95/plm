@@ -29,5 +29,5 @@ exports.delete = function(req, res, next) {
 };
 
 exports.checkout = function(req, res, next) {
-    utils.doWithAccess(req, res, next, Order, 'deleteAllWithUserAccess', req.params.userId, '', false, true);
+    utils.doWithAccess(req, res, next, Order, 'checkoutOrders', req.params.userId, '', false, true);
 };

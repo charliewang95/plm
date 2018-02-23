@@ -26,3 +26,7 @@ exports.update = function(req, res, next) {
 exports.delete = function(req, res, next) {
     utils.doWithAccess(req, res, next, Formula, 'delete', req.params.userId, req.params.formulaId, true, true);
 };
+
+exports.checkout = function(req, res, next) {
+    utils.doWithAccess(req, res, next, Formula, 'checkoutFormula', req.params.userId, req.params.formulaId, false, true); //
+}
