@@ -27,6 +27,8 @@ import Chip from 'material-ui/Chip';
 import Input from 'material-ui/Input';
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
+//
+import { TableCell } from 'material-ui/Table'; //for customize filter row
 
 const getRowId = row => row.id;
 //for previleges
@@ -57,6 +59,25 @@ const PrevilegeTypeProvider = props => (
   />
 );
 
+const PrevilegeFilterCell = ({ filter, onFilter, classes }) => (
+  <TableCell>
+    <Input
+      type="text"
+      value={filter ? filter.value : ''}
+      onChange={e => onFilter(e.target.value ? { value: e.target.value } : null)}
+      placeholder="Filter..."
+    />
+  </TableCell>
+);
+
+const FilterCell = (props) => {
+	console.log("props.column.name: " + props.column.name);
+  if (props.column.name === 'privilege') {
+    return <PrevilegeFilterCell {...props} />;
+  }
+  return <TableFilterRow.Cell {...props} />;
+};
+
 export default class SampleTable extends React.PureComponent {
 	constructor(props) {
 		super(props);
@@ -74,19 +95,19 @@ export default class SampleTable extends React.PureComponent {
       				getCellValue: row => (row.email ? row.email : undefined), 
       			},
       			{ 
-      				name: 'privelege', 
-      				title: 'Privelege',
-      				getCellValue: row => (row.privelege ? row.privelege : undefined),
+      				name: 'privilege', 
+      				title: 'Privilege',
+      				getCellValue: row => (row.privilege ? row.privilege : undefined),
       				dataType: 'string' 
       			},
       		],
 
-      		privelegeColumns: ['privelege'],
+      		privilegeColumns: ['privilege'],
 
       		rows: [
-      			{ id: 0, username: 'sampleUser', email: 'user@duke.edu', privelege: 'user' }, //id for editing
-     			{ id: 1, username: 'sampleManager', email: 'manager@duke.edu', privelege: 'manager' },
-      			{ id: 2, username: 'sampleAdmin', email: 'admin@duke.edu', privelege: 'admin'},
+      			{ id: 0, username: 'sampleUser', email: 'user@duke.edu', privilege: 'user' }, //id for editing
+     			{ id: 1, username: 'sampleManager', email: 'manager@duke.edu', privilege: 'manager' },
+      			{ id: 2, username: 'sampleAdmin', email: 'admin@duke.edu', privilege: 'admin'},
       		],
 
       		sorting: [{ columnName: 'username', direction: 'asc' }],
@@ -101,8 +122,8 @@ export default class SampleTable extends React.PureComponent {
           			createRowChange: (row, value) => ( {...row, email: value} ),
        			},
         		{
-          			columnName: 'privelege',
-          			createRowChange: (row, value) => ( {...row, privelege: value} ),
+          			columnName: 'privilege',
+          			createRowChange: (row, value) => ( {...row, privilege: value} ),
         		},
       		],
       	}
@@ -138,7 +159,7 @@ export default class SampleTable extends React.PureComponent {
   }
 
 	render() {
-		const { rows, columns, sorting, editingColumnExtensions, privelegeColumns } = this.state;
+		const { rows, columns, sorting, editingColumnExtensions, privilegeColumns } = this.state;
 		return(
 			<Grid
 				rows={rows}
@@ -153,7 +174,7 @@ export default class SampleTable extends React.PureComponent {
 				/>
 				<IntegratedSorting />
 				<PrevilegeTypeProvider
-					for={privelegeColumns}
+					for={privilegeColumns}
 				/>
 				<EditingState
             		columnExtensions={editingColumnExtensions}
@@ -161,7 +182,9 @@ export default class SampleTable extends React.PureComponent {
           		/>
 				<Table />
 				<TableHeaderRow showSortingControls />
-				<TableFilterRow /> 
+				<TableFilterRow 
+					cellComponent={FilterCell}
+				/> 
 				<TableEditRow />
           		<TableEditColumn showAddCommand showEditCommand showDeleteCommand />
 			</Grid>
@@ -171,14 +194,14 @@ export default class SampleTable extends React.PureComponent {
 // const App = () => (
 //   <Grid
 //     rows={[
-//       { username: 'sampleUser', email: 'user@duke.edu', privelege: 'user' },
-//       { username: 'sampleManager', email: 'manager@duke.edu', privelege: 'manager' },
-//       { username: 'sampleAdmin', email: 'admin@duke.edu', privelege: 'admin'}
+//       { username: 'sampleUser', email: 'user@duke.edu', privilege: 'user' },
+//       { username: 'sampleManager', email: 'manager@duke.edu', privilege: 'manager' },
+//       { username: 'sampleAdmin', email: 'admin@duke.edu', privilege: 'admin'}
 //     ]}
 //     columns={[
 //       { name: 'username', title: 'Username' },
 //       { name: 'email', title: 'E-mail' },
-//       { name: 'privelege', title: 'Privelege' },
+//       { name: 'privilege', title: 'privilege' },
 //     ]}>
 //     <Table />
 //     <TableHeaderRow />
