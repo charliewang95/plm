@@ -208,21 +208,3 @@ export default class SampleTable extends React.PureComponent {
 		);
 	}
 }
-// const App = () => (
-//   <Grid
-//     rows={[
-//       { username: 'sampleUser', email: 'user@duke.edu', privilege: 'user' },
-//       { username: 'sampleManager', email: 'manager@duke.edu', privilege: 'manager' },
-//       { username: 'sampleAdmin', email: 'admin@duke.edu', privilege: 'admin'}
-//     ]}
-//     columns={[
-//       { name: 'username', title: 'Username' },
-//       { name: 'email', title: 'E-mail' },
-//       { name: 'privilege', title: 'privilege' },
-//     ]}>
-//     <Table />
-//     <TableHeaderRow />
-//   </Grid>
-// );
-
-// export default App;
