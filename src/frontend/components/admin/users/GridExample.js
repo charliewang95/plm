@@ -39,13 +39,13 @@ const PrevilegeFormatter = ({ value }) =>
 const PrevilegeEditor = ({ value, onValueChange }) => (
   <Select
     input={<Input />}
-    value={value}
+    value={value ?  value : ''}
     onChange={event => onValueChange(event.target.value.toLowerCase())}
     style={{ width: '100%', marginTop: '4px' }}
   >
-    <MenuItem value='user'>User</MenuItem>
-    <MenuItem value='manager'>Manager</MenuItem>
-    <MenuItem value='admin'>Admin</MenuItem>
+    <MenuItem value={'user'}>User</MenuItem>
+    <MenuItem value={'manager'}>Manager</MenuItem>
+    <MenuItem value={'admin'}>Admin</MenuItem>
   </Select>
 );
 
