@@ -43,7 +43,7 @@ const styles = {
       width: 100,
     },
     quantity:{
-      width: 100
+      width: 100,
     },
     formControl: {
       width: 400
@@ -74,8 +74,8 @@ class AddIngredientForm extends React.Component{
       nativeUnit: (details.nativeUnit)?(details.nativeUnit):'',
       numUnitPerPackage: (details.numUnitPerPackage)?(details.numUnitPerPackage):'',
       isDisabled: (isCreateNew) ? false: true,
-      numUnit: 0,
-      space: 0,
+      numUnit: (details.numUnit)?(details.numUnit):0,
+      space: (details.numUnit)?(details.numUnit):0,
       moneySpent: (details.moneySpent)?(details.moneySpent) : 0,
       moneyProd: (details.moneyProd) ? (details.moneyProd): 0,
       price: 0,
@@ -86,6 +86,8 @@ class AddIngredientForm extends React.Component{
     this.updateVendors = this.updateVendors.bind(this);
     this.computeVendorString = this.computeVendorString.bind(this);
     this.isValid = this.isValid.bind(this);
+    this.handleQuantityChange = this.handleQuantityChange.bind(this);
+    this.loadIngredient = this.loadIngredient.bind(this);
   }
 
   handleOnChange (option) {
@@ -126,6 +128,46 @@ class AddIngredientForm extends React.Component{
   }
 
   componentDidMount(){
+    console.log("logs");
+    if(this.props.location.state.fromLogs){
+      this.loadIngredient();
+    }
+    this.computeVendorString();
+  }
+
+  async loadIngredient(){
+    var details = [];
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    console.log("ingredient id");
+    console.log(this.props.location.state.ingredientId);
+    details = await ingredientInterface.getIngredientAsync('5a8e37ab182c28046184cd75', sessionId);
+    console.log("load one ingredient");
+    console.log(details);
+    var formatVendorsArray = new Array();
+      for (var j=0; j<details.vendors.length; j++){
+        //var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].codeUnique);
+        var vendorName = details.vendors[j].vendorName;
+        var price = details.vendors[j].price;
+        var vendorObject = new Object();
+        vendorObject.vendorName = vendorName;
+        vendorObject.price = price;
+        formatVendorsArray.push(vendorObject);
+      }
+
+    this.setState({
+      vendorsArray: formatVendorsArray,
+      ingredientId: this.props.location.state.ingredientId,
+      name:details.name,
+      packageName:details.packageName,
+      temperatureZone:details.temperatureZone,
+      nativeUnit: details.nativeUnit,
+      numUnitPerPackage: details.numUnitPerPackage,
+      moneySpent: details.moneySpent,
+      moneyProd: details.moneyProd,
+      numUnit: details.numUnit,
+      space: details.space,
+    });
+
     this.computeVendorString();
   }
 
@@ -157,7 +199,7 @@ class AddIngredientForm extends React.Component{
     if(this.isValid() && this.state.isCreateNew){
       ingredientInterface.addIngredient(this.state.name, this.state.packageName, this.state.temperatureZone,
         this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, this.state.nativeUnit, 
-        this.state.numUnitPerPackage, sessionId, function(res){
+        this.state.numUnitPerPackage, 0, 0, sessionId, function(res){
                   if (res.status == 400) {
                       alert(res.data);
                   } else if (res.status == 500) {
@@ -170,7 +212,7 @@ class AddIngredientForm extends React.Component{
     }else{
       ingredientInterface.updateIngredient(this.state.ingredientId, this.state.name, this.state.packageName, 
                 this.state.temperatureZone, this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, 
-                this.state.nativeUnit, this.state.numUnitPerPackage, sessionId, function(res){
+                this.state.nativeUnit, this.state.numUnitPerPackage, this.state.numUnit, this.state.space, sessionId, function(res){
                   if (res.status == 400) {
                       alert(res.data);
                   } else if (res.status == 500) {
@@ -187,6 +229,15 @@ class AddIngredientForm extends React.Component{
 
     handleNewOptionClick(option){
       console.log("New Option was clicked: " + option.value);
+  }
+
+  handleQuantityChange(event){
+  const re = /^[0-9\b]+$/;
+      if ( event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
+         this.setState({numUnitPerPackage: event.target.value})
+      }else{
+        alert(" Quantity must be a positive number.");
+      }
   }
 
   render (){
@@ -228,7 +279,7 @@ class AddIngredientForm extends React.Component{
               id="numUnitPerPackage"
               label="Quantity"
               value={this.state.numUnitPerPackage}
-              onChange={this.handleChange('numUnitPerPackage')}
+              onChange={(event)=>this.handleQuantityChange(event)}
               margin="normal"
               disabled = {this.state.isDisabled}
               style={styles.quantity}
@@ -248,7 +299,6 @@ class AddIngredientForm extends React.Component{
             <FormControl style={styles.packageName}>
               <InputLabel htmlFor="packageName">Package</InputLabel>
               <Select
-                style={{verticalAlign: 'bottom'}}
                 value={this.state.packageName}
                 onChange={this.handleChange('packageName')}
                 inputProps={{
@@ -257,6 +307,7 @@ class AddIngredientForm extends React.Component{
                 }}
                 disabled = {this.state.isDisabled}
                 required
+
               >
                 <MenuItem value={'sack'}>Sack</MenuItem>
                 <MenuItem value={'pail'}>Pail</MenuItem>
@@ -275,6 +326,8 @@ class AddIngredientForm extends React.Component{
             />}
             {(!this.state.isDisabled) && <SelectVendors initialArray={this.state.vendorsArray} handleChange={this.updateVendors}/>}
             </FormGroup>
+            {!this.state.isCreateNew && 
+              <div>
               <p><font size="6">Inventory Information</font></p>
               <FormGroup>
                 <TextField
@@ -294,6 +347,7 @@ class AddIngredientForm extends React.Component{
                   margin="normal"
                 />
               </FormGroup>
+              </div>}
               {!this.state.isCreateNew &&
               <div>
               <p><font size="6">Financial Information</font></p>
@@ -327,11 +381,11 @@ class AddIngredientForm extends React.Component{
                           // className=classes.button
                           style={styles.saveButton}
                           type="Submit"
-                          primary={true}> {(this.state.isCreateNew)? 'ADD' : 'SAVE'} </RaisedButton>}
+                          primary="true"> {(this.state.isCreateNew)? 'ADD' : 'SAVE'} </RaisedButton>}
                 <RaisedButton color="default"
-      component={Link} to='/admin-ingredients'
-      style = {{marginTop: 5, marginLeft: 5}}
-      > BACK </RaisedButton>
+                  component={Link} to='/admin-ingredients'
+                  style = {{marginTop: 5, marginLeft: 5}}
+                  > BACK </RaisedButton>
              </div>
            </form>
          // </PageBase>

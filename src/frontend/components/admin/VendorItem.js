@@ -33,6 +33,11 @@ class VendorItem extends Component {
   }
 
   componentDidMount(){
+    // console.log("I am in vendoritem");
+    // console.log(this.props.vendorsArray);
+  }
+
+  componentDidUpdate(){
     console.log("I am in vendoritem");
     console.log(this.props.vendorsArray);
   }
@@ -41,7 +46,7 @@ class VendorItem extends Component {
     return (
     	<div style={{marginLeft:20}}>
       {this.props.vendorsArray && this.props.vendorsArray.map((vendor,index)=>(
-        <div key="index">
+        <div key={index}>
         {vendor.vendorName}
          <FormControl >
             <Input
@@ -49,6 +54,7 @@ class VendorItem extends Component {
               value={vendor.price}
               style={{marginLeft: 10, width:50}}
               startAdornment={<InputAdornment position="start">$</InputAdornment>}
+              onChange={(event)=>{this.props.updatePrice(event, index)}}
             />
           </FormControl>
           <IconButton aria-label="Delete" onClick={()=>{this.props.deleteVendor(index, vendor.vendorName);}}>
