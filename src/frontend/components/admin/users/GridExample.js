@@ -11,8 +11,9 @@ import {
 	IntegratedSorting
 } from '@devexpress/dx-react-grid'; // for sorting
 import {
-	EditingState,
-} from '@devexpress/dx-react-grid'; // for editing
+	DataTypeProvider, //for ???
+	EditingState,// for editing
+} from '@devexpress/dx-react-grid'; 
 import {
   Grid,
   Table,
@@ -21,8 +22,40 @@ import {
   TableEditRow, //for editing
   TableEditColumn, //for editing
 } from '@devexpress/dx-react-grid-material-ui';
+// for selecting previlege level
+import Chip from 'material-ui/Chip';
+import Input from 'material-ui/Input';
+import Select from 'material-ui/Select';
+import { MenuItem } from 'material-ui/Menu';
 
 const getRowId = row => row.id;
+//for previleges
+const PrevilegeFormatter = ({ value }) =>
+  <Chip label={
+  	value === 'admin' ? 'Admin' : 
+  		(value === 'manager' ? 'Manager' : 'User') }
+  />;
+
+const PrevilegeEditor = ({ value, onValueChange }) => (
+  <Select
+    input={<Input />}
+    value={value}
+    onChange={event => onValueChange(event.target.value.toLowerCase())}
+    style={{ width: '100%', marginTop: '4px' }}
+  >
+    <MenuItem value='user'>User</MenuItem>
+    <MenuItem value='manager'>Manager</MenuItem>
+    <MenuItem value='admin'>Admin</MenuItem>
+  </Select>
+);
+
+const PrevilegeTypeProvider = props => (
+  <DataTypeProvider
+    formatterComponent={PrevilegeFormatter}
+    editorComponent={PrevilegeEditor}
+    {...props}
+  />
+);
 
 export default class SampleTable extends React.PureComponent {
 	constructor(props) {
@@ -43,9 +76,12 @@ export default class SampleTable extends React.PureComponent {
       			{ 
       				name: 'privelege', 
       				title: 'Privelege',
-      				getCellValue: row => (row.privelege ? row.privelege : undefined), 
+      				getCellValue: row => (row.privelege ? row.privelege : undefined),
+      				dataType: 'string' 
       			},
       		],
+
+      		privelegeColumns: ['privelege'],
 
       		rows: [
       			{ id: 0, username: 'sampleUser', email: 'user@duke.edu', privelege: 'user' }, //id for editing
@@ -102,7 +138,7 @@ export default class SampleTable extends React.PureComponent {
   }
 
 	render() {
-		const { rows, columns, sorting, editingColumnExtensions } = this.state;
+		const { rows, columns, sorting, editingColumnExtensions, privelegeColumns } = this.state;
 		return(
 			<Grid
 				rows={rows}
@@ -116,6 +152,9 @@ export default class SampleTable extends React.PureComponent {
 					onSortingChange={this.changeSorting}
 				/>
 				<IntegratedSorting />
+				<PrevilegeTypeProvider
+					for={privelegeColumns}
+				/>
 				<EditingState
             		columnExtensions={editingColumnExtensions}
             		onCommitChanges={this.commitChanges}
