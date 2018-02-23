@@ -54,6 +54,9 @@ class Orders extends React.PureComponent{
       ingredient_options:[],
       vendor_options:[],
       total: 0,
+      numUnitPerPackage: 0,
+      totalQuantity: 0,
+      nativeUnit: '',
       }
 
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -66,33 +69,32 @@ class Orders extends React.PureComponent{
     this.loadAllIngredients();
   }
 
-   async loadAllIngredients(){
-     console.log(" LOAD ALL INGREDIENTS");
-     var rawData = [];
+  async loadAllIngredients(){
+    console.log(" LOAD ALL INGREDIENTS");
+    var rawData = [];
     if(READ_FROM_DATABASE){
       sessionId = JSON.parse(localStorage.getItem('user'))._id;
       rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
       console.log("data from DB " + JSON.stringify(rawData));
     }else{
-    rawData = dummyData;
+      rawData = dummyData;
     }
     var parsedIngredientOptions = [...rawData.map((row, index)=> ({
-        value: row._id,label: row.name,packageName: row.packageName,
+        value: row._id,label: row.name, numUnitPerPackage: row.numUnitPerPackage, nativeUnit: row.nativeUnit, packageName: row.packageName + ' (' + row.numUnitPerPackage + ' ' + row.nativeUnit + ')',
       })),
     ];
-
     console.log("parsedIngredientOptions" + JSON.stringify(parsedIngredientOptions));
     this.setState({ingredient_options:parsedIngredientOptions});
-
     console.log("Ingredient Options " + JSON.stringify(parsedIngredientOptions));
     }
 
 
   async handleIngredientChange(option) {
     console.log(" Ingredient Selected " + option.label);
-
     this.setState({packageName:option.packageName});
     this.setState({ingredientId:option.value});
+    this.setState({numUnitPerPackage: option.numUnitPerPackage});
+    this.setState({nativeUnit: option.nativeUnit});
     var ingredientDetails;
     //TODO: get vendors list for the selected ingredient
     try{
@@ -105,7 +107,7 @@ class Orders extends React.PureComponent{
 
                     var parsedVendorOptions = [...ingredientDetails.vendors.map((row,index)=> ({
                         value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
-                        price: row.price,
+                        price: row.price, numUnitPerPackage: row.numUnitPerPackage, nativeUnit: row.nativeUnit,
                       })),
                     ];
                     console.log("Vendor options " + JSON.stringify(parsedVendorOptions));
@@ -198,8 +200,11 @@ class Orders extends React.PureComponent{
     console.log("clicked!");
     //var packageWeight = this.packageWeight();
     var tempTotal = this.state.quantity * this.state.price;
-    console.log(tempTotal);
+    var tempTotal2 = this.state.quantity * this.state.numUnitPerPackage;
+    console.log(this.state.numUnitPerPackage);
+    console.log(tempTotal2);
     this.setState({total: tempTotal});
+    this.setState({totalQuantity: tempTotal2});
   }
 
   clearFields(){
@@ -239,6 +244,7 @@ class Orders extends React.PureComponent{
                   onChange = {(event) => this.setState({ packageName: event.target.value})}
                   margin="dense"
               />
+
             </div>
             <br></br>
             <label> Quantity of Package: </label>
@@ -260,21 +266,22 @@ class Orders extends React.PureComponent{
                   value = {vendorId}
                 />
               </div>
+              <p><font size="6">Total Quantity: {this.state.totalQuantity} {this.state.nativeUnit}</font></p>
               <p><font size="6">Current Total: $ {this.state.total}</font></p>
               <Divider></Divider>
               <br></br>
               <SimpleTable />
               <div style={styles.buttons}>
-                  <RaisedButton raised color = "secondary"
-                    // component = {Link} to = "/orders"
-                    onClick ={(event) => this.clearFields(event)}>
-                    CANCEL</RaisedButton>
                   <RaisedButton raised
-                            color="primary"
-                            // component = {Link} to = "/vendors" //commented out because it overrides onSubmit
-                            style={styles.saveButton}
-                            type="Submit"
-                            primary="true"> ORDER </RaisedButton>
+                    color="primary"
+                    // component = {Link} to = "/vendors" //commented out because it overrides onSubmit
+                    type="Submit"
+                    primary="true"> ORDER </RaisedButton>
+                    <RaisedButton raised color = "secondary"
+                    style={styles.saveButton}
+                    component = {Link} to = "/admin-ingredients"
+                    >
+                    BACK</RaisedButton>
              </div>
            </form>
            {fireRedirect && (

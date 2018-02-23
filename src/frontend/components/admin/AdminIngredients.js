@@ -40,6 +40,7 @@ import SelectVendors from './SelectVendors';
 import * as ingredientInterface from '../../interface/ingredientInterface';
 import * as vendorInterface from '../../interface/vendorInterface';
 import * as uploadInterface from '../../interface/uploadInterface';
+import * as inventoryInterface from '../../interface/inventoryInterface';
   // TODO: get the sessionId
 import * as testConfig from '../../../resources/testConfig.js';
 import MyPdfViewer from './PdfViewer';
@@ -536,6 +537,15 @@ class AdminIngredients extends React.PureComponent {
     });
     this.setState({idToNameMap:map});
   }
+  
+  async loadInventoryData(ingredientId, sessionId){
+    console.log("enterasdf");
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    var inventoryData = await inventoryInterface.getInventoryAsync(ingredientId, sessionId);
+    console.log("loading inventory");
+    console.log(inventoryData);
+    return inventoryData;
+  }
 
   async loadAllIngredients(){
     sessionId = JSON.parse(localStorage.getItem('user'))._id;
@@ -570,16 +580,15 @@ class AdminIngredients extends React.PureComponent {
 
         console.log(vendorName);
         vendorArrayString+=vendorName + " / $" + rawData[i].vendors[j].price;
-        console.log("tired");
-        console.log(i);
          if(i!= (rawData[i].vendors.length-1) ){
             vendorArrayString+=', ';
           }
-
-
       }
-
+      
       var singleData = new Object ();
+     // singleData.numUnit = this.loadInventoryData(rawData[i]._id, sessionId);
+      console.log("singleData");
+      console.log(singleData);
       // singleData.id = i;
       singleData.name = rawData[i].name;
       singleData.packageName = rawData[i].packageName;
@@ -589,6 +598,8 @@ class AdminIngredients extends React.PureComponent {
       singleData.moneyProd = rawData[i].moneyProd;
       singleData.nativeUnit = rawData[i].nativeUnit;
       singleData.numUnitPerPackage = rawData[i].numUnitPerPackage;
+      singleData.numUnit = rawData[i].numUnit;
+      singleData.space = rawData[i].space;
       //singleData.vendorsArray = "";
       singleData.vendors = vendorArrayString;
       console.log("my id");

@@ -3,7 +3,7 @@ import Paper from 'material-ui/Paper';
 import { DatePicker, DatePickerInput } from 'rc-datepicker';
 import 'rc-datepicker/lib/style.css';
 import PropTypes from 'prop-types';
-
+import {Link} from 'react-router-dom';
 import {
   FilteringState,
   IntegratedFiltering,
@@ -22,6 +22,7 @@ import {
 import {EditButton,CommitButton,CancelButton} from '../vendors/Buttons.js';
 import Button from 'material-ui/Button';
 import * as logActions from '../../interface/logInterface';
+import * as ingredientActions from '../../interface/ingredientInterface';
 
 //TODO: get user data
 // const sessionId = testConfig.sessionId;
@@ -36,6 +37,11 @@ var isAdmin =  "";
 // JSON.parse(localStorage.getItem('user')).isAdmin;
 
 const Cell = (props)=>{
+  if(props.column.name=="item"){
+    return <Table.Cell {...props}>
+    <Link to={{pathname: '/ingredient-details', state:{ingredientId: props.row._id, fromLogs: true} }}>{props.row.item}</Link>
+    </Table.Cell>
+  }
   return <Table.Cell {...props}
     style={{
         whiteSpace: "normal",

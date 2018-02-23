@@ -147,7 +147,8 @@ async function getByIdAsync(url, propertyName, objectId, sessionId) {
 
 	const res = await axios.get(completeUrl);
 	const result = res.data;
-	console.log(result);
+	console.log("result from crud action");
+	console.log(res);
 	return result;
 };
 

@@ -12,6 +12,7 @@ import Select from 'material-ui/Select';
 import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
 import { FormControl, FormGroup, FormHelperText } from 'material-ui/Form';
 import { MenuItem } from 'material-ui/Menu';
+import Button from 'material-ui/Button';
 
 
 const VENDORS = require('./dummyVendors');
@@ -29,7 +30,7 @@ class SelectVendors extends Component {
     super(props)
     this.state = {
       selectName: "",
-      inputPrice: 0,
+      inputPrice: '',
       options: [],
       vendorsArray: this.props.initialArray,
       idToNameMap: {}, //id = key, name=value
@@ -148,7 +149,7 @@ class SelectVendors extends Component {
     this.state.vendorsArray.push(newVendor);
     this.setState({vendorsArray:this.state.vendorsArray});
     this.resetArray(tempId, "add");
-    this.setState({inputPrice : 0});
+    this.setState({inputPrice : ''});
     this.setState({selectName: ""})
     console.log(this.state.vendorsArray);
     this.props.handleChange(this.state.vendorsArray);
@@ -183,27 +184,41 @@ class SelectVendors extends Component {
   }
 
   updatePrice (newPrice, index){
-    console.log("this is the price");
-    var price = parseFloat(newPrice.target.value);
-    console.log(typeof (price));
-
-    var isEmpty = (!price || (price.length==0));
-
-    console.log(index);
-    if(index>=0 && !isEmpty){
-      // var updateVendor = this.state.vendorsArray.slice();
-      // updateVendor[index].price = newPrice.target.value;
-      // this.setState({vendorsArray: updateVendor});
-      this.state.vendorsArray[index].price = price;
-      this.setState({vendorsArray: this.state.vendorsArray});
-      this.props.handleChange(this.state.vendorsArray);
-    }
+    var price = newPrice.target.value;
+    console.log("price");
+    console.log(price);
+    const re = /^\d*\.?\d*$/;
+      if ( index>=0 && (price==''|| (price>0 && re.test(price)))) {
+        this.state.vendorsArray[index].price = parseFloat(price);
+        this.setState({vendorsArray: this.state.vendorsArray});
+        console.log("this is the price [updated]");
+        console.log(this.state.vendorsArray);
+        this.props.handleChange(this.state.vendorsArray);
+      }else{
+        alert("Price must be a positive number.");
+      }
   }
 
-  updatePriceHere(newPrice){
-    this.setState({inputPrice: newPrice.target.value});
-  }
+  //   if(index>=0 && !isEmpty){
+  //     // var updateVendor = this.state.vendorsArray.slice();
+  //     // updateVendor[index].price = newPrice.target.value;
+  //     // this.setState({vendorsArray: updateVendor});
+      
+  //   }
+  // }
 
+  // updatePriceHere(newPrice){
+  //   this.setState({inputPrice: newPrice.target.value});
+  // }
+
+updatePriceHere(event){
+  const re = /^\d*\.?\d*$/;
+      if ( event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
+         this.setState({inputPrice: event.target.value})
+      }else{
+        alert("Price must be a positive number.");
+      }
+  }
   // updateName(value){
   //   console.log("updateName");
   //   console.log(value);
@@ -221,7 +236,7 @@ class SelectVendors extends Component {
   render() {
     return (
     	<div>
-          <p>Select a Vendor to be added:</p>
+          <p>Vendors:</p>
           <FormControl style={{marginLeft: 20, width:150}}>
             <InputLabel htmlFor="vendorName">Vendor</InputLabel>
             <Select
@@ -234,6 +249,7 @@ class SelectVendors extends Component {
              }}>
             {this.state.options.map((vendor, index)=>(<MenuItem key={index} value={vendor.vendorName}>{vendor.vendorName}</MenuItem>))}
             </Select>
+            {this.state.selectName && (this.state.inputPrice>0) && <FormHelperText>Press + to add vendor</FormHelperText>}
          </FormControl>
          <FormControl style={{marginLeft:10}}>
           <InputLabel htmlFor="amount">Price</InputLabel>
@@ -246,11 +262,7 @@ class SelectVendors extends Component {
           />
          </FormControl>
          {this.state.selectName && (this.state.inputPrice>0) && 
-         <IconButton aria-label="Add" onClick={()=>{this.addVendor();}}>
-               <Tooltip id="tooltip-top" title="Press to add vendor" placement="top-start">
-                  <AddCircleIcon color="primary"/> 
-               </Tooltip>
-        </IconButton>}
+         <Button raised style={{marginLeft:10}} onClick={()=>{this.addVendor();}}>ADD VENDOR</Button>}
  <br/>
 
       
