@@ -29,6 +29,18 @@ import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
 //
 import { TableCell } from 'material-ui/Table'; //for customize filter row
+import { withStyles } from 'material-ui/styles';
+
+const styles = theme => ({
+  cell: {
+    width: '100%',
+    paddingLeft: theme.spacing.unit,
+    paddingRight: theme.spacing.unit,
+  },
+  input: {
+    width: '100%',
+  },
+});
 
 const getRowId = row => row.id;
 //for previleges
@@ -59,9 +71,10 @@ const PrevilegeTypeProvider = props => (
   />
 );
 
-const PrevilegeFilterCell = ({ filter, onFilter, classes }) => (
-  <TableCell>
+const PrevilegeFilterCellBase = ({ filter, onFilter, classes }) => (
+  <TableCell className={classes.cell} >
     <Input
+      className={classes.input}
       type="text"
       value={filter ? filter.value : ''}
       onChange={e => onFilter(e.target.value ? { value: e.target.value } : null)}
@@ -70,8 +83,10 @@ const PrevilegeFilterCell = ({ filter, onFilter, classes }) => (
   </TableCell>
 );
 
+const PrevilegeFilterCell = withStyles(styles, { name: 'PrivilegeFilterCell' })(PrevilegeFilterCellBase);
+
 const FilterCell = (props) => {
-	console.log("props.column.name: " + props.column.name);
+	// console.log("props.column.name: " + props.column.name);
   if (props.column.name === 'privilege') {
     return <PrevilegeFilterCell {...props} />;
   }
@@ -161,6 +176,7 @@ export default class SampleTable extends React.PureComponent {
 	render() {
 		const { rows, columns, sorting, editingColumnExtensions, privilegeColumns } = this.state;
 		return(
+			<Paper>
 			<Grid
 				rows={rows}
 				columns={columns}
@@ -188,6 +204,7 @@ export default class SampleTable extends React.PureComponent {
 				<TableEditRow />
           		<TableEditColumn showAddCommand showEditCommand showDeleteCommand />
 			</Grid>
+			</Paper>
 		);
 	}
 }
