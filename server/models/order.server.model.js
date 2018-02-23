@@ -17,7 +17,7 @@ var OrderSchema = new Schema({
     },
     vendorName: {
         type: String,
-        required: true
+//        required: true
     },
     packageNum: {
         type: Number,
@@ -53,7 +53,7 @@ OrderSchema.statics.getNumSpaceAndNumUnits = function(ingredientName, package, r
             res.send("Ingredient doesn't exist");
         }
         else {
-            ingredient.getPackageSpace(ingredient.packageName, function(space) {
+            Ingredient.getPackageSpace(ingredient.packageName, function(space) {
                 if (space == -1) {
                     res.status(400);
                     res.send("Package name doesn't exist");

@@ -275,41 +275,36 @@ var deleteAllWithUserAccess = function(req, res, next, model, userId) {
                 console.log("Orders validated.");
                 res.send(items);
                 postProcessor.process(model, items, '', res, next);
-                Storage.findOne({temperatureZone: 'warehouse'}, function(err, storage){
-                    var capacity = storage.capacity;
-                    var newOccupied = storage.currentOccupiedSpace + wSpace;
-                    var newEmpty = capacity - newOccupied;
-                    storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
-
-                    });
-                });
-                Storage.findOne({temperatureZone: 'refrigerator'}, function(err, storage){
-                    var capacity = storage.capacity;
-                    var newOccupied = storage.currentOccupiedSpace + rSpace;
-                    var newEmpty = capacity - newOccupied;
-                    storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
-
-                    });
-                });
-                Storage.findOne({temperatureZone: 'freezer'}, function(err, storage){
-                    var capacity = storage.capacity;
-                    var newOccupied = storage.currentOccupiedSpace + fSpace;
-                    var newEmpty = capacity - newOccupied;
-                    storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
-
-                    });
-                });
+                updateStorage(wSpace, rSpace, fSpace);
             });
-//            item.remove(function(err) {
-//                if (err) {
-//                    return next(err);
-//                }
-//                else {
-//                    logger.log(username, 'delete', item, model);
-//                    res.json(item);
-//                }
-//            });
         }
+    });
+};
+
+var updateStorage = function(wSpace, rSpace, fSpace) {
+    Storage.findOne({temperatureZone: 'warehouse'}, function(err, storage){
+        var capacity = storage.capacity;
+        var newOccupied = storage.currentOccupiedSpace + wSpace;
+        var newEmpty = capacity - newOccupied;
+        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+
+        });
+    });
+    Storage.findOne({temperatureZone: 'refrigerator'}, function(err, storage){
+        var capacity = storage.capacity;
+        var newOccupied = storage.currentOccupiedSpace + rSpace;
+        var newEmpty = capacity - newOccupied;
+        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+
+        });
+    });
+    Storage.findOne({temperatureZone: 'freezer'}, function(err, storage){
+        var capacity = storage.capacity;
+        var newOccupied = storage.currentOccupiedSpace + fSpace;
+        var newEmpty = capacity - newOccupied;
+        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+
+        });
     });
 };
 
@@ -326,6 +321,10 @@ var validateOrdersHelper = function(i, items, res, next, wSpace, rSpace, fSpace,
         });
     } else {
         var order = items[i];
+        if (items.vendorName == null || items.vendorName == '') {
+            res.status(400).send('Vendor has not been chosen for ingredient '+order.ingredientName+'.');
+            return;
+        }
         var space = order.space;
         Ingredient.findOne({nameUnique: order.ingredientName.toLowerCase()}, function(err, obj){
             if (err) next(err);
@@ -334,9 +333,9 @@ var validateOrdersHelper = function(i, items, res, next, wSpace, rSpace, fSpace,
                 return;
             } else {
                 var temperatureZone = obj.temperatureZone;
-                if (temperatureZone == 'warehouse') wSpace += space;
-                else if (temperatureZone == 'refrigerator') rSpace += space;
-                else if (temperatureZone == 'freezer') fSpace += space;
+                if (temperatureZone == 'warehouse' && obj.packageName != 'railcar' && obj.packageName != 'truckload') wSpace += space;
+                else if (temperatureZone == 'refrigerator' && obj.packageName != 'railcar' && obj.packageName != 'truckload') rSpace += space;
+                else if (temperatureZone == 'freezer' && obj.packageName != 'railcar' && obj.packageName != 'truckload') fSpace += space;
                 else {
                     res.status(400).send('Temperature zone '+temperatureZone+' does not exist.');
                     return;
@@ -371,7 +370,7 @@ var checkSpaces = function(res, next, wSpace, rSpace, fSpace, callback) {
                 }
             }
             console.log(wSpace+' '+rSpace+' '+fSpace);
-            callback(wSpace, rSpace, fSpace);
+            callback();
         }
     });
 };
