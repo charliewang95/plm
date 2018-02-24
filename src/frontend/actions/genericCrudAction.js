@@ -65,34 +65,8 @@ async function create(url, object, sessionId, callback) {
       }
     }
 	
-	/*
-	.then(function (response) {
-		console.log(response);
-		return response;
-	})
-	.catch(function (error) {
-		console.log(error);
-	});*/
 };
 
-/* 
- * get all objects of a kind
- * url: string, the url for the get request
- */
- /*
-function getAll(url) {
-	//deprecated because somehow front end does not work?
-	//use getAllAsync instead
-	axios.get(url)
-	.then(function (response) {
-		console.log(response);
-		return response;
-	})
-	.catch(function (error) {
-		console.log(error);
-	});
-};
-*/
 
 /* 
  * get all objects of a kind
@@ -110,25 +84,6 @@ async function getAllAsync(url, sessionId) {
 	console.log(result);
 	return result;
 }
-
-/* 
- * get one object with a specfic id
- * deprecated, use getByIdAsync instead
- * objectId: string, the id of the ingredient
- * url: string, the url for the get request
- */
- /*
-function getById(objectId, url) {
-	axios.get(url.concat(objectId))
-	.then(function (response) {
-		console.log(response);
-		return response;
-	})
-	.catch(function (error) {
-		console.log(error);
-	});
-};
-*/
 
 /* 
  * get one object with a specfic id
@@ -163,18 +118,6 @@ async function getByIdAsync(url, propertyName, objectId, sessionId) {
 async function updateById(url, propertyName, objectId, sessionId, newObject, callback) {
 	const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName, objectId]);
 	const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
-	//const res = await axios.put(completeUrl, newObject)//
-	//const result = res.data;
-	//console.log(result);
-	//return result;
-
-	// .then(function (response) {
-	// 	console.log(response);
-	// 	return response;
-	// })
-	// .catch(function (error) {
-	// 	console.log(error);
-	// });
 
 	try {
 	    console.log(newObject);
@@ -211,14 +154,6 @@ async function deleteById(url, propertyName, objectId, sessionId) {
 	const result = res.data;
 	console.log(result);
 	return result;
-
-	// .then(function (response) {
-	// 	console.log(response);
-	// 	return response;
-	// })
-	// .catch(function (error) {
-	// 	console.log(error);
-	// });
 };
 
 /* 
@@ -234,14 +169,6 @@ async function deleteAll(url, propertyName, sessionId) {
 	const result = res.data;
 	console.log(result);
 	return result;
-	
-	// .then(function (response) {
-	// 	console.log(response);
-	// 	return response;
-	// })
-	// .catch(function (error) {
-	// 	console.log(error);
-	// });
 };
 
 //export functions above for use by other modules
