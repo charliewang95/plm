@@ -30,6 +30,9 @@ import { MenuItem } from 'material-ui/Menu';
 //
 import { TableCell } from 'material-ui/Table'; //for customize filter row
 import { withStyles } from 'material-ui/styles';
+//local components
+import * as userInterface from '../../../interface/userInterface';
+import * as utils from '../../../utils/utils';
 
 const styles = theme => ({
   cell: {
@@ -171,6 +174,21 @@ export default class SampleTable extends React.PureComponent {
       rows = rows.filter(row => !deletedSet.has(row.id));
     }
     this.setState({ rows });
+  }
+
+  async loadLocalUsers(){
+    const sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    const fromDukeOAuth = JSON.parse(sessionStorage.getItem('fromDukeOAuth'));
+    console.log("sessionId:" + sessionId);
+    console.log("fromDukeOAuth:" + fromDukeOAuth);
+    const sessionInfo = utils.createSessionInfoObject(sessionId, fromDukeOAuth);
+    console.log("sessionInfo:");
+    console.log(sessionInfo);
+    // var rawData = await ingredientInterface.getAllIngredientsAsync(sessionId);
+  }
+
+  componentDidMount(){
+    this.loadLocalUsers();
   }
 
 	render() {
