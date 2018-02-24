@@ -184,7 +184,11 @@ export default class SampleTable extends React.PureComponent {
     const sessionInfo = utils.createSessionInfoObject(sessionId, fromDukeOAuth);
     console.log("sessionInfo:");
     console.log(sessionInfo);
-    // var rawData = await ingredientInterface.getAllIngredientsAsync(sessionId);
+    const rawUserData = await userInterface.getAllUsersAsync(sessionInfo);
+    console.log(rawUserData);
+    if (rawUserData.length == 0){
+      return;
+    }
   }
 
   componentDidMount(){
