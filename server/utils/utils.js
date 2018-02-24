@@ -277,7 +277,7 @@ var checkoutOrders = function(req, res, next, model, userId, username) {
                 console.log("Orders validated.");
                 res.send(items);
                 postProcessor.process(model, items, '', res, next);
-                logger.log(username, 'checkout', user, model);
+                logger.log(username, 'checkout', items[0], model);
                 updateStorage(wSpace, rSpace, fSpace);
             });
         }
@@ -324,7 +324,7 @@ var validateOrdersHelper = function(i, items, res, next, wSpace, rSpace, fSpace,
         });
     } else {
         var order = items[i];
-        if (items.vendorName == null || items.vendorName == '') {
+        if (order.vendorName == null || order.vendorName == '') {
             res.status(400).send('Vendor has not been chosen for ingredient '+order.ingredientName+'.');
             return;
         }
@@ -392,23 +392,28 @@ var checkoutFormula = function(req, res, next, model, username) {
             } else {
                 var multiplier = quantity/unitsProvided;
                 var ingredients = formula.ingredients;
-                checkIngredientHelper(req, res, next, multiplier, 0, ingredients, [], function(array){
-                    if (array.length == 0) {
-                        logger.log(username, 'checkout', formula, model);
-                        updateIngredientHelper(req, res, next, multiplier, ingredients, 0, function() {
-                            return res.send('Got it');
-                        });
-                    }
-                    else return res.status(406).json(array);
+                checkIngredientHelper(req, res, next, multiplier, 0, ingredients, [], true, function(array, viable){
+                      if (req.params.action = 'review') {
+                          res.json(array);
+                      } else {
+                          if (viable) {
+                              updateIngredientHelper(req, res, next, multiplier, ingredients, 0, function() {
+                                  logger.log(username, 'checkout', formula, model);
+                                  return res.send('Got it');
+                              });
+                          } else {
+                              return res.status(406).send(array);
+                          }
+                      }
                 });
             }
         }
     });
 };
 
-var checkIngredientHelper = function(req, res, next, multiplier, i, ingredients, missingIngredientArray, callback) {
+var checkIngredientHelper = function(req, res, next, multiplier, i, ingredients, missingIngredientArray, viable, callback) {
     if (i == ingredients.length) {
-        callback(missingIngredientArray);
+        callback(missingIngredientArray, viable);
     } else {
         var ingredientQuantity = ingredients[i];
         var totalAmountNeeded = multiplier*ingredientQuantity.quantity;
@@ -417,13 +422,17 @@ var checkIngredientHelper = function(req, res, next, multiplier, i, ingredients,
             else if (!ingredient) return res.status(400).send('Ingredient '+ingredientQuantity.ingredientName+' does not exist.');
             else {
                 if (totalAmountNeeded > ingredient.numUnit) {
+                    viable = false;
                     var ingredientDelta = new Object();
+                    ingredientDelta.ingredientId = ingredient._id;
                     ingredientDelta.ingredientName = ingredientQuantity.ingredientName;
-                    ingredientDelta.delta = totalAmountNeeded - ingredient.numUnit;
+                    ingredientDelta.totalAmountNeeded = totalAmountNeeded;
+                    ingredientDelta.currentUnit = ingredient.numUnit;
+                    ingredientDelta.delta = (totalAmountNeeded - ingredient.numUnit) > 0 ? totalAmountNeeded - ingredient.numUnit : 0;
                     missingIngredientArray.push(ingredientDelta);
                     console.log(totalAmountNeeded+' '+ingredient.numUnit);
                 }
-                checkIngredientHelper(req, res, next, multiplier, i+1, ingredients, missingIngredientArray, callback);
+                checkIngredientHelper(req, res, next, multiplier, i+1, ingredients, missingIngredientArray, viable, callback);
             }
         });
     }

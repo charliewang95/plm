@@ -11,13 +11,18 @@ var OrderSchema = new Schema({
         ref: 'User',
         required: true
 	},
+	ingredientId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Ingredient',
+        required: true
+    },
 	ingredientName: {
         type: String,
         required: true
     },
     vendorName: {
         type: String,
-//        required: true
+        required: true
     },
     packageNum: {
         type: Number,

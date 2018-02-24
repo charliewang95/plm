@@ -77,10 +77,10 @@ async function deleteFormula(formulaId, sessionId) {
 	return await genericActions.deleteById(baseUrl, property, formulaId, sessionId);
 };
 
-async function checkoutFormula(formulaId, quantity, sessionId) {
+async function checkoutFormula(action, formulaId, quantity, sessionId) {
 	const checkoutSegment = '/checkout';
     //return await genericActions.deleteAll(baseUrl, checkoutSegment, sessionId);
-    const res = await axios.delete(baseUrl+checkoutSegment+'/formula/'+formulaId+'/amount/'+quantity+'/user/'+sessionId);
+    const res = await axios.delete(baseUrl+checkoutSegment+'/'+action+'/formula/'+formulaId+'/amount/'+quantity+'/user/'+sessionId);
     const result = res.data;
     console.log(result);
     return result;
