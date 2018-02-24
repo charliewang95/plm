@@ -29,4 +29,11 @@ exports.delete = function(req, res, next) {
 
 exports.checkout = function(req, res, next) {
     utils.doWithAccess(req, res, next, Formula, 'checkoutFormula', req.params.userId, req.params.formulaId, false, true); //
-}
+};
+
+exports.bulkImportFormulas = function(req, res, next, contents, callback) {
+    bulkImport.bulkImportFormulas(req, res, next, contents, function() {
+        //res.send(contents);
+        callback();
+    });
+};

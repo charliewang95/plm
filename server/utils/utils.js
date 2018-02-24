@@ -156,7 +156,7 @@ var update = function(req, res, next, model, itemId, username) {
                         }
                         else if (obj2){
                             console.log("updating, updated");
-                            logger.log(username, 'update', obj, model);
+                            logger.log(username, 'update', obj2, model);
                             if (model == Storage) {
                                 postProcessor.process(model, obj, itemId, res, next);
                             }
@@ -202,7 +202,7 @@ var updateWithUserAccess = function(req, res, next, model, userId, itemId, usern
                                 }
                                 else if (obj2){
                                     console.log("updating, updated");
-                                    logger.log(username, 'update', obj, model);
+                                    logger.log(username, 'update', obj2, model);
                                     if (model == Storage) {
                                         postProcessor.process(model, obj, itemId, res, next);
                                     }
