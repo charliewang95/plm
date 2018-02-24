@@ -8,7 +8,7 @@ import {
   TableHeaderRow,TableEditColumn,PagingPanel,TableEditRow,
 } from '@devexpress/dx-react-grid-material-ui';
 import {
-  EditingState,PagingState,IntegratedPaging
+  EditingState,PagingState,IntegratedPaging,
 } from '@devexpress/dx-react-grid';
 
 import * as testConfig from '../../../resources/testConfig.js';
@@ -38,7 +38,7 @@ import {cartData, ingredientData} from './dummyData';
 
 
 // TODO: Get the user ID
-const READ_FROM_DATABASE = true;
+const READ_FROM_DATABASE = false;
 var isAdmin= "";
 var userId = "";
 var sessionId = "";
@@ -62,13 +62,13 @@ const EditCell = (props) => {
 
   if(props.column.name == 'packageNum'){
     return <TableEditRow.Cell {...props}
-            required
+            required style={{backgroundColor:'aliceblue'}}
           />;
   }else if(props.column.name == 'vendors'){
     return <VendorCell handleChange = {props.onValueChange}
               vendorOptions = {vendorOptions} value = {value}/>;
   }else{
-    return <Cell {...props} />;
+    return <Cell {...props} style={{backgroundColor:'aliceblue'}}  />;
   }
 };
 
@@ -116,7 +116,11 @@ class ShoppingCart extends React.Component {
       currentPage: 0,
       pageSize: 10,
       pageSizes: [5, 10, 0],
+
     };
+
+
+
 
     this.changeCurrentPage = currentPage => {
       this.setState({ currentPage });
@@ -296,17 +300,19 @@ class ShoppingCart extends React.Component {
           <Table />
           <TableHeaderRow />
 
-          <EditingState
-            editingRowIds={editingRowIds}
-            onEditingRowIdsChange={this.changeEditingRowIds}
-            rowChanges={rowChanges}
-            onRowChangesChange={this.changeRowChanges}
-            onCommitChanges={this.commitChanges}
-          />
+
+
+            <EditingState
+              editingRowIds={editingRowIds}
+              onEditingRowIdsChange={this.changeEditingRowIds}
+              rowChanges={rowChanges}
+              onRowChangesChange={this.changeRowChanges}
+              onCommitChanges={this.commitChanges}/>
 
           {isAdmin && <TableEditRow
-            cellComponent={EditCell}
-          /> }
+            cellComponent={EditCell}/>
+        }
+
 
           <TableEditColumn
             width={120}

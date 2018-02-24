@@ -44,7 +44,7 @@ class VendorCell extends Component{
     vendorObject.vendorId=option.value;
     vendorObject.price=option.price;
     vendorObject.label = option.label
-    
+
     this.props.handleChange(vendorObject);
   }
 
@@ -59,7 +59,8 @@ class VendorCell extends Component{
 
   render(){
     return(
-      <TableCell>
+      <TableCell
+        style={{backgroundColor:'aliceblue'}} >
         <Select
          name="Vendor"
          options={this.state.vendorOptions}
