@@ -96,14 +96,14 @@ async function deleteFormula(formulaId, sessionId) {
 	return await formulaActions.deleteFormula(formulaId, sessionId);
 };
 
-async function checkoutFormula(formulaId, quantity, sessionId) {
+async function checkoutFormula(action, formulaId, quantity, sessionId) {
      // TODO: call something
      // if doesn't have enough, send back json with res.status == 406
      // [{
      //      ingredientName,
      //      delta,
      // }]
-     return await formulaActions.checkoutFormula(formulaId, quantity, sessionId);
+     return await formulaActions.checkoutFormula(action, formulaId, quantity, sessionId);
 };
 
 

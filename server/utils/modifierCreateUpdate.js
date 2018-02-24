@@ -53,36 +53,15 @@ var modifyOrder = function(item, res, next, callback) { //add number of pounds t
             return next(err);
         }
         else {
-            var str = JSON.stringify(item).slice(0,-1)+',"space":'+space+',"numUnit":'+numUnit+',"totalPrice":'+item.price*item.packageNum+'}';
-            callback(err, JSON.parse(str));
-//            var price;
-//            var fail = true;
-//            Ingredient.findById(item.ingredientId, function(err, ingredient){
-//                if (err) return next(err);
-//                else {
-//
-//
-//                    var vendors = ingredient.vendors;
-//                    for (var i = 0; i < vendors.length; i++) {
-//                        var vendor = vendors[i];
-//                        if (vendor.vendorId.toString() === item.vendorId.toString()) {
-//                            fail = false;
-//                            price = vendor.price;
-//                            str = str.slice(0,-1)+',"price":'+price+',"totalPrice":'+price*num+'}';
-//                            var moneySpent = ingredient.moneySpent;
-//                            console.log(price*num);
-//                            ingredient.update({moneySpent: moneySpent + price*num}, function(err, obj) {
-//                                if (err) return next(err);
-//                                else {
-//                                    callback(err, JSON.parse(str));
-//                                }
-//                            });
-//                        }
-//                    }
-//                    if (fail)
-//                        res.status(400).send("Vendor doesn't sell this ingredient or vendor doesn't exist");
-//                }
-//            });
+            Ingredient.findOne({nameUnique: item.ingredientName.toLowerCase()}, function(err, ingredient){
+                if (err) return next(err);
+                else if (!ingredient){
+                    return res.status(400).send('Ingredient does not exist');
+                } else {
+                    var str = JSON.stringify(item).slice(0,-1)+',"space":'+space+',"numUnit":'+numUnit+',"totalPrice":'+item.price*item.packageNum+',"ingredientId":"'+ingredient._id+'"}';
+                    callback(err, JSON.parse(str));
+                }
+            });
         }
     });
 };
