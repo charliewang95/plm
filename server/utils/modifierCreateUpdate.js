@@ -218,18 +218,20 @@ var helperIngredient = function(vendors, i, res, next, array, callback) {
 };
 
 var modifyFormula = function(action, item, itemId, res, next, callback) { //add unique lowercase code to check code uniqueness
-    var str = JSON.stringify(ingredient).slice(0,-1)+',"nameUnique":"'+item.name.toLowerCase()+'"}';
+    var str = JSON.stringify(item).slice(0,-1)+',"nameUnique":"'+item.name.toLowerCase()+'"}';
     item = JSON.parse(str);
     var ingredients = item.ingredients;
     if (ingredients == null || ingredients.length == 0){
         callback(0, item);
     } else {
         var newIngredients = [];
-        helperFormula(ingredients, 0, res, next, newIngredients, function(err, obj){
-            item.ingredients = obj;
-            callback(0, item);
-        })
+//        helperFormula(ingredients, 0, res, next, newIngredients, function(err, obj){
+//            item.ingredients = obj;
+//            callback(0, item);
+//        })
+        callback(0, item);
     }
+
 };
 
 var helperFormula = function(ingredients, i, res, next, array, callback) {

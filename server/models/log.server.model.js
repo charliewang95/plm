@@ -18,6 +18,10 @@ var LogSchema = new Schema({
         type: String,
         required: true,
     },
+    itemId: {
+        type: String,
+        required: true,
+    },
     date : {
         type: Date,
         required: true,

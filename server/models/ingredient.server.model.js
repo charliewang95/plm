@@ -77,7 +77,7 @@ var IngredientSchema = new Schema({
 
 //IngredientSchema.index({ name: 1, packageName: 1}, { unique: true });
 
-IngredientSchema.methods.getPackageSpace = function(packageName, callback) {
+IngredientSchema.statics.getPackageSpace = function(packageName, callback) {
     if (packageName == 'sack')
         callback(0.5);
     else if (packageName == 'pail')
