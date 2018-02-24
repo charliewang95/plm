@@ -2,10 +2,16 @@ var mongoose = require('mongoose'),
 	crypto = require('crypto'),
 	Schema = mongoose.Schema;
 
+var config = {
+    saltBytes : 16,
+    hashBytes: 32,
+    iterations: 78912
+};
+
 var UserSchema = new Schema({
 	email: {
 	    type: String,
-	    required: true
+	    //required: true
 	},
 	username: {
 		type: String,
@@ -23,12 +29,13 @@ var UserSchema = new Schema({
 	},
 	isManager: {
 	    type: Boolean,
-	    //required: true
+	    required: true
 	},
 	loggedIn: {
 	    type: Boolean,
         required: true
-	}
+	},
+	salt: String
 	//provider: String,
 	//providerId: String,
 	//providerData: {},
@@ -37,16 +44,29 @@ var UserSchema = new Schema({
 
 UserSchema.pre('save', 
 	function(next) {
-		if (this.password) {
+	    var temp = this;
+		if (temp.password) {
+		    this.salt = crypto.randomBytes(128).toString('base64');
+		    var iterations = 987;
+
+		    for (var i = 0; i<iterations; i++) {
+		        this.password += this.salt;
+		    }
+
 			var md5 = crypto.createHash('md5');
 			this.password = md5.update(this.password).digest('hex');
+
 		}
 
 		next();
 	}
 );
 
-UserSchema.methods.authenticate = function(password) {
+UserSchema.methods.authenticate = function(password, salt) {
+    for (var i = 0; i < 987; i++) {
+        password += salt;
+    }
+
 	var md5 = crypto.createHash('md5');
 	md5 = md5.update(password).digest('hex');
 

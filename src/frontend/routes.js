@@ -13,6 +13,9 @@ import Cart from './components/cart/Cart';
 import Report from './components/report/Report';
 import Login from './components/login/LoginPage';
 import Register from './components/login/RegisterPage';
+import ViewDetailsForm from './components/admin/ViewDetailsForm';
+import Log from './components/log/Log';
+import Formula from './components/formulas/Formula';
 
 const Routes = () => (
       <div>
@@ -21,6 +24,7 @@ const Routes = () => (
 		      <Route path="/dashboard" component={DashBoard} />
 		      <Route path="/admin-ingredients" component={AdminIngredients} />
 		      <Route path="/user-ingredients" component={UserIngredients} />
+		      <Route path="/ingredient-details" component={ViewDetailsForm} />
 		      <Route path="/inventory" component={Inventory} />
 		      <Route path="/orders" component={Orders} />
 		      <Route path="/storage" component={Storage} />
@@ -30,6 +34,8 @@ const Routes = () => (
 	          <Route path="/addVendorForm" component={AddVendorForm} />
 	          <Route path="/cart" component={Cart} />
 	          <Route path="/report" component={Report} />
+	          <Route path="/log" component={Log} />
+	          <Route path="/formula" component={Formula} />
 		  </Switch>
       </div>
 

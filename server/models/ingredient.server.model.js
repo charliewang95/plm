@@ -18,7 +18,8 @@ var VendorPriceSchema = new Schema({
     },
     price: {
         type: Number,
-        required: true
+        required: true,
+        min: [0, 'Price cannot be negative'],
     }
 });
 mongoose.model('VendorPrice', VendorPriceSchema);
@@ -27,6 +28,10 @@ var IngredientSchema = new Schema({
     name: {
         type: String,
         required: true,
+        unique: true
+    },
+    nameUnique: {
+        type: String,
         unique: true
     },
     packageName: {
@@ -54,14 +59,25 @@ var IngredientSchema = new Schema({
     },
     numUnitPerPackage: {
         type: Number,
-        required: true
+        required: true,
+        min: [0, 'Number cannot be negative'],
+    },
+    numUnit: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    space: {
+        type: Number,
+        required: true,
+        default: 0
     },
     vendors : [VendorPriceSchema]
 });
 
 //IngredientSchema.index({ name: 1, packageName: 1}, { unique: true });
 
-IngredientSchema.methods.getPackageSpace = function(packageName, callback) {
+IngredientSchema.statics.getPackageSpace = function(packageName, callback) {
     if (packageName == 'sack')
         callback(0.5);
     else if (packageName == 'pail')

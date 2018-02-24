@@ -1,17 +1,31 @@
 var mongoose = require('mongoose'),
-    Ingredient = require('mongoose').model('Ingredient'),
 	Schema = mongoose.Schema;
 
 var LogSchema = new Schema({
-    name: {
+    username: {
+        type: String,
+        required: true
+    },
+    action: {
+        type: String,
+        required: true
+    },
+    model: {
         type: String,
         required: true,
-        unique: true
     },
-    description: {
+    item: {
         type: String,
+        required: true,
     },
-    ingredients : [IngredientQuantitySchema]
+    itemId: {
+        type: String,
+        required: true,
+    },
+    date : {
+        type: Date,
+        required: true,
+    },
 });
 
-mongoose.model('Formula', FormulaSchema);
+mongoose.model('Log', LogSchema);
