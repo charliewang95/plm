@@ -74,6 +74,7 @@
     "redirect-https": "^1.1.4",
     "redux": "^3.7.2",
     "redux-form": "^7.2.1",
-    "redux-form-material-ui": "^5.0.0-beta.2"
+    "redux-form-material-ui": "^5.0.0-beta.2",
+    "url_parser": "^1.0.5"
   }
 }
