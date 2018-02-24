@@ -74,12 +74,6 @@ export const MainListItems = (
       </ListItemIcon>
       <ListItemText primary="Orders" />
     </ListItem> */}
-    <ListItem component={Link} to="/inventory" button>
-      <ListItemIcon>
-        <InventoryIcon/>
-      </ListItemIcon>
-      <ListItemText primary="Inventory" />
-    </ListItem>
     <ListItem component={Link} to="/storage" button>
       <ListItemIcon>
         <KitchenIcon />

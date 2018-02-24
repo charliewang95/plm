@@ -84,9 +84,9 @@ class Storage extends React.PureComponent {
     this.state = {
       columns: [
         { name: 'temperatureZone', title: 'Temperature Zone' },
-        { name: 'capacity', title: 'Capacity (lbs)' },
-        { name: 'currentOccupiedSpace', title: 'Space Occupied (lbs)' },
-        { name: 'currentEmptySpace', title: 'Space Left (lbs)' },
+        { name: 'capacity', title: 'Capacity (sqft)' },
+        { name: 'currentOccupiedSpace', title: 'Space Occupied (sqft)' },
+        { name: 'currentEmptySpace', title: 'Space Left (sqft)' },
       ],
       rows:[],
       editingRowIds: [],
