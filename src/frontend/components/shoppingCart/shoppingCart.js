@@ -38,7 +38,7 @@ import {cartData, ingredientData} from './dummyData';
 
 
 // TODO: Get the user ID
-const READ_FROM_DATABASE = false;
+const READ_FROM_DATABASE = true;
 var isAdmin= "";
 var userId = "";
 var sessionId = "";
@@ -118,10 +118,6 @@ class ShoppingCart extends React.Component {
       pageSizes: [5, 10, 0],
 
     };
-
-
-
-
     this.changeCurrentPage = currentPage => {
       this.setState({ currentPage });
     };

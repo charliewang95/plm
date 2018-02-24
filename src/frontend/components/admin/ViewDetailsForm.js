@@ -35,7 +35,7 @@ const styles = {
       float: 'center'
     },
     saveButton: {
-      marginLeft: 5
+      marginLeft: 50,
     },
     packageName:{
       marginLeft: 10,
@@ -187,31 +187,34 @@ class AddIngredientForm extends React.Component{
     else if(this.state.vendorsArray.length==0 || this.state.vendorsArray == null){
       alert("Please add a vendor.");
       return false;
-    }
-    return true;
+    }else if (!(/^[A-z]+$/).test(this.state.nativeUnit)){
+        alert('Native unit must be a string. ');
+    }else
+      return true;
   }
+
 
   onFormSubmit(e) {
 
     e.preventDefault();
     sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    
+
     if(this.isValid() && this.state.isCreateNew){
       ingredientInterface.addIngredient(this.state.name, this.state.packageName, this.state.temperatureZone,
-        this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, this.state.nativeUnit, 
+        this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, this.state.nativeUnit,
         this.state.numUnitPerPackage, 0, 0, sessionId, function(res){
                   if (res.status == 400) {
                       alert(res.data);
                   } else if (res.status == 500) {
                       alert('Ingredient name already exists');
-                  } else {
+                  } else{
                       // SnackBarPop("Row was successfully added!");
                       alert(" Ingredient Successfully added! ");
                   }
               });
     }else{
-      ingredientInterface.updateIngredient(this.state.ingredientId, this.state.name, this.state.packageName, 
-                this.state.temperatureZone, this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, 
+      ingredientInterface.updateIngredient(this.state.ingredientId, this.state.name, this.state.packageName,
+                this.state.temperatureZone, this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd,
                 this.state.nativeUnit, this.state.numUnitPerPackage, this.state.numUnit, this.state.space, sessionId, function(res){
                   if (res.status == 400) {
                       alert(res.data);
@@ -326,7 +329,7 @@ class AddIngredientForm extends React.Component{
             />}
             {(!this.state.isDisabled) && <SelectVendors initialArray={this.state.vendorsArray} handleChange={this.updateVendors}/>}
             </FormGroup>
-            {!this.state.isCreateNew && 
+            {!this.state.isCreateNew &&
               <div>
               <p><font size="6">Inventory Information</font></p>
               <FormGroup>

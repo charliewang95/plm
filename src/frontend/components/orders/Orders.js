@@ -56,7 +56,7 @@ class Orders extends React.PureComponent{
       total: 0,
       numUnitPerPackage: 0,
       totalQuantity: 0,
-      nativeUnit: '',
+      nativeUnit:'',
       }
 
     this.onFormSubmit = this.onFormSubmit.bind(this);

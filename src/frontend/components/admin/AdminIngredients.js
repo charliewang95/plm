@@ -368,8 +368,8 @@ class AdminIngredients extends React.PureComponent {
         console.log(added[0].vendorsArray);
         // TODO: Send data to back end
         var temp = this;
-        
-        await ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone, 
+
+        await ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone,
           added[0].vendorsArray, 0, 0, added[0].nativeUnit, added[0].numUnitPerPackage, sessionId, function(res){
             if (res.status == 400) {
                 if (!alert(res.data))
@@ -437,8 +437,8 @@ class AdminIngredients extends React.PureComponent {
               rows[i].vendors = vendors_string;
             }
 
-            ingredientInterface.updateIngredient(rows[i].ingredientId, rows[i].name, rows[i].packageName, 
-              rows[i].temperatureZone, rows[i].vendorsArray, rows[i].moneySpent, rows[i].moneyProd, 
+            ingredientInterface.updateIngredient(rows[i].ingredientId, rows[i].name, rows[i].packageName,
+              rows[i].temperatureZone, rows[i].vendorsArray, rows[i].moneySpent, rows[i].moneyProd,
               rows[i].nativeUnit, rows[i].numUnitPerPackage, sessionId, function(res){
                 if (res.status == 400) {
                     alert(res.data);
@@ -537,7 +537,7 @@ class AdminIngredients extends React.PureComponent {
     });
     this.setState({idToNameMap:map});
   }
-  
+
   async loadInventoryData(ingredientId, sessionId){
     console.log("enterasdf");
     sessionId = JSON.parse(localStorage.getItem('user'))._id;
@@ -584,7 +584,7 @@ class AdminIngredients extends React.PureComponent {
             vendorArrayString+=', ';
           }
       }
-      
+
       var singleData = new Object ();
      // singleData.numUnit = this.loadInventoryData(rawData[i]._id, sessionId);
       console.log("singleData");
@@ -775,7 +775,7 @@ class AdminIngredients extends React.PureComponent {
         Click <a href="./FormatSpec.pdf" style={{color:"#000000",}}>HERE</a> for format specification
       </div>
     }
-
+    
       <Button raised color="primary"
       component={Link} to="/orders"
       style = {{marginLeft: 380, marginBottom: 30}}
