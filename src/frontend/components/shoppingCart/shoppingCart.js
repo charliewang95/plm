@@ -354,10 +354,10 @@ class ShoppingCart extends React.Component {
         <Button raised
                   color="primary"
                   component = {Link} to = "/cart" //commented out because it overrides onSubmit
-                  style={{marginLeft: 380, marginBottom: 30}}
+                  style={{marginLeft: 500, marginBottom: 30, float: 'center'}}
                   type="submit"
                   onClick = {this.handleCheckOut}
-                  primary="true"> Order Ingredients </Button>
+                  primary="true"> Checkout </Button>
       </div>
       </Paper>
 

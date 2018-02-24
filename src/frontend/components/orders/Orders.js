@@ -42,12 +42,13 @@ class Orders extends React.PureComponent{
   constructor(props) {
     super(props);
     this.state = {
+      ingredientName:'',
   		vendorName:'',
       vendorId:'',
       price: 0,
   		value:undefined,
       packagName:'',
-      quantity:'',
+      packageNum:'',
       ingredientId:'',
       rows:[],
       fireRedirect: false,
@@ -62,6 +63,7 @@ class Orders extends React.PureComponent{
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.handleVendorChange = this.handleVendorChange.bind(this);
     this.calculate = this.calculate.bind(this);
+    this.isValid = this.isValid.bind(this);
   }
 
   // load all the ingredients initially
@@ -80,7 +82,9 @@ class Orders extends React.PureComponent{
       rawData = dummyData;
     }
     var parsedIngredientOptions = [...rawData.map((row, index)=> ({
-        value: row._id,label: row.name, numUnitPerPackage: row.numUnitPerPackage, nativeUnit: row.nativeUnit, packageName: row.packageName + ' (' + row.numUnitPerPackage + ' ' + row.nativeUnit + ')',
+        value: row._id,label: row.name, numUnitPerPackage:
+        row.numUnitPerPackage, nativeUnit: row.nativeUnit,
+        packageName: row.packageName + ' (' + row.numUnitPerPackage + ' ' + row.nativeUnit + ')',
       })),
     ];
     console.log("parsedIngredientOptions" + JSON.stringify(parsedIngredientOptions));
@@ -91,6 +95,7 @@ class Orders extends React.PureComponent{
 
   async handleIngredientChange(option) {
     console.log(" Ingredient Selected " + option.label);
+    this.setState({ingredientName: option.label});
     this.setState({packageName:option.packageName});
     this.setState({ingredientId:option.value});
     this.setState({numUnitPerPackage: option.numUnitPerPackage});
@@ -103,46 +108,33 @@ class Orders extends React.PureComponent{
       console.log('An error passed to the front end!')
       alert(e);
     }
+
     console.log("Vendors " + JSON.stringify(ingredientDetails.vendors));
 
-                    var parsedVendorOptions = [...ingredientDetails.vendors.map((row,index)=> ({
-                        value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
-                        price: row.price, numUnitPerPackage: row.numUnitPerPackage, nativeUnit: row.nativeUnit,
-                      })),
-                    ];
-                    console.log("Vendor options " + JSON.stringify(parsedVendorOptions));
-                    this.setState({vendor_options:parsedVendorOptions});
-//    ingredientActions.getIngredientAsync(option.value,sessionId, function(res){
-//        if (res.status == 400) {
-//            alert(res.data);
-//        } else {
-//            ingredientDetails = res;
-//             console.log("Vendors " + JSON.stringify(ingredientDetails.vendors));
-//
-//                var parsedVendorOptions = [...ingredientDetails.vendors.map((row,index)=> ({
-//                    value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
-//                    price: row.price,
-//                  })),
-//                ];
-//                console.log("Vendor options " + JSON.stringify(parsedVendorOptions));
-//                this.setState({vendor_options:parsedVendorOptions});
-//        }
-//    })
+    var parsedVendorOptions = [...ingredientDetails.vendors.map((row,index)=> ({
+        value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
+        price: row.price, numUnitPerPackage: row.numUnitPerPackage, nativeUnit: row.nativeUnit,
+        vendorName: row.vendorName,
+      })),
+    ];
+    console.log("Vendor options " + JSON.stringify(parsedVendorOptions));
+    this.setState({vendor_options:parsedVendorOptions});
   }
 
 // event handler when a vendor is selected from the drop down
   handleVendorChange(option){
     this.setState({vendorId: option.value});
     this.setState({price: option.price});
+    this.setState({vendorName: option.vendorName});
   }
 
-  // event handler when quantity is changed
+  // event handler when packageNum is changed
   handleQuantityChange(event){
-  const re = /^[0-9\b]+$/;
+  const re =/^[1-9]\d*$/;
       if (event.target.value == '' || re.test(event.target.value)) {
-         this.setState({quantity: event.target.value})
+         this.setState({packageNum: event.target.value})
       }else{
-        alert(" Quantity must be a number.");
+        alert(" No of Packages must be a number.");
       }
   }
 
@@ -156,29 +148,28 @@ class Orders extends React.PureComponent{
     console.log("package Name " + this.state.packageName);
     console.log("ingredientId " + this.state.ingredientId);
     console.log("vendorId " + this.state.vendorId);
-    console.log("quantity " + this.state.quantity);
+    console.log("packageNum " + this.state.packageNum);
     e.preventDefault();
     //TODO: Send data to back end
-//    try{
-//
-//      const response = await orderActions.addOrder(userId,this.state.ingredientId,
-//      this.state.vendorId,parseInt(this.state.quantity,10),this.state.price,sessionId);
-//      this.setState({ fireRedirect: true });
-//    }
-//    catch (e){
-//      console.log('An error passed to the front end!')
-//      //TODO: error handling in the front end
-//      alert(e);
-//    }
-        await orderActions.addOrder(userId,this.state.ingredientId,
-        this.state.vendorId,parseInt(this.state.quantity,10),this.state.price,sessionId,function(res){
-            if (res.status == 400) {
-                alert(res.data);
-            }else{
-              alert(" Ingredient ordered successfully! Please check the inventory to see the updated amount.")
-            }
-        });
-    this.clearFields();
+   try{
+     if(this.isValid()){
+       await orderActions.addOrder(userId,this.state.ingredientId,this.state.ingredientName,
+       this.state.vendorName,parseInt(this.state.packageNum,10),this.state.price,sessionId,function(res){
+           if (res.status == 400) {
+               alert(res.data);
+           }else{
+             alert(" Ingredient ordered successfully!");
+             // this.clearFields();
+           }
+       });
+       this.setState({ fireRedirect: true });
+     }
+   }
+   catch (e){
+     console.log('An error passed to the front end!')
+     //TODO: error handling in the front end
+     alert(e);
+   }
   }
 
   packageWeight(){
@@ -199,8 +190,8 @@ class Orders extends React.PureComponent{
   calculate(){
     console.log("clicked!");
     //var packageWeight = this.packageWeight();
-    var tempTotal = this.state.quantity * this.state.price;
-    var tempTotal2 = this.state.quantity * this.state.numUnitPerPackage;
+    var tempTotal = this.state.packageNum * this.state.price;
+    var tempTotal2 = this.state.packageNum * this.state.numUnitPerPackage;
     console.log(this.state.numUnitPerPackage);
     console.log(tempTotal2);
     this.setState({total: tempTotal});
@@ -214,11 +205,22 @@ class Orders extends React.PureComponent{
     this.setState({packageName:''});
     this.setState({ingredientId:''});
     this.setState({vendor_options: []});
-    this.setState({quantity: ''});
+    this.setState({packageNum: ''});
+  }
+
+  // Check for validation of the data fields before submitting an order
+  isValid(){
+    if(!this.state.ingredientName){
+      alert(" Please select an ingredient");
+  }else if(!this.state.vendorName){
+      alert(" Please select a vendor.");
+    }else{
+      return true;
+    }
   }
 
   render (){
-    const { vendorName, vendorId, packagName, quantity,ingredientId,rows,
+    const { vendorName, vendorId, packagName, packageNum,ingredientId,rows,
       fireRedirect ,ingredient_options,vendor_options} = this.state;
     return (
         <div>
@@ -251,8 +253,8 @@ class Orders extends React.PureComponent{
               <TextField
                   required
                   fullWidth={true}
-                  id="quantity"
-                  value={this.state.quantity}
+                  id="packageNum"
+                  value={this.state.packageNum}
                   onChange = {(event) => this.handleQuantityChange(event)}
                   margin="dense"
               />
@@ -285,7 +287,7 @@ class Orders extends React.PureComponent{
              </div>
            </form>
            {fireRedirect && (
-             <Redirect to={'/orders'}/>
+             <Redirect to={'/shoppingCart'}/>
            )}
          </div>
          )
