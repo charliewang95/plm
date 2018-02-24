@@ -575,12 +575,12 @@ class AdminIngredients extends React.PureComponent {
           let form = new FormData();
           form.append('file', file);
           console.log(form);
-           await uploadInterface.upload(form, sessionId, function(res){
+           await uploadInterface.uploadFormula(form, sessionId, function(res){
                 if (res.status == 400) {
                     if (!alert(res.data))
                         window.location.reload();
                 } else if (res.status == 500) {
-                    if (!alert('Duplicate Key on Ingredients (different package not allowed)'))
+                    if (!alert('Duplicate Key on Formula (different package not allowed)'))
                         window.location.reload();
                 } else if (res.status == 200) {
                     console.log(res);
@@ -711,7 +711,7 @@ class AdminIngredients extends React.PureComponent {
       }
       </Paper>
     {/* <Paper styles = {{color : "#42f4d9"}} > */}
-      {isAdmin && <p><font size="5">Bulk Import</font></p>}
+      {isAdmin && <p><font size="5">Formula Bulk Import</font></p>}
       {isAdmin && <input type="file"
         name="myFile"
         onChange={this.uploadFile} /> }

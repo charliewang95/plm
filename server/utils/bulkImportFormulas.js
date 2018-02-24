@@ -40,7 +40,7 @@ var validateBulkImport = function(req, res, next, array, i, callback){
     else {
         var formula = array[i];
         //console.log(formula);
-        var formulaName = formula.FORMULA;
+        var formulaName = formula.NAME;
         var unitsProvided = formula["PRODUCT UNITS"];
         var description = formula.DESCRIPTION;
         var ingredientNameUnique = formula.INGREDIENT.toLowerCase();
@@ -54,7 +54,7 @@ var validateBulkImport = function(req, res, next, array, i, callback){
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Units provided cannot be empty or zero');
             return;
         }
-        if (ingredientName == null || ingredientName == '') {
+        if (ingredientNameUnique == null || ingredientNameUnique == '') {
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Ingredient name cannot be empty');
             return;
         }

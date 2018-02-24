@@ -626,7 +626,7 @@ class AdminIngredients extends React.PureComponent {
           let form = new FormData();
           form.append('file', file);
           console.log(form);
-           await uploadInterface.upload(form, sessionId, function(res){
+           await uploadInterface.uploadIngredient(form, sessionId, function(res){
                 if (res.status == 400) {
                     if (!alert(res.data))
                         window.location.reload();
@@ -765,7 +765,7 @@ class AdminIngredients extends React.PureComponent {
       }
       </Paper>
     {/* <Paper styles = {{color : "#42f4d9"}} > */}
-      {isAdmin && <p><font size="5">Bulk Import</font></p>}
+      {isAdmin && <p><font size="5">Ingredient Bulk Import</font></p>}
       {isAdmin && <input type="file"
         name="myFile"
         onChange={this.uploadFile} /> }

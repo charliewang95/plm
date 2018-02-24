@@ -6,6 +6,7 @@ var utils = require('../utils/utils');
 var fs = require('fs');
 var Converter = require("csvtojson").Converter;
 var converter = new Converter({});
+var bulkImport = require('../utils/bulkImportFormulas');
 
 exports.create = function(req, res, next) {
     utils.doWithAccess(req, res, next, Formula, 'create', req.params.userId, '', true, true);
