@@ -30,12 +30,12 @@ const Routes = () => (
 		      <Route path="/storage" component={Storage} />
 		      <Route path="/login" component={Login} />
 		      <Route path="/register" component={Register} />
-	          <Route path="/vendors" component={Vendors} />
-	          <Route path="/addVendorForm" component={AddVendorForm} />
-	          <Route path="/cart" component={ShoppingCart} />
-	          <Route path="/report" component={Report} />
-	          <Route path="/log" component={Log} />
-	          <Route path="/formula" component={Formula} />
+	         <Route path="/vendors" component={Vendors} />
+	         <Route path="/addVendorForm" component={AddVendorForm} />
+	         <Route path="/cart" component={ShoppingCart} />
+	         <Route path="/report" component={Report} />
+	         <Route path="/log" component={Log} />
+	         <Route path="/formula" component={Formula} />
 		  </Switch>
       </div>
 
