@@ -12,7 +12,7 @@ import {
 } from '@devexpress/dx-react-grid';
 
 import * as testConfig from '../../../resources/testConfig.js';
-import * as cartActions from '../../interface/cartInterface.js';
+
 import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import Styles from  'react-select/dist/react-select.css';
@@ -31,11 +31,14 @@ import Dialog, {
 
 import VendorCell from './vendorCell';
 
+import * as orderActions from '../../interface/orderInterface.js';
+import * as ingredientActions from '../../interface/ingredientInterface.js';
+
 import {cartData, ingredientData} from './dummyData';
 
 
 // TODO: Get the user ID
-const READ_FROM_DATABASE = false;
+const READ_FROM_DATABASE = true;
 var isAdmin= "";
 var userId = "";
 var sessionId = "";
@@ -122,8 +125,10 @@ class ShoppingCart extends React.Component {
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
 
-    this.commitChanges =  ({ changed, deleted }) => {
+    this.commitChanges =  async ({ changed, deleted }) => {
       let { rows } = this.state;
+      var temp = this;
+
       if(changed){
           for(var i = 0; i < rows.length;i++){
             console.log( " Changed Id " + JSON.stringify(changed[rows[i].id]));
@@ -135,67 +140,68 @@ class ShoppingCart extends React.Component {
                     if (!re.test(enteredQuantity)) {
                       alert(" Number of packages must be a positive integer");
                     }else{
-                      // update the table
-                      rows[i].packageNum = changed[rows[i].id].packageNum;
-
                       // TODO: Update back end
-                      // TODO: Add SnackBar
+                      await orderActions.updateOrder(userId,rows[i].ingredientId,rows[i].ingredientName,
+                            "", rows[i].packageNum,0,sessionId,function(res){
+                              // TODO: Display error on exceeding storage capacity
+                              // if(res.status==)
+                              // TODO: Add SnackBar
+                              // update the table
+                              rows[i].packageNum = changed[rows[i].id].packageNum;
+                            });
+                        }
                     }
-                  }
+
                if (changed[rows[i].id].vendors){
+                 // TODO: Update Back End -- No error status so no callback??
+                 await orderActions.updateOrder(userId,rows[i].ingredientId,rows[i].ingredientName,
+                       changed[rows[i].id].vendors.vendorName,rows[i].packageNum,
+                       changed[rows[i].id].vendors.price,sessionId);
+
                  // update table
                   rows[i].vendors = changed[rows[i].id].vendors.label;
                   // update selectedVendor in row
                   rows[i].selectedVendorId =changed[rows[i].id].vendors.vendorId;
-                  // TODO: Update Back End
                   // TODO: Add SnackBar
               }
             }
           }
         }
+        // Delete
 
-      this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
+        this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
+        // TODO: Add SnackBar
     }
 
     this.cancelDelete = () => this.setState({ deletingRows: [] });
 
     this.deleteRows = () => {
       const rows = this.state.rows.slice();
-
       this.state.deletingRows.forEach(async (rowId) => {
         const index = rows.findIndex(row => row.id === rowId);
-
         if (index > -1) {
-          // This line removes the data from the rows
-          var cartId = rows[index]._id;
-          console.log("Deleted Item: " + rows[index].ingredientName);
-
-          //TODO: Delete order in back end
-          // await cartActions.deleteCart(cartId,sessionId);
-          // Delete row from the cart table
+          var orderId = rows[index]._id;
+          // TODO: update back End
+          orderActions.deleteOrder(orderId, sessionId);
           rows.splice(index, 1);
           // TODO: Add SnackBar
-
-          // console.log(" Cart After Delete " + JSON.stringify(rows));
-          alert(" Ingredient successfully deleted ! ");
+          // alert(" Ingredient successfully deleted ! ");
         }
-
       });
-
       this.setState({ rows, deletingRows: [] });
     };
 
-    // handle check out of carts
+    // handle check out orders
     this.handleCheckOut = async () => {
       // TODO: send data to back End
       console.log("checkout" );
       console.log(" ORDERED DATA " + this.state.rows);
-      // await cartActions.checkoutCart(sessionId);
 
+      await orderActions.checkoutOrder(sessionId);
       this.setState({rows:[]});
 
       // TODO: ADD snackbar
-      alert(" Ingredients successfully ordered  ! ");
+      // alert(" Ingredients successfully ordered  ! ");
       // window.location.reload();
     };
 
@@ -203,22 +209,19 @@ class ShoppingCart extends React.Component {
 
   componentWillMount(){
     this.loadCartData();
+    // TODO: Change later ?
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    userId =  JSON.parse(localStorage.getItem('user'))._id;
     isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
   }
 
-  componentDidMount(){
-    // this.loadCartData()
-  };
-
+  // Initialize data in the table
   async loadCartData(){
     var startingIndex = 0;
-    var rawData = '';
+    var rawData = [];
     if(READ_FROM_DATABASE){
-      // TODO: Initialize data
-      sessionId = JSON.parse(localStorage.getItem('user'))._id;
-      userId =  JSON.parse(localStorage.getItem('user'))._id;
-      rawData = await cartActions.getAllCartsAsync(userId);
-      console.log("rawData " + JSON.stringify(rawData));
+      rawData = await orderActions.getAllOrdersAsync(sessionId);
+      // console.log("rawData " + JSON.stringify(rawData));
     } else {
       rawData = cartData;
     }
@@ -228,24 +231,26 @@ class ShoppingCart extends React.Component {
       var singleData = new Object ();
       singleData.ingredientName = rawData[i].ingredientName;
       singleData.packageNum = rawData[i].packageNum;
+      singleData.ingredientId = rawData[i].ingredientId;
 
-      var data = {};
+      var singleIngredientData = {};
+
       // TODO: Get vendors from ingredients interface
       if(READ_FROM_DATABASE){
-        // TODO: load from back end
-        // ingredientData = await
+        //TODO: get ingredientDetails from back End
+        singleIngredientData = await ingredientActions.getIngredientAsync(rawData[i].ingredientId);
       }else{
-        data = ingredientData[i];
+        singleIngredientData = ingredientData[i];
       }
-      console.log(" ingredient DATA " + JSON.stringify(data));
+      console.log(" ingredient DATA " + JSON.stringify(singleIngredientData));
+
       // Sort the vendors
-      data.vendors.sort(function(a, b) {
-      return a.price - b.price });
+      singleIngredientData.vendors.sort(function(a, b) {return a.price - b.price });
 
         /* Parse vendors Options */
-        var parsedVendorOptions = [...data.vendors.map((row,index)=> ({
+        var parsedVendorOptions = [...singleIngredientData.vendors.map((row,index)=> ({
             value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
-            price: row.price,
+            price: row.price, vendorName:row.vendorName,
           })),
         ];
         // console.log(" Vendors Select " + parsedVendorOptions);
@@ -254,6 +259,7 @@ class ShoppingCart extends React.Component {
         singleData.vendorOptions= parsedVendorOptions;
         // Id is the value
         singleData.selectedVendorId = parsedVendorOptions[0].value;
+
         processedData.push(singleData);
   }
     // console.log("Vendor Options " + JSON.stringify(parsedVendorOptions));
