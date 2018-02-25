@@ -38,9 +38,10 @@ class RegisterPage extends React.Component {
     this.processForm = this.processForm.bind(this);
     this.changeUser = this.changeUser.bind(this);
     this.userSuccessfullyAdded = this.userSuccessfullyAdded.bind(this);
-    this.refreshTableInfo = this.refreshTableInfo.bind(this);
     //for table display
     this.loadAllUsers = this.loadAllUsers.bind(this);
+    //for both register and table display
+    this.refreshTableInfo = this.refreshTableInfo.bind(this);
     
   }
 
@@ -235,6 +236,7 @@ class RegisterPage extends React.Component {
           formUser={this.state.user}
           //for display users
           rows={this.state.userTableRows}
+          refreshTable={this.refreshTableInfo}
         />
 
         

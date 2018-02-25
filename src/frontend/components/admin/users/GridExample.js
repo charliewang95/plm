@@ -39,6 +39,8 @@ import { withStyles } from 'material-ui/styles';
 import * as userInterface from '../../../interface/userInterface';
 import * as utils from '../../../utils/utils';
 
+var sessionId = '';
+
 const styles = theme => ({
   cell: {
     width: '100%',
@@ -206,12 +208,15 @@ export default class SampleTable extends React.PureComponent {
         //for paging
         this.changeCurrentPage = currentPage => this.setState({ currentPage });
         this.changePageSize = pageSize => this.setState({ pageSize });
+        //for refreshing table
+        this.refreshTable = props.refreshTable;
   }
 
-	commitChanges({ added, changed, deleted }) { //function for saving changes in table
-    let { rows } = this.state;
+	async commitChanges({ added, changed, deleted }) { //function for saving changes in table
+    let { rows } = this.props;
     console.log("Entered commitChanges()");
     if (added) {
+      //this part should not be executed because we removed NEW from the UI
       console.log("entering added");
       const startingAddedId = (rows.length - 1) > 0 ? rows[rows.length - 1].id + 1 : 0;
       rows = [
@@ -228,10 +233,26 @@ export default class SampleTable extends React.PureComponent {
     }
     if (deleted) {
     	console.log("entering deleted")
+      console.log("parameter 'deleted':")
+      console.log(deleted);
       const deletedSet = new Set(deleted);
-      rows = rows.filter(row => !deletedSet.has(row.id));
+      const deleteRows = rows.filter(row => deletedSet.has(row.id));
+      console.log("This row is supposed to be deleted:");
+      console.log(deleteRows);
+      for (var i = 0; i < deleteRows.length; i++){
+        const userObject = deleteRows[i];
+        console.log("Deleting user...")
+        console.log(userObject);
+        const userId = userObject.userId;
+        console.log("userId: " + userId);
+        //issue delete
+        console.log("sessionId: " + sessionId);
+        await userInterface.deleteUser(userId, sessionId);
+        this.refreshTable();
+      }
+      // rows = rows.filter(row => !deletedSet.has(row.id));
     }
-    this.setState({ rows });
+    // this.setState({ rows });
   }
 
   async loadAllUsers(){
@@ -286,7 +307,10 @@ export default class SampleTable extends React.PureComponent {
     // this.setState({rows: finalData});
 
   };
-
+  componentWillMount(){
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    console.log("sessionId set to " + sessionId);
+  }
   componentDidMount(){
     this.loadAllUsers();
     // console.log("constructor in GridExample: rows:")

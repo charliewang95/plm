@@ -33,8 +33,8 @@ function SimpleExpansionPanel(props) {
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <GridExample 
-          	rows = {props.rows}
-
+          	rows={props.rows}
+          	refreshTable={props.refreshTable}
           />
         </ExpansionPanelDetails>
       </ExpansionPanel>
