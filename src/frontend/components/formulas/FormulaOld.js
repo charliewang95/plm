@@ -1,16 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  FilteringState,
-  IntegratedFiltering,
-} from '@devexpress/dx-react-grid';
-import {
   SortingState, EditingState, PagingState,
   IntegratedPaging, IntegratedSorting,
 } from '@devexpress/dx-react-grid';
 import {
   Grid,
-  Table, TableFilterRow, TableHeaderRow, TableEditRow, TableEditColumn,
+  Table, TableHeaderRow, TableEditRow, TableEditColumn,
   PagingPanel, DragDropProvider, TableColumnReordering,
 } from '@devexpress/dx-react-grid-material-ui';
 import Paper from 'material-ui/Paper';
@@ -32,18 +28,16 @@ import EditIcon from 'material-ui-icons/Edit';
 import SaveIcon from 'material-ui-icons/Save';
 import CancelIcon from 'material-ui-icons/Cancel';
 import { withStyles } from 'material-ui/styles';
+import SelectIngredients from './SelectIngredients';
 
 import Styles from  'react-select/dist/react-select.css';
 import ReactSelect from 'react-select';
-import testData from './testIngredients';
-import SelectVendors from './SelectVendors';
-import * as ingredientInterface from '../../interface/ingredientInterface';
-import * as vendorInterface from '../../interface/vendorInterface';
+import * as formulaInterface from '../../interface/formulaInterface';
 import * as uploadInterface from '../../interface/uploadInterface';
-import * as inventoryInterface from '../../interface/inventoryInterface';
+import * as ingredientInterface from '../../interface/ingredientInterface';
   // TODO: get the sessionId
 import * as testConfig from '../../../resources/testConfig.js';
-import MyPdfViewer from './PdfViewer';
+import MyPdfViewer from '../admin/PdfViewer';
 import {Link} from 'react-router-dom';
 import Snackbar from 'material-ui/Snackbar';
 
@@ -78,8 +72,8 @@ const AddButton = ({ onExecute }) => (
   <div style={{ textAlign: 'center' }}>
     <Button
       color="primary"
-      title="Create New Ingredient"
-      component={Link} to={{pathname: '/ingredient-details', state:{isCreateNew: true} }}
+      onClick={onExecute}
+      title="Create new row"
     >
       New
     </Button>
@@ -134,17 +128,8 @@ const commandComponents = {
   cancel: CancelButton,
 };
 
-const FilterCell = (props) => {
-  return <TableFilterRow.Cell {...props} />
-}
-FilterCell.propTypes = {
-  column: PropTypes.shape({ name: PropTypes.string }).isRequired,
-};
-
 const Command = ({ id, onExecute }) => {
   const CommandButton = commandComponents[id];
-  console.log("this is a command");
-  console.log(commandComponents[id]);
   return (
     <CommandButton
       onExecute={onExecute}
@@ -158,30 +143,30 @@ Command.propTypes = {
 
 // options for the drop down
 const availableValues = {
-  packageName: testData.tablePage.package_options,
-  temperatureZone: testData.tablePage.temperatureZone_options,
-  // vendors: testData.tablePage.vendor_options,
+  // packageName: testData.tablePage.package_options,
+  // temperatureZone: testData.tablePage.temperatureZone_options,
+  // ingredients: testData.tablePage.ingredient_options,
 
   // TODO: Get the data from the back end
-  vendors: sessionId == "" ? null : vendorInterface.getAllVendorsAsync(sessionId),
-  //vendors: testData.tablePage.vendor_options2,
+  formulas: sessionId == "" ? null : formulaInterface.getAllFormulasAsync(sessionId),
+  //ingredients: testData.tablePage.ingredient_options2,
 
 };
 
 
 const MultiSelectCellBase = ({
-  onValueChange, vendorsArray, classes
+  onValueChange, ingredientsArray, classes
 }) => (
   <TableCell className={classes.lookupEditCell}>
 
-     <SelectVendors initialArray={vendorsArray} handleChange={onValueChange}/>
+     <SelectIngredients initialArray={ingredientsArray} handleChange={onValueChange}/>
     {/* </ReactSelect> */}
   </TableCell>
 );
 
 MultiSelectCellBase.propTypes = {
   onValueChange: PropTypes.func.isRequired,
-  vendorsArray: PropTypes.any,
+  ingredientsArray: PropTypes.any,
   classes: PropTypes.object.isRequired,
 };
 
@@ -225,15 +210,8 @@ LookupEditCellBase.defaultProps = {
 export const LookupEditCell = withStyles(styles, { name: 'ControlledModeDemo' })(LookupEditCellBase);
 
 
-
 const Cell = (props) => {
-  console.log(" CELL props value: ");
-  console.log(props);
-  if(props.column.name=='name'){
-    return <Table.Cell {...props}>
-    <Link to={{pathname: '/ingredient-details', state:{details: props.row} }}>{props.row.name}</Link>
-    </Table.Cell>
-  }
+  console.log(" CELL props value: " + props.value)
   return <Table.Cell {...props} />;
 };
 
@@ -244,13 +222,13 @@ Cell.propTypes = {
 const EditCell = (props) => {
   console.log('Options Choice ' + props.column.name);
   const availableColumnValues = availableValues[props.column.name];
-  const vendorsArray = props.row.vendorsArray;
+  const ingredientsArray = props.row.ingredientsArray;
 
   // EDIT to make changes to the multi select things //
   /* CHANGE */
-  if (props.column.name =='vendors') {
-    console.log(vendorsArray);
-    return  <MultiSelectCell {...props} vendorsArray= {vendorsArray} onValueChange={props.onValueChange}/>;
+  if (props.column.name =='ingredients') {
+    console.log(ingredientsArray);
+    return  <MultiSelectCell {...props} ingredientsArray= {ingredientsArray} onValueChange={props.onValueChange}/>;
   }else if (availableColumnValues){
     return <LookupEditCell {...props} availableColumnValues={availableColumnValues}/>;
   }
@@ -259,21 +237,6 @@ const EditCell = (props) => {
 EditCell.propTypes = {
   column: PropTypes.shape({ name: PropTypes.string }).isRequired,
 };
-
-// const SnackBarBase=({message}) => (
-//     <Snackbar
-//               anchorOrigin={{vertical: 'top', horizontal:'right' }}
-//               // open={open}
-//               onClose={this.handleClose}
-//               SnackbarContentProps={{
-//                 'aria-describedby': 'message-id',
-//               }}
-//               message={<span id="message-id">{message}</span>}
-//             />
-//           );
-//
-// export const SnackBarPop = withStyles(styles, { name: 'snackbar' })(SnackBarBase);
-
 
 
 const getRowId = row => row.id;
@@ -286,11 +249,13 @@ class AdminIngredients extends React.PureComponent {
       idToNameMap:{},
       columns: [
         { name: 'name', title: 'Name' },
-        { name: 'packageName', title: 'Package' },
-        { name: 'temperatureZone', title: 'Temperature Zone' },
-        { name: 'vendors', title: 'Vendors/Price' },
-        { name: 'nativeUnit', title: 'Native Unit' },
-        { name: 'numUnitPerPackage', title: 'Unit/package' },
+        { name: 'description', title: 'Description' },
+        { name: 'unitsProvided', title: 'Units Provided' },
+        { name: 'ingredients', title: 'Ingredient/Quantity' },
+      ],
+
+      tableColumnExtensions: [
+        { columnName: 'ingredients', align: 'right' },
       ],
 
       // TODO: get data to display from back end
@@ -304,7 +269,7 @@ class AdminIngredients extends React.PureComponent {
       deletingRows: [],
       pageSize: 10,
       pageSizes: [5, 10, 0],
-      columnOrder: ['name', 'temperatureZone', 'packageName', 'numUnitPerPackage', 'nativeUnit', 'vendors'],
+      columnOrder: ['name', 'description', 'unitsProvided', 'ingredients'],
       options:[],
     };
 
@@ -316,12 +281,12 @@ class AdminIngredients extends React.PureComponent {
 
         /* TODO: Change this after getting the data from back End */
         // name: testData.tablePage.ingredient_options[0],
-        // vendors: testData.tablePage.vendor_options[0],
+        // ingredients: testData.tablePage.ingredient_options[0],
         //temperatureZone: testData.tablePage.temperatureZone_options[0],
         //packageName:testData.tablePage.package_options[0],
         temperatureZone: "",
         packageName: "",
-        vendorsArray: [],
+        ingredientsArray: [],
       })),
     });
     // this.changeRowChanges = rowChanges => this.setState({ rowChanges });
@@ -340,50 +305,48 @@ class AdminIngredients extends React.PureComponent {
         const startingAddedId = (rows.length - 1) > 0 ? rows[rows.length - 1].id + 1 : 0;
 
         // TODO: Add checks for Values
-        var vendors_string = "";
-        if (added[0].vendors == null){
-            alert('Vendors must be filled');
+        var ingredients_string = "";
+        if (added[0].ingredients == null){
+            alert('Ingredients must be filled');
         } else {
-        for(var i =0; i < added[0].vendors.length; i++){
-          var vendorObject = added[0].vendors[i];
-          //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
-          var vendorName = vendorObject.vendorName;
-          console.log(vendorName);
-          var namePrice = vendorName + " / $" + vendorObject.price;
-          vendors_string += namePrice;
+        for(var i =0; i < added[0].ingredients.length; i++){
+          var ingredientObject = added[0].ingredients[i];
+          //var ingredientName = this.state.idToNameMap.get(ingredientObject.codeUnique);
+          var ingredientName = ingredientObject.ingredientName;
+          console.log(ingredientName);
+          var nameQuantity = ingredientName + " / " + ingredientObject.quantity;
+          ingredients_string += nameQuantity;
           console.log("this is I");
           console.log(i);
-          if(i!= (added[0].vendors).length -1){
-            vendors_string+=', ';
+          if(i!= (added[0].ingredients).length -1){
+            ingredients_string+=', ';
           }
         }
 
-        console.log("Added vendors");
-        added[0].vendorsArray = added[0].vendors;
-        console.log(added[0].vendorsArray);
-        added[0].vendors = vendors_string;
+        console.log("Added ingredients");
+        added[0].ingredientsArray = added[0].ingredients;
+        console.log(added[0].ingredientsArray);
+        added[0].ingredients = ingredients_string;
         added[0].id = startingAddedId;
 
         console.log("********************************");
-        console.log(added[0].vendorsArray);
+        console.log(added[0].ingredientsArray);
         // TODO: Send data to back end
         var temp = this;
-
-        await ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone,
-          added[0].vendorsArray, 0, 0, added[0].nativeUnit, added[0].numUnitPerPackage, sessionId, function(res){
+        await formulaInterface.addFormula(added[0].name, added[0].description, added[0].unitsProvided, added[0].ingredientsArray, sessionId, function(res){
             if (res.status == 400) {
                 if (!alert(res.data))
                     //window.location.reload();
                     temp.setState({rows:rows});
 
             } else if (res.status == 500) {
-                if (!alert('Cannot add ingredient (ingredient already exists/one or more fields are empty)'))
+                if (!alert('Formula already exist'))
                     //window.location.reload();
                     temp.setState({rows:rows});
           }else{
             rows = [...rows,added[0]];
             temp.setState({rows:rows});
-            alert(" New Ingredient Successfully added! ");
+            alert(" New Formula Successfully added! ");
           }
         });
 
@@ -393,53 +356,39 @@ class AdminIngredients extends React.PureComponent {
         console.log("changed " + Object.keys(changed));
 
         for(var i =0; i < rows.length; i++){
-          // Accessing the changes made to the rows and displaying them=
-
+          // Accessing the changes made to the rows and displaying them
           if(changed[rows[i].id]){
             if(changed[rows[i].id].name){
               rows[i].name = changed[rows[i].id].name;
             }
-            if(changed[rows[i].id].packageName){
-              rows[i].packageName = changed[rows[i].id].packageName;
+            if(changed[rows[i].id].description){
+              rows[i].description = changed[rows[i].id].description;
             }
-            if(changed[rows[i].id].temperatureZone){
-              rows[i].temperatureZone = changed[rows[i].id].temperatureZone;
-            }
-            if(changed[rows[i].id].nativeUnit){
-              rows[i].nativeUnit = changed[rows[i].id].nativeUnit;
-            }
-            if(changed[rows[i].id].numUnitPerPackage){
-              const re = /^[0-9\b]+$/;
-              if(re.test(changed[rows[i].id].numUnitPerPackage)){
-                rows[i].numUnitPerPackage = changed[rows[i].id].numUnitPerPackage;
-              }else{
-                alert("Quantity must be a number!");
-              }
-            }
-            var vendors_string = "";
 
-            // parse vendors into a string
-            if(changed[rows[i].id].vendors){
-              for(var j = 0; j < (changed[rows[i].id].vendors).length ; j++){
+            if(changed[rows[i].id].unitsProvided){
+              rows[i].unitsProvided = changed[rows[i].id].unitsProvided;
+            }
+            var ingredients_string = "";
+
+            // parse ingredients into a string
+            if(changed[rows[i].id].ingredients){
+              for(var j = 0; j < (changed[rows[i].id].ingredients).length ; j++){
                 console.log("Is this changed?");
-                console.log(changed[rows[i].id].vendors[j]);
-                var vendorObject = changed[rows[i].id].vendors[j];
-                //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
-                var vendorName = vendorObject.vendorName;
-                var namePrice = vendorName + " / $" + vendorObject.price;
-                vendors_string += namePrice;
-              //   vendors_string += changed[rows[i].id].vendors[j].value;
-                if(j!= (changed[rows[i].id].vendors).length -1){
-                  vendors_string+=', ';
+                console.log(changed[rows[i].id].ingredients[j]);
+                var ingredientObject = changed[rows[i].id].ingredients[j];
+                //var ingredientName = this.state.idToNameMap.get(ingredientObject.codeUnique);
+                var ingredientName = ingredientObject.ingredientName;
+                var nameQuantity = ingredientName + " / $" + ingredientObject.quantity;
+                ingredients_string += nameQuantity;
+              //   ingredients_string += changed[rows[i].id].ingredients[j].value;
+                if(j!= (changed[rows[i].id].ingredients).length -1){
+                  ingredients_string+=', ';
                 }
               }
-              rows[i].vendorsArray = changed[rows[i].id].vendors;
-              rows[i].vendors = vendors_string;
+              rows[i].ingredientsArray = changed[rows[i].id].ingredients;
+              rows[i].ingredients = ingredients_string;
             }
-
-            ingredientInterface.updateIngredient(rows[i].ingredientId, rows[i].name, rows[i].packageName,
-              rows[i].temperatureZone, rows[i].vendorsArray, rows[i].moneySpent, rows[i].moneyProd,
-              rows[i].nativeUnit, rows[i].numUnitPerPackage, sessionId, function(res){
+            formulaInterface.updateFormula(rows[i].formulaId, rows[i].name, rows[i].description, rows[i].unitsProvided, rows[i].ingredientsArray, sessionId, function(res){
                 if (res.status == 400) {
                     alert(res.data);
                 } else if (res.status == 500) {
@@ -473,12 +422,12 @@ class AdminIngredients extends React.PureComponent {
           var name = rows[index].name;
           var packageName = rows[index].packageName;
           console.log("delete");
-          console.log(rows[index].ingredientId);
-          ingredientInterface.deleteIngredient(rows[index].ingredientId, sessionId);
+          console.log(rows[index].formulaId);
+          formulaInterface.deleteFormula(rows[index].formulaId, sessionId);
           rows.splice(index, 1);
 
           //Alert the user
-          alert(" Ingredient successfully deleted ! ");
+          alert(" Formula successfully deleted ! ");
         }
 
       });
@@ -495,12 +444,12 @@ class AdminIngredients extends React.PureComponent {
   // handleRowChange({rowChanges}){
     // console.log("ROW CHANGES Keys: " + Object.keys(rowChanges));
 
-    // console.log("RC" + rowChanges.id + rowChanges.name + rowChanges.packageName + rowChanges.vendors);
+    // console.log("RC" + rowChanges.id + rowChanges.name + rowChanges.packageName + rowChanges.ingredients);
     // this.setState ({rowChanges: rowChanges});
   // }
 
   componentWillMount(){
-    this.loadCodeNameArray();
+    //this.loadCodeNameArray();
     this.loadAllIngredients();
     isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
   }
@@ -513,14 +462,14 @@ class AdminIngredients extends React.PureComponent {
    // var startingIndex = 0;
     var rawData = [];
     sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    rawData = await vendorInterface.getAllVendorNamesCodesAsync(sessionId);
+    //rawData = await formulaInterface.getAllIngredientNamesCodesAsync(sessionId);
     console.log("loadCodeNameArray was called");
     console.log(rawData.data);
 
     var list = rawData.data;
     var map = new Map();
-     list.forEach(function(vendor){
-      map.set(vendor.codeUnique, vendor.name);
+     list.forEach(function(ingredient){
+      map.set(ingredient.codeUnique, ingredient.name);
     });
     this.setState({idToNameMap:map});
 
@@ -532,29 +481,20 @@ class AdminIngredients extends React.PureComponent {
     console.log("create map!");
     console.log(list);
     var map = new Map();
-    list.forEach(function(vendor){
-      map.set(vendor.codeUnique, vendor.name);
+    list.forEach(function(ingredient){
+      map.set(ingredient.codeUnique, ingredient.name);
     });
     this.setState({idToNameMap:map});
   }
 
-  async loadInventoryData(ingredientId, sessionId){
-    console.log("enterasdf");
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    var inventoryData = await inventoryInterface.getInventoryAsync(ingredientId, sessionId);
-    console.log("loading inventory");
-    console.log(inventoryData);
-    return inventoryData;
-  }
-
   async loadAllIngredients(){
     sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    var rawData = await ingredientInterface.getAllIngredientsAsync(sessionId);
+    var rawData = await formulaInterface.getAllFormulasAsync(sessionId);
     if(rawData.length==0){
-      return
+      return;
     }
     console.log("rawData asdfasdfasdf");
-    console.log(rawData[0].vendors);
+    console.log(rawData[0]);
     var processedData=[];
     //   var processedData = [...rawData.map((row, index)=> ({
     //     id: startingIndex + index,...row,
@@ -563,48 +503,42 @@ class AdminIngredients extends React.PureComponent {
 
     // //loop through ingredient
     for (var i = 0; i < rawData.length; i++) {
-      var vendorArrayString = "";
-      //loop through vendor
+      var formulaArrayString = "";
+      //loop through ingredient
       console.log("This is the rawData");
       console.log(rawData[i]);
-      var formatVendorsArray = new Array();
-      for (var j=0; j<rawData[i].vendors.length; j++){
-        //var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].codeUnique);
-        var vendorName = rawData[i].vendors[j].vendorName;
-        var price = rawData[i].vendors[j].price;
+      var formatFormulasArray = new Array();
+      for (var j=0; j<rawData[i].ingredients.length; j++){
+        //var ingredientName = this.state.idToNameMap.get(rawData[i].ingredients[j].codeUnique);
+        var ingredientName = rawData[i].ingredients[j].ingredientName;
+        var quantity = rawData[i].ingredients[j].quantity;
 
-        var vendorObject = new Object();
-        vendorObject.vendorName = vendorName;
-        vendorObject.price = price;
-        formatVendorsArray.push(vendorObject);
+        var formulaObject = new Object();
+        formulaObject.ingredientName = ingredientName;
+        formulaObject.quantity = quantity;
+        formatFormulasArray.push(formulaObject);
 
-        console.log(vendorName);
-        vendorArrayString+=vendorName + " / $" + rawData[i].vendors[j].price;
-         if(i!= (rawData[i].vendors.length-1) ){
-            vendorArrayString+=', ';
+        var ingredientArrayString = '';
+        console.log(ingredientName);
+        ingredientArrayString+=ingredientName + " / " + rawData[i].ingredients[j].quantity;
+        console.log("tired");
+        console.log(i);
+         if(i!= (rawData[i].ingredients.length-1) ){
+            ingredientArrayString+=', ';
           }
       }
 
       var singleData = new Object ();
-     // singleData.numUnit = this.loadInventoryData(rawData[i]._id, sessionId);
-      console.log("singleData");
-      console.log(singleData);
       // singleData.id = i;
       singleData.name = rawData[i].name;
-      singleData.packageName = rawData[i].packageName;
-      singleData.temperatureZone = rawData[i].temperatureZone;
-      singleData.vendorsArray = formatVendorsArray;
-      singleData.moneySpent = rawData[i].moneySpent;
-      singleData.moneyProd = rawData[i].moneyProd;
-      singleData.nativeUnit = rawData[i].nativeUnit;
-      singleData.numUnitPerPackage = rawData[i].numUnitPerPackage;
-      singleData.numUnit = rawData[i].numUnit;
-      singleData.space = rawData[i].space;
-      //singleData.vendorsArray = "";
-      singleData.vendors = vendorArrayString;
+      singleData.description = rawData[i].description;
+      singleData.unitsProvided = rawData[i].unitsProvided;
+      singleData.ingredientsArray = formatFormulasArray;
+      //singleData.ingredientsArray = "";
+      singleData.ingredients = ingredientArrayString;
       console.log("my id");
-      singleData.ingredientId = rawData[i]._id;
-      console.log(singleData.ingredientId);
+      singleData.formulaId = rawData[i]._id;
+      console.log(singleData.formulaId);
       processedData.push(singleData);
     }
 
@@ -626,7 +560,7 @@ class AdminIngredients extends React.PureComponent {
           let form = new FormData();
           form.append('file', file);
           console.log(form);
-           await uploadInterface.uploadIngredient(form, sessionId, function(res){
+           await uploadInterface.upload(form, sessionId, function(res){
                 if (res.status == 400) {
                     if (!alert(res.data))
                         window.location.reload();
@@ -678,8 +612,6 @@ class AdminIngredients extends React.PureComponent {
           getRowId={getRowId}
 
         >
-        <FilteringState/>
-          <IntegratedFiltering />
           <SortingState
             sorting={sorting}
             onSortingChange={this.changeSorting}
@@ -706,7 +638,6 @@ class AdminIngredients extends React.PureComponent {
 
           <DragDropProvider />
 
-
           <Table
             columnExtensions={tableColumnExtensions}
             cellComponent={Cell}
@@ -718,13 +649,14 @@ class AdminIngredients extends React.PureComponent {
           />
 
           <TableHeaderRow showSortingControls />
-          <TableFilterRow cellComponent={FilterCell}/>
+
           {isAdmin && <TableEditRow
             cellComponent={EditCell}
           /> }
           {isAdmin && <TableEditColumn
             width={120}
             showAddCommand={!addedRows.length}
+            showEditCommand
             showDeleteCommand
             commandComponent={Command}
           />}
@@ -751,7 +683,6 @@ class AdminIngredients extends React.PureComponent {
                 <Table
                   columnExtensions={tableColumnExtensions}
                   cellComponent={Cell}
-                  order={columnOrder}
                 />
                 <TableHeaderRow />
               </Grid>
@@ -765,17 +696,17 @@ class AdminIngredients extends React.PureComponent {
       }
       </Paper>
     {/* <Paper styles = {{color : "#42f4d9"}} > */}
-      {isAdmin && <p><font size="5">Ingredient Bulk Import</font></p>}
+      {isAdmin && <p><font size="5">Bulk Import</font></p>}
       {isAdmin && <input type="file"
         name="myFile"
         onChange={this.uploadFile} /> }
       {isAdmin &&
       <div>
         <br></br>
-        Click <a href="./BulkImportEV2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
+        Click <a href="./FormatSpec.pdf" style={{color:"#000000",}}>HERE</a> for format specification
       </div>
     }
-    
+
       <Button raised color="primary"
       component={Link} to="/orders"
       style = {{marginLeft: 380, marginBottom: 30}}
