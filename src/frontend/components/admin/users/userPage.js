@@ -55,30 +55,49 @@ class RegisterPage extends React.Component {
   processForm(event) {
     // prevent default action. in this case, action is the form submission event
     event.preventDefault();
-
+    console.log("Creating user...")
 //        var str = JSON.stringify(this.state.user);
 //        str = str.slice(0,-1) + ', "isAdmin": true, '+'"loggedIn":false'+'}';
 //        var user = JSON.parse(str);
 //        console.log(user);
-    console.log("Creating user with the following information: " + JSON.stringify(this.state.user));
-    var me = this;
-    addUser(this.state.user.email, this.state.user.username, this.state.user.password, false, false, sessionId,
-      (res)=>{
-        if (res.status == 400) {
-          alert(res.data);
-        } else if (res.status == 500) {
-          alert('Username or email already exists');
-        }else{
-          me.userSuccessfullyAdded();
-          this.clearFields();
-        }
-      });
+    this.clearFields();
+    // console.log("Creating user with the following information: " + JSON.stringify(this.state.user));
+    // var me = this;
+    // addUser(this.state.user.email, this.state.user.username, this.state.user.password, false, false, sessionId,
+    //   (res)=>{
+    //     if (res.status == 400) {
+    //       alert(res.data);
+    //     } else if (res.status == 500) {
+    //       alert('Username or email already exists');
+    //     }else{
+    //       me.userSuccessfullyAdded();
+    //       this.clearFields();
+    //     }
+    //   });
   }
 
   clearFields(){
-    this.setState({email:""});
-    this.setState({username:""});
-    this.setState({password:""});
+    this.setState(
+      {
+        user:{
+          ...this.state.user, 
+          email:"",
+          username:"",
+          password:"",
+          privilege:"user",
+          fromDukeOAuth:false
+        }
+      }
+    );
+    // this.setState(
+    //   {
+    //     email:"",
+    //     username:"",
+    //     password:"",
+
+    //   }
+
+    // );
   }
 
   /**
