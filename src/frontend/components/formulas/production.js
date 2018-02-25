@@ -15,6 +15,7 @@ import {
   Table,
   TableHeaderRow,TableEditColumn,PagingPanel,TableEditRow,
 } from '@devexpress/dx-react-grid-material-ui';
+import TextField from 'material-ui/TextField';
 
 
 class ProductionReview extends React.Component {
@@ -34,6 +35,7 @@ class ProductionReview extends React.Component {
         formulaRows:(props.location.state.selectedFormula) ? [props.location.state.selectedFormula] : [],
         open : true,
         rows:[],
+        addedQuantity:'',
     };
     // this.cancelProduction = this.cancelProduction.bind(this);
     this.cancelProduction =() =>
@@ -45,6 +47,17 @@ class ProductionReview extends React.Component {
       this.setState({open:false});
       console.log(" SEND TO PRODUCTION HERE ");
     }
+
+  }
+
+  handleFormulaQuantity(event){
+  const re = /^[0-9\b]+$/;
+      if (event.target.value == '' || re.test(event.target.value)) {
+         this.setState({addedQuantity: event.target.value})
+
+      }else{
+        alert(" Quantity must be a number.");
+      }
   }
 
   componentWillMount(){
@@ -89,6 +102,22 @@ class ProductionReview extends React.Component {
                   <TableHeaderRow />
                 </Grid>
               </Paper>
+              <Divider />
+              <Paper>
+                <TextField
+                  required
+                  autoFocus
+                  margin="dense"
+                  id="quantity"
+                  label="Enter Quantity (lbs)"
+                  fullWidth = {false}
+                  onChange={(event) => this.handleFormulaQuantity(event)}
+                  // verticalSpacing= "desnse"
+                  style={{
+                  marginLeft: 20,
+                  martginRight: 20
+                  }}/>
+              </Paper>
             </DialogContent>
             <DialogActions>
               <Button onClick={this.cancelProduction} color="primary">Cancel</Button>
@@ -99,5 +128,6 @@ class ProductionReview extends React.Component {
     );
   }
 }
+
 
 export default ProductionReview;

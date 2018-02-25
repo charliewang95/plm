@@ -66,19 +66,22 @@ class FormulaDetails extends React.Component{
     this.computeIngredientsString = this.computeIngredientsString.bind(this);
     this.isValid = this.isValid.bind(this);
     this.handleUnitsProvidedChange = this.handleUnitsProvidedChange.bind(this);
-    this.loadAllIngredients = this.loadAllIngredients.bind(this);
-  }
+    // this.loadAllIngredients = this.loadAllIngredients.bind(this);
 
-  // componentWillMount(){
-  //   this.loadAllIngredients();
-  // }
+    }
+
+  componentWillMount(){
+    // this.loadAllIngredients();
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    userId = JSON.parse(localStorage.getItem('user'))._id;
+  }
 
   componentDidMount(){
     // sessionId = JSON.parse(localStorage.getItem('user'))._id;
     console.log(" Create NEW " + this.state.isCreateNew);
-    if(this.state.isCreateNew){
-      this.loadAllIngredients();
-    }
+    // if(this.state.isCreateNew){
+    //   this.loadAllIngredients();
+    // }
     this.computeIngredientsString();
   }
 
