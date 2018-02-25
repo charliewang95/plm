@@ -18,10 +18,12 @@ import SimpleTable from './packageTable.js';
 import Typography from 'material-ui/Typography';
 
 //TODO: get session Id
-const userId = "5a765f3d9de95bea24f905d9";
+//const userId = "5a765f3d9de95bea24f905d9";
 // const sessionId = testConfig.sessionId;
 var sessionId = '';
-const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
+var userId = '';
+var isAdmin;
+const READ_FROM_DATABASE = true;
 
 
 const styles = {
@@ -68,9 +70,17 @@ class Orders extends React.PureComponent{
 
   // load all the ingredients initially
   componentDidMount(){
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    userId =  JSON.parse(localStorage.getItem('user'))._id;
+    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
     this.loadAllIngredients();
   }
 
+    componentWillMount(){
+        sessionId = JSON.parse(localStorage.getItem('user'))._id;
+        userId =  JSON.parse(localStorage.getItem('user'))._id;
+        isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+    }
   async loadAllIngredients(){
     console.log(" LOAD ALL INGREDIENTS");
     var rawData = [];
@@ -287,7 +297,7 @@ class Orders extends React.PureComponent{
              </div>
            </form>
            {fireRedirect && (
-             <Redirect to={'/shoppingCart'}/>
+             <Redirect to={'/cart'}/>
            )}
          </div>
          )

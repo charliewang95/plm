@@ -228,16 +228,7 @@ class FormulaDetails extends React.Component{
               style={styles.quantity}
               required
             />
-            <TextField
-              id="nativeUnit"
-              label="Native Units"
-              value={this.state.nativeUnit}
-              onChange={this.handleChange('nativeUnit')}
-              margin="normal"
-              disabled = {this.state.isDisabled}
-              style={styles.unitsProvided}
-              required
-            />
+
             <FormGroup>
             {this.state.isDisabled && <TextField
               id="selectIngredients"

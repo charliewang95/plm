@@ -228,9 +228,9 @@ class Formula extends React.PureComponent {
   async loadAllFormulas(){
     sessionId = JSON.parse(localStorage.getItem('user'))._id;
     //TODO: Get from backend
-    // var rawData = await formulaActions.getAllFormulasAsync(sessionId);
+    var rawData = await formulaActions.getAllFormulasAsync(sessionId);
 
-    var rawData = formulaData;
+    //var rawData = formulaData;
 
     for(var i =0; i < rawData.length;i++){
         var ingredientsArray  = rawData[i].ingredients;

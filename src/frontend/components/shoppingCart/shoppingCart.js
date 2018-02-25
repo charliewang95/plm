@@ -52,7 +52,6 @@ Cell.propTypes = {
 };
 
 
-
 const EditCell = (props) => {
   // selectedVendor.value is the vendor ID
   const vendorOptions = props.row.vendorOptions;
@@ -137,20 +136,20 @@ class ShoppingCart extends React.Component {
                 // Validate
                 const re =/^[1-9]\d*$/;
                 var enteredQuantity = changed[rows[i].id].packageNum;
-                    if (!re.test(enteredQuantity)) {
-                      alert(" Number of packages must be a positive integer");
-                    }else{
-                      // TODO: Update back end
-                      await orderActions.updateOrder(userId,rows[i].ingredientId,rows[i].ingredientName,
-                            "", rows[i].packageNum,0,sessionId,function(res){
-                              // TODO: Display error on exceeding storage capacity
-                              // if(res.status==)
-                              // TODO: Add SnackBar
-                              // update the table
-                              rows[i].packageNum = changed[rows[i].id].packageNum;
-                            });
-                        }
+                if (!re.test(enteredQuantity)) {
+                  alert(" Number of packages must be a positive integer");
+                }else{
+                  // TODO: Update back end
+                  await orderActions.updateOrder(userId,rows[i].ingredientId,rows[i].ingredientName,
+                        "", rows[i].packageNum,0,sessionId,function(res){
+                          // TODO: Display error on exceeding storage capacity
+                          // if(res.status==)
+                          // TODO: Add SnackBar
+                          // update the table
+                          rows[i].packageNum = changed[rows[i].id].packageNum;
+                        });
                     }
+                }
 
                if (changed[rows[i].id].vendors){
                  // TODO: Update Back End -- No error status so no callback??
@@ -207,6 +206,12 @@ class ShoppingCart extends React.Component {
 
   }
 
+  componentDidMount(){
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    userId =  JSON.parse(localStorage.getItem('user'))._id;
+    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+  }
+
   componentWillMount(){
     this.loadCartData();
     // TODO: Change later ?
@@ -221,7 +226,7 @@ class ShoppingCart extends React.Component {
     var rawData = [];
     if(READ_FROM_DATABASE){
       rawData = await orderActions.getAllOrdersAsync(sessionId);
-      // console.log("rawData " + JSON.stringify(rawData));
+      console.log("rawData " + JSON.stringify(rawData));
     } else {
       rawData = cartData;
     }
@@ -238,7 +243,7 @@ class ShoppingCart extends React.Component {
       // TODO: Get vendors from ingredients interface
       if(READ_FROM_DATABASE){
         //TODO: get ingredientDetails from back End
-        singleIngredientData = await ingredientActions.getIngredientAsync(rawData[i].ingredientId);
+        singleIngredientData = await ingredientActions.getIngredientAsync(rawData[i].ingredientId, sessionId);
       }else{
         singleIngredientData = ingredientData[i];
       }
