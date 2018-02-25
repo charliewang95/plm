@@ -84,7 +84,7 @@ class SignUpForm extends React.Component{
         value={this.props.user.fromDukeOAuth}
       />
 
-      { !this.props.user.fromDukeOAuth &&
+      
         <div fullWidth={true}>
           <br/>
           <FormControl 
@@ -96,7 +96,7 @@ class SignUpForm extends React.Component{
               id="password"
               name="password"
               label="Password"
-          
+              disabled={this.props.user.fromDukeOAuth}
               type={this.state.showPassword ? 'text' : 'password'}
               value={this.props.user.password}
               onChange={this.props.onChange}
@@ -113,7 +113,7 @@ class SignUpForm extends React.Component{
             />
           </FormControl>
         </div>
-      }
+      
       
       <div style={styles.buttons}>
         <RaisedButton raised color = "secondary"
