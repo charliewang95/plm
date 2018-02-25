@@ -257,7 +257,7 @@ EditCell.propTypes = {
 const getRowId = row => row.id;
 
 
-class AdminIngredients extends React.PureComponent {
+class Formula extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -269,9 +269,9 @@ class AdminIngredients extends React.PureComponent {
         { name: 'ingredients', title: 'Ingredient/Quantity' },
       ],
 
-      tableColumnExtensions: [
-        { columnName: 'ingredients', align: 'right' },
-      ],
+//      tableColumnExtensions: [
+//        { columnName: 'ingredients', align: 'right' },
+//      ],
 
       // TODO: get data to display from back end
       // rows: testData.tablePage.items,
@@ -410,7 +410,6 @@ class AdminIngredients extends React.PureComponent {
                     alert('Ingredient name already exists');
                 } else {
                     // SnackBarPop("Row was successfully added!");
-                    console.log("sdfadfsdf");
                     alert(" Ingredient Successfully edited! ");
                 }
             });
@@ -523,6 +522,8 @@ class AdminIngredients extends React.PureComponent {
       console.log("This is the rawData");
       console.log(rawData[i]);
       var formatFormulasArray = new Array();
+
+      var ingredientArrayString = '';
       for (var j=0; j<rawData[i].ingredients.length; j++){
         //var ingredientName = this.state.idToNameMap.get(rawData[i].ingredients[j].codeUnique);
         var ingredientName = rawData[i].ingredients[j].ingredientName;
@@ -533,13 +534,12 @@ class AdminIngredients extends React.PureComponent {
         formulaObject.quantity = quantity;
         formatFormulasArray.push(formulaObject);
 
-        var ingredientArrayString = '';
         console.log(ingredientName);
         ingredientArrayString+=ingredientName + " / " + rawData[i].ingredients[j].quantity;
         console.log("tired");
         console.log(i);
-         if(i!= (rawData[i].ingredients.length-1) ){
-            ingredientArrayString+=', ';
+         if(j != (rawData[i].ingredients.length - 1)){
+            ingredientArrayString += ', ';
           }
       }
 
@@ -732,8 +732,8 @@ class AdminIngredients extends React.PureComponent {
   }
 }
 
-AdminIngredients.propTypes = {
+Formula.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { name: 'ControlledModeDemo' })(AdminIngredients);
+export default withStyles(styles, { name: 'ControlledModeDemo' })(Formula);

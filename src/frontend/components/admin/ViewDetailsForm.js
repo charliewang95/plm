@@ -75,7 +75,7 @@ class AddIngredientForm extends React.Component{
       numUnitPerPackage: (details.numUnitPerPackage)?(details.numUnitPerPackage):'',
       isDisabled: (isCreateNew) ? false: true,
       numUnit: (details.numUnit)?(details.numUnit):0,
-      space: (details.numUnit)?(details.numUnit):0,
+      space: (details.space)?(details.space):0,
       moneySpent: (details.moneySpent)?(details.moneySpent) : 0,
       moneyProd: (details.moneyProd) ? (details.moneyProd): 0,
       price: 0,
