@@ -72,6 +72,7 @@
     "react-tap-event-plugin": "^2.0.1",
     "react-transition-group": "^1.2.1",
     "react-view-engine": "0.0.1",
+    "reactstrap": "^4.8.0",
     "redirect-https": "^1.1.4",
     "redux": "^3.7.2",
     "redux-form": "^7.2.1",
