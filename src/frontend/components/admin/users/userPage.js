@@ -91,8 +91,14 @@ class RegisterPage extends React.Component {
     console.log("field is " + field);
     const user = this.state.user;
     console.log("user before change is " + JSON.stringify(user));
-    user[field] = event.target.value;
-    console.log("Changed user[field] to " + user[field]);
+    if (field === "fromDukeOAuth"){
+      user[field] = event.target.checked;
+    } else{
+      user[field] = event.target.value;
+    }
+    
+    
+    console.log("Changed user[" + field +"] to " + user[field]);
     console.log(user);
     this.setState({
       user

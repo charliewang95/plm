@@ -14,7 +14,8 @@ import { FormControl, FormHelperText } from 'material-ui/Form';
 import Visibility from 'material-ui-icons/Visibility';
 import VisibilityOff from 'material-ui-icons/VisibilityOff';
 //local import
-import PrivilegeSelection from './RadioButtonExample.js';
+import PrivilegeSelection from './RadioButtonExample';
+import DukeOAuthSwitch from './SwitchExample'
 
 const styles = {
   buttons: {
@@ -105,6 +106,11 @@ class SignUpForm extends React.Component{
       <PrivilegeSelection 
         onChange={this.props.onChange}
         value={this.props.user.privilege}
+      />
+
+      <DukeOAuthSwitch
+        onChange={this.props.onChange}
+        value={this.props.user.fromDukeOAuth}
       />
       
       <div style={styles.buttons}>
