@@ -17,6 +17,9 @@ import Log from './components/log/Log';
 import Formula from './components/formulas/Formula';
 import ShoppingCart from './components/shoppingCart/shoppingCart';
 
+import ProductionReview from './components/formulas/production.js';
+import FormulaDetails from './components/formulas/formulaDetails.js';
+
 const Routes = () => (
       <div>
 	      <Switch>
@@ -35,7 +38,10 @@ const Routes = () => (
 	         <Route path="/cart" component={ShoppingCart} />
 	         <Route path="/report" component={Report} />
 	         <Route path="/log" component={Log} />
-	         <Route path="/formula" component={Formula} />
+	         <Route path="/formula" component={Formula}/>
+           <Route path="/production-review" component={ProductionReview}/>
+           <Route path="/formula-details" component={FormulaDetails}/>
+
 		  </Switch>
       </div>
 

@@ -10,7 +10,6 @@ import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 import Delete from 'material-ui-icons/Delete';
-import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
 
 const styles = theme => ({
   button: {
@@ -33,38 +32,32 @@ class IngredientItem extends Component {
   }
 
   componentDidMount(){
-    // console.log("I am in vendoritem");
-    // console.log(this.props.vendorsArray);
-  }
-
-  componentDidMount(){
     console.log("I am in ingredientitem");
     console.log(this.props.ingredientsArray);
   }
 
   render() {
+     const { classes } = this.props;
     return (
-    	<div style={{marginLeft:20}}>
+    	<div>
       {this.props.ingredientsArray && this.props.ingredientsArray.map((ingredient,index)=>(
-        <div key={index}>
-        {ingredient.ingredientName}
-         <FormControl >
-            <Input
-              id="adornment-amount"
-              value={ingredient.quantity}
-              style={{marginLeft: 10, width:50}}
-              startAdornment={<InputAdornment position="start">$</InputAdornment>}
-              onChange={(event)=>{this.props.updateQuantity(event, index)}}
-            />
-          </FormControl>
-          <IconButton aria-label="Delete" onClick={()=>{this.props.deleteIngredient(index, ingredient.ingredientName);}}>
-            <RemoveCircleIcon />
-          </IconButton>
-        </div>
+          // <IconButton aria-label="Delete" onClick={()=>{this.props.deleteIngredient(index);}}>
+          // {ingredient.ingredientName} : {ingredient.price}
+          // <RemoveCircleIcon />
+          // </IconButton>
+          <Button onClick={()=>{this.props.deleteIngredient(index, ingredient.ingredientName);}} variant="raised" color="primary">
+        {ingredient.ingredientName} : {ingredient.quantity}
+        <Delete/>
+      </Button>
+
       ))}
       </div>
     );
   }
 }
 
-export default IngredientItem;
+IngredientItem.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default IngredientItem

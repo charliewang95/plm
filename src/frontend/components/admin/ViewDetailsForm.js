@@ -51,6 +51,7 @@ const styles = {
   };
 
 var sessionId = "";
+var userId="";
 
 
 class AddIngredientForm extends React.Component{
@@ -137,10 +138,12 @@ class AddIngredientForm extends React.Component{
 
   async loadIngredient(){
     var details = [];
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    // sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    sessionId = '5a8b99a669b5a9637e9cc3bb';
+    userId = '5a8b99a669b5a9637e9cc3bb';
     console.log("ingredient id");
     console.log(this.props.location.state.ingredientId);
-    details = await ingredientInterface.getIngredientAsync('5a8e37ab182c28046184cd75', sessionId);
+    details = await ingredientInterface.getIngredientAsync(userId, sessionId);
     console.log("load one ingredient");
     console.log(details);
     var formatVendorsArray = new Array();
@@ -200,9 +203,11 @@ class AddIngredientForm extends React.Component{
     sessionId = JSON.parse(localStorage.getItem('user'))._id;
 
     if(this.isValid() && this.state.isCreateNew){
+      console.log(" Add ingredient ");
+
       ingredientInterface.addIngredient(this.state.name, this.state.packageName, this.state.temperatureZone,
-        this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, this.state.nativeUnit,
-        this.state.numUnitPerPackage, 0, 0, sessionId, function(res){
+        this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, this.state.nativeUnit,0,
+        this.state.numUnitPerPackage, 0, sessionId, function(res){
                   if (res.status == 400) {
                       alert(res.data);
                   } else if (res.status == 500) {
