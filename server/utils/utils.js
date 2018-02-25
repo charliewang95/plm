@@ -393,16 +393,21 @@ var checkoutFormula = function(req, res, next, model, username) {
                 var multiplier = quantity/unitsProvided;
                 var ingredients = formula.ingredients;
                 checkIngredientHelper(req, res, next, multiplier, 0, ingredients, [], true, function(array, viable){
-                      if (req.params.action = 'review') {
+                      if (req.params.action == 'review') {
                           res.json(array);
                       } else {
                           if (viable) {
-                              updateIngredientHelper(req, res, next, multiplier, ingredients, 0, function() {
+                              updateIngredientHelper(req, res, next, multiplier, ingredients, 0, 0, function(newSpentMoney) {
                                   logger.log(username, 'checkout', formula, model);
-                                  return res.send('Got it');
+                                  var totalProvided = formula.totalProvided;
+                                  var totalCost = formula.totalCost;
+                                  formula.update({totalProvided: totalProvided+1, totalCost:totalCost+newSpentMoney}, function(err, obj) {
+                                      if (err) return next(err);
+                                      else return res.send(formula);
+                                  });
                               });
                           } else {
-                              return res.status(406).send(array);
+                              return res.status(406).json(array);
                           }
                       }
                 });
@@ -423,33 +428,39 @@ var checkIngredientHelper = function(req, res, next, multiplier, i, ingredients,
             else {
                 if (totalAmountNeeded > ingredient.numUnit) {
                     viable = false;
-                    var ingredientDelta = new Object();
-                    ingredientDelta.ingredientId = ingredient._id;
-                    ingredientDelta.ingredientName = ingredientQuantity.ingredientName;
-                    ingredientDelta.totalAmountNeeded = totalAmountNeeded;
-                    ingredientDelta.currentUnit = ingredient.numUnit;
-                    ingredientDelta.delta = (totalAmountNeeded - ingredient.numUnit) > 0 ? totalAmountNeeded - ingredient.numUnit : 0;
-                    missingIngredientArray.push(ingredientDelta);
-                    console.log(totalAmountNeeded+' '+ingredient.numUnit);
                 }
+                var ingredientDelta = new Object();
+                ingredientDelta.ingredientId = ingredient._id;
+                ingredientDelta.ingredientName = ingredientQuantity.ingredientName;
+                ingredientDelta.totalAmountNeeded = totalAmountNeeded;
+                ingredientDelta.currentUnit = ingredient.numUnit;
+                ingredientDelta.delta = (totalAmountNeeded - ingredient.numUnit) > 0 ? totalAmountNeeded - ingredient.numUnit : 0;
+                missingIngredientArray.push(ingredientDelta);
+                console.log(totalAmountNeeded+' '+ingredient.numUnit);
                 checkIngredientHelper(req, res, next, multiplier, i+1, ingredients, missingIngredientArray, viable, callback);
             }
         });
     }
 }
 
-var updateIngredientHelper = function(req, res, next, multiplier, ingredients, i, callback) {
+var updateIngredientHelper = function(req, res, next, multiplier, ingredients, newSpentMoney, i, callback) {
     if (i == ingredients.length) {
-        callback();
+        callback(newSpentMoney);
     } else {
         var ingredientQuantity = ingredients[i];
         Ingredient.findOne({nameUnique: ingredientQuantity.ingredientName.toLowerCase()}, function(err, ingredient){
             var numUnit = ingredient.numUnit;
             var newNumUnit = numUnit - ingredientQuantity.quantity*multiplier;
             var remainingPackages = Math.ceil(newNumUnit/ingredient.numUnitPerPackage);
+
+            var moneyProd = ingredient.moneyProd;
+            var moneySpent = ingredient.moneySpent;
+            var newMoneyProd = moneyProd+1.0*ingredientQuantity.quantity*multiplier*(moneySpent-moneyProd)/numUnit;
+            newSpentMoney += 1.0*ingredientQuantity.quantity*multiplier*(moneySpent-moneyProd)/numUnit;
+
             Ingredient.getPackageSpace(ingredient.packageName, function(retSpace){
                 var newSpace = remainingPackages * retSpace;
-                ingredient.update({numUnit: newNumUnit, space: newSpace}, function(err, obj){
+                ingredient.update({numUnit: newNumUnit, space: newSpace, moneyProd: newMoneyProd}, function(err, obj){
                     if (err) return next(err);
                     else {
                         Storage.findOne({temperatureZone: ingredient.temperatureZone}, function(err, storage){
@@ -461,7 +472,7 @@ var updateIngredientHelper = function(req, res, next, multiplier, ingredients, i
                                 if (err) return next(err);
                                 else {
                                     console.log(subSpace+' '+retSpace+' '+ingredientQuantity.quantity*multiplier/ingredient.numUnitPerPackage);
-                                    updateIngredientHelper(req, res, next, multiplier, ingredients, i+1, callback);
+                                    updateIngredientHelper(req, res, next, multiplier, ingredients, newSpentMoney, i+1, callback);
                                 }
                             });
                         });
@@ -470,4 +481,4 @@ var updateIngredientHelper = function(req, res, next, multiplier, ingredients, i
             });
         });
     }
-}
+};

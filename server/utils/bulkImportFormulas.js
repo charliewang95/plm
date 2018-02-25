@@ -50,7 +50,7 @@ var validateBulkImport = function(req, res, next, array, i, callback){
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Formula name cannot be empty');
             return;
         }
-        if (unitsProvided == null || unitsProvided <= 0) {
+        if (formulaName.toLowerCase() != prevFormula.toLowerCase() && (unitsProvided == null || unitsProvided <= 0)) {
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Units provided cannot be empty or zero');
             return;
         }
@@ -84,10 +84,11 @@ var validateBulkImport = function(req, res, next, array, i, callback){
                         if (formulaName.toLowerCase() != prevFormula && allFormulas.includes(formulaName.toLowerCase())){
                             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Duplicate formula names exist (the same formula should be in consecutive rows).');
                             return;
-                        } else {
+                        } else if (formulaName.toLowerCase() != prevFormula) {
                             prevFormula = formulaName.toLowerCase();
-                            validateBulkImport(req, res, next, array, i+1, callback);
+                            allFormulas.push(formulaName.toLowerCase());
                         }
+                        validateBulkImport(req, res, next, array, i+1, callback);
                     }
                 });
             }
