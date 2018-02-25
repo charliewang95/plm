@@ -16,7 +16,7 @@ import dummyData from './dummyData.js';
 import testVendorData from '../vendors/dummyData.js';
 import SimpleTable from './packageTable.js';
 import Typography from 'material-ui/Typography';
-
+import { FormControl, FormHelperText } from 'material-ui/Form';
 //TODO: get session Id
 //const userId = "5a765f3d9de95bea24f905d9";
 // const sessionId = testConfig.sessionId;
@@ -60,12 +60,15 @@ class Orders extends React.PureComponent{
       numUnitPerPackage: 0,
       totalQuantity: 0,
       nativeUnit:'',
+      totalFloorSpace: '',
+      helpText: '',
       }
 
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.handleVendorChange = this.handleVendorChange.bind(this);
     this.calculate = this.calculate.bind(this);
     this.isValid = this.isValid.bind(this);
+    this.packageWeight = this.packageWeight.bind(this);
   }
 
   // load all the ingredients initially
@@ -94,7 +97,7 @@ class Orders extends React.PureComponent{
     var parsedIngredientOptions = [...rawData.map((row, index)=> ({
         value: row._id,label: row.name, numUnitPerPackage:
         row.numUnitPerPackage, nativeUnit: row.nativeUnit,
-        packageName: row.packageName + ' (' + row.numUnitPerPackage + ' ' + row.nativeUnit + ')',
+        packageName: row.packageName,
       })),
     ];
     console.log("parsedIngredientOptions" + JSON.stringify(parsedIngredientOptions));
@@ -104,6 +107,9 @@ class Orders extends React.PureComponent{
 
 
   async handleIngredientChange(option) {
+    var packageNameHelpText = option.numUnitPerPackage + ' ' + option.nativeUnit + ' / ' + 
+    this.packageWeight(option.packageName) + ' sqft';
+    this.setState({helpText:packageNameHelpText});
     console.log(" Ingredient Selected " + option.label);
     this.setState({ingredientName: option.label});
     this.setState({packageName:option.packageName});
@@ -182,30 +188,38 @@ class Orders extends React.PureComponent{
    }
   }
 
-  packageWeight(){
-    if(this.state.packageName=='drum'){
-      return 500;
+  packageWeight(input){
+    if(input=='drum'){
+      return '3';
     }
-    else if(this.state.packageName=='supersack'){
-      return 2000;
-    }else if(this.state.packageName=='truckload'){
-      return 5000;
-    }else if(this.state.packageName=='railcar'){
-      return 280000
+    else if(input=='supersack'){
+      return '16';
+    }else if(input=='sack'){
+      return '0.5';
+    }else if(input=='pail'){
+      return '1';
     }else{
-      return 50;
+      return 'N/A';
     }
   }
 
   calculate(){
-    console.log("clicked!");
     //var packageWeight = this.packageWeight();
-    var tempTotal = this.state.packageNum * this.state.price;
-    var tempTotal2 = this.state.packageNum * this.state.numUnitPerPackage;
-    console.log(this.state.numUnitPerPackage);
-    console.log(tempTotal2);
-    this.setState({total: tempTotal});
-    this.setState({totalQuantity: tempTotal2});
+    var totalPrice = this.state.packageNum * this.state.price;
+    var totalNativeUnits = this.state.packageNum * this.state.numUnitPerPackage;
+  //  var packageWeight = parseFloat(packageWeight());
+    var totalSqft;
+
+    if(this.packageWeight(this.state.packageName)=='N/A'){
+      totalSqft = 'N/A';
+    }else{
+      var computeFloor = this.state.packageNum * this.packageWeight(this.state.packageName);
+      totalSqft = computeFloor.toString();
+    }
+    this.setState({total: totalPrice});
+    this.setState({totalQuantity: totalNativeUnits});
+    this.setState({totalFloorSpace: totalSqft});
+   // this.setState({totalFloorSpace: totalSqft});
   }
 
   clearFields(){
@@ -247,7 +261,8 @@ class Orders extends React.PureComponent{
                 />
               </div>
             <div style = {styles.buttons}>
-              <label> Package (Refer to the table below): </label>
+            <FormControl>
+              <label> Package: </label>
               <TextField
                   fullWidth={true}
                   disabled={true}
@@ -256,7 +271,8 @@ class Orders extends React.PureComponent{
                   onChange = {(event) => this.setState({ packageName: event.target.value})}
                   margin="dense"
               />
-
+              <FormHelperText>{this.state.helpText}</FormHelperText>
+            </FormControl>
             </div>
             <br></br>
             <label> Quantity of Package: </label>
@@ -278,11 +294,13 @@ class Orders extends React.PureComponent{
                   value = {vendorId}
                 />
               </div>
-              <p><font size="6">Total Quantity: {this.state.totalQuantity} {this.state.nativeUnit}</font></p>
-              <p><font size="6">Current Total: $ {this.state.total}</font></p>
-              <Divider></Divider>
               <br></br>
-              <SimpleTable />
+              <br></br>
+              <Divider></Divider>
+              <p><font size="6">Total Quantity: {this.state.totalQuantity} {this.state.nativeUnit}</font></p>
+              <p><font size="6">Total Floor Space: {this.state.totalFloorSpace} sqft</font></p>
+              <p><font size="6">Current Total: $ {this.state.total}</font></p>
+              <br></br>
               <div style={styles.buttons}>
                   <RaisedButton raised
                     color="primary"

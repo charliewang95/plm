@@ -46,6 +46,7 @@ import * as testConfig from '../../../resources/testConfig.js';
 import MyPdfViewer from './PdfViewer';
 import {Link} from 'react-router-dom';
 import Snackbar from 'material-ui/Snackbar';
+import Chip from 'material-ui/Chip';
 
 // TODO: get session Id from the user
 
@@ -232,6 +233,7 @@ const Cell = (props) => {
   if(props.column.name=='name'){
     return <Table.Cell {...props}>
     <Link to={{pathname: '/ingredient-details', state:{details: props.row} }}>{props.row.name}</Link>
+    {(props.row.numUnit>0)&&<Chip style={{marginLeft: 10}} label="In Stock"/>}
     </Table.Cell>
   }
   return <Table.Cell {...props} />;
@@ -286,11 +288,11 @@ class AdminIngredients extends React.PureComponent {
       idToNameMap:{},
       columns: [
         { name: 'name', title: 'Name' },
-        { name: 'packageName', title: 'Package' },
+        { name: 'packageNameString', title: 'Package' },
         { name: 'temperatureZone', title: 'Temperature Zone' },
         { name: 'vendors', title: 'Vendors/Price' },
-        { name: 'nativeUnit', title: 'Native Unit' },
-        { name: 'numUnitPerPackage', title: 'Unit/package' },
+        { name: 'numUnitString', title: "Current Quantity in Stock"},
+        { name: 'space', title: "Space Occupied (sqft)"},
       ],
 
       // TODO: get data to display from back end
@@ -304,7 +306,7 @@ class AdminIngredients extends React.PureComponent {
       deletingRows: [],
       pageSize: 10,
       pageSizes: [5, 10, 0],
-      columnOrder: ['name', 'temperatureZone', 'packageName', 'numUnitPerPackage', 'nativeUnit', 'vendors'],
+      columnOrder: ['name', 'temperatureZone', 'packageNameString', 'numUnitString', 'space', 'vendors'],
       options:[],
     };
 
@@ -593,6 +595,7 @@ class AdminIngredients extends React.PureComponent {
       // singleData.id = i;
       singleData.name = rawData[i].name;
       singleData.packageName = rawData[i].packageName;
+      singleData.packageNameString = rawData[i].packageName + " (" + rawData[i].numUnitPerPackage + " " + rawData[i].nativeUnit +")";
       singleData.temperatureZone = rawData[i].temperatureZone;
       singleData.vendorsArray = formatVendorsArray;
       singleData.moneySpent = rawData[i].moneySpent;
@@ -600,6 +603,7 @@ class AdminIngredients extends React.PureComponent {
       singleData.nativeUnit = rawData[i].nativeUnit;
       singleData.numUnitPerPackage = rawData[i].numUnitPerPackage;
       singleData.numUnit = rawData[i].numUnit;
+      singleData.numUnitString = rawData[i].numUnit + " " + rawData[i].nativeUnit;
       singleData.space = rawData[i].space;
       //singleData.vendorsArray = "";
       singleData.vendors = vendorArrayString;

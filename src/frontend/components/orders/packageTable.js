@@ -46,14 +46,12 @@ function SimpleTable(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map(n => {
-            return (
-              <TableRow key={n.id}>
+          {data.map((n, index) => (
+              <TableRow key={index}>
                 <TableCell className={classes.tableCell}>{n.packageName}</TableCell>
                 <TableCell>{n.weight}</TableCell>
               </TableRow>
-            );
-          })}
+          ))}
         </TableBody>
       </Table>
     </Paper>
