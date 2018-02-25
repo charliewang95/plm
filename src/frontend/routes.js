@@ -17,6 +17,7 @@ import ViewDetailsForm from './components/admin/ViewDetailsForm';
 import Log from './components/log/Log';
 import Formula from './components/formulas/Formula';
 import ProductionReport from './components/productionReport/ProductionReport';
+import PageNotFound from './components/error/PageNotFound';
 
 const Routes = () => (
       <div>
@@ -38,6 +39,7 @@ const Routes = () => (
 	          <Route path="/prod-report" component={ProductionReport} />
 	          <Route path="/log" component={Log} />
 	          <Route path="/formula" component={Formula} />
+	          <Route path="/pagenotfound" component={PageNotFound} />
 		  </Switch>
       </div>
 
