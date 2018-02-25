@@ -228,7 +228,7 @@ class FormulaDetails extends React.Component{
               style={styles.quantity}
               required
             />
-            
+
             <FormGroup>
             {this.state.isDisabled && <TextField
               id="selectIngredients"

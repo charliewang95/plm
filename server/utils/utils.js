@@ -55,6 +55,7 @@ var list = function(req, res, next, model, username) {
 			return next(err);
 		}
 		else {
+		    console.log(items);
 			res.json(items);
 		}
 	});
@@ -62,6 +63,8 @@ var list = function(req, res, next, model, username) {
 
 var listPartial = function(req, res, next, model, itemId, username) {
 	model.find({userId: itemId}, function(err, items) {
+
+		console.log(itemId);
 		if (err) {
 			return next(err);
 		}
