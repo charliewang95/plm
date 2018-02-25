@@ -581,7 +581,7 @@ class AdminIngredients extends React.PureComponent {
 
         console.log(vendorName);
         vendorArrayString+=vendorName + " / $" + rawData[i].vendors[j].price;
-         if(i!= (rawData[i].vendors.length-1) ){
+         if(j!= (rawData[i].vendors.length-1) ){
             vendorArrayString+=', ';
           }
       }

@@ -241,6 +241,7 @@ class Formula extends React.PureComponent {
 
     console.log(" Formulas " + JSON.stringify(rawData));
 
+
     for(var i =0; i < rawData.length;i++){
         var ingredientsArray  = rawData[i].ingredients;
         var ingredientsString = '';

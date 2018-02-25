@@ -22,6 +22,7 @@ async function addOrder(order, sessionId, callback) {
  * sessionId: string, id of the current session
  */
 async function getAllOrdersAsync(sessionId){
+    console.log("getting all orders");
 	return await genericActions.getAllAsync(baseUrl, sessionId);
 };
 

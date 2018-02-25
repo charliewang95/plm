@@ -219,6 +219,7 @@ class FormulaDetails extends React.Component{
               onChange={(event)=>this.handleUnitsProvidedChange(event)}
               margin="normal"
               disabled = {this.state.isDisabled}
+
               style={styles.unitsProvided}
             />
 

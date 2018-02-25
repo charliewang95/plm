@@ -22,12 +22,11 @@ exports.bulkImportFormulas = function(req, res, next, contents, callback) {
     .on('done',()=>{
 //          console.log(jsonArray);
         validateBulkImport(req, res, next, jsonArray, 0, function(){
-            res.send("Bulk import Success!");
             //do bulk import
-//            doBulkImport(req, res, next, jsonArray, 0, function(){
-//                res.send("Bulk import Success!");
-//                callback();
-//            });
+            doBulkImport(req, res, next, jsonArray, 0, function(){
+                res.send("Bulk import Success!");
+                callback();
+            });
         })
     })
 };
@@ -43,6 +42,7 @@ var validateBulkImport = function(req, res, next, array, i, callback){
         var formulaName = formula.NAME;
         var unitsProvided = formula["PRODUCT UNITS"];
         var description = formula.DESCRIPTION;
+        var ingredientName = formula.INGREDIENT;
         var ingredientNameUnique = formula.INGREDIENT.toLowerCase();
         var ingredientUnits = formula["INGREDIENT UNITS"];
 
@@ -62,7 +62,7 @@ var validateBulkImport = function(req, res, next, array, i, callback){
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Ingredient units cannot be empty or zero');
             return;
         }
-        if (!Number.isInteger(unitsProvided)) {
+        if (Number(unitsProvided)%1!=0) {
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Units provided must be an integer.');
             return;
         }
@@ -77,7 +77,7 @@ var validateBulkImport = function(req, res, next, array, i, callback){
                 Ingredient.findOne({nameUnique: ingredientNameUnique}, function(err, obj) {
                     if (err) return next(err);
                     else if (!obj) {
-                        res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Ingredient does not exist.');
+                        res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Ingredient '+formula.INGREDIENT+' does not exist.');
                         return;
                     }
                     else {
@@ -102,14 +102,14 @@ var doBulkImport = function(req, res, next, array, i, callback){
     else {
         var formula = array[i];
         //console.log(formula);
-        var formulaName = formula.FORMULA;
+        var formulaName = formula.NAME;
         var unitsProvided = formula["PRODUCT UNITS"];
         var description = formula.DESCRIPTION;
         var ingredientName = formula.INGREDIENT;
         var ingredientUnits = formula["INGREDIENT UNITS"];
         var ingredient = new Object();
         ingredient.ingredientName = ingredientName;
-        ingredient.quantity = amount;
+        ingredient.quantity = ingredientUnits;
 
         Formula.findOne({nameUnique: formulaName.toLowerCase()}, function(err, obj){
             if (err) next(err);
