@@ -16,6 +16,7 @@ import Register from './components/login/RegisterPage';
 import ViewDetailsForm from './components/admin/ViewDetailsForm';
 import Log from './components/log/Log';
 import Formula from './components/formulas/Formula';
+import ProductionReport from './components/productionReport/ProductionReport';
 
 const Routes = () => (
       <div>
@@ -34,6 +35,7 @@ const Routes = () => (
 	          <Route path="/addVendorForm" component={AddVendorForm} />
 	          <Route path="/cart" component={Cart} />
 	          <Route path="/report" component={Report} />
+	          <Route path="/prod-report" component={ProductionReport} />
 	          <Route path="/log" component={Log} />
 	          <Route path="/formula" component={Formula} />
 		  </Switch>
