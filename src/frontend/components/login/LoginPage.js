@@ -22,7 +22,7 @@ import { withStyles } from 'material-ui/styles';
 import IconButton from 'material-ui/IconButton';
 
 import axios from 'axios';
-import * as dukeUserActions from  '../../interface/dukeUserInterface';
+// import * as userActions from  '../../interface/userInterface';
 const queryString = require('query-string');
 
 const styles = {
@@ -108,7 +108,7 @@ class LoginPage extends React.Component{
       var temp = this;
       // add user to DukeUser Database if user does not exist previously
       var userAdded = false;
-      await dukeUserActions.addDukeUserAsync(email, username, false, false, false, (res) =>{
+      await userActions.addDukeUserAutomaticAsync(email, username, false, false, false, (res) =>{
         // console.log(res);
         if (res.status == 400) {
             // message = res.data;

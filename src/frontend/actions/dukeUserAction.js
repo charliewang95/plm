@@ -13,9 +13,9 @@ async function addDukeUserAutomaticAsync(dukeUser, callback) {
 	console.log(dukeUser);
 	try {
 		console.log("Posting to " + baseUrlAutomatic);
-      	const res = await axios.post(baseUrlAutomatic, dukeUser);
-      	console.log("Response obtained:")
-      	console.log(res);
+    const res = await axios.post(baseUrlAutomatic, dukeUser);
+  	console.log("Response obtained:")
+    console.log(res);
 		const result = res.data;
 		console.log("Data in response:");
 		console.log(result);

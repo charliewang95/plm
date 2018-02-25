@@ -5,7 +5,51 @@
 //and calls actions to send the actual requests
 import * as dummyUser from '../dummyDatas/user.js'
 import * as userActions from '../actions/userAction'
+import * as dukeUserActions from '../actions/dukeUserAction'
 
+
+
+/*****************************************
+Added for dukeOAuth
+*****************************************/
+/**
+takes in various properties of user,
+returns a Json object that encapsulates all properties 
+email: string
+username: string 
+isAdmin: boolean
+isManager: boolean
+loggedIn: boolean 
+**/
+function packDukeUserIntoJson(email, username, isAdmin, isManager, loggedIn){
+	var dukeUserJson = new Object();
+	dukeUserJson.email = email;
+	dukeUserJson.password = "Nonsense";//this won't actually be used, but it is required in the schema
+	dukeUserJson.username = username;
+	dukeUserJson.isAdmin = isAdmin;
+	dukeUserJson.isManager = isManager;
+	dukeUserJson.fromDukeOAuth = true;
+	dukeUserJson.loggedIn = loggedIn;
+	console.log("A dukeUser object has been packed into JSON");
+	console.log(dukeUserJson);
+	//console.log(dummyUser.sampleUser);
+	return dukeUserJson;
+};
+
+/* add one dukeUser
+ * if a duke user exists with the same username(netid), update it instead
+ * for arguments see packIntoJson
+ * callback: a function
+ */
+async function addDukeUserAutomaticAsync(email, username, isAdmin, isManager, loggedIn, callback) {
+	const newUser = packDukeUserIntoJson(email, username, isAdmin, isManager, loggedIn);
+	await dukeUserActions.addDukeUserAutomaticAsync(newUser, callback);
+};
+
+
+/****************************************
+
+*****************************************/
 /**
 takes in various properties of user,
 returns a Json object that encapsulates all properties 
@@ -95,4 +139,5 @@ async function authenticateAsync(username, password, callback){
 }
 
 //export functions above for use by other modules
-export { addUser, getAllUsersAsync, getUserAsync, updateUser, deleteUser, authenticateAsync};
+export { addUser, getAllUsersAsync, getUserAsync, updateUser, deleteUser, authenticateAsync, 
+	addDukeUserAutomaticAsync};
