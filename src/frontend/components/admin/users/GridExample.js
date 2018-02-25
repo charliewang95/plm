@@ -46,6 +46,28 @@ const styles = theme => ({
 });
 
 const getRowId = row => row.id;
+//for dukeOAuth
+const BooleanFormatter = ({ value }) =>
+  <Chip label={value ? 'Yes' : 'No'} />;
+const BooleanEditor = ({ value, onValueChange }) => (
+  <Select
+    input={<Input />}
+    value={value ? 'Yes' : 'No'}
+    onChange={event => onValueChange(event.target.value === 'Yes')}
+    style={{ width: '100%', marginTop: '4px' }}
+  >
+    <MenuItem value="Yes">Yes</MenuItem>
+    <MenuItem value="No">No</MenuItem>
+  </Select>
+);
+const BooleanTypeProvider = props => (
+  <DataTypeProvider
+    formatterComponent={BooleanFormatter}
+    editorComponent={BooleanEditor}
+    {...props}
+  />
+);
+
 //for previleges
 const PrevilegeFormatter = ({ value }) =>
   <Chip label={
@@ -90,7 +112,8 @@ const PrevilegeFilterCell = withStyles(styles, { name: 'PrivilegeFilterCell' })(
 
 const FilterCell = (props) => {
 	// console.log("props.column.name: " + props.column.name);
-  if (props.column.name === 'privilege') {
+  if (props.column.name === 'privilege' ||
+      props.column.name === 'dukeUser') {
     return <PrevilegeFilterCell {...props} />;
   }
   return <TableFilterRow.Cell {...props} />;
@@ -116,18 +139,26 @@ export default class SampleTable extends React.PureComponent {
       				name: 'privilege', 
       				title: 'Privilege',
       				getCellValue: row => (row.privilege ? row.privilege : undefined),
-      				dataType: 'string' 
+      				dataType: 'boolean,' 
       			},
+            {
+              name: 'dukeUser',
+              title: 'Duke User',
+              getCellValue: row => (row.fromDukeOAuth ? row.fromDukeOAuth : undefined),
+              dataType: 'boolean',
+            },
       		],
-
+          booleanColumns: ['dukeUser'],
       		privilegeColumns: ['privilege'],
-
+          rows: [],
+          //commented out because fetching data remotely
+          /*
       		rows: [
       			{ id: 0, username: 'sampleUser', email: 'user@duke.edu', privilege: 'user' }, //id for editing
      			{ id: 1, username: 'sampleManager', email: 'manager@duke.edu', privilege: 'manager' },
       			{ id: 2, username: 'sampleAdmin', email: 'admin@duke.edu', privilege: 'admin'},
       		],
-
+          */
       		sorting: [{ columnName: 'username', direction: 'asc' }],
 
       		editingColumnExtensions: [
@@ -185,18 +216,82 @@ export default class SampleTable extends React.PureComponent {
     console.log("sessionInfo:");
     console.log(sessionInfo);
     const rawUserData = await userInterface.getAllUsersAsync(sessionInfo);
+    console.log("rawUserData:");
     console.log(rawUserData);
     if (rawUserData.length == 0){
       return;
     }
-  }
+    var processedData=[];
+    // loop through users
+    for (var i = 0; i < rawUserData.length; i++) {
+      const currentUser = rawUserData[i];
+      console.log("processing user..." );
+      console.log(currentUser);
+    //   var vendorArrayString = "";
+    //   //loop through vendor
+      
+    //   var formatVendorsArray = new Array();
+    //   for (var j=0; j<rawData[i].vendors.length; j++){
+    //     //var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].codeUnique);
+    //     var vendorName = rawData[i].vendors[j].vendorName;
+    //     var price = rawData[i].vendors[j].price;
+
+    //     var vendorObject = new Object();
+    //     vendorObject.vendorName = vendorName;
+    //     vendorObject.price = price;
+    //     formatVendorsArray.push(vendorObject);
+
+    //     console.log(vendorName);
+    //     vendorArrayString+=vendorName + " / $" + rawData[i].vendors[j].price;
+    //     console.log("tired");
+    //     console.log(i);
+    //      if(i!= (rawData[i].vendors.length-1) ){
+    //         vendorArrayString+=', ';
+    //       }
+    //   }
+
+      var singleData = new Object ();
+    // match schema for user
+      singleData.username = currentUser.username;
+      singleData.email = currentUser.email;
+      singleData.isAdmin = currentUser.isAdmin;
+      singleData.isManager = currentUser.isManager;
+      singleData.fromDukeOAuth = currentUser.fromDukeOAuth;
+      singleData.loggedIn = currentUser.loggedIn;
+      singleData.userId = currentUser._id;
+      console.log("packaged user");
+      console.log(singleData);
+      processedData.push(singleData);
+    //   singleData.moneySpent = rawData[i].moneySpent;
+    //   singleData.moneyProd = rawData[i].moneyProd;
+    //   //singleData.vendorsArray = "";
+    //   singleData.vendors = vendorArrayString;
+    //   console.log("my id");
+    //   singleData.ingredientId = rawData[i]._id;
+    //   console.log(singleData.ingredientId);
+    //   processedData.push(singleData);
+    };
+
+    var finalData = [...processedData.map((row, index)=> ({
+        id: index,...row,
+      })),
+    ];
+
+    console.log("Finished Processing All Data:");
+    console.log(finalData);
+    this.setState({rows: finalData});
+
+    // console.log("loadAllIngredients()");
+    // console.log(finalData);
+  };
 
   componentDidMount(){
     this.loadLocalUsers();
   }
 
 	render() {
-		const { rows, columns, sorting, editingColumnExtensions, privilegeColumns } = this.state;
+		const { rows, columns, sorting, editingColumnExtensions, 
+      privilegeColumns, booleanColumns } = this.state;
 		return(
 			<Paper>
 			<Grid
@@ -211,6 +306,9 @@ export default class SampleTable extends React.PureComponent {
 					onSortingChange={this.changeSorting}
 				/>
 				<IntegratedSorting />
+        <BooleanTypeProvider
+          for={booleanColumns}
+        />
 				<PrevilegeTypeProvider
 					for={privilegeColumns}
 				/>
