@@ -235,66 +235,71 @@ export default class SampleTable extends React.PureComponent {
   }
 
   async loadAllUsers(){
-    const sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    // const fromDukeOAuth = JSON.parse(sessionStorage.getItem('fromDukeOAuth'));
-    // console.log("sessionId:" + sessionId);
-    // console.log("fromDukeOAuth:" + fromDukeOAuth);
-    // const sessionInfo = utils.createSessionInfoObject(sessionId, fromDukeOAuth);
-    // console.log("sessionInfo:");
-    // console.log(sessionInfo);
-    const rawUserData = await userInterface.getAllUsersAsync(sessionId);
-    console.log("rawUserData:");
-    console.log(rawUserData);
-    if (rawUserData.length == 0){
-      return;
-    }
-    var processedData=[];
-    // loop through users
-    for (var i = 0; i < rawUserData.length; i++) {
-      const currentUser = rawUserData[i];
-      console.log("processing user..." );
-      console.log(currentUser);
-      //process data
-      var singleData = new Object ();
-    // match schema for user
-      singleData.username = currentUser.username;
-      singleData.email = currentUser.email;
-      singleData.isAdmin = currentUser.isAdmin;
-      singleData.isManager = currentUser.isManager;
-      singleData.fromDukeOAuth = currentUser.fromDukeOAuth;
-      singleData.loggedIn = currentUser.loggedIn;
-      singleData.userId = currentUser._id;
-      singleData.privilege = 'user';
-      //add privilege property, which is a string
-      if (singleData.isAdmin){
-        singleData.privilege = 'admin';
-      } else if (singleData.isManager){
-        singleData.privilege = 'manager';
-      }
-      console.log("packaged user");
-      console.log(singleData);
-      processedData.push(singleData);
-    };
+    // const sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    // // const fromDukeOAuth = JSON.parse(sessionStorage.getItem('fromDukeOAuth'));
+    // // console.log("sessionId:" + sessionId);
+    // // console.log("fromDukeOAuth:" + fromDukeOAuth);
+    // // const sessionInfo = utils.createSessionInfoObject(sessionId, fromDukeOAuth);
+    // // console.log("sessionInfo:");
+    // // console.log(sessionInfo);
+    // const rawUserData = await userInterface.getAllUsersAsync(sessionId);
+    // console.log("rawUserData:");
+    // console.log(rawUserData);
+    // if (rawUserData.length == 0){
+    //   return;
+    // }
+    // var processedData=[];
+    // // loop through users
+    // for (var i = 0; i < rawUserData.length; i++) {
+    //   const currentUser = rawUserData[i];
+    //   console.log("processing user..." );
+    //   console.log(currentUser);
+    //   //process data
+    //   var singleData = new Object ();
+    // // match schema for user
+    //   singleData.username = currentUser.username;
+    //   singleData.email = currentUser.email;
+    //   singleData.isAdmin = currentUser.isAdmin;
+    //   singleData.isManager = currentUser.isManager;
+    //   singleData.fromDukeOAuth = currentUser.fromDukeOAuth;
+    //   singleData.loggedIn = currentUser.loggedIn;
+    //   singleData.userId = currentUser._id;
+    //   singleData.privilege = 'user';
+    //   //add privilege property, which is a string
+    //   if (singleData.isAdmin){
+    //     singleData.privilege = 'admin';
+    //   } else if (singleData.isManager){
+    //     singleData.privilege = 'manager';
+    //   }
+    //   console.log("packaged user");
+    //   console.log(singleData);
+    //   processedData.push(singleData);
+    // };
 
-    var finalData = [...processedData.map((row, index)=> ({
-        id: index,...row,
-      })),
-    ];
+    // var finalData = [...processedData.map((row, index)=> ({
+    //     id: index,...row,
+    //   })),
+    // ];
 
-    console.log("Finished Processing All Data:");
-    console.log(finalData);
-    this.setState({rows: finalData});
+    // console.log("Finished Processing All Data:");
+    // console.log(finalData);
+    // this.setState({rows: finalData});
 
   };
 
   componentDidMount(){
     this.loadAllUsers();
+    // console.log("constructor in GridExample: rows:")
+    // console.log("Getting user data from props:");
+    // console.log(this.props.rows);
+    // this.setState({rows: this.props.rows});
   }
 
 	render() {
-		const { rows, columns, sorting, editingColumnExtensions, 
+		const { columns, sorting, editingColumnExtensions, 
       privilegeColumns, booleanColumns,
       pageSize, pageSizes, currentPage, } = this.state;
+    const { rows } = this.props;
 		return(
 			<Paper>
 			<Grid

@@ -32,7 +32,10 @@ function SimpleExpansionPanel(props) {
           <Typography className={classes.heading}>View All Users</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          <GridExample />
+          <GridExample 
+          	rows = {props.rows}
+
+          />
         </ExpansionPanelDetails>
       </ExpansionPanel>
 

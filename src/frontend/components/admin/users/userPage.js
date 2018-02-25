@@ -1,12 +1,11 @@
 // userPage.js
-
 import React from 'react';
 import PropTypes from 'prop-types';
+//local imports
 import { addLocalUser, addDukeUser } from '../../../interface/userInterface.js';
-
-import * as testConfig from '../../../../resources/testConfig.js'
-
-import ExpansionPanelExample from './ExpansionPanelExample'
+import * as testConfig from '../../../../resources/testConfig.js';
+import ExpansionPanelExample from './ExpansionPanelExample';
+import * as userInterface from '../../../interface/userInterface';
 
 // TODO: get session Id from the user
 var sessionId = "";
@@ -30,16 +29,24 @@ class RegisterPage extends React.Component {
         password: '',
         privilege: 'user',
         fromDukeOAuth: false,
-      }
-    };
+      },
+      userTableRows: [],
 
+    };
+    //function that are used as props
+    //for register
     this.processForm = this.processForm.bind(this);
     this.changeUser = this.changeUser.bind(this);
     this.userSuccessfullyAdded = this.userSuccessfullyAdded.bind(this);
+    this.refreshTableInfo = this.refreshTableInfo.bind(this);
+    //for table display
+    this.loadAllUsers = this.loadAllUsers.bind(this);
+    
   }
 
-  componentWillMount(){
+  async componentWillMount(){
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    await this.loadAllUsers();
   }
 
   userSuccessfullyAdded() {
@@ -85,6 +92,7 @@ class RegisterPage extends React.Component {
           }else{
             me.userSuccessfullyAdded();
             this.clearFields();
+            this.refreshTableInfo()
           }
         }
       );
@@ -99,6 +107,7 @@ class RegisterPage extends React.Component {
           }else{
             me.userSuccessfullyAdded();
             this.clearFields();
+            this.refreshTableInfo();
           }
         }
       );
@@ -146,6 +155,72 @@ class RegisterPage extends React.Component {
     console.log("user after change is " + JSON.stringify(user));
   }
 
+  refreshTableInfo(){
+    this.loadAllUsers();
+  }
+
+  /*************************************
+   * Functions that related to table displaying all users
+   **************************************/
+  async loadAllUsers(){
+    const sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    // const fromDukeOAuth = JSON.parse(sessionStorage.getItem('fromDukeOAuth'));
+    // console.log("sessionId:" + sessionId);
+    // console.log("fromDukeOAuth:" + fromDukeOAuth);
+    // const sessionInfo = utils.createSessionInfoObject(sessionId, fromDukeOAuth);
+    // console.log("sessionInfo:");
+    // console.log(sessionInfo);
+    const rawUserData = await userInterface.getAllUsersAsync(sessionId);
+    console.log("rawUserData:");
+    console.log(rawUserData);
+    if (rawUserData.length == 0){
+      return;
+    }
+    var processedData=[];
+    // loop through users
+    for (var i = 0; i < rawUserData.length; i++) {
+      const currentUser = rawUserData[i];
+      console.log("processing user..." );
+      console.log(currentUser);
+      //process data
+      var singleData = new Object ();
+    // match schema for user
+      singleData.username = currentUser.username;
+      singleData.email = currentUser.email;
+      singleData.isAdmin = currentUser.isAdmin;
+      singleData.isManager = currentUser.isManager;
+      singleData.fromDukeOAuth = currentUser.fromDukeOAuth;
+      singleData.loggedIn = currentUser.loggedIn;
+      singleData.userId = currentUser._id;
+      singleData.privilege = 'user';
+      //add privilege property, which is a string
+      if (singleData.isAdmin){
+        singleData.privilege = 'admin';
+      } else if (singleData.isManager){
+        singleData.privilege = 'manager';
+      }
+      console.log("packaged user");
+      console.log(singleData);
+      processedData.push(singleData);
+    };
+
+    var finalData = [...processedData.map((row, index)=> ({
+        id: index,...row,
+      })),
+    ];
+
+    console.log("Finished Processing All Data:");
+    console.log(finalData);
+    this.setState({userTableRows: finalData});
+    console.log("userTableRows:")
+    console.log(this.state.userTableRows);
+  };
+
+
+  /**************************************
+   * Render
+  **************************************/
+
   /**
    * Render the component.
    */
@@ -153,10 +228,13 @@ class RegisterPage extends React.Component {
     return (
       <div>
         <ExpansionPanelExample
+          //for register page
           onFormSubmit={this.processForm}
           onFormChange={this.changeUser}
           formErrors={this.state.errors}
           formUser={this.state.user}
+          //for display users
+          rows={this.state.userTableRows}
         />
 
         
