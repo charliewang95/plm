@@ -139,12 +139,12 @@ export default class SampleTable extends React.PureComponent {
       				name: 'privilege', 
       				title: 'Privilege',
       				getCellValue: row => (row.privilege ? row.privilege : undefined),
-      				dataType: 'boolean,' 
+      				dataType: 'string,' 
       			},
             {
               name: 'dukeUser',
               title: 'Duke User',
-              getCellValue: row => (row.fromDukeOAuth ? row.fromDukeOAuth : undefined),
+              getCellValue: row => (row.fromDukeOAuth ? row.fromDukeOAuth : false),
               dataType: 'boolean',
             },
       		],
@@ -259,6 +259,13 @@ export default class SampleTable extends React.PureComponent {
       singleData.fromDukeOAuth = currentUser.fromDukeOAuth;
       singleData.loggedIn = currentUser.loggedIn;
       singleData.userId = currentUser._id;
+      singleData.privilege = 'user';
+      //add privilege property, which is a string
+      if (singleData.isAdmin){
+        singleData.privilege = 'admin';
+      } else if (singleData.isManager){
+        singleData.privilege = 'manager';
+      }
       console.log("packaged user");
       console.log(singleData);
       processedData.push(singleData);
