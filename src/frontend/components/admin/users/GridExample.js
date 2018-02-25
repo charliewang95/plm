@@ -11,6 +11,10 @@ import {
 	IntegratedSorting
 } from '@devexpress/dx-react-grid'; // for sorting
 import {
+  PagingState,
+  IntegratedPaging,
+} from '@devexpress/dx-react-grid'; // for paging
+import {
 	DataTypeProvider, //for ???
 	EditingState,// for editing
 } from '@devexpress/dx-react-grid'; 
