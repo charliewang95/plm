@@ -2,11 +2,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import RegisterForm from './RegisterForm.jsx';
 import { addUser } from '../../../interface/userInterface.js';
 
 import * as testConfig from '../../../../resources/testConfig.js'
-import GridExample from './GridExample'
+
+import ExpansionPanelExample from './ExpansionPanelExample'
 
 // TODO: get session Id from the user
 var sessionId = "";
@@ -104,14 +104,14 @@ class RegisterPage extends React.Component {
   render() {
     return (
       <div>
-        <RegisterForm
-          onSubmit={this.processForm}
-          onChange={this.changeUser}
-          errors={this.state.errors}
-          user={this.state.user}
+        <ExpansionPanelExample
+          onFormSubmit={this.processForm}
+          onFormChange={this.changeUser}
+          formErrors={this.state.errors}
+          formUser={this.state.user}
         />
 
-        <GridExample />
+        
       </div>
     );
   }
