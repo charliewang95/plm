@@ -65,6 +65,7 @@ class LoginPage extends React.Component{
     this.handleLogin = this.handleLogin.bind(this);
     this.handleClickShowPasssword = this.handleClickShowPasssword.bind(this);
     this.registerOnClick = this.registerOnClick.bind(this);
+    this.checkDukeOAuthLogin = this.checkDukeOAuthLogin.bind(this);
   }
 
   async getDukeUser(client_id, token){
@@ -80,7 +81,7 @@ class LoginPage extends React.Component{
     return dukeUserData;
   };
 
-  async componentDidMount(){
+  async checkDukeOAuthLogin(){
     //redirects if hash exisits
     // console.log("Component did mount")
     const hash = window.location.hash;
@@ -128,6 +129,12 @@ class LoginPage extends React.Component{
         });
       console.log("userAdded: " + userAdded);
     }
+    
+  }
+  async componentWillMount(){
+    await this.checkDukeOAuthLogin();
+  }
+  componentDidMount(){
     
   };
 
