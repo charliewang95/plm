@@ -72,8 +72,20 @@ class SignUpForm extends React.Component{
         onChange = {this.props.onChange}
         margin="normal"
       />
+      
+
+      <PrivilegeSelection 
+        onChange={this.props.onChange}
+        value={this.props.user.privilege}
+      />
+
+      <DukeOAuthSwitch
+        onChange={this.props.onChange}
+        value={this.props.user.fromDukeOAuth}
+      />
+
       { !this.props.user.fromDukeOAuth &&
-        <div>
+        <div fullWidth={true}>
           <br/>
           <FormControl 
             fullWidth 
@@ -102,16 +114,6 @@ class SignUpForm extends React.Component{
           </FormControl>
         </div>
       }
-
-      <PrivilegeSelection 
-        onChange={this.props.onChange}
-        value={this.props.user.privilege}
-      />
-
-      <DukeOAuthSwitch
-        onChange={this.props.onChange}
-        value={this.props.user.fromDukeOAuth}
-      />
       
       <div style={styles.buttons}>
         <RaisedButton raised color = "secondary"
