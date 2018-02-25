@@ -203,13 +203,11 @@ class AddIngredientForm extends React.Component{
 
     e.preventDefault();
     sessionId = JSON.parse(localStorage.getItem('user'))._id;
-
     if(this.isValid() && this.state.isCreateNew){
       console.log(" Add ingredient ");
-
       ingredientInterface.addIngredient(this.state.name, this.state.packageName, this.state.temperatureZone,
-        this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, this.state.nativeUnit,0,
-        this.state.numUnitPerPackage, 0, sessionId, function(res){
+        this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, this.state.nativeUnit,
+        this.state.numUnitPerPackage, this.state.numUnit, this.state.space, sessionId, function(res){
                   if (res.status == 400) {
                       alert(res.data);
                   } else if (res.status == 500) {
@@ -232,6 +230,7 @@ class AddIngredientForm extends React.Component{
                       alert(" Ingredient Successfully edited! ");
                   }
               });
+      this.setState({isDisabled:true});
     }
       // Call function to send data to backend
 
@@ -323,6 +322,8 @@ class AddIngredientForm extends React.Component{
                 <MenuItem value={'pail'}>Pail</MenuItem>
                 <MenuItem value={'drum'}>Drum</MenuItem>
                 <MenuItem value={'supersack'}>Supersack</MenuItem>
+                <MenuItem value={'truckload'}>Truckload</MenuItem>
+                <MenuItem value={'railcar'}>Railcar</MenuItem>
               </Select>
             </FormControl>
             <FormGroup>
