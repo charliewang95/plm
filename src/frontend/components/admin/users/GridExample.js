@@ -340,7 +340,7 @@ export default class SampleTable extends React.PureComponent {
 					cellComponent={FilterCell}
 				/> 
 				<TableEditRow />
-          		<TableEditColumn showAddCommand showEditCommand showDeleteCommand />
+        <TableEditColumn showEditCommand showDeleteCommand />
 			</Grid>
 			</Paper>
 		);
