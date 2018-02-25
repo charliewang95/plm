@@ -104,11 +104,11 @@ const PrevilegeFilterCellBase = ({ filter, onFilter, classes }) => (
   <TableCell className={classes.cell} >
     <Select
       input={<Input />}
-      value={filter ?  filter.value : ''}
+      value={filter ?  (filter.value!='' ? filter.value : 'No Filter') : 'No Filter'}
       onChange={e => onFilter(e.target.value ? { value: e.target.value.toLowerCase() } : null)/*onValueChange(event.target.value.toLowerCase())*/}
       style={{ width: '100%', marginTop: '4px' }}
     >
-      <MenuItem value={''}>None</MenuItem>
+      <MenuItem value={''}>No Filter</MenuItem>
       <MenuItem value={'user'}>User</MenuItem>
       <MenuItem value={'manager'}>Manager</MenuItem>
       <MenuItem value={'admin'}>Admin</MenuItem>
@@ -120,11 +120,11 @@ const DukeUserFilterCellBase = ({ filter, onFilter, classes }) => (
   <TableCell className={classes.cell} >
     <Select
       input={<Input />}
-      value={filter ?  filter.value : ''}
+      value={filter ?  (filter.value!='' ? filter.value : 'No Filter') : 'No Filter'}
       onChange={e => onFilter(e.target.value ? { value: e.target.value} : null)/*onValueChange(event.target.value.toLowerCase())*/}
       style={{ width: '100%', marginTop: '4px' }}
     >
-      <MenuItem value={''}>None</MenuItem>
+      <MenuItem value={''}>No Filter</MenuItem>
       <MenuItem value={'true'}>Yes</MenuItem>
       <MenuItem value={'false'}>No</MenuItem>
     </Select>
