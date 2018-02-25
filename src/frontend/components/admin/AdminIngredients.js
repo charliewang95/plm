@@ -381,8 +381,9 @@ class AdminIngredients extends React.PureComponent {
                     //window.location.reload();
                     temp.setState({rows:rows});
           }else{
-            rows = [...rows,added[0]];
-            temp.setState({rows:rows});
+            // rows = [...rows,added[0]];
+            // temp.setState({rows:rows});
+            window.reload();
             alert(" New Ingredient Successfully added! ");
           }
         });
@@ -775,7 +776,7 @@ class AdminIngredients extends React.PureComponent {
         Click <a href="./BulkImportEV2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
       </div>
     }
-    
+
       <Button raised color="primary"
       component={Link} to="/orders"
       style = {{marginLeft: 380, marginBottom: 30}}

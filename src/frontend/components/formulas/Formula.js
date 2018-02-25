@@ -44,8 +44,11 @@ import MyPdfViewer from '../admin/PdfViewer';
 import * as uploadInterface from '../../interface/uploadInterface';
 import formulaData from './dummyData';
 
+//TODO: Set the user ID
 var sessionId = "";
 var isAdmin = "";
+var userId;
+
 var formulaSentToProduction={};
 
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
@@ -200,7 +203,9 @@ class Formula extends React.PureComponent {
           //TODO: Delete in the back end
 
           var formulaId = rows[index]._id;
-          //await formulaActions.deleteFormula(formulaId, sessionId);
+
+          await formulaActions.deleteFormula(formulaId, sessionId);
+          
           console.log("delete");
           console.log(rows[index].name);
           rows.splice(index, 1);
@@ -213,6 +218,8 @@ class Formula extends React.PureComponent {
     };
 
     this.uploadFile = this.uploadFile.bind(this);
+
+
   }
 
   componentWillMount(){
@@ -227,10 +234,12 @@ class Formula extends React.PureComponent {
 
   async loadAllFormulas(){
     sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    //TODO: Get from backend
-    // var rawData = await formulaActions.getAllFormulasAsync(sessionId);
+    userId = JSON.parse(localStorage.getItem('user'))._id;
 
-    var rawData = formulaData;
+    //TODO: Get from backend
+    var rawData = await formulaActions.getAllFormulasAsync(sessionId);
+
+    console.log(" Formulas " + JSON.stringify(rawData));
 
     for(var i =0; i < rawData.length;i++){
         var ingredientsArray  = rawData[i].ingredients;

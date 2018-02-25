@@ -138,9 +138,10 @@ class AddIngredientForm extends React.Component{
 
   async loadIngredient(){
     var details = [];
-    // sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    sessionId = '5a8b99a669b5a9637e9cc3bb';
-    userId = '5a8b99a669b5a9637e9cc3bb';
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    userId = JSON.parse(localStorage.getItem('user'))._id;
+    // sessionId = '5a8b99a669b5a9637e9cc3bb';
+    // userId = '5a8b99a669b5a9637e9cc3bb';
     console.log("ingredient id");
     console.log(this.props.location.state.ingredientId);
 

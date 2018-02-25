@@ -7,4 +7,14 @@ ingredients:[{_id: "IngID3", ingredientName:" PEPPER", quantity: 40}],},
 {_id: "ID3",name: " Formula 3", description: " desc 1",unitsProvided: 50,
 ingredients:[{_id: "IngID3", ingredientName:" MILK", quantity: 30}],},
 ];
-export default formulaData;
+
+
+const reviewData = [
+{ingredientId: "ID1",ingredientName: "salt", totalAmountNeeded: 500,currentUnit: 20,
+delta:480},
+{ingredientId: "ID2",ingredientName: "pepper", totalAmountNeeded: 10,currentUnit: 5,
+delta:5},
+{ingredientId: "ID1",ingredientName: "salt", totalAmountNeeded: 50,currentUnit: 30,
+delta:0},];
+
+export  {formulaData,reviewData};
