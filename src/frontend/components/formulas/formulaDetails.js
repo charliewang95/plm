@@ -10,10 +10,10 @@ import { FormControl, FormGroup, FormHelperText } from 'material-ui/Form';
 import { MenuItem } from 'material-ui/Menu';
 import Select from 'material-ui/Select';
 import Chip from 'material-ui/Chip';
-import * as ingredientInterface from '../../interface/ingredientInterface';
+import * as ingredientActions from '../../interface/ingredientInterface';
+import * as formulaActions from '../../interface/formulaInterface';
 import SelectIngredients from './SelectIngredients';
 
-import {ingredientData} from '../shoppingCart/dummyData';
 
 const styles = {
     buttons: {
@@ -53,64 +53,30 @@ class FormulaDetails extends React.Component{
       formulaId: (details._id)?(details.ingredientId):'',
       name:(details.name)?(details.name):'',
       description:(details.description)?(details.description):'',
-      unitsProvided:(details.unitsProvided)?(details.unitsProvided):0,
+      unitsProvided:(details.unitsProvided)?(details.unitsProvided):'',
       ingredients: (details.ingredients)?(details.ingredients):'',
       multi : 'false',
       isDisabled: (isCreateNew) ? false: true,
       isCreateNew: (isCreateNew),
+      isValid: false,
       }
 
     this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.updateIngredients = this.updateIngredients.bind(this);
     this.computeIngredientsString = this.computeIngredientsString.bind(this);
-    this.isValid = this.isValid.bind(this);
     this.handleUnitsProvidedChange = this.handleUnitsProvidedChange.bind(this);
-    // this.loadAllIngredients = this.loadAllIngredients.bind(this);
+    this.isValid = this.isValid.bind(this);
 
     }
 
   componentWillMount(){
     // this.loadAllIngredients();
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    userId = JSON.parse(localStorage.getItem('user'))._id;
+
   }
 
   componentDidMount(){
-    // sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    console.log(" Create NEW " + this.state.isCreateNew);
-    // if(this.state.isCreateNew){
-    //   this.loadAllIngredients();
-    // }
     this.computeIngredientsString();
-  }
-
-
-   async loadAllIngredients(){
-    sessionId = '5a8b99a669b5a9637e9cc3bb';
-    userId = '5a8b99a669b5a9637e9cc3bb';
-
-    var allIngredients = [];
-    // TODO: Connect with back end and get data
-    // allIngredients = await ingredientInterface.getAllIngredientNamesAsync(sessionId);
-    allIngredients = ingredientData;
-    // console.log(" All Ingredients " + JSON.stringify(allIngredients));
-      var formatIngredientsArray =  new Array();
-
-      for (var i=0; i<allIngredients.length; i++){
-        //var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].codeUnique);
-        var ingredientName = allIngredients[i].name;
-        var ingredientObj = new Object();
-        ingredientObj.ingredientName = ingredientName;
-        ingredientObj.quantity = 0;
-        formatIngredientsArray.push(ingredientObj);
-      }
-      console.log(formatIngredientsArray);
-    this.setState({ingredientsArray: formatIngredientsArray});
-    this.setState({ingredientsString: "blablabla"});
-      console.log(this.state);
-    this.computeIngredientsString();
-    // console.log(" String " + )
   }
 
   handleOnChange (option) {
@@ -154,38 +120,65 @@ class FormulaDetails extends React.Component{
     const re =/^[1-9]\d*$/;
     if(!this.state.name){
       alert(" Please enter the formula name. ");
+      return false;
     }else if (!this.state.description){
       alert(" Please enter the description. ");
+      return false;
     }else if (!re.test(this.state.unitsProvided)) {
       alert(" Units of product of formula must be a positive integer. ");
+      return false;
     }else if (this.state.ingredientsArray.length==0){
-      alert(" Please add ingredients needed for the formula.")
-
+      alert(" Please add ingredients needed for the formula.");
+      return false;
     }else if (this.state.ingredientsArray.length){
       // loop through and make sure all ingredients have quantities updated
       for(var i =0; i < this.state.ingredientsArray.length;i++){
         if(!this.state.ingredientsArray[i].quantity){
           alert(" Please add a positive integer quantity for ingredient " + this.state.ingredientsArray[i].ingredientName);
+          return false;
         }
       }
-    }else
       return true;
+    }else{
+      return true;
+    }
   }
 
-  onFormSubmit(e) {
+  async onFormSubmit(e) {
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+
     e.preventDefault();
-
+    console.log("submit formula ");
     if(this.isValid() && this.state.isCreateNew){
-      console.log(" Add Formula ");
-      // TODO: Add formula in back end
 
+
+      console.log(" Array " + JSON.stringify(this.state.ingredientsArray));
+      //TODO: Check for adding order
+      await formulaActions.addFormula(this.state.name, this.state.description,
+            this.state.unitsProvided, this.state.ingredientsArray, sessionId, function(res){
+              //TODO: Please update the error accordingly
+              if(res.status==400){
+                alert(res.data);
+              }else{
+                // TODO: Snackbar
+                alert(" Formula successfully added! ");
+              }
+            });
     }else if (this.isValid()){
-      console.log(" UPDATE FORMULA ");
-      // TODO: Update Formula
-    }
-      // Call function to send data to backend
+      console.log("update formula ");
+      await formulaActions.updateFormula(this.state.formulaId, this.state.name,
+        this.state.description,this.state.unitsProvided, this.state.ingredients, sessionId, function(res){
+          //TODO: Update error status
+          if(res.status){
+            alert(res.data==400);
+          }else{
+            //TODO: SnackBar
+            alert(" Formula successfully updated. ");
+          }
+        });
 
     }
+  }
 
     handleNewOptionClick(option){
       console.log("New Option was clicked: " + option.value);
@@ -201,7 +194,7 @@ class FormulaDetails extends React.Component{
   }
 
   render (){
-    const { name, description, unitsProvided, ingredients } = this.state;
+    const { formulaId,name, description, unitsProvided, ingredients, isCreateNew,isDisabled} = this.state;
     return (
       // <PageBase title = 'Add Ingredients' navigation = '/Application Form'>
       <form onSubmit={this.onFormSubmit} style={styles.formControl}>
@@ -219,15 +212,29 @@ class FormulaDetails extends React.Component{
             />
             </FormGroup>
             <TextField
+              required
               id="unitsProvided"
               label="Product Units"
               value={this.state.unitsProvided}
               onChange={(event)=>this.handleUnitsProvidedChange(event)}
               margin="normal"
               disabled = {this.state.isDisabled}
-              style={styles.quantity}
-              required
+
+              style={styles.unitsProvided}
             />
+
+            <FormGroup>
+              <TextField
+                id="description"
+                label="Description "
+                value={this.state.description}
+                onChange={this.handleChange('description')}
+                margin="normal"
+                disabled = {this.state.isDisabled}
+                // style={styles.unitsProvided}
+                required
+              />
+            </FormGroup>
 
             <FormGroup>
             {this.state.isDisabled && <TextField
@@ -247,7 +254,9 @@ class FormulaDetails extends React.Component{
                           // className=classes.button
                           style={styles.saveButton}
                           type="Submit"
-                          primary="true"> {(this.state.isCreateNew)? 'ADD' : 'SAVE'} </RaisedButton>}
+                          primary="true"
+                          > {(this.state.isCreateNew)? 'ADD' : 'SAVE'} </RaisedButton>}
+
                 <RaisedButton color="default"
                   component={Link} to='/formula'
                   style = {{marginTop: 5, marginLeft: 5}}

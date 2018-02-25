@@ -12,7 +12,9 @@ import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
 import { FormControl, FormGroup, FormHelperText } from 'material-ui/Form';
 import { MenuItem } from 'material-ui/Menu';
 import Button from 'material-ui/Button';
-import IngredientItem from './IngredientItem.js';
+import IngredientItem from './ingredientItem.js';
+
+import {ingredientData} from '../shoppingCart/dummyData';
 
 
 // TODO: Get sessionID and UserID
@@ -79,27 +81,32 @@ class SelectIngredients extends Component {
     userId = JSON.parse(localStorage.getItem('user'))._id;
 
     var rawData = [];
-    rawData = await ingredientActions.getAllIngredientNamesAsync(sessionId);
-    console.log("loadCodeNameArray was called");
-    console.log(rawData.data);
-    var optionsArray = rawData.data.map(obj=>{
-    var temp = new Object();
-    temp.ingredientName = obj.ingredientName;
-    temp.label = obj.ingredientName;
-    return temp;
-    })
-    var ans = optionsArray;
-    for(var i=0; i<this.props.initialArray.length; i++){
-      console.log("initialArray");
-      console.log(this.props.initialArray);
+    try{
+      rawData = await ingredientActions.getAllIngredientNamesAsync(sessionId);
 
-      ans = ans.filter(option=>option.ingredientName!=this.props.initialArray[i].ingredientName);
+      console.log("CALLED FOR INGREDIENTS DATA ");
 
-    //  var index = optionsArray.map(item=>{item.ingredientName; console.log(item.ingredientName);}).indexOf(this.props.initialArray[i].ingredientName);
-      console.log(ans);
-    //  optionsArray.splice(index, 1);
+      console.log(JSON.stringify(rawData));
+      var optionsArray = rawData.data.map(obj=>{
+      var temp = new Object();
+      temp.ingredientName = obj.ingredientName;
+      temp.label = obj.ingredientName;
+      return temp;
+      })
+      var ans = optionsArray;
+      for(var i=0; i<this.props.initialArray.length; i++){
+        console.log("initialArray");
+        console.log(this.props.initialArray);
+        ans = ans.filter(option=>option.ingredientName!=this.props.initialArray[i].ingredientName);
+      //  var index = optionsArray.map(item=>{item.ingredientName; console.log(item.ingredientName);}).indexOf(this.props.initialArray[i].ingredientName);
+        console.log(ans);
+      //  optionsArray.splice(index, 1);
+      }
+
+      this.setState({options: ans});
+    }catch(e){
+      alert(e);
     }
-    this.setState({options: ans});
   }
 
   resetArray(name, action){
@@ -233,7 +240,7 @@ updateQuantityHere(event){
             required
             onChange={(value)=>{this.updateQuantityHere(value);}}
             value={this.state.inputQuantity}
-            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+            startAdornment={<InputAdornment position="start"></InputAdornment>}
           />
          </FormControl>
          {this.state.selectName && (this.state.inputQuantity>0) &&

@@ -32,10 +32,6 @@ class IngredientItem extends Component {
     };
   }
 
-  componentDidMount(){
-    // console.log("I am in vendoritem");
-    // console.log(this.props.vendorsArray);
-  }
 
   componentDidMount(){
     console.log("I am in ingredientitem");
