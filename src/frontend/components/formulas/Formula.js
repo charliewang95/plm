@@ -123,8 +123,7 @@ const AddToProdButton = ({selectedFormula, onExecute}) => (
       color="primary"
       title="Send formula to production"
       component={Link} to={{pathname: '/production-review', state:{selectedFormula: selectedFormula} }}
-    >
-      Initiate Production
+    > Use
     </Button>
   </div>
 );
@@ -264,12 +263,31 @@ class Formula extends React.PureComponent {
     async uploadFile(event) {
       console.log(" UPLOAD FILE ");
         let file = event.target.files[0];
+
+        console.log(file);
+
+        if (file) {
+          let form = new FormData();
+          form.append('file', file);
+          console.log(form);
+           await uploadInterface.uploadFormula(form, sessionId, function(res){
+                if (res.status == 400) {
+                    if (!alert(res.data))
+                        window.location.reload();
+                } else if (res.status == 500) {
+                    if (!alert('Duplicate Key on Formula (different package not allowed)'))
+                        window.location.reload();
+                } else if (res.status == 200) {
+                    console.log(res);
+                    if(!alert(res.data))
+                        window.location.reload();
+                }
+           });
+         }
     }
 
   render() {
-    const {
-      classes,
-    } = this.props;
+    const {classes,} = this.props;
     const {
       rows,
       columns,
@@ -285,17 +303,14 @@ class Formula extends React.PureComponent {
       columnOrder,
       productionFormula
     } = this.state;
-
-    return (
+    return(
       <div>
       <Paper>
         <Grid
           allowColumnResizing = {true}
           rows={rows}
           columns={columns}
-          getRowId={getRowId}
-
-        >
+          getRowId={getRowId}>
 
           <PagingState
             currentPage={currentPage}
@@ -316,21 +331,16 @@ class Formula extends React.PureComponent {
             // onAddedRowsChange={this.changeAddedRows}
             onCommitChanges={this.commitChanges}
           />}
-
           <DragDropProvider />
-
           <Table
             // columnExtensions={tableColumnExtensions}
             cellComponent={Cell}
           />
-
           <TableColumnReordering
             order={columnOrder}
             onOrderChange={this.changeColumnOrder}
           />
-
           <TableHeaderRow />
-
           {isAdmin && <TableEditRow
             cellComponent={Cell}
           /> }
@@ -376,25 +386,26 @@ class Formula extends React.PureComponent {
           </DialogActions>
         </Dialog>
       }
-      </Paper>
+    </Paper>
     {/* <Paper styles = {{color : "#42f4d9"}} > */}
-      {isAdmin && <p><font size="5">Bulk Import</font></p>}
+      {isAdmin && <p><font size="5">Formula Bulk Import</font></p>}
       {isAdmin && <input type="file"
         name="myFile"
         onChange={this.uploadFile} /> }
       {isAdmin &&
       <div>
         <br></br>
-        Click <a href="./FormatSpec.pdf" style={{color:"#000000",}}>HERE</a> for format specification
+        Click <a href="./BulkImportEV2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
       </div>
     }
-    </div>
-    );
+  </div>
+);
   }
-}
 
-Formula.propTypes = {
-  classes: PropTypes.object.isRequired,
 };
+
+// Formula.propTypes = {
+//   classes: PropTypes.object.isRequired,
+// };
 
 export default withStyles(styles, { name: 'Formula' })(Formula);

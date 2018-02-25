@@ -143,7 +143,9 @@ class AddIngredientForm extends React.Component{
     userId = '5a8b99a669b5a9637e9cc3bb';
     console.log("ingredient id");
     console.log(this.props.location.state.ingredientId);
-    details = await ingredientInterface.getIngredientAsync(userId, sessionId);
+
+    details = await ingredientInterface.getIngredientAsync(this.props.location.state.ingredientId, sessionId);
+
     console.log("load one ingredient");
     console.log(details);
     var formatVendorsArray = new Array();

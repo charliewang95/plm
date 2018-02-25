@@ -152,7 +152,9 @@ class PersistentDrawer extends React.Component {
 
   componentDidMount(){
     console.log("component did mount");
-    console.log(((localStorage.getItem('user')!=null)?(localStorage.getItem('user').isAdmin):false));
+    console.log(localStorage.getItem('user'));
+    console.log(((localStorage.getItem('user')!=null)?(JSON.parse(localStorage.getItem('user')).isAdmin):false));
+    this.setState({isAdmin: (localStorage.getItem('user')!=null)?(JSON.parse(localStorage.getItem('user')).isAdmin):false});
   }
 
   logout(){
@@ -176,7 +178,8 @@ class PersistentDrawer extends React.Component {
   };
 
   render() {
-    console.log("isAdmin ", this.state.isAdmin);
+    console.log("isAdmin "+this.state.isAdmin);
+    console.log(this.state);
     const { classes, theme } = this.props;
     const { anchor, open } = this.state;
     const drawer = (
@@ -195,7 +198,7 @@ class PersistentDrawer extends React.Component {
             </IconButton>
           </div>
           <Divider />
-          {this.state.isAdmin && <List className={classes.list}>{UserListItems}</List> }
+          {localStorage.getItem('user')!=null && JSON.parse(localStorage.getItem('user')).isAdmin && <List className={classes.list}>{UserListItems}</List> }
           <Divider />
           <MainList> </MainList>
         </div>
