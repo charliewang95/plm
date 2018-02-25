@@ -13,6 +13,8 @@ import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
 import { FormControl, FormHelperText } from 'material-ui/Form';
 import Visibility from 'material-ui-icons/Visibility';
 import VisibilityOff from 'material-ui-icons/VisibilityOff';
+//local import
+import PrivilegeSelection from './RadioButtonExample.js';
 
 const styles = {
   buttons: {
@@ -96,6 +98,9 @@ class SignUpForm extends React.Component{
           </FormControl>
         </div>
       }
+
+      <PrivilegeSelection />
+      
       <div style={styles.buttons}>
         <RaisedButton raised color = "secondary"
           component = {Link} to = "/">Back To Dashboard</RaisedButton>
