@@ -3,6 +3,7 @@ import Paper from 'material-ui/Paper';
 import { DatePicker, DatePickerInput } from 'rc-datepicker';
 import 'rc-datepicker/lib/style.css';
 import PropTypes from 'prop-types';
+import { Container, Row, Col } from 'reactstrap';
 import {Link} from 'react-router-dom';
 import {
   FilteringState,
@@ -37,9 +38,9 @@ var isAdmin =  "";
 // JSON.parse(localStorage.getItem('user')).isAdmin;
 
 const Cell = (props)=>{
-  if(props.column.name=="item"){
+  if(props.column.name=="item" && props.row.model == 'ingredients'){
     return <Table.Cell {...props}>
-    <Link to={{pathname: '/ingredient-details', state:{ingredientId: props.row._id, fromLogs: true} }}>{props.row.item}</Link>
+    <Link to={{pathname: '/ingredient-details', state:{ingredientId: props.row.itemId, fromLogs: true} }}>{props.row.item}</Link>
     </Table.Cell>
   }
   return <Table.Cell {...props}
@@ -203,17 +204,20 @@ class Log extends React.PureComponent {
 
     return (
       <Paper>
-      <div>Filter by Timespan </div>
-      <br/>
-      <DatePickerInput style={pickerStyle}
+      <div> Start Date: </div>
+        <DatePickerInput style={pickerStyle}
+          readOnly = {true}
           onChange={this.handleStartDateChange}
           value={this.state.startDate}
           className='my-custom-datepicker-component'
-      />
+        />
+        <br/>
+        <div> End Date: </div>
       <DatePickerInput style={pickerStyle}
-            onChange={this.handleEndDateChange}
-            value={this.state.endDate}
-            className='my-custom-datepicker-component'
+          readOnly = {true}
+          onChange={this.handleEndDateChange}
+          value={this.state.endDate}
+          className='my-custom-datepicker-component'
         />
 
         <Grid
@@ -229,6 +233,7 @@ class Log extends React.PureComponent {
           <TableHeaderRow />
           <TableFilterRow />
         </Grid>
+
       </Paper>
     );
   }

@@ -178,12 +178,7 @@ handleMouseDownPassword(event){
 
                   <RaisedButton raised color = "primary" onClick={this.handleLogin}
                    primary="true" type="Submit" >LOGIN</RaisedButton>
-                  <RaisedButton raised
-                            // component = {Link} to = "/storage"
-                            color="secondary"
-                            style={styles.saveButton}
-                            onClick={this.registerOnClick}
-                            > REGISTER </RaisedButton>
+                 
 
              </div>
            </form>
