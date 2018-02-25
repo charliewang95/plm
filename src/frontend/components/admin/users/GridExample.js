@@ -98,23 +98,43 @@ const PrevilegeTypeProvider = props => (
 
 const PrevilegeFilterCellBase = ({ filter, onFilter, classes }) => (
   <TableCell className={classes.cell} >
-    <Input
-      className={classes.input}
-      type="text"
-      value={filter ? filter.value : ''}
-      onChange={e => onFilter(e.target.value ? { value: e.target.value } : null)}
-      placeholder="Filter..."
-    />
+    <Select
+      input={<Input />}
+      value={filter ?  filter.value : ''}
+      onChange={e => onFilter(e.target.value ? { value: e.target.value.toLowerCase() } : null)/*onValueChange(event.target.value.toLowerCase())*/}
+      style={{ width: '100%', marginTop: '4px' }}
+    >
+      <MenuItem value={''}>None</MenuItem>
+      <MenuItem value={'user'}>User</MenuItem>
+      <MenuItem value={'manager'}>Manager</MenuItem>
+      <MenuItem value={'admin'}>Admin</MenuItem>
+    </Select>
+  </TableCell>
+);
+
+const DukeUserFilterCellBase = ({ filter, onFilter, classes }) => (
+  <TableCell className={classes.cell} >
+    <Select
+      input={<Input />}
+      value={filter ?  filter.value : ''}
+      onChange={e => onFilter(e.target.value ? { value: e.target.value} : null)/*onValueChange(event.target.value.toLowerCase())*/}
+      style={{ width: '100%', marginTop: '4px' }}
+    >
+      <MenuItem value={''}>None</MenuItem>
+      <MenuItem value={'true'}>Yes</MenuItem>
+      <MenuItem value={'false'}>No</MenuItem>
+    </Select>
   </TableCell>
 );
 
 const PrevilegeFilterCell = withStyles(styles, { name: 'PrivilegeFilterCell' })(PrevilegeFilterCellBase);
-
+const DukeUserFilterCell = withStyles(styles, { name: 'DukeUserFilterCell' })(DukeUserFilterCellBase);
 const FilterCell = (props) => {
 	// console.log("props.column.name: " + props.column.name);
-  if (props.column.name === 'privilege' ||
-      props.column.name === 'dukeUser') {
+  if (props.column.name === 'privilege') {
     return <PrevilegeFilterCell {...props} />;
+  } else if (props.column.name === 'dukeUser') {
+    return <DukeUserFilterCell {...props} />;
   }
   return <TableFilterRow.Cell {...props} />;
 };
@@ -151,14 +171,6 @@ export default class SampleTable extends React.PureComponent {
           booleanColumns: ['dukeUser'],
       		privilegeColumns: ['privilege'],
           rows: [],
-          //commented out because fetching data remotely
-          /*
-      		rows: [
-      			{ id: 0, username: 'sampleUser', email: 'user@duke.edu', privilege: 'user' }, //id for editing
-     			{ id: 1, username: 'sampleManager', email: 'manager@duke.edu', privilege: 'manager' },
-      			{ id: 2, username: 'sampleAdmin', email: 'admin@duke.edu', privilege: 'admin'},
-      		],
-          */
       		sorting: [{ columnName: 'username', direction: 'asc' }],
 
       		editingColumnExtensions: [
@@ -227,29 +239,7 @@ export default class SampleTable extends React.PureComponent {
       const currentUser = rawUserData[i];
       console.log("processing user..." );
       console.log(currentUser);
-    //   var vendorArrayString = "";
-    //   //loop through vendor
-      
-    //   var formatVendorsArray = new Array();
-    //   for (var j=0; j<rawData[i].vendors.length; j++){
-    //     //var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].codeUnique);
-    //     var vendorName = rawData[i].vendors[j].vendorName;
-    //     var price = rawData[i].vendors[j].price;
-
-    //     var vendorObject = new Object();
-    //     vendorObject.vendorName = vendorName;
-    //     vendorObject.price = price;
-    //     formatVendorsArray.push(vendorObject);
-
-    //     console.log(vendorName);
-    //     vendorArrayString+=vendorName + " / $" + rawData[i].vendors[j].price;
-    //     console.log("tired");
-    //     console.log(i);
-    //      if(i!= (rawData[i].vendors.length-1) ){
-    //         vendorArrayString+=', ';
-    //       }
-    //   }
-
+      //process data
       var singleData = new Object ();
     // match schema for user
       singleData.username = currentUser.username;
@@ -269,14 +259,6 @@ export default class SampleTable extends React.PureComponent {
       console.log("packaged user");
       console.log(singleData);
       processedData.push(singleData);
-    //   singleData.moneySpent = rawData[i].moneySpent;
-    //   singleData.moneyProd = rawData[i].moneyProd;
-    //   //singleData.vendorsArray = "";
-    //   singleData.vendors = vendorArrayString;
-    //   console.log("my id");
-    //   singleData.ingredientId = rawData[i]._id;
-    //   console.log(singleData.ingredientId);
-    //   processedData.push(singleData);
     };
 
     var finalData = [...processedData.map((row, index)=> ({
@@ -288,8 +270,6 @@ export default class SampleTable extends React.PureComponent {
     console.log(finalData);
     this.setState({rows: finalData});
 
-    // console.log("loadAllIngredients()");
-    // console.log(finalData);
   };
 
   componentDidMount(){
