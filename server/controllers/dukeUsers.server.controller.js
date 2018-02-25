@@ -19,16 +19,6 @@ exports.loggingInViaOAuth = function(req, res, next) {
         				 	res.json(dukeUser);
         	})
 
-
-
-            // if (user.authenticate(req.body.password)) {
-            //     user.update({loggedIn: true}, function(err, obj){
-            //         res.json(user);
-            //     });
-            // } else {
-            //     res.status(400);
-            //     res.send("Incorrect password.");
-            // }
         }
     });
 	
