@@ -6,6 +6,7 @@ var utils = require('../utils/utils');
 var fs = require('fs');
 var Converter = require("csvtojson").Converter;
 var converter = new Converter({});
+var bulkImport = require('../utils/bulkImportFormulas');
 
 exports.create = function(req, res, next) {
     utils.doWithAccess(req, res, next, Formula, 'create', req.params.userId, '', true, true);
@@ -29,4 +30,11 @@ exports.delete = function(req, res, next) {
 
 exports.checkout = function(req, res, next) {
     utils.doWithAccess(req, res, next, Formula, 'checkoutFormula', req.params.userId, req.params.formulaId, false, true); //
-}
+};
+
+exports.bulkImportFormulas = function(req, res, next, contents, callback) {
+    bulkImport.bulkImportFormulas(req, res, next, contents, function() {
+        //res.send(contents);
+        callback();
+    });
+};

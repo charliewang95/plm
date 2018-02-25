@@ -15,6 +15,7 @@ import ShoppingCartIcon from 'material-ui-icons/ShoppingCart'; // Cart
 import ReportIcon from 'material-ui-icons/Receipt'; // Report
 import BugReportIcon from 'material-ui-icons/BugReport'; // Logs
 import RestaurantIcon from 'material-ui-icons/Restaurant';
+import BalanceIcon from 'material-ui-icons/AccountBalance';
 
 const styles = theme => ({
   menuItem: {
@@ -63,13 +64,6 @@ function ListItemComposition(props) {
           <ListItemText classes={{ primary: classes.primary }} inset primary="Cart" />
         </MenuItem>
 
-        <MenuItem className={classes.menuItem} component={Link} to="/inventory" button>
-          <ListItemIcon className={classes.icon}>
-            <InventoryIcon />
-          </ListItemIcon>
-          <ListItemText classes={{ primary: classes.primary }} inset primary="Inventory" />
-        </MenuItem>
-
         <MenuItem className={classes.menuItem} component={Link} to="/formula" button>
           <ListItemIcon className={classes.icon}>
             <RestaurantIcon />
@@ -89,6 +83,13 @@ function ListItemComposition(props) {
             <ReportIcon />
           </ListItemIcon>
           <ListItemText classes={{ primary: classes.primary }} inset primary="Financial Report" />
+        </MenuItem>
+
+        <MenuItem className={classes.menuItem} component={Link} to="/prod-report" button>
+          <ListItemIcon className={classes.icon}>
+            <BalanceIcon />
+          </ListItemIcon>
+          <ListItemText classes={{ primary: classes.primary }} inset primary="Production Report" />
         </MenuItem>
 
         <MenuItem className={classes.menuItem} component={Link} to="/log" button>

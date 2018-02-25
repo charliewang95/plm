@@ -140,7 +140,8 @@ class AddIngredientForm extends React.Component{
     sessionId = JSON.parse(localStorage.getItem('user'))._id;
     console.log("ingredient id");
     console.log(this.props.location.state.ingredientId);
-    details = await ingredientInterface.getIngredientAsync('5a8e37ab182c28046184cd75', sessionId);
+    //details = await ingredientInterface.getIngredientAsync('5a8e37ab182c28046184cd75', sessionId);
+    details = await ingredientInterface.getIngredientAsync(this.props.location.state.ingredientId, sessionId);
     console.log("load one ingredient");
     console.log(details);
     var formatVendorsArray = new Array();
@@ -173,8 +174,8 @@ class AddIngredientForm extends React.Component{
 
   isValid(){
     const re = /^[0-9\b]+$/;
-      if (this.state.numUnitPerPackage == 0 || this.state.numUnitPerPackage == '' || !re.test(this.state.numUnitPerPackage)) {
-        alert("Quantity must be a positive number.");
+      if (this.state.numUnitPerPackage < 0 || this.state.numUnitPerPackage == '' || !re.test(this.state.numUnitPerPackage)) {
+        alert(" Quantity must be a positive number or 0 (not in stock).");
         return false;
       }
     if(this.state.temperatureZone==null || this.state.temperatureZone==''){
@@ -233,10 +234,10 @@ class AddIngredientForm extends React.Component{
 
   handleQuantityChange(event){
   const re = /^[0-9\b]+$/;
-      if ( event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
+      if ( event.target.value == '' || (event.target.value>=0 && re.test(event.target.value))) {
          this.setState({numUnitPerPackage: event.target.value})
       }else{
-        alert(" Quantity must be a positive number.");
+        alert(" Quantity must be a positive number or 0 (not in stock).");
       }
   }
 

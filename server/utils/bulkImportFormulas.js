@@ -40,7 +40,7 @@ var validateBulkImport = function(req, res, next, array, i, callback){
     else {
         var formula = array[i];
         //console.log(formula);
-        var formulaName = formula.FORMULA;
+        var formulaName = formula.NAME;
         var unitsProvided = formula["PRODUCT UNITS"];
         var description = formula.DESCRIPTION;
         var ingredientNameUnique = formula.INGREDIENT.toLowerCase();
@@ -50,11 +50,11 @@ var validateBulkImport = function(req, res, next, array, i, callback){
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Formula name cannot be empty');
             return;
         }
-        if (unitsProvided == null || unitsProvided <= 0) {
+        if (formulaName.toLowerCase() != prevFormula.toLowerCase() && (unitsProvided == null || unitsProvided <= 0)) {
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Units provided cannot be empty or zero');
             return;
         }
-        if (ingredientName == null || ingredientName == '') {
+        if (ingredientNameUnique == null || ingredientNameUnique == '') {
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Ingredient name cannot be empty');
             return;
         }
@@ -84,10 +84,11 @@ var validateBulkImport = function(req, res, next, array, i, callback){
                         if (formulaName.toLowerCase() != prevFormula && allFormulas.includes(formulaName.toLowerCase())){
                             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Duplicate formula names exist (the same formula should be in consecutive rows).');
                             return;
-                        } else {
+                        } else if (formulaName.toLowerCase() != prevFormula) {
                             prevFormula = formulaName.toLowerCase();
-                            validateBulkImport(req, res, next, array, i+1, callback);
+                            allFormulas.push(formulaName.toLowerCase());
                         }
+                        validateBulkImport(req, res, next, array, i+1, callback);
                     }
                 });
             }
@@ -116,11 +117,10 @@ var doBulkImport = function(req, res, next, array, i, callback){
                 console.log('Formula '+formulaName+' exists');
                 var ingredients = obj.ingredients;
                 ingredients.push(ingredient);
-                obj.update({vendors: vendors, nameUnique:ingredientName.toLowerCase()}, function(err, obj3){
+                obj.update({ingredients: ingredients}, function(err, obj3){
                     if (err) return next(err);
-                    doBulkImport(req, res, next, array, i+1, callback);
-                })
-
+                    else doBulkImport(req, res, next, array, i+1, callback);
+                });
             } else {
                 console.log('Formula '+formulaName+' does not exist yet');
                 var ingredients = [];
@@ -134,78 +134,8 @@ var doBulkImport = function(req, res, next, array, i, callback){
 
                 newFormula.save(function(err){
                     if (err) return next(err);
-                    doBulkImport(req, res, next, array, i+1, callback);
+                    else doBulkImport(req, res, next, array, i+1, callback);
                 });
-            }
-        });
-
-
-
-
-
-
-        Ingredient.findOne({name: ingredientName}, function(err, obj){
-            console.log("processing "+ingredientName);
-            console.log(obj);
-            if (err) return next(err);
-            else if (obj) {
-                console.log("ingredient "+ingredientName+" already exists");
-                if (vendorCode != null && vendorCode != '') {
-                    Vendor.findOne({codeUnique: vendorCode}, function(err, obj2){ //need to check if vendor already selling it
-                        var vendors = obj.vendors;
-                        if (vendors == null || vendors.length == 0)
-                            vendors = [];
-                        console.log("old vendors");
-                        console.log(vendors);
-                        var newVendor = new Object();
-                        newVendor.codeUnique = vendorCode;
-                        newVendor.vendorName = obj2.name;
-                        newVendor.vendorId = obj2._id;
-                        newVendor.price = Number(vendorPrice);
-                        vendors.push(newVendor);
-                        obj.update({vendors: vendors, nameUnique:ingredientName.toLowerCase()}, function(err, obj3){
-                            if (err) return next(err);
-                            doBulkImport(req, res, next, array, i+1, callback);
-                        })
-                    });
-                }
-            }
-            else {
-                console.log("ingredient "+ingredientName+" does not exist");
-                if (vendorCode != null && vendorCode != '') {
-                    Vendor.findOne({codeUnique: vendorCode}, function(err, obj2){ //need to check if vendor already selling it
-                        var vendors = [];
-                        var newVendor = new Object();
-                        newVendor.codeUnique = vendorCode;
-                        newVendor.vendorName = obj2.name;
-                        newVendor.vendorId = obj2._id;
-                        newVendor.price = Number(vendorPrice);
-                        vendors.push(newVendor);
-
-                        var newIngredient = new Ingredient();
-                        newIngredient.name = ingredientName;
-                        newIngredient.nameUnique = ingredientName.toLowerCase();
-                        newIngredient.packageName = packageName;
-                        newIngredient.temperatureZone = temperatureZone;
-                        newIngredient.vendors = vendors;
-                        newIngredient.save(function(err){
-                            if (err) return next(err);
-                            doBulkImport(req, res, next, array, i+1, callback);
-                        });
-                    });
-                } else {
-                    var newIngredient = new Ingredient();
-                    newIngredient.name = ingredientName;
-                    newIngredient.nameUnique = ingredientName.toLowerCase();
-                    newIngredient.packageName = packageName;
-                    newIngredient.temperatureZone = temperatureZone;
-                    newIngredient.vendors = [];
-
-                    newIngredient.save(function(err){
-                        if (err) return next(err);
-                        doBulkImport(req, res, next, array, i+1, callback);
-                    });
-                }
             }
         });
     }
