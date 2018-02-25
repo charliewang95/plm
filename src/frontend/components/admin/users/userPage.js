@@ -27,7 +27,9 @@ class RegisterPage extends React.Component {
       user: {
         email: '',
         username: '',
-        password: ''
+        password: '',
+        privilege: 'user',
+        fromDukeOAuth: false,
       }
     };
 

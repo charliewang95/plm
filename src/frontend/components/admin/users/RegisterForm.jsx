@@ -60,7 +60,7 @@ class SignUpForm extends React.Component{
         margin="normal"
       />
       <TextField
-        required
+        //required
         fullWidth={true}
         id="email"
         name="email"
@@ -69,30 +69,33 @@ class SignUpForm extends React.Component{
         onChange = {this.props.onChange}
         margin="normal"
       />
-<br/><br/>
-      <FormControl fullWidth required>
-          <InputLabel htmlFor="password">Password</InputLabel>
-          <Input
-            id="password"
-            name="password"
-            label="Password"
-            
-            type={this.state.showPassword ? 'text' : 'password'}
-            value={this.props.user.password}
-            onChange={this.props.onChange}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={this.handleClickShowPasssword}
-                  onMouseDown={this.handleMouseDownPassword}
-                >
+      { !this.props.user.fromDukeOAuth &&
+        <div>
+          <br/>
+          <FormControl fullWidth required>
+            <InputLabel htmlFor="password">Password</InputLabel>
+            <Input
+              id="password"
+              name="password"
+              label="Password"
+          
+              type={this.state.showPassword ? 'text' : 'password'}
+              value={this.props.user.password}
+              onChange={this.props.onChange}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={this.handleClickShowPasssword}
+                    onMouseDown={this.handleMouseDownPassword}
+                  >
                   {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-          />
-        </FormControl>
-
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+        </div>
+      }
       <div style={styles.buttons}>
         <RaisedButton raised color = "secondary"
           component = {Link} to = "/">Back To Dashboard</RaisedButton>

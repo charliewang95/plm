@@ -26,6 +26,16 @@ function SimpleExpansionPanel(props) {
   const { classes } = props;
   return (
     <div className={classes.root}>
+      
+      <ExpansionPanel defaultExpanded>
+        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography className={classes.heading}>View All Users</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <GridExample />
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+
       <ExpansionPanel>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <Typography className={classes.heading}>Create New Users</Typography>
@@ -37,14 +47,6 @@ function SimpleExpansionPanel(props) {
           		errors={props.formErrors}
           		user={props.formUser}
         	/>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-      <ExpansionPanel defaultExpanded>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.heading}>View All Users</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <GridExample />
         </ExpansionPanelDetails>
       </ExpansionPanel>
     {/*
