@@ -25,6 +25,7 @@ import {
   TableFilterRow, // for filtering
   TableEditRow, //for editing
   TableEditColumn, //for editing
+  PagingPanel, // for paging
 } from '@devexpress/dx-react-grid-material-ui';
 // for selecting previlege level
 import Chip from 'material-ui/Chip';
@@ -172,11 +173,13 @@ export default class SampleTable extends React.PureComponent {
               dataType: 'boolean',
             },
       		],
+          rows: [],
+          //for filtering
           booleanColumns: ['dukeUser'],
       		privilegeColumns: ['privilege'],
-          rows: [],
+          //for sorting
       		sorting: [{ columnName: 'username', direction: 'asc' }],
-
+          //for editing
       		editingColumnExtensions: [
         		{
          			columnName: 'username',
@@ -191,11 +194,19 @@ export default class SampleTable extends React.PureComponent {
           			createRowChange: (row, value) => ( {...row, privilege: value} ),
         		},
       		],
+          //for paging
+          currentPage: 0,
+          pageSize: 5,
+          pageSizes: [5, 10, 15],
       	}
-
+        //for sorting
       	this.changeSorting = sorting => this.setState( {sorting} );// for sorting
-      	this.commitChanges = this.commitChanges.bind(this); // for editing
-	}
+      	//for editing
+        this.commitChanges = this.commitChanges.bind(this); // for editing
+        //for paging
+        this.changeCurrentPage = currentPage => this.setState({ currentPage });
+        this.changePageSize = pageSize => this.setState({ pageSize });
+  }
 
 	commitChanges({ added, changed, deleted }) { //function for saving changes in table
     let { rows } = this.state;
@@ -282,7 +293,8 @@ export default class SampleTable extends React.PureComponent {
 
 	render() {
 		const { rows, columns, sorting, editingColumnExtensions, 
-      privilegeColumns, booleanColumns } = this.state;
+      privilegeColumns, booleanColumns,
+      pageSize, pageSizes, currentPage, } = this.state;
 		return(
 			<Paper>
 			<Grid
@@ -306,9 +318,19 @@ export default class SampleTable extends React.PureComponent {
 				<EditingState
             		columnExtensions={editingColumnExtensions}
             		onCommitChanges={this.commitChanges}
-          		/>
+        />
+        <PagingState
+          currentPage={currentPage}
+          onCurrentPageChange={this.changeCurrentPage}
+          pageSize={pageSize}
+          onPageSizeChange={this.changePageSize}
+        />
+        <IntegratedPaging />
 				<Table />
 				<TableHeaderRow showSortingControls />
+        <PagingPanel
+            pageSizes={pageSizes}
+        />
 				<TableFilterRow 
 					cellComponent={FilterCell}
 				/> 
