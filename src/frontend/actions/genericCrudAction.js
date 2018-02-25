@@ -16,7 +16,7 @@ function appendSessionIdToUrl(url, sessionInfo){
 	const fromDukeOAuth = sessionInfo.fromDukeOAuth;
 	console.log('sessionId: ' + sessionId );
 	console.log('fromDukeOAuth: ' + fromDukeOAuth);
-	const userString = fromDukeOAuth ? 'dukeuser' : 'user';
+	const userString = 'user';
 	return appendSegmentsToUrl(url, [userString, sessionId]);
 };
 

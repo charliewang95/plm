@@ -28,7 +28,7 @@ exports.loggingInViaOAuth = function(req, res, next) {
         				email: req.body.email
                     }, 
                     function(err, obj){
-        				res.json(dukeUser);
+        				res.json(user);
         	        }
                 )
             }
