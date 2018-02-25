@@ -85,7 +85,7 @@ class SignUpForm extends React.Component{
       />
 
       
-        <div fullWidth={true}>
+        <div>
           <br/>
           <FormControl 
             fullWidth 

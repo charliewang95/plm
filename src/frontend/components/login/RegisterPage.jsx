@@ -57,17 +57,20 @@ class RegisterPage extends React.Component {
 //        console.log(user);
     console.log("Creating user with the following information: " + JSON.stringify(this.state.user));
     var me = this;
-    addUser(this.state.user.email, this.state.user.username, this.state.user.password, false, false, sessionId,
-      (res)=>{
-        if (res.status == 400) {
-          alert(res.data);
-        } else if (res.status == 500) {
-          alert('Username or email already exists');
-        }else{
-          me.userSuccessfullyAdded();
-          this.clearFields();
-        }
-      });
+    alert("Check Console!");
+    console.log("Adding user has been commented out, please modify this part of the code");
+    //commented out 
+    // addUser(this.state.user.email, this.state.user.username, this.state.user.password, false, false, sessionId,
+    //   (res)=>{
+    //     if (res.status == 400) {
+    //       alert(res.data);
+    //     } else if (res.status == 500) {
+    //       alert('Username or email already exists');
+    //     }else{
+    //       me.userSuccessfullyAdded();
+    //       this.clearFields();
+    //     }
+    //   });
   }
 
   clearFields(){

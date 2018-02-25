@@ -2,7 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { addUser } from '../../../interface/userInterface.js';
+import { addLocalUser, addDukeUser } from '../../../interface/userInterface.js';
 
 import * as testConfig from '../../../../resources/testConfig.js'
 
@@ -55,25 +55,55 @@ class RegisterPage extends React.Component {
   processForm(event) {
     // prevent default action. in this case, action is the form submission event
     event.preventDefault();
-    console.log("Creating user...")
+    console.log("Creating user...");
+    const userInfo = this.state.user;
+    console.log(userInfo);
 //        var str = JSON.stringify(this.state.user);
 //        str = str.slice(0,-1) + ', "isAdmin": true, '+'"loggedIn":false'+'}';
 //        var user = JSON.parse(str);
 //        console.log(user);
-    this.clearFields();
+    // this.clearFields();
     // console.log("Creating user with the following information: " + JSON.stringify(this.state.user));
-    // var me = this;
-    // addUser(this.state.user.email, this.state.user.username, this.state.user.password, false, false, sessionId,
-    //   (res)=>{
-    //     if (res.status == 400) {
-    //       alert(res.data);
-    //     } else if (res.status == 500) {
-    //       alert('Username or email already exists');
-    //     }else{
-    //       me.userSuccessfullyAdded();
-    //       this.clearFields();
-    //     }
-    //   });
+    var me = this;
+    var isAdmin = false;
+    var isManager = false;
+    const privilegeLevel = userInfo.privilege.toLowerCase();
+    if ( privilegeLevel === 'admin'){
+      isAdmin = true;
+      isManager = true;
+    } else if (privilegeLevel === 'manager' ){
+      isManager = true
+    }
+    if (userInfo.fromDukeOAuth){
+      addDukeUser(userInfo.username, userInfo.email, isAdmin, isManager, sessionId, 
+        (res)=>
+        {
+          if (res.status == 400) {
+            alert(res.data);
+          } else if (res.status == 500) {
+            alert('Username or email already exists');
+          }else{
+            me.userSuccessfullyAdded();
+            this.clearFields();
+          }
+        }
+      );
+    } else {
+      addLocalUser(userInfo.username, userInfo.password, userInfo.email, isAdmin, isManager, sessionId, 
+        (res)=>
+        {
+          if (res.status == 400) {
+            alert(res.data);
+          } else if (res.status == 500) {
+            alert('Username or email already exists');
+          }else{
+            me.userSuccessfullyAdded();
+            this.clearFields();
+          }
+        }
+      );
+    }
+
   }
 
   clearFields(){
@@ -89,15 +119,6 @@ class RegisterPage extends React.Component {
         }
       }
     );
-    // this.setState(
-    //   {
-    //     email:"",
-    //     username:"",
-    //     password:"",
-
-    //   }
-
-    // );
   }
 
   /**

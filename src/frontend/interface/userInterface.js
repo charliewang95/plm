@@ -46,6 +46,21 @@ async function addDukeUserAutomaticAsync(email, username, isAdmin, isManager, lo
 	await dukeUserActions.addDukeUserAutomaticAsync(newUser, callback);
 };
 
+async function addDukeUser(username, email, isAdmin, isManager, sessionId, callback){
+	const fromDukeOAuth = true;
+	const password = 'Nonsense';
+	const loggedIn = false;
+	return await addUser(username, email, password, isAdmin, isManager, 
+		fromDukeOAuth, loggedIn, sessionId, callback);
+}
+
+async function addLocalUser(username, password, email, isAdmin, isManager, sessionId, callback){
+	const fromDukeOAuth = false;
+	const loggedIn = false;
+	// const newUser = packIntoJson(username, email, password, isAdmin, isManager, fromDukeOAuth, loggedIn);
+	return await addUser(username, email, password, isAdmin, isManager, 
+		fromDukeOAuth, loggedIn, sessionId, callback);
+}
 
 /****************************************
 
@@ -53,32 +68,34 @@ async function addDukeUserAutomaticAsync(email, username, isAdmin, isManager, lo
 /**
 takes in various properties of user,
 returns a Json object that encapsulates all properties 
-name: string
+email: string
 username: string 
 password: string
 isAdmin: boolean
 loggedIn: boolean 
 **/
-function packIntoJson(email, username, password, isAdmin, loggedIn){
+function packIntoJson(username, email, password, isAdmin, isManager, fromDukeOAuth, loggedIn){
 	var userJson = new Object();
-	userJson.email = email;
 	userJson.username = username;
+	userJson.email = email;
 	userJson.password = password;
 	userJson.isAdmin = isAdmin;
+	userJson.isManager = isManager;
+	userJson.fromDukeOAuth = fromDukeOAuth;
 	userJson.loggedIn = loggedIn;
-	console.log("JSON");
+	console.log("Created User object:");
 	console.log(userJson);
 	//console.log(dummyUser.sampleUser);
 	return userJson;
 };
 
-/* add one user
+/* add one user, to be used internally
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  * callback: a function
  */
-async function addUser(email, username, password, isAdmin, loggedIn, sessionId, callback) {
-	var newUser = packIntoJson(email, username, password, isAdmin, loggedIn);
+async function addUser(username, email, password, isAdmin, isManager, fromDukeOAuth, loggedIn, sessionId, callback) {
+	var newUser = packIntoJson(username, email, password, isAdmin, isManager, fromDukeOAuth, loggedIn);
 	return await userActions.addUser(newUser, sessionId, callback);
 };
 
@@ -139,5 +156,5 @@ async function authenticateAsync(username, password, callback){
 }
 
 //export functions above for use by other modules
-export { addUser, getAllUsersAsync, getUserAsync, updateUser, deleteUser, authenticateAsync, 
-	addDukeUserAutomaticAsync};
+export { getAllUsersAsync, getUserAsync, updateUser, deleteUser, authenticateAsync, 
+	addDukeUserAutomaticAsync, addDukeUser, addLocalUser};
