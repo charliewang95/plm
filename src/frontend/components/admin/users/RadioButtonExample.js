@@ -16,14 +16,20 @@ const styles = theme => ({
 });
 
 class RadioButtonsGroup extends React.Component {
-  state = {
-    value: 'user',
-  };
+	constructor(props) {
+    	super(props);
+    	this.state = {
+      		value: 'user',
+    	};
+    	// this.handleChange = this.handleChange.bind(this);
+  	};
 
-  handleChange = (event, value) => {
-  	console.log("changing value to " + value);
-    this.setState({ value });
-  };
+  // handleChange = (event, value) => {
+  // 	console.log("changing value to " + value);
+  // 	console.log("props value: " + this.props.value);
+  // 	console.log("props onChange: " + this.props.onChange);
+  //   this.setState({ value });
+  // };
 
   render() {
     const { classes } = this.props;
@@ -35,8 +41,8 @@ class RadioButtonsGroup extends React.Component {
             aria-label="privilege"
             name="privilege"
             className={classes.group}
-            value={this.state.value}
-            onChange={this.handleChange}
+            value={this.props.value}
+            onChange={this.props.onChange}
             row={true}
           >
             <FormControlLabel value="user" control={<Radio />} label="User" />

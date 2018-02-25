@@ -74,7 +74,10 @@ class SignUpForm extends React.Component{
       { !this.props.user.fromDukeOAuth &&
         <div>
           <br/>
-          <FormControl fullWidth required>
+          <FormControl 
+            fullWidth 
+            required
+          >
             <InputLabel htmlFor="password">Password</InputLabel>
             <Input
               id="password"
@@ -99,7 +102,10 @@ class SignUpForm extends React.Component{
         </div>
       }
 
-      <PrivilegeSelection />
+      <PrivilegeSelection 
+        onChange={this.props.onChange}
+        value={this.props.user.privilege}
+      />
       
       <div style={styles.buttons}>
         <RaisedButton raised color = "secondary"
