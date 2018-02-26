@@ -179,7 +179,7 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
                                     if (temperatureZone == 'warehouse' && packageName != 'railcar' && packageName != 'truckload') wSpace += space;
                                     else if (temperatureZone == 'refrigerator' && packageName != 'railcar' && packageName != 'truckload') rSpace += space;
                                     else if (temperatureZone == 'freezer' && packageName != 'railcar' && packageName != 'truckload') fSpace += space;
-                                    else {
+                                    else if (temperatureZone != 'warehouse' && temperatureZone != 'refrigerator' && temperatureZone != 'freezer') {
                                         res.status(400).send('Temperature zone '+temperatureZone+' does not exist.');
                                         return;
                                     }
@@ -213,7 +213,7 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
                                             if (temperatureZone == 'warehouse' && packageName != 'railcar' && packageName != 'truckload') wSpace += space;
                                             else if (temperatureZone == 'refrigerator' && packageName != 'railcar' && packageName != 'truckload') rSpace += space;
                                             else if (temperatureZone == 'freezer' && packageName != 'railcar' && packageName != 'truckload') fSpace += space;
-                                            else {
+                                            else if (temperatureZone != 'warehouse' && temperatureZone != 'refrigerator' && temperatureZone != 'freezer'){
                                                 res.status(400).send('Temperature zone '+temperatureZone+' does not exist.');
                                                 return;
                                             }

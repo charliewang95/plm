@@ -138,8 +138,8 @@ class AddIngredientForm extends React.Component{
 
   async loadIngredient(){
     var details = [];
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    userId = JSON.parse(localStorage.getItem('user'))._id;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    userId = JSON.parse(sessionStorage.getItem('user'))._id;
     // sessionId = '5a8b99a669b5a9637e9cc3bb';
     // userId = '5a8b99a669b5a9637e9cc3bb';
     console.log("ingredient id");
@@ -203,7 +203,7 @@ class AddIngredientForm extends React.Component{
   onFormSubmit(e) {
 
     e.preventDefault();
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     if(this.isValid() && this.state.isCreateNew){
       console.log(" Add ingredient ");
       ingredientInterface.addIngredient(this.state.name, this.state.packageName, this.state.temperatureZone,

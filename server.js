@@ -31,6 +31,7 @@ User.findOne({username: 'admin'}, function(err, obj){
         admin.isAdmin = true;
         admin.isManager = true;
         admin.loggedIn = false;
+        admin.fromDukeOAuth = false;
         admin.save(function(err){
             //console.log(admin);
         });

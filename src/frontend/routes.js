@@ -12,6 +12,7 @@ import AddVendorForm from './components/vendors/AddVendorForm';
 import Report from './components/report/Report';
 import Login from './components/login/LoginPage';
 import Register from './components/login/RegisterPage';
+import AdminUserPage from './components/admin/users/userPage'
 import ViewDetailsForm from './components/admin/ViewDetailsForm';
 import Log from './components/log/Log';
 import Formula from './components/formulas/Formula.js';
@@ -45,7 +46,7 @@ const Routes = () => (
             <Route path="/pagenotfound" component={PageNotFound} />
             <Route path="/production-review" component={ProductionReview}/>
             <Route path="/formula-details" component={FormulaDetails}/>
-
+            <Route path="/admin-users" component={AdminUserPage} />
 		  </Switch>
       </div>
 

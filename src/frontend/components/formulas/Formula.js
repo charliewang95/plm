@@ -223,7 +223,7 @@ class Formula extends React.PureComponent {
   }
 
   componentWillMount(){
-    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
     this.loadAllFormulas();
 
   }
@@ -233,8 +233,8 @@ class Formula extends React.PureComponent {
   }
 
   async loadAllFormulas(){
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    userId = JSON.parse(localStorage.getItem('user'))._id;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    userId = JSON.parse(sessionStorage.getItem('user'))._id;
 
     //TODO: Get from backend
     var rawData = await formulaActions.getAllFormulasAsync(sessionId);

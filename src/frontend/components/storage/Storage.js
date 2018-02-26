@@ -29,7 +29,7 @@ var sessionId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 var isAdmin =  "";
-// JSON.parse(localStorage.getItem('user')).isAdmin;
+// JSON.parse(sessionStorage.getItem('user')).isAdmin;
 
 
 const Cell = (props)=>{
@@ -150,7 +150,7 @@ class Storage extends React.PureComponent {
       }
 
   componentWillMount(){
-    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
   }
 
 
@@ -161,7 +161,7 @@ class Storage extends React.PureComponent {
   async loadStorageInfo(){
     var rawData = [];
     if(READ_FROM_DATABASE){
-      sessionId = JSON.parse(localStorage.getItem('user'))._id;
+      sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
       rawData = await storageActions.getAllStoragesAsync(sessionId);
     } else {
      rawData = dummyData;
