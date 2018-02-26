@@ -22,6 +22,15 @@ const ingredient_options = [
     { value: 'cabbage', label: 'Cabbage' }
 ]
 
+const spaceMap = [
+    { package: 'sack', space: 0.5 },
+    { package: 'pail', space: 1 },
+    { package: 'drum', space: 3 },
+    { package: 'supersack', space: 16 },
+    { package: 'truckload', space: 0 },
+    { package: 'railcar', space: 0 },
+]
+
 /* Replace with the data from the back end -- filtered based on ingredients */
 const vendor_options = [
     { value: 'vendor1', label: 'vendor1' },
@@ -201,7 +210,7 @@ class AddIngredientForm extends React.Component{
 
 
   onFormSubmit(e) {
-
+    this.state.space = Math.ceil(1.0*this.state.numUnit/this.state.numUnitPerPackage)*spaceMap()
     e.preventDefault();
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     if(this.isValid() && this.state.isCreateNew){

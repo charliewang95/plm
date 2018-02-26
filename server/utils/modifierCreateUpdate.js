@@ -158,17 +158,26 @@ var modifyVendor = function(action, item, itemId, res, next, callback) { //add u
 var modifyIngredient = function(action, item, itemId, res, next, callback) {
     var vendors = item.vendors;
     var ingredientName = item.name;
-    var str = JSON.stringify(item).slice(0,-1)+',"nameUnique":"'+ingredientName.toLowerCase()+'"}';
-    item = JSON.parse(str);
-    if (vendors == null || vendors.length == 0){
-        callback(0, item);
-    } else {
-        var newVendors = [];
-        helperIngredient(vendors, 0, res, next, newVendors, function(err, obj){
-            item.vendors = obj;
-            callback(0, item);
-        })
-    }
+    var packageName = item. packageName;
+//    Ingredient.getPackageSpace(packageName, function(singleSpace){
+//        if (singleSpace == -1) return res.status(400).send('Package name does\'t exist');
+//        else {
+//            console.log(Math.ceil(1.0 * item.numUnit / item.numUnitPerPackage));
+//            var newSpace = Math.ceil(1.0 * item.numUnit / item.numUnitPerPackage) * singleSpace;
+            var str = JSON.stringify(item).slice(0,-1)+',"nameUnique":"'+ingredientName.toLowerCase()+'"}';
+            item = JSON.parse(str);
+//            item.space = newSpace;
+            if (vendors == null || vendors.length == 0){
+                callback(0, item);
+            } else {
+                var newVendors = [];
+                helperIngredient(vendors, 0, res, next, newVendors, function(err, obj){
+                    item.vendors = obj;
+                    callback(0, item);
+                })
+            }
+//        }
+//    });
 };
 
 var helperIngredient = function(vendors, i, res, next, array, callback) {
