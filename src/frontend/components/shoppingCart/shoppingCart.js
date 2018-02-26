@@ -216,8 +216,6 @@ class ShoppingCart extends React.Component {
         }
       });
 
-
-
       // TODO: ADD snackbar
       // alert(" Ingredients successfully ordered  ! ");
       // window.location.reload();

@@ -408,7 +408,7 @@ var checkoutFormula = function(req, res, next, model, username) {
                                   logger.log(username, 'checkout', formula, model);
                                   var totalProvided = formula.totalProvided;
                                   var totalCost = formula.totalCost;
-                                  formula.update({totalProvided: totalProvided+1, totalCost:totalCost+newSpentMoney}, function(err, obj) {
+                                  formula.update({totalProvided: Number(totalProvided)+Number(quantity), totalCost:totalCost+newSpentMoney}, function(err, obj) {
                                       if (err) return next(err);
                                       else return res.send(formula);
                                   });
@@ -441,6 +441,8 @@ var checkIngredientHelper = function(req, res, next, multiplier, i, ingredients,
                 ingredientDelta.ingredientName = ingredientQuantity.ingredientName;
                 ingredientDelta.totalAmountNeeded = totalAmountNeeded;
                 ingredientDelta.currentUnit = ingredient.numUnit;
+                ingredientDelta.numUnitPerPackage = ingredient.numUnitPerPackage;
+                ingredientDelta.vendors = ingredient.vendors;
                 ingredientDelta.delta = (totalAmountNeeded - ingredient.numUnit) > 0 ? totalAmountNeeded - ingredient.numUnit : 0;
                 missingIngredientArray.push(ingredientDelta);
                 console.log(totalAmountNeeded+' '+ingredient.numUnit);

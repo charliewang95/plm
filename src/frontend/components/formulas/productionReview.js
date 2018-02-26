@@ -73,6 +73,7 @@ class ProductionReview extends React.Component {
         open: false,
       });
     console.log(this.state.formulaRows);
+
     this.productionReview = async() =>{
       //TODO: add to cart
       sessionId = JSON.parse(localStorage.getItem('user'))._id;
@@ -82,9 +83,11 @@ class ProductionReview extends React.Component {
 
       // TODO: get
       var temp = this;
+
       console.log(this.state.formulaRows[0]._id+' '+Number(this.state.addedQuantity));
       await formulaActions.checkoutFormula("review",this.state.formulaRows[0]._id,
                           Number(this.state.addedQuantity),sessionId, function(res){
+
               if (res.status == 400) {
                 if (!alert(res.data)){
                     return;
@@ -103,7 +106,7 @@ class ProductionReview extends React.Component {
                    temp.setState({rows:review});
 
                    // Check if you need to order the ingredients
-                   var data = [];
+                    var data = [];
                    for(var i =0; i < review.length;i++){
                      if(review[i].delta> 0 ){
                        // Add to the Array
@@ -112,11 +115,13 @@ class ProductionReview extends React.Component {
                      }
                    }
 
+                    console.log(data);
                    temp.setState({ingredientsToOrder:data});
                    temp.setState({open:false});
               }
       });
     }
+
     console.log('preview constructed');
     this.addToShoppingCart = this.addToShoppingCart.bind(this);
     this.checkOutFormula = this.checkOutFormula.bind(this);
@@ -135,8 +140,13 @@ class ProductionReview extends React.Component {
       var row = this.state.ingredientsToOrder[i];
       var vendorName = "";
       var price = 0;
-      var _package = row.delta;
-      await orderActions.addOrder(userId,row.ingredientName,vendorName,_package,price,sessionId,function(res){
+      var _package = Math.ceil(row.delta / row.numUnitPerPackage);
+      var vendors = row.vendors;
+      vendors.sort(function(a, b) {return a.price - b.price });
+      vendorName = vendors[0].vendorName;
+      price = vendors[0].price;
+
+      await orderActions.addOrder(userId,row.ingredientId, row.ingredientName,vendorName,_package,price,sessionId,function(res){
         //TODO: Please update this
         if(res.status == 400){
           alert(res.data);
@@ -157,14 +167,14 @@ class ProductionReview extends React.Component {
     //TODO: Checkout formula
     console.log(" checkout , why is this called first");
     console.log(JSON.stringify(this.state));
-//    await formulaActions.checkoutFormula("checkout",this.state.formulaRows[0]._id,
-//                              Number(this.state.addedQuantity),sessionId, function(res){
-//         if (res.status == 400) {
-//            alert('Please order the missing ingredients to proceed.');
-//         } else {
-//            alert('Successfully added to production.');
-//         }
-//      });
+    await formulaActions.checkoutFormula("checkout",this.state.formulaRows[0]._id,
+                              Number(this.state.addedQuantity),sessionId, function(res){
+         if (res.status == 400) {
+            alert('Please order the missing ingredients to proceed.');
+         } else {
+            alert('Successfully added to production.');
+         }
+      });
     //TODO: Snackbar
     event.stopPropagation();
   }
@@ -263,6 +273,7 @@ class ProductionReview extends React.Component {
                   // className=classes.button
                   style={styles.orderIngredientsButton}
                   onClick = {(event) => this.addToShoppingCart(event)}
+                  component = {Link} to = "/formula"
                   primary="true"> Order Ingredients </RaisedButton>
           </Tooltip> }
 
@@ -273,6 +284,7 @@ class ProductionReview extends React.Component {
                     // className=classes.button
                     style={styles.orderIngredientsButton}
                     onClick = {(event) => this.checkOutFormula(event)}
+                    component = {Link} to = "/formula"
                     primary="true">Send to production</RaisedButton>
             </Tooltip>}
 
