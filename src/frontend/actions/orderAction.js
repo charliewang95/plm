@@ -58,9 +58,11 @@ async function deleteOrder(orderId, sessionId) {
 	return await genericActions.deleteById(baseUrl, property, orderId, sessionId);
 };
 
-async function checkoutOrder(sessionId) {
+async function checkoutOrder(sessionId, callback) {
 	const checkoutSegment = 'checkout';
-    return await genericActions.deleteAll(baseUrl, checkoutSegment, sessionId);
+    return await genericActions.deleteAll(baseUrl, checkoutSegment, sessionId, function(res){
+        callback(res);
+    });
 };
 
 //export functions above for use by other modules

@@ -81,30 +81,41 @@ class ProductionReview extends React.Component {
       //             parseInt(this.state.addedQuantity,10) + ", " + sessionId);
 
       // TODO: get
-      // var review = await formulaActions.checkoutFormula("action",this.state.formulaRows[0]._id,
-                            // parseInt(this.state.addedQuantity,10),sessionId);
+      var temp = this;
+      console.log(this.state.formulaRows[0]._id+' '+Number(this.state.addedQuantity));
+      await formulaActions.checkoutFormula("review",this.state.formulaRows[0]._id,
+                          Number(this.state.addedQuantity),sessionId, function(res){
+              if (res.status == 400) {
+                if (!alert(res.data)){
+                    return;
+                }
+              } else if (res.status == 500){
+                alert(res.data)
+              }
 
-      var review = reviewData;
+              else {
+                 review = res.data;
+                 var review = [...review.map((row, index)=> ({
+                     id:index,...row,
+                     })),
+                   ];
+                   // console.log(" Formula " + JSON.stringify(review));
+                   temp.setState({rows:review});
 
-      var review = [...review.map((row, index)=> ({
-        id:index,...row,
-        })),
-      ];
-      // console.log(" Formula " + JSON.stringify(review));
-      this.setState({rows:review});
+                   // Check if you need to order the ingredients
+                   var data = [];
+                   for(var i =0; i < review.length;i++){
+                     if(review[i].delta> 0 ){
+                       // Add to the Array
+                       data.push(review[i]);
+                       // this.setState({needToOrderIngredients:true})
+                     }
+                   }
 
-      // Check if you need to order the ingredients
-      var data = [];
-      for(var i =0; i < review.length;i++){
-        if(review[i].delta> 0 ){
-          // Add to the Array
-          data.push(review[i]);
-          // this.setState({needToOrderIngredients:true})
-        }
-      }
-
-      this.setState({ingredientsToOrder:data});
-      this.setState({open:false});
+                   temp.setState({ingredientsToOrder:data});
+                   temp.setState({open:false});
+              }
+      });
     }
 
     this.addToShoppingCart = this.addToShoppingCart.bind(this);
@@ -126,9 +137,8 @@ class ProductionReview extends React.Component {
       var _package = row.delta;
       await orderActions.addOrder(userId,row.ingredientName,vendorName,_package,price,sessionId,function(res){
         //TODO: Please update this
-        if(res.status ==400){
+        if(res.status == 400){
           alert(res.data);
-
         }else{
           success = true;
         }
@@ -136,15 +146,24 @@ class ProductionReview extends React.Component {
     }
 
     //TODO: Snackbar
-    if(success){
-      alert("Ingredients successfully added to cart. Please check out your cart first to send this formula to production.")
-    }
+//    if(success){
+//      alert("Ingredients successfully added to cart. Please check out your cart first to send this formula to production.")
+//    }
 
   }
 
   async checkOutFormula(){
     //TODO: Checkout formula
-    console.log(" checkout " + JSON.stringify(this.state));
+    console.log(" checkout ");
+    console.log(JSON.stringify(this.state));
+//    await formulaActions.checkoutFormula("checkout",this.state.formulaRows[0]._id,
+//                              Number(this.state.addedQuantity),sessionId, function(res){
+//         if (res.status == 400) {
+//            alert('Please order the missing ingredients to proceed.');
+//         } else {
+//            alert('Successfully added to production.');
+//         }
+//      });
     //TODO: Snackbar
   }
 
