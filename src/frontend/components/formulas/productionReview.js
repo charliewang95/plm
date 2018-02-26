@@ -72,7 +72,7 @@ class ProductionReview extends React.Component {
         formulaRows:[],
         open: false,
       });
-
+    console.log(this.state.formulaRows);
     this.productionReview = async() =>{
       //TODO: add to cart
       sessionId = JSON.parse(localStorage.getItem('user'))._id;
@@ -117,9 +117,10 @@ class ProductionReview extends React.Component {
               }
       });
     }
-
+    console.log('preview constructed');
     this.addToShoppingCart = this.addToShoppingCart.bind(this);
     this.checkOutFormula = this.checkOutFormula.bind(this);
+    console.log('everything binded');
   }
 
 
@@ -154,7 +155,7 @@ class ProductionReview extends React.Component {
 
   async checkOutFormula(){
     //TODO: Checkout formula
-    console.log(" checkout ");
+    console.log(" checkout , why is this called first");
     console.log(JSON.stringify(this.state));
 //    await formulaActions.checkoutFormula("checkout",this.state.formulaRows[0]._id,
 //                              Number(this.state.addedQuantity),sessionId, function(res){
@@ -213,7 +214,7 @@ class ProductionReview extends React.Component {
             <DialogTitle>Check out to production</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Are you sure to move this ingredient to production?
+                Are you sure to produce this formula?
               </DialogContentText>
               <Paper>
                 <Grid

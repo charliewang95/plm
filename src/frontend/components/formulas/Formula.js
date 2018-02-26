@@ -118,7 +118,6 @@ Command.propTypes = {
 };
 
 const AddToProdButton = ({selectedFormula, onExecute}) => (
-  console.log(" selectedFormula " + selectedFormula),
   // formulaSentToProduction = selectedFormula,
   // alert(formulaSentToProduction),
   <div style={{ textAlign: 'center' }}>
@@ -135,14 +134,15 @@ AddToProdButton.propTypes = {
 };
 
 const Cell = (props) => {
-  console.log(" CELL props value: ");
-  console.log(props);
+//  console.log(" CELL props value: ");
+//  console.log(props);
   if(props.column.name=='name'){
     return <Table.Cell {...props}>
     <Link to={{pathname: '/formula-details', state:{details: props.row} }}>{props.row.name}</Link>
     </Table.Cell>
   }else if (props.column.key=='sendToProd'){
     // <Link to={{pathname: '/product-review', state:{selectedFormula: props.row} }}}
+    console.log('send to prod');
     return <AddToProdButton  selectedFormula = {props.row}/>
   }
   return <Table.Cell {...props} />;
