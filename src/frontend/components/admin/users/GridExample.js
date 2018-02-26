@@ -54,15 +54,15 @@ const styles = theme => ({
 
 const getRowId = row => row.id;
 //for dukeOAuth
-const BooleanFormatter = ({ value }) =>
+const DukeUserFormatter = ({ value }) =>
   <Chip label={value ? 'Yes' : 'No'} />;
 const BooleanEditor = ({ value, onValueChange }) => (
   <Chip label={value ? 'Yes' : 'No'} />
   
 );
-const BooleanTypeProvider = props => (
+const DukeUserTypeProvider = props => (
   <DataTypeProvider
-    formatterComponent={BooleanFormatter}
+    formatterComponent={DukeUserFormatter}
     editorComponent={BooleanEditor}
     {...props}
   />
@@ -366,7 +366,7 @@ export default class SampleTable extends React.PureComponent {
 					onSortingChange={this.changeSorting}
 				/>
 				<IntegratedSorting />
-        <BooleanTypeProvider
+        <DukeUserTypeProvider
           for={booleanColumns}
         />
 				<PrevilegeTypeProvider
