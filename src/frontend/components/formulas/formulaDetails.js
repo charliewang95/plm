@@ -145,7 +145,7 @@ class FormulaDetails extends React.Component{
   }
 
   async onFormSubmit(e) {
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
 
     e.preventDefault();
     console.log("submit formula ");

@@ -73,16 +73,16 @@ class Orders extends React.PureComponent{
 
   // load all the ingredients initially
   componentDidMount(){
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    userId =  JSON.parse(localStorage.getItem('user'))._id;
-    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    userId =  JSON.parse(sessionStorage.getItem('user'))._id;
+    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
     this.loadAllIngredients();
   }
 
     componentWillMount(){
-        sessionId = JSON.parse(localStorage.getItem('user'))._id;
-        userId =  JSON.parse(localStorage.getItem('user'))._id;
-        isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+        sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+        userId =  JSON.parse(sessionStorage.getItem('user'))._id;
+        isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
     }
   async loadAllIngredients(){
     console.log(" LOAD ALL INGREDIENTS");

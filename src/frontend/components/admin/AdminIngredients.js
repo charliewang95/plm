@@ -543,7 +543,7 @@ class AdminIngredients extends React.PureComponent {
 
   async loadInventoryData(ingredientId, sessionId){
     console.log("enterasdf");
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     var inventoryData = await inventoryInterface.getInventoryAsync(ingredientId, sessionId);
     console.log("loading inventory");
     console.log(inventoryData);
