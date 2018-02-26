@@ -31,18 +31,18 @@ const styles = theme => ({
 
 export const UserListItems = (
   <div>
-    <ListItem component={Link} to="/register" button>
+    {/*<ListItem component={Link} to="/register" button>
       <ListItemIcon>
         <PersonAddIcon />
       </ListItemIcon>
       <ListItemText primary="Create User (Admin)" />
-    </ListItem>
+    </ListItem>*/}
 
      <ListItem component={Link} to="/admin-users" button>
       <ListItemIcon>
         <PersonAddIcon />
       </ListItemIcon>
-      <ListItemText primary="Users (Admin)" />
+      <ListItemText primary="Users" />
     </ListItem>
   </div>
 );
