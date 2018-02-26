@@ -12,7 +12,7 @@ import Select from 'material-ui/Select';
 import Chip from 'material-ui/Chip';
 import * as ingredientActions from '../../interface/ingredientInterface';
 import * as formulaActions from '../../interface/formulaInterface';
-import SelectIngredients from './selectIngredients';
+import SelectIngredients from './SelectIngredients';
 
 
 const styles = {

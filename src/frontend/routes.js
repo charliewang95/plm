@@ -14,7 +14,7 @@ import Login from './components/login/LoginPage';
 import Register from './components/login/RegisterPage';
 import ViewDetailsForm from './components/admin/ViewDetailsForm';
 import Log from './components/log/Log';
-import Formula from './components/formulas/formula.js';
+import Formula from './components/formulas/Formula.js';
 import ShoppingCart from './components/shoppingCart/shoppingCart';
 import ProductionReview from './components/formulas/productionReview.js';
 import FormulaDetails from './components/formulas/formulaDetails.js';

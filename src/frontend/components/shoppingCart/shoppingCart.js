@@ -135,18 +135,26 @@ class ShoppingCart extends React.Component {
               if(changed[rows[i].id].packageNum){
                 // Validate
                 const re =/^[1-9]\d*$/;
-                var enteredQuantity = changed[rows[i].id].packageNum;
+                var enteredQuantity = Number(changed[rows[i].id].packageNum);
+                var vendor = rows[i].selectedVendorName ? rows[i].selectedVendorName : rows[i].vendorOptions[0].price;
+                var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].vendorName;
                 if (!re.test(enteredQuantity)) {
                   alert(" Number of packages must be a positive integer");
                 }else{
                   // TODO: Update back end
-                  await orderActions.updateOrder(userId,rows[i].ingredientId,rows[i].ingredientName,
-                        "", rows[i].packageNum,0,sessionId,function(res){
+                  console.log(rows[i]);
+                  await orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
+                        vendor, enteredQuantity ,price,sessionId,function(res){
                           // TODO: Display error on exceeding storage capacity
                           // if(res.status==)
                           // TODO: Add SnackBar
                           // update the table
-                          rows[i].packageNum = changed[rows[i].id].packageNum;
+                          console.log('called');
+                          if (res.status != 400 && res.status != 500 ){
+//                            rows[i].packageNum = enteredQuantity;
+                              window.location.reload();
+                          }
+
                         });
                     }
                 }
@@ -167,7 +175,6 @@ class ShoppingCart extends React.Component {
           }
         }
         // Delete
-
         this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
         // TODO: Add SnackBar
     }
@@ -195,9 +202,21 @@ class ShoppingCart extends React.Component {
       // TODO: send data to back End
       console.log("checkout" );
       console.log(" ORDERED DATA " + this.state.rows);
+       var temp = this;
 
-      await orderActions.checkoutOrder(sessionId);
-      this.setState({rows:[]});
+      await orderActions.checkoutOrder(sessionId, function(res){
+        if (res.status == 400) {
+            if (!alert(res.data)) {
+                window.location.reload();
+                //temp.setState({rows:rows});
+            }
+        } else {
+            alert('Checkout successful!');
+            temp.setState({rows:[]});
+        }
+      });
+
+
 
       // TODO: ADD snackbar
       // alert(" Ingredients successfully ordered  ! ");
@@ -213,11 +232,11 @@ class ShoppingCart extends React.Component {
   }
 
   componentWillMount(){
+  sessionId = JSON.parse(localStorage.getItem('user'))._id;
+      userId =  JSON.parse(localStorage.getItem('user'))._id;
+      isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
     this.loadCartData();
     // TODO: Change later ?
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    userId =  JSON.parse(localStorage.getItem('user'))._id;
-    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
   }
 
   // Initialize data in the table
@@ -227,6 +246,7 @@ class ShoppingCart extends React.Component {
     if(READ_FROM_DATABASE){
       rawData = await orderActions.getAllOrdersAsync(sessionId);
       console.log("rawData " + JSON.stringify(rawData));
+
     } else {
       rawData = cartData;
     }
@@ -237,6 +257,7 @@ class ShoppingCart extends React.Component {
       singleData.ingredientName = rawData[i].ingredientName;
       singleData.packageNum = rawData[i].packageNum;
       singleData.ingredientId = rawData[i].ingredientId;
+      singleData._id = rawData[i]._id;
 
       var singleIngredientData = {};
 
@@ -262,6 +283,8 @@ class ShoppingCart extends React.Component {
 
         singleData.vendors = parsedVendorOptions[0].label;
         singleData.vendorOptions= parsedVendorOptions;
+        singleData.selectedVendorName= parsedVendorOptions[0].vendorName;
+        singleData.selectedVendorPrice= parsedVendorOptions[0].price;
         // Id is the value
         singleData.selectedVendorId = parsedVendorOptions[0].value;
 

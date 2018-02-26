@@ -15,10 +15,11 @@ vendorId: string, string, id of the vendor that the user is ordering from
 _package: number, the number of packages the user is ordering (package is a keyword in js)
 price: number, the price of each package
 **/
-function packIntoJson(userId, ingredientName, vendorName, _package, price){
+function packIntoJson(userId, ingredientId, ingredientName, vendorName, _package, price){
 	var orderJson = new Object();
 	orderJson.userId = userId;
 	orderJson.ingredientName = ingredientName;
+	orderJson.ingredientId = ingredientId;
 	orderJson.vendorName = vendorName;
 	orderJson.packageNum = _package;
 	orderJson.price = price;
@@ -32,7 +33,7 @@ function packIntoJson(userId, ingredientName, vendorName, _package, price){
  * sessionId: string, id of the current session
  */
 async function addOrder(userId, ingredientId, ingredientName, vendorName, _package, price, sessionId, callback) {
-	var newOrder = packIntoJson(userId, ingredientName, vendorName, _package, price);
+	var newOrder = packIntoJson(userId, ingredientId, ingredientName, vendorName, _package, price);
 	//return await orderActions.addOrder(newOrder, sessionId);
 	orderActions.addOrder(newOrder, sessionId, function(res){
 	    callback(res);
@@ -62,10 +63,10 @@ async function getOrderAsync(orderId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-async function updateOrder(userId, ingredientId,ingredientName, vendorName, _package, price, sessionId, callback) {
-	var updatedOrder = packIntoJson(userId, ingredientName, vendorName, _package, price);
+async function updateOrder(orderId, userId, ingredientId,ingredientName, vendorName, _package, price, sessionId, callback) {
+	var updatedOrder = packIntoJson(userId, ingredientId, ingredientName, vendorName, _package, price);
 	//return await orderActions.updateOrder(orderId, sessionId, updatedOrder);
-	orderActions.updateOrder(updatedOrder, sessionId, updatedOrder, function(res){
+	orderActions.updateOrder(orderId, sessionId, updatedOrder, function(res){
 	    callback(res);
 	});
 };
@@ -79,8 +80,10 @@ async function deleteOrder(orderId, sessionId) {
 	return await orderActions.deleteOrder(orderId, sessionId);
 };
 
-async function checkoutOrder(sessionId) {
-    return await orderActions.checkoutOrder(sessionId);
+async function checkoutOrder(sessionId, callback) {
+    return await orderActions.checkoutOrder(sessionId, function(res){
+        callback(res);
+    });
 };
 
 //export functions above for use by other modules

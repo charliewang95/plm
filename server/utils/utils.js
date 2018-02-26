@@ -180,6 +180,9 @@ var update = function(req, res, next, model, itemId, username) {
 };
 
 var updateWithUserAccess = function(req, res, next, model, userId, itemId, username) {
+    console.log(req.body);
+    console.log(userId);
+    console.log(itemId);
     model.findOne({_id: itemId, userId: userId}, function(err, obj) {
         if (err) {
             return next(err);
@@ -209,6 +212,7 @@ var updateWithUserAccess = function(req, res, next, model, userId, itemId, usern
                                     if (model == Storage) {
                                         postProcessor.process(model, obj, itemId, res, next);
                                     }
+
                                     res.json(obj2);
                                 } else {
                                     res.status(400);

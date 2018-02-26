@@ -77,13 +77,24 @@ async function deleteFormula(formulaId, sessionId) {
 	return await genericActions.deleteById(baseUrl, property, formulaId, sessionId);
 };
 
-async function checkoutFormula(action, formulaId, quantity, sessionId) {
-	const checkoutSegment = '/checkout';
-    //return await genericActions.deleteAll(baseUrl, checkoutSegment, sessionId);
-    const res = await axios.delete(baseUrl+checkoutSegment+'/'+action+'/formula/'+formulaId+'/amount/'+quantity+'/user/'+sessionId);
-    const result = res.data;
-    console.log(result);
-    return result;
+async function checkoutFormula(action, formulaId, quantity, sessionId, callback) {
+    try {
+        const checkoutSegment = '/checkout';
+        //return await genericActions.deleteAll(baseUrl, checkoutSegment, sessionId);
+        const res = await axios.delete(baseUrl+checkoutSegment+'/'+action+'/formula/'+formulaId+'/amount/'+quantity+'/user/'+sessionId);
+        const result = res.data;
+        console.log(result);
+        callback(res);
+    }
+     catch(e) {
+       console.log('there was an error');
+       console.log(e);
+       //TODO: different error message for different types of error
+       if (e.response.status == 400 || e.response.status == 500)
+         callback(e.response);
+       else
+         throw e;
+     }
 };
 
 //export functions above for use by other modules

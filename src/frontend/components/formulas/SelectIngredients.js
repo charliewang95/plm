@@ -12,7 +12,7 @@ import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
 import { FormControl, FormGroup, FormHelperText } from 'material-ui/Form';
 import { MenuItem } from 'material-ui/Menu';
 import Button from 'material-ui/Button';
-import IngredientItem from './ingredientItem.js';
+import IngredientItem from './IngredientItem.js';
 
 import {ingredientData} from '../shoppingCart/dummyData';
 

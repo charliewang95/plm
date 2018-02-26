@@ -173,7 +173,10 @@ class Orders extends React.PureComponent{
        this.state.vendorName,parseInt(this.state.packageNum,10),this.state.price,sessionId,function(res){
            if (res.status == 400) {
                alert(res.data);
-           }else{
+           }else if (res.status == 500) {
+               alert('ingredient already in cart');
+           }
+           else{
              alert(" Ingredient ordered successfully!");
              // this.clearFields();
            }

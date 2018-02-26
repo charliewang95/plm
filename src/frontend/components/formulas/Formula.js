@@ -126,7 +126,7 @@ const AddToProdButton = ({selectedFormula, onExecute}) => (
       color="primary"
       title="Send formula to production"
       component={Link} to={{pathname: '/production-review', state:{selectedFormula: selectedFormula} }}
-    > Use
+    > Use Formula
     </Button>
   </div>
 );
