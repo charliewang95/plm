@@ -124,7 +124,7 @@ class ProductionReview extends React.Component {
   }
 
 
-  async addToShoppingCart(){
+  async addToShoppingCart(event){
     //TODO: send to back end
     userId = JSON.parse(localStorage.getItem('user'))._id;
 
@@ -150,10 +150,10 @@ class ProductionReview extends React.Component {
 //    if(success){
 //      alert("Ingredients successfully added to cart. Please check out your cart first to send this formula to production.")
 //    }
-
+    event.stopPropagation();
   }
 
-  async checkOutFormula(){
+  async checkOutFormula(event){
     //TODO: Checkout formula
     console.log(" checkout , why is this called first");
     console.log(JSON.stringify(this.state));
@@ -166,6 +166,7 @@ class ProductionReview extends React.Component {
 //         }
 //      });
     //TODO: Snackbar
+    event.stopPropagation();
   }
 
   handleFormulaQuantity(event){
@@ -261,7 +262,7 @@ class ProductionReview extends React.Component {
                   color="primary"
                   // className=classes.button
                   style={styles.orderIngredientsButton}
-                  onClick = {this.addToShoppingCart()}
+                  onClick = {(event) => this.addToShoppingCart(event)}
                   primary="true"> Order Ingredients </RaisedButton>
           </Tooltip> }
 
@@ -271,7 +272,7 @@ class ProductionReview extends React.Component {
                     color="primary"
                     // className=classes.button
                     style={styles.orderIngredientsButton}
-                    onclick = {this.checkOutFormula()}
+                    onClick = {(event) => this.checkOutFormula(event)}
                     primary="true">Send to production</RaisedButton>
             </Tooltip>}
 
