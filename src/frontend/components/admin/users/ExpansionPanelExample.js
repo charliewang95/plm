@@ -29,7 +29,7 @@ function SimpleExpansionPanel(props) {
       
       <ExpansionPanel defaultExpanded>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.heading}>View All Users</Typography>
+          <Typography className={classes.heading}>View All Users (Except Local Admin)</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <GridExample 

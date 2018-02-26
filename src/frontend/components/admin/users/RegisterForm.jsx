@@ -47,7 +47,6 @@ class SignUpForm extends React.Component{
   render(){
     return (
 <div>
-    <label> Create a User </label>
     {this.props.errors.summary && <p className="error-message">{this.props.errors.summary}</p>}
       
     <form action = "/" onSubmit={this.props.onSubmit}>

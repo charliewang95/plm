@@ -202,7 +202,12 @@ class RegisterPage extends React.Component {
       }
       console.log("packaged user");
       console.log(singleData);
-      processedData.push(singleData);
+      if (singleData.username == 'admin' && !singleData.fromDukeOAuth ){
+        //do nothing
+      } else {
+        processedData.push(singleData);
+      }
+      
     };
 
     var finalData = [...processedData.map((row, index)=> ({
