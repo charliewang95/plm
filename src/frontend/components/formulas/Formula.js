@@ -31,6 +31,7 @@ import DeleteIcon from 'material-ui-icons/Delete';
 import EditIcon from 'material-ui-icons/Edit';
 import SaveIcon from 'material-ui-icons/Save';
 import CancelIcon from 'material-ui-icons/Cancel';
+import AddShoppingCartIcon from 'material-ui-icons/AddShoppingCart';
 import { withStyles } from 'material-ui/styles';
 
 import Styles from  'react-select/dist/react-select.css';
@@ -120,14 +121,14 @@ Command.propTypes = {
 const AddToProdButton = ({selectedFormula, onExecute}) => (
   // formulaSentToProduction = selectedFormula,
   // alert(formulaSentToProduction),
-  <div style={{ textAlign: 'center' }}>
+  // <div style={{ textAlign: 'center' }}>
     <Button
       color="primary"
       title="Send formula to production"
       component={Link} to={{pathname: '/production-review', state:{selectedFormula: selectedFormula} }}
-    > Use Formula
+    > <AddShoppingCartIcon title="Send formula to production"/>
     </Button>
-  </div>
+  // </div>
 );
 AddToProdButton.propTypes = {
   onExecute: PropTypes.func.isRequired,
@@ -143,7 +144,9 @@ const Cell = (props) => {
   }else if (props.column.key=='sendToProd'){
     // <Link to={{pathname: '/product-review', state:{selectedFormula: props.row} }}}
     console.log('send to prod');
-    return <AddToProdButton  selectedFormula = {props.row}/>
+    return <Table.Cell {...props}>
+            <AddToProdButton  selectedFormula = {props.row}/>
+            </Table.Cell>
   }
   return <Table.Cell {...props} />;
 };
