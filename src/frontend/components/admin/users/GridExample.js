@@ -111,6 +111,16 @@ const UsernameTypeProvider = props => (
   />
 );
 
+const UsernameFilterCellBase = ({ filter, onFilter, classes }) => (
+  <TableCell className={classes.cell} >
+    <Input
+      placeholder="Filter..."
+      value={filter ?  (filter.value!='' ? filter.value : '') : ''}
+      onChange={e => onFilter(e.target.value ? { value: e.target.value } : null)}
+    />
+  </TableCell>
+);
+
 const PrevilegeFilterCellBase = ({ filter, onFilter, classes }) => (
   <TableCell className={classes.cell} >
     <Select
@@ -144,12 +154,15 @@ const DukeUserFilterCellBase = ({ filter, onFilter, classes }) => (
 
 const PrevilegeFilterCell = withStyles(styles, { name: 'PrivilegeFilterCell' })(PrevilegeFilterCellBase);
 const DukeUserFilterCell = withStyles(styles, { name: 'DukeUserFilterCell' })(DukeUserFilterCellBase);
+const UsernameFilterCell = withStyles(styles, { name: 'UsernameFilterCell' })(UsernameFilterCellBase);
 const FilterCell = (props) => {
 	// console.log("props.column.name: " + props.column.name);
   if (props.column.name === 'privilege') {
     return <PrevilegeFilterCell {...props} />;
   } else if (props.column.name === 'dukeUser') {
     return <DukeUserFilterCell {...props} />;
+  } else if (props.column.name === 'username') {
+    return <UsernameFilterCell {...props} />;
   }
   return <TableFilterRow.Cell {...props} />;
 };
