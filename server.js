@@ -29,7 +29,9 @@ User.findOne({username: 'admin'}, function(err, obj){
         admin.password = 'whatismongoose';
         admin.email = 'admin@realproducers.net';
         admin.isAdmin = true;
+        admin.isManager = true;
         admin.loggedIn = false;
+        admin.fromDukeOAuth = false;
         admin.save(function(err){
             //console.log(admin);
         });
@@ -41,6 +43,8 @@ Storage.findOne({temperatureZone: 'freezer'}, function(err, obj){
         var storage = new Storage();
         storage.temperatureZone = 'freezer';
         storage.capacity = 20000;
+        storage.currentEmptySpace = 20000;
+        storage.currentOccupiedSpace = 0;
         storage.save(function(err){
             //console.log(admin);
         });
@@ -52,6 +56,8 @@ Storage.findOne({temperatureZone: 'refrigerator'}, function(err, obj){
         var storage = new Storage();
         storage.temperatureZone = 'refrigerator';
         storage.capacity = 20000;
+        storage.currentEmptySpace = 20000;
+        storage.currentOccupiedSpace = 0;
         storage.save(function(err){
             //console.log(admin);
         });
@@ -63,6 +69,8 @@ Storage.findOne({temperatureZone: 'warehouse'}, function(err, obj){
         var storage = new Storage();
         storage.temperatureZone = 'warehouse';
         storage.capacity = 20000;
+        storage.currentEmptySpace = 20000;
+        storage.currentOccupiedSpace = 0;
         storage.save(function(err){
             //console.log(admin);
         });

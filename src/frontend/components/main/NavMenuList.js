@@ -10,7 +10,24 @@ import LocalPizzaIcon from 'material-ui-icons/LocalPizza'; //Ingredients
 import VendorsIcon from 'material-ui-icons/Group'; // Vendors
 import ShoppingCartIcon from 'material-ui-icons/ShoppingCart'; // Cart
 import ReportIcon from 'material-ui-icons/Receipt'; // Report
+import BugReportIcon from 'material-ui-icons/BugReport'; // Report
 import PersonAddIcon from 'material-ui-icons/PersonAdd';
+import PropTypes from 'prop-types';
+import { MenuList, MenuItem } from 'material-ui/Menu';
+import { withStyles } from 'material-ui/styles';
+
+const styles = theme => ({
+  menuItem: {
+    '&:focus': {
+      backgroundColor: theme.palette.primary.main,
+      '& $primary, & $icon': {
+        color: theme.palette.common.white,
+      },
+    },
+  },
+  primary: {},
+  icon: {},
+});
 
 export const UserListItems = (
   <div>
@@ -30,6 +47,8 @@ export const UserListItems = (
   </div>
 );
 
+
+//deprecated, moved to MainList.js
 export const MainListItems = (
   <div>
     {/* <ListItem component={Link} to="/user-ingredients" button>
@@ -44,6 +63,12 @@ export const MainListItems = (
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItem>
+    <ListItem component={Link} to="/vendors" button>
+        <ListItemIcon>
+          <VendorsIcon />
+        </ListItemIcon>
+        <ListItemText primary="Vendors" />
+      </ListItem>
     <ListItem component={Link} to="/admin-ingredients" button>
       <ListItemIcon>
         <LocalPizzaIcon />
@@ -56,23 +81,17 @@ export const MainListItems = (
       </ListItemIcon>
       <ListItemText primary="Orders" />
     </ListItem> */}
-    <ListItem component={Link} to="/inventory" button>
-      <ListItemIcon>
-        <InventoryIcon/>
-      </ListItemIcon>
-      <ListItemText primary="Inventory" />
-    </ListItem>
     <ListItem component={Link} to="/storage" button>
       <ListItemIcon>
         <KitchenIcon />
       </ListItemIcon>
       <ListItemText primary="Storage" />
     </ListItem>
-    <ListItem component={Link} to="/vendors" button>
+    <ListItem component={Link} to="/formula" button>
       <ListItemIcon>
         <VendorsIcon />
       </ListItemIcon>
-      <ListItemText primary="Vendors" />
+      <ListItemText primary="Formulas" />
     </ListItem>
     <ListItem component={Link} to="/cart" button>
       <ListItemIcon>
@@ -86,5 +105,12 @@ export const MainListItems = (
       </ListItemIcon>
       <ListItemText primary="Financial Report" />
     </ListItem>
+    <ListItem component={Link} to="/log" button>
+      <ListItemIcon>
+        <BugReportIcon />
+      </ListItemIcon>
+      <ListItemText primary="Logs" />
+    </ListItem>
   </div>
 );
+

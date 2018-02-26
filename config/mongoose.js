@@ -12,7 +12,11 @@ module.exports = function() {
 	require('../server/models/inventory.server.model');
 	require('../server/models/formula.server.model');
 	require('../server/models/cart.server.model');
+<<<<<<< HEAD
 	require('../server/models/dukeUser.server.model');
+=======
+	require('../server/models/log.server.model');
+>>>>>>> 326f96ca1570b9f403faeec7d82bc570f8c64b11
 
 	return db;
 };

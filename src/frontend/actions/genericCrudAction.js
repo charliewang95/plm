@@ -127,7 +127,8 @@ async function getByIdAsync(url, propertyName, objectId, sessionId) {
 
 	const res = await axios.get(completeUrl);
 	const result = res.data;
-	console.log(result);
+	console.log("result from crud action");
+	console.log(res);
 	return result;
 };
 
@@ -152,7 +153,6 @@ async function updateById(url, propertyName, objectId, sessionId, newObject, cal
         const result = res.data;
         console.log(result);
         callback(res);
-        return;
     }
     catch(e) {
       console.log(newObject);
@@ -192,13 +192,33 @@ async function deleteById(url, propertyName, objectId, sessionId) {
  * propertyName: string, segment following the base url
  * sessionId: string
  */
-async function deleteAll(url, propertyName, sessionId) {
-	const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName]);
-	const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
-	const res = await axios.delete(completeUrl);
-	const result = res.data;
-	console.log(result);
-	return result;
+async function deleteAll(url, propertyName, sessionId, callback) {
+
+	try {
+        const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName]);
+        const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
+        const res = await axios.delete(completeUrl);
+        const result = res.data;
+        console.log(result);
+        callback(res);
+    }
+    catch(e) {
+      console.log('there was an error');
+      console.log(e);
+      //TODO: different error message for different types of error
+      if (e.response.status == 400 || e.response.status == 500)
+        callback(e.response);
+      else
+        throw e;
+    }
+	
+	// .then(function (response) {
+	// 	console.log(response);
+	// 	return response;
+	// })
+	// .catch(function (error) {
+	// 	console.log(error);
+	// });
 };
 
 //export functions above for use by other modules

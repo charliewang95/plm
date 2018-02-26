@@ -22,6 +22,7 @@ async function addOrder(order, sessionId, callback) {
  * sessionId: string, id of the current session
  */
 async function getAllOrdersAsync(sessionId){
+    console.log("getting all orders");
 	return await genericActions.getAllAsync(baseUrl, sessionId);
 };
 
@@ -57,5 +58,12 @@ async function deleteOrder(orderId, sessionId) {
 	return await genericActions.deleteById(baseUrl, property, orderId, sessionId);
 };
 
+async function checkoutOrder(sessionId, callback) {
+	const checkoutSegment = 'checkout';
+    return await genericActions.deleteAll(baseUrl, checkoutSegment, sessionId, function(res){
+        callback(res);
+    });
+};
+
 //export functions above for use by other modules
-export { addOrder, getAllOrdersAsync, getOrderAsync, updateOrder, deleteOrder};
+export { addOrder, getAllOrdersAsync, getOrderAsync, updateOrder, deleteOrder, checkoutOrder};

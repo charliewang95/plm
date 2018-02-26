@@ -8,6 +8,7 @@ var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
 var Inventory = mongoose.model('Inventory');
 var Cart = mongoose.model('Cart');
+var Formula = mongoose.model('Formula');
 
 exports.modify = function(action, model, item, itemId, res, next, callback) {
     if (model == Order) {
@@ -34,41 +35,31 @@ exports.modify = function(action, model, item, itemId, res, next, callback) {
             }
         });
     }
+    else if (model == Formula) {
+        modifyFormula(action, item, itemId, res, next, function(err, obj){
+            if (err) next(err);
+            else {
+                callback(err, obj);
+            }
+        });
+    }
     else callback(false, item);
 };
 
 var modifyOrder = function(item, res, next, callback) { //add number of pounds to order
     var num = item.packageNum;
-    Order.getNumSpaceAndNumUnits(item.ingredientId, item.packageNum, res, next, function(err, space, numUnit){
+    Order.getNumSpaceAndNumUnits(item.ingredientName, item.packageNum, res, next, function(err, space, numUnit){
         if (err) {
             return next(err);
         }
         else {
-            var str = JSON.stringify(item).slice(0,-1)+',"space":'+space+',"numUnit":'+numUnit+'}';
-            var price;
-            var fail = true;
-            Ingredient.findById(item.ingredientId, function(err, ingredient){
+            Ingredient.findOne({nameUnique: item.ingredientName.toLowerCase()}, function(err, ingredient){
                 if (err) return next(err);
-                else {
-                    var vendors = ingredient.vendors;
-                    for (var i = 0; i < vendors.length; i++) {
-                        var vendor = vendors[i];
-                        if (vendor.vendorId.toString() === item.vendorId.toString()) {
-                            fail = false;
-                            price = vendor.price;
-                            str = str.slice(0,-1)+',"price":'+price+',"totalPrice":'+price*num+'}';
-                            var moneySpent = ingredient.moneySpent;
-                            console.log(price*num);
-                            ingredient.update({moneySpent: moneySpent + price*num}, function(err, obj) {
-                                if (err) return next(err);
-                                else {
-                                    callback(err, JSON.parse(str));
-                                }
-                            });
-                        }
-                    }
-                    if (fail)
-                        res.status(400).send("Vendor doesn't sell this ingredient or vendor doesn't exist");
+                else if (!ingredient){
+                    return res.status(400).send('Ingredient does not exist');
+                } else {
+                    var str = JSON.stringify(item).slice(0,-1)+',"space":'+space+',"numUnit":'+numUnit+',"totalPrice":'+item.price*item.packageNum+',"ingredientId":"'+ingredient._id+'"}';
+                    callback(err, JSON.parse(str));
                 }
             });
         }
@@ -165,9 +156,10 @@ var modifyVendor = function(action, item, itemId, res, next, callback) { //add u
 };
 
 var modifyIngredient = function(action, item, itemId, res, next, callback) {
-    var counter = 0;
     var vendors = item.vendors;
-    var vendor;
+    var ingredientName = item.name;
+    var str = JSON.stringify(item).slice(0,-1)+',"nameUnique":"'+ingredientName.toLowerCase()+'"}';
+    item = JSON.parse(str);
     if (vendors == null || vendors.length == 0){
         callback(0, item);
     } else {
@@ -189,7 +181,7 @@ var helperIngredient = function(vendors, i, res, next, array, callback) {
         Vendor.findOne({name: vendor.vendorName}, function(err, obj){
             if (err) next(err);
             else if (!obj) {
-                res.send('Vendor '+vendor.codeUnique+' does not exist.');
+                res.send('Vendor '+vendor.vendorName+' does not exist.');
             }
             else {
 //                console.log(i);
@@ -199,6 +191,47 @@ var helperIngredient = function(vendors, i, res, next, array, callback) {
                 array.push(newVendor);
 
                 helperIngredient(vendors, i+1, res, next, array, callback);
+            }
+        });
+    }
+};
+
+var modifyFormula = function(action, item, itemId, res, next, callback) { //add unique lowercase code to check code uniqueness
+    var str = JSON.stringify(item).slice(0,-1)+',"nameUnique":"'+item.name.toLowerCase()+'"}';
+    item = JSON.parse(str);
+    var ingredients = item.ingredients;
+    if (ingredients == null || ingredients.length == 0){
+        callback(0, item);
+    } else {
+        var newIngredients = [];
+//        helperFormula(ingredients, 0, res, next, newIngredients, function(err, obj){
+//            item.ingredients = obj;
+//            callback(0, item);
+//        })
+        callback(0, item);
+    }
+
+};
+
+var helperFormula = function(ingredients, i, res, next, array, callback) {
+    if (i == ingredients.length) {
+        callback(0, array);
+    } else {
+        ingredient = ingredients[i];
+//        console.log(vendor);
+        var newIngredient;
+        Ingredient.findOne({name: ingredient.ingredientName}, function(err, obj){
+            if (err) next(err);
+            else if (!obj) {
+                res.send('Ingredient '+ingredient.ingredientName+' does not exist.');
+            }
+            else {
+//                console.log(i);
+//                var str = JSON.stringify(ingredient).slice(0,-1)+',"ingredientId":"'+obj._id+'"}';
+//                newIngredient = JSON.parse(str);
+//                array.push(newIngredient);
+//                console.log(newIngredient);
+                helperFormula(ingredients, i+1, res, next, array, callback);
             }
         });
     }

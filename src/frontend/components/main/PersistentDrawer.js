@@ -21,6 +21,8 @@ import cookie from 'react-cookies';
 import Button from 'material-ui/Button';
 import {Link} from 'react-router-dom';
 import ExitToApp from 'material-ui-icons/ExitToApp';
+import {MenuList} from 'material-ui/Menu';
+import MainList from './MainList'
 
 const drawerWidth = 240;
 
@@ -181,9 +183,8 @@ class PersistentDrawer extends React.Component {
     //copied from login() to make sure refreshing does not result in incorrect rendering
     const user = JSON.parse(sessionStorage.getItem('user'));
     console.log(typeof user);
-    const isAdmin = user == null ? false : user["isAdmin"];
+    const isAdmin = (user == null) ? false : user["isAdmin"];
     console.log("user is admin: " + isAdmin);
-    //
     const { classes, theme } = this.props;
     const { anchor, open } = this.state;
     const drawer = (
@@ -204,7 +205,7 @@ class PersistentDrawer extends React.Component {
           <Divider />
           {isAdmin && <List className={classes.list}>{UserListItems}</List> }
           <Divider />
-          <List className={classes.list}>{MainListItems}</List>
+          <MainList> </MainList>
         </div>
       </Drawer>
     );

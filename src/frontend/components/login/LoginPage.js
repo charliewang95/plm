@@ -16,7 +16,7 @@ import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
 import { FormControl, FormHelperText } from 'material-ui/Form';
 import Visibility from 'material-ui-icons/Visibility';
 import VisibilityOff from 'material-ui-icons/VisibilityOff';
-
+import AppBar from 'material-ui/AppBar';
 
 import { withStyles } from 'material-ui/styles';
 import IconButton from 'material-ui/IconButton';
@@ -35,9 +35,15 @@ const styles = {
     },
     paper: {
       padding: 50,
+      width: 500,
+      textAlign: 'center',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      marginTop: 50
     },
     media: {
       height: 200,
+      width: 500,
     },
   };
 
@@ -199,13 +205,17 @@ handleMouseDownPassword(event){
     const { name, contact, code,fireRedirect } = this.state;
     return (
             <div>
-
+            <AppBar style={{height:60}}>
+              <Typography style={{marginTop: 'auto', marginBottom: 'auto', textAlign:'center'}} type="title" color="inherit" noWrap>
+                Real Producers
+              </Typography>
+          </AppBar>
             <Card style={styles.paper}>
             <CardMedia
           style={styles.media}
           image="https://t3.ftcdn.net/jpg/01/27/38/98/240_F_127389862_pMUoWAQMoKsq6QOrF8kq8S9KaXOCjlHP.jpg"
         />
-            <form onSubmit={this.onFormSubmit}>
+            <form style={{width: 500}} onSubmit={this.onFormSubmit}>
                 <TextField
                     required
                     fullWidth={true}
@@ -241,14 +251,9 @@ handleMouseDownPassword(event){
 
               <div style={styles.buttons}>
 
-                  <RaisedButton raised color = "primary" onClick={this.handleLogin}
+                  <RaisedButton raised color = "secondary" onClick={this.handleLogin}
                    primary="true" type="Submit" >LOGIN</RaisedButton>
-                  <RaisedButton raised
-                            // component = {Link} to = "/storage"
-                            color="secondary"
-                            style={styles.saveButton}
-                            onClick={this.registerOnClick}
-                            > REGISTER </RaisedButton>
+                  
                   <RaisedButton raised
                                 href = "https://oauth.oit.duke.edu/oauth/authorize.php?
                                 response_type=token&
@@ -268,5 +273,13 @@ handleMouseDownPassword(event){
     )
 	}
 };
+/*Register Button
+  <RaisedButton raised
+                            // component = {Link} to = "/storage"
+                            color="secondary"
+                            style={styles.saveButton}
+                            onClick={this.registerOnClick}
+                            > REGISTER </RaisedButton>
+*/
 
 export default LoginPage;

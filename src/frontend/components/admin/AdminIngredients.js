@@ -1,12 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  FilteringState,
+  IntegratedFiltering,
+} from '@devexpress/dx-react-grid';
+import {
   SortingState, EditingState, PagingState,
   IntegratedPaging, IntegratedSorting,
 } from '@devexpress/dx-react-grid';
 import {
   Grid,
-  Table, TableHeaderRow, TableEditRow, TableEditColumn,
+  Table, TableFilterRow, TableHeaderRow, TableEditRow, TableEditColumn,
   PagingPanel, DragDropProvider, TableColumnReordering,
 } from '@devexpress/dx-react-grid-material-ui';
 import Paper from 'material-ui/Paper';
@@ -36,11 +40,13 @@ import SelectVendors from './SelectVendors';
 import * as ingredientInterface from '../../interface/ingredientInterface';
 import * as vendorInterface from '../../interface/vendorInterface';
 import * as uploadInterface from '../../interface/uploadInterface';
+import * as inventoryInterface from '../../interface/inventoryInterface';
   // TODO: get the sessionId
 import * as testConfig from '../../../resources/testConfig.js';
 import MyPdfViewer from './PdfViewer';
 import {Link} from 'react-router-dom';
 import Snackbar from 'material-ui/Snackbar';
+import Chip from 'material-ui/Chip';
 
 // TODO: get session Id from the user
 
@@ -73,8 +79,8 @@ const AddButton = ({ onExecute }) => (
   <div style={{ textAlign: 'center' }}>
     <Button
       color="primary"
-      onClick={onExecute}
-      title="Create new row"
+      title="Create New Ingredient"
+      component={Link} to={{pathname: '/ingredient-details', state:{isCreateNew: true} }}
     >
       New
     </Button>
@@ -129,8 +135,17 @@ const commandComponents = {
   cancel: CancelButton,
 };
 
+const FilterCell = (props) => {
+  return <TableFilterRow.Cell {...props} />
+}
+FilterCell.propTypes = {
+  column: PropTypes.shape({ name: PropTypes.string }).isRequired,
+};
+
 const Command = ({ id, onExecute }) => {
   const CommandButton = commandComponents[id];
+  console.log("this is a command");
+  console.log(commandComponents[id]);
   return (
     <CommandButton
       onExecute={onExecute}
@@ -211,8 +226,16 @@ LookupEditCellBase.defaultProps = {
 export const LookupEditCell = withStyles(styles, { name: 'ControlledModeDemo' })(LookupEditCellBase);
 
 
+
 const Cell = (props) => {
-  console.log(" CELL props value: " + props.value)
+  console.log(" CELL props value: ");
+  console.log(props);
+  if(props.column.name=='name'){
+    return <Table.Cell {...props}>
+    <Link to={{pathname: '/ingredient-details', state:{details: props.row} }}>{props.row.name}</Link>
+    {(props.row.numUnit>0)&&<Chip style={{marginLeft: 10}} label="In Stock"/>}
+    </Table.Cell>
+  }
   return <Table.Cell {...props} />;
 };
 
@@ -265,13 +288,11 @@ class AdminIngredients extends React.PureComponent {
       idToNameMap:{},
       columns: [
         { name: 'name', title: 'Name' },
-        { name: 'packageName', title: 'Package' },
+        { name: 'packageNameString', title: 'Package' },
         { name: 'temperatureZone', title: 'Temperature Zone' },
         { name: 'vendors', title: 'Vendors/Price' },
-      ],
-
-      tableColumnExtensions: [
-        { columnName: 'vendors', align: 'right' },
+        { name: 'numUnitString', title: "Current Quantity in Stock"},
+        { name: 'space', title: "Space Occupied (sqft)"},
       ],
 
       // TODO: get data to display from back end
@@ -285,7 +306,7 @@ class AdminIngredients extends React.PureComponent {
       deletingRows: [],
       pageSize: 10,
       pageSizes: [5, 10, 0],
-      columnOrder: ['name', 'packageName', 'temperatureZone', 'vendors'],
+      columnOrder: ['name', 'temperatureZone', 'packageNameString', 'numUnitString', 'space', 'vendors'],
       options:[],
     };
 
@@ -349,7 +370,9 @@ class AdminIngredients extends React.PureComponent {
         console.log(added[0].vendorsArray);
         // TODO: Send data to back end
         var temp = this;
-        await ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone, added[0].vendorsArray, sessionId, function(res){
+
+        await ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone,
+          added[0].vendorsArray, 0, 0, added[0].nativeUnit, added[0].numUnitPerPackage, sessionId, function(res){
             if (res.status == 400) {
                 if (!alert(res.data))
                     //window.location.reload();
@@ -360,8 +383,9 @@ class AdminIngredients extends React.PureComponent {
                     //window.location.reload();
                     temp.setState({rows:rows});
           }else{
-            rows = [...rows,added[0]];
-            temp.setState({rows:rows});
+            // rows = [...rows,added[0]];
+            // temp.setState({rows:rows});
+            window.reload();
             alert(" New Ingredient Successfully added! ");
           }
         });
@@ -372,7 +396,8 @@ class AdminIngredients extends React.PureComponent {
         console.log("changed " + Object.keys(changed));
 
         for(var i =0; i < rows.length; i++){
-          // Accessing the changes made to the rows and displaying them
+          // Accessing the changes made to the rows and displaying them=
+
           if(changed[rows[i].id]){
             if(changed[rows[i].id].name){
               rows[i].name = changed[rows[i].id].name;
@@ -380,9 +405,19 @@ class AdminIngredients extends React.PureComponent {
             if(changed[rows[i].id].packageName){
               rows[i].packageName = changed[rows[i].id].packageName;
             }
-
             if(changed[rows[i].id].temperatureZone){
               rows[i].temperatureZone = changed[rows[i].id].temperatureZone;
+            }
+            if(changed[rows[i].id].nativeUnit){
+              rows[i].nativeUnit = changed[rows[i].id].nativeUnit;
+            }
+            if(changed[rows[i].id].numUnitPerPackage){
+              const re = /^[0-9\b]+$/;
+              if(re.test(changed[rows[i].id].numUnitPerPackage)){
+                rows[i].numUnitPerPackage = changed[rows[i].id].numUnitPerPackage;
+              }else{
+                alert("Quantity must be a number!");
+              }
             }
             var vendors_string = "";
 
@@ -404,7 +439,10 @@ class AdminIngredients extends React.PureComponent {
               rows[i].vendorsArray = changed[rows[i].id].vendors;
               rows[i].vendors = vendors_string;
             }
-            ingredientInterface.updateIngredient(rows[i].ingredientId, rows[i].name, rows[i].packageName, rows[i].temperatureZone, rows[i].vendorsArray, rows[i].moneySpent, rows[i].moneyProd, sessionId, function(res){
+
+            ingredientInterface.updateIngredient(rows[i].ingredientId, rows[i].name, rows[i].packageName,
+              rows[i].temperatureZone, rows[i].vendorsArray, rows[i].moneySpent, rows[i].moneyProd,
+              rows[i].nativeUnit, rows[i].numUnitPerPackage, sessionId, function(res){
                 if (res.status == 400) {
                     alert(res.data);
                 } else if (res.status == 500) {
@@ -503,6 +541,15 @@ class AdminIngredients extends React.PureComponent {
     this.setState({idToNameMap:map});
   }
 
+  async loadInventoryData(ingredientId, sessionId){
+    console.log("enterasdf");
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    var inventoryData = await inventoryInterface.getInventoryAsync(ingredientId, sessionId);
+    console.log("loading inventory");
+    console.log(inventoryData);
+    return inventoryData;
+  }
+
   async loadAllIngredients(){
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     var rawData = await ingredientInterface.getAllIngredientsAsync(sessionId);
@@ -536,23 +583,28 @@ class AdminIngredients extends React.PureComponent {
 
         console.log(vendorName);
         vendorArrayString+=vendorName + " / $" + rawData[i].vendors[j].price;
-        console.log("tired");
-        console.log(i);
-         if(i!= (rawData[i].vendors.length-1) ){
+         if(j!= (rawData[i].vendors.length-1) ){
             vendorArrayString+=', ';
           }
-
-
       }
 
       var singleData = new Object ();
+     // singleData.numUnit = this.loadInventoryData(rawData[i]._id, sessionId);
+      console.log("singleData");
+      console.log(singleData);
       // singleData.id = i;
       singleData.name = rawData[i].name;
       singleData.packageName = rawData[i].packageName;
+      singleData.packageNameString = rawData[i].packageName + " (" + rawData[i].numUnitPerPackage + " " + rawData[i].nativeUnit +")";
       singleData.temperatureZone = rawData[i].temperatureZone;
       singleData.vendorsArray = formatVendorsArray;
       singleData.moneySpent = rawData[i].moneySpent;
       singleData.moneyProd = rawData[i].moneyProd;
+      singleData.nativeUnit = rawData[i].nativeUnit;
+      singleData.numUnitPerPackage = rawData[i].numUnitPerPackage;
+      singleData.numUnit = rawData[i].numUnit;
+      singleData.numUnitString = rawData[i].numUnit + " " + rawData[i].nativeUnit;
+      singleData.space = rawData[i].space;
       //singleData.vendorsArray = "";
       singleData.vendors = vendorArrayString;
       console.log("my id");
@@ -579,7 +631,7 @@ class AdminIngredients extends React.PureComponent {
           let form = new FormData();
           form.append('file', file);
           console.log(form);
-           await uploadInterface.upload(form, sessionId, function(res){
+           await uploadInterface.uploadIngredient(form, sessionId, function(res){
                 if (res.status == 400) {
                     if (!alert(res.data))
                         window.location.reload();
@@ -631,6 +683,8 @@ class AdminIngredients extends React.PureComponent {
           getRowId={getRowId}
 
         >
+        <FilteringState/>
+          <IntegratedFiltering />
           <SortingState
             sorting={sorting}
             onSortingChange={this.changeSorting}
@@ -657,6 +711,7 @@ class AdminIngredients extends React.PureComponent {
 
           <DragDropProvider />
 
+
           <Table
             columnExtensions={tableColumnExtensions}
             cellComponent={Cell}
@@ -668,14 +723,13 @@ class AdminIngredients extends React.PureComponent {
           />
 
           <TableHeaderRow showSortingControls />
-
+          <TableFilterRow cellComponent={FilterCell}/>
           {isAdmin && <TableEditRow
             cellComponent={EditCell}
           /> }
           {isAdmin && <TableEditColumn
             width={120}
             showAddCommand={!addedRows.length}
-            showEditCommand
             showDeleteCommand
             commandComponent={Command}
           />}
@@ -702,6 +756,7 @@ class AdminIngredients extends React.PureComponent {
                 <Table
                   columnExtensions={tableColumnExtensions}
                   cellComponent={Cell}
+                  order={columnOrder}
                 />
                 <TableHeaderRow />
               </Grid>
@@ -715,14 +770,14 @@ class AdminIngredients extends React.PureComponent {
       }
       </Paper>
     {/* <Paper styles = {{color : "#42f4d9"}} > */}
-      {isAdmin && <p><font size="5">Bulk Import</font></p>}
+      {isAdmin && <p><font size="5">Ingredient Bulk Import</font></p>}
       {isAdmin && <input type="file"
         name="myFile"
         onChange={this.uploadFile} /> }
       {isAdmin &&
       <div>
         <br></br>
-        Click <a href="./FormatSpec.pdf" style={{color:"#000000",}}>HERE</a> for format specification
+        Click <a href="./BulkImportEV2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
       </div>
     }
 
