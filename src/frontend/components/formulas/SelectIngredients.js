@@ -1,22 +1,25 @@
 import React, {Component} from 'react';
 import TextField from 'material-ui/TextField';
-import { FormControl, FormHelperText } from 'material-ui/Form';
-import Select from 'react-select';
+//import Select from 'react-select';
 import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
 import AddCircleIcon from 'material-ui-icons/AddCircle';
-import IngredientItem from './IngredientItem';
 import * as ingredientActions from '../../interface/ingredientInterface.js';
 import * as testConfig from '../../../resources/testConfig.js';
+import Tooltip from 'material-ui/Tooltip';
+import Select from 'material-ui/Select';
+import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
+import { FormControl, FormGroup, FormHelperText } from 'material-ui/Form';
+import { MenuItem } from 'material-ui/Menu';
+import Button from 'material-ui/Button';
+import IngredientItem from './IngredientItem.js';
 
-//const VENDORS = require('./dummyIngredients');
+import {ingredientData} from '../shoppingCart/dummyData';
 
 
-// TODO: get session Id from the user
-//const sessionId = testConfig.sessionId;
-const sessionId = '5a63be959144b37a6136491e';
-const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
-
+// TODO: Get sessionID and UserID
+var sessionId = "";
+var userId="";
 
 class SelectIngredients extends Component {
 
@@ -24,12 +27,21 @@ class SelectIngredients extends Component {
     super(props)
     this.state = {
       selectName: "",
-      inputQuantity: 0,
+      inputQuantity: '',
       options: [],
       ingredientsArray: this.props.initialArray,
       idToNameMap: {}, //id = key, name=value
     };
-    this.updateId = this.updateId.bind(this);
+//     this.updateId = this.updateId.bind(this);
+//     this.deleteVendor = this.deleteVendor.bind(this);
+//     this.addVendor = this.addVendor.bind(this);
+//     this.updatePrice = this.updatePrice.bind(this);
+//     this.loadVendorsArray = this.loadVendorsArray.bind(this);
+//     this.loadCodeNameArray = this.loadCodeNameArray.bind(this);
+// //    this.updateName = this.updateName.bind(this);
+// //    this.createMap = this.createMap.bind(this);
+//     this.resetArray = this.resetArray.bind(this);
+
     this.deleteIngredient = this.deleteIngredient.bind(this);
     this.addIngredient = this.addIngredient.bind(this);
     this.updateQuantity = this.updateQuantity.bind(this);
@@ -37,6 +49,7 @@ class SelectIngredients extends Component {
     this.loadCodeNameArray = this.loadCodeNameArray.bind(this);
 //    this.createMap = this.createMap.bind(this);
     this.resetArray = this.resetArray.bind(this);
+
   }
 
   componentWillMount(){
@@ -64,28 +77,36 @@ class SelectIngredients extends Component {
 
   async loadCodeNameArray(){
    // var startingIndex = 0;
+    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    userId = JSON.parse(localStorage.getItem('user'))._id;
+
     var rawData = [];
-    rawData = await ingredientActions.getAllIngredientNamesAsync(sessionId);
-    console.log("loadCodeNameArray was called");
-    console.log(rawData.data);
-    var optionsArray = rawData.data.map(obj=>{
-    var temp = new Object();
-    temp.ingredientName = obj.ingredientName;
-    temp.label = obj.ingredientName;
-    return temp;
-    })
-    var ans = optionsArray;
-    for(var i=0; i<this.props.initialArray.length; i++){
-      console.log("initialArray");
-      console.log(this.props.initialArray);
+    try{
+      rawData = await ingredientActions.getAllIngredientNamesAsync(sessionId);
 
-      ans = ans.filter(option=>option.ingredientName!=this.props.initialArray[i].ingredientName);
+      console.log("CALLED FOR INGREDIENTS DATA ");
 
-    //  var index = optionsArray.map(item=>{item.ingredientName; console.log(item.ingredientName);}).indexOf(this.props.initialArray[i].ingredientName);
-      console.log(ans);
-    //  optionsArray.splice(index, 1);
+      console.log(JSON.stringify(rawData));
+      var optionsArray = rawData.data.map(obj=>{
+      var temp = new Object();
+      temp.ingredientName = obj.ingredientName;
+      temp.label = obj.ingredientName;
+      return temp;
+      })
+      var ans = optionsArray;
+      for(var i=0; i<this.props.initialArray.length; i++){
+        console.log("initialArray");
+        console.log(this.props.initialArray);
+        ans = ans.filter(option=>option.ingredientName!=this.props.initialArray[i].ingredientName);
+      //  var index = optionsArray.map(item=>{item.ingredientName; console.log(item.ingredientName);}).indexOf(this.props.initialArray[i].ingredientName);
+        console.log(ans);
+      //  optionsArray.splice(index, 1);
+      }
+
+      this.setState({options: ans});
+    }catch(e){
+      alert(e);
     }
-    this.setState({options: ans});
   }
 
   resetArray(name, action){
@@ -104,37 +125,15 @@ class SelectIngredients extends Component {
      }
   }
 
-  // resetArray(){
-  //   this.state.ingredientsArray.forEach((ingredient)=>{
-  //     var index = this.state.options.map(item=>item.ingredientName).indexOf(ingredient.ingredientName);
-  //     this.state.options.splice(index, 1);
-  //   });
-  //
-  //   this.setState({options:this.state.options});
-  //   //
-  //   // var index = this.state.options.map(item=>item.ingredientName).indexOf(name);
-  //   // this.state.options.splice(index, 1);
-  //   // this.setState({options:this.state.options});
-  // }
-
-  // async createMap(){
-  //   var list = this.state.options;
-  //   var map = new Map();
-  //   list.forEach(function(ingredient){
-  //     map.set(ingredient.codeUnique, ingredient.name);
-  //   });
-  //   this.setState({idToNameMap:map});
-  // }
-
   addIngredient(){
 
     var newIngredient = new Object();
     console.log("addIngredient() was called");
     console.log(this.state.selectName);
-    var tempId = this.state.selectName.ingredientName;
+    var tempId = this.state.selectName;
     var quantityFloat = parseFloat(this.state.inputQuantity);
     newIngredient = {ingredientName: tempId, quantity: quantityFloat};
-    console.log(newIngredient);
+    console.log("NEW INGREDIENT " + newIngredient);
     // var updateIngredient = new Array(this.state.ingredientsArray.slice(0));
     // updateIngredient.push(newIngredient);
     // console.log("I was called");
@@ -177,60 +176,86 @@ class SelectIngredients extends Component {
   }
 
   updateQuantity (newQuantity, index){
-    console.log("this is the quantity");
-    var quantity = parseFloat(newQuantity.target.value);
+    // console.log("this is the quantity");
+    // var quantity = parseFloat(newQuantity.target.value);
+
+    var quantity = newQuantity.target.value;
     console.log(typeof (quantity));
+    // const re =/^[1-9]\d*$/;
 
-    var isEmpty = (!quantity || (quantity.length==0));
+    const re = /^\d*\.?\d*$/;
+      if ( index>=0 && re.test(quantity) && quantity!=null) {
+        this.state.ingredientsArray[index].quantity = quantity;
+        this.setState({ingredientsArray: this.state.ingredientsArray});
+        this.props.handleChange(this.state.ingredientsArray);
+      }else
+        alert("Quantity must be a positive number.");
 
-    console.log(index);
-    if(index>=0 && !isEmpty){
-      // var updateIngredient = this.state.ingredientsArray.slice();
-      // updateIngredient[index].quantity = newQuantity.target.value;
-      // this.setState({ingredientsArray: updateIngredient});
-      this.state.ingredientsArray[index].quantity = quantity;
-      this.setState({ingredientsArray: this.state.ingredientsArray});
-      this.props.handleChange(this.state.ingredientsArray);
-    }
   }
 
-  updateQuantityHere(newQuantity){
-    this.setState({inputQuantity: newQuantity.target.value});
+
+updateQuantityHere(event){
+  console.log(" UPDATE HERE " + event.target.value);
+  // const re = /^\d*\.?\d*$/;
+  const re =/^[1-9]\d*$/;
+      if ( event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
+         this.setState({inputQuantity: event.target.value})
+      }else{
+        alert("Quantity must be a positive number.");
+      }
   }
 
-  updateName(value){
-    console.log("updateName");
-    console.log(value);
-    this.setState({selectName: value});
-  }
+   handleChange = name => event => {
+    console.log("handling changes:");
+    console.log(event.target.value);
+    this.setState({
+      [name]: event.target.value,
+    });
+  };
 
   render() {
     return (
     	<div>
-      <Grid container spacing={16}>
-        <Grid item sm={7}>
-         <Select
-          placeholder="Select New Ingredient"
-          name="Ingredient Name"
-          options={this.state.options}
-          valueKey="ingredientName"
-          value={this.state.selectName} //value displayed
-          onChange={this.updateName.bind(this)}
+          <p>Ingredients:</p>
+          <FormControl style={{marginLeft: 20, width:150}}>
+            <InputLabel htmlFor="vendorName">Ingredient</InputLabel>
+            <Select
+             disabled={this.state.options.length==0}
+             value={this.state.selectName}
+             onChange={this.handleChange('selectName')}
+             inputProps={{
+              name: 'ingredientName',
+              id: 'ingredientName',
+             }}>
+            {this.state.options.map((ingredient, index)=>(<MenuItem key={index} value={ingredient.ingredientName}>{ingredient.ingredientName}</MenuItem>))}
+            </Select>
+            {this.state.selectName && (this.state.inputQuantity>0) && <FormHelperText>Press + to add an ingredient</FormHelperText>}
+         </FormControl>
+         <FormControl style={{marginLeft:10}}>
+          <InputLabel htmlFor="amount">Quantity</InputLabel>
+
+          <Input
+            style={{width:50}}
+            id="adornment-amount"
+            required
+            onChange={(value)=>{this.updateQuantityHere(value);}}
+            value={this.state.inputQuantity}
+            startAdornment={<InputAdornment position="start"></InputAdornment>}
           />
-        </Grid>
-        <Grid item sm={3}>
-          <TextField value={this.state.inputQuantity} onChange={(value)=>{this.updateQuantityHere(value);}}/>
-        </Grid>
-        <Grid item sm={1}>
-          <IconButton aria-label="Add" onClick={()=>{this.addIngredient();}}>
-            <AddCircleIcon />
-          </IconButton>
-        </Grid>
-      </Grid>
-      <IngredientItem idToNameMap = {this.state.idToNameMap} ingredientsArray={this.state.ingredientsArray} deleteIngredient={this.deleteIngredient} updateId={this.updateId} updateQuantity={this.updateQuantity} options={this.state.options} />
+         </FormControl>
+         {this.state.selectName && (this.state.inputQuantity>0) &&
+         <Button raised style={{marginLeft:10}} onClick={()=>{this.addIngredient();}}>ADD INGREDIENT</Button>}
+ <br/>
+
+
+      <IngredientItem idToNameMap = {this.state.idToNameMap}
+        ingredientsArray={this.state.ingredientsArray}
+        deleteIngredient={this.deleteIngredient}
+        updateId={this.updateId} updateQuantity={this.updateQuantity}
+        options={this.state.options} />
       </div>
     );
   }
 }
 
-export default SelectIngredients
+export default SelectIngredients;

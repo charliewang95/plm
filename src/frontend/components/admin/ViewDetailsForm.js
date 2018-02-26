@@ -35,7 +35,7 @@ const styles = {
       float: 'center'
     },
     saveButton: {
-      marginLeft: 5
+      marginLeft: 50,
     },
     packageName:{
       marginLeft: 10,
@@ -51,6 +51,7 @@ const styles = {
   };
 
 var sessionId = "";
+var userId="";
 
 
 class AddIngredientForm extends React.Component{
@@ -75,7 +76,7 @@ class AddIngredientForm extends React.Component{
       numUnitPerPackage: (details.numUnitPerPackage)?(details.numUnitPerPackage):'',
       isDisabled: (isCreateNew) ? false: true,
       numUnit: (details.numUnit)?(details.numUnit):0,
-      space: (details.numUnit)?(details.numUnit):0,
+      space: (details.space)?(details.space):0,
       moneySpent: (details.moneySpent)?(details.moneySpent) : 0,
       moneyProd: (details.moneyProd) ? (details.moneyProd): 0,
       price: 0,
@@ -138,10 +139,14 @@ class AddIngredientForm extends React.Component{
   async loadIngredient(){
     var details = [];
     sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    userId = JSON.parse(localStorage.getItem('user'))._id;
+    // sessionId = '5a8b99a669b5a9637e9cc3bb';
+    // userId = '5a8b99a669b5a9637e9cc3bb';
     console.log("ingredient id");
     console.log(this.props.location.state.ingredientId);
-    //details = await ingredientInterface.getIngredientAsync('5a8e37ab182c28046184cd75', sessionId);
+
     details = await ingredientInterface.getIngredientAsync(this.props.location.state.ingredientId, sessionId);
+
     console.log("load one ingredient");
     console.log(details);
     var formatVendorsArray = new Array();
@@ -188,31 +193,34 @@ class AddIngredientForm extends React.Component{
     else if(this.state.vendorsArray.length==0 || this.state.vendorsArray == null){
       alert("Please add a vendor.");
       return false;
-    }
-    return true;
+    }else if (!(/^[A-z]+$/).test(this.state.nativeUnit)){
+        alert('Native unit must be a string. ');
+    }else
+      return true;
   }
+
 
   onFormSubmit(e) {
 
     e.preventDefault();
     sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    
     if(this.isValid() && this.state.isCreateNew){
+      console.log(" Add ingredient ");
       ingredientInterface.addIngredient(this.state.name, this.state.packageName, this.state.temperatureZone,
-        this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, this.state.nativeUnit, 
-        this.state.numUnitPerPackage, 0, 0, sessionId, function(res){
+        this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, this.state.nativeUnit,
+        this.state.numUnitPerPackage, this.state.numUnit, this.state.space, sessionId, function(res){
                   if (res.status == 400) {
                       alert(res.data);
                   } else if (res.status == 500) {
                       alert('Ingredient name already exists');
-                  } else {
+                  } else{
                       // SnackBarPop("Row was successfully added!");
                       alert(" Ingredient Successfully added! ");
                   }
               });
     }else{
-      ingredientInterface.updateIngredient(this.state.ingredientId, this.state.name, this.state.packageName, 
-                this.state.temperatureZone, this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, 
+      ingredientInterface.updateIngredient(this.state.ingredientId, this.state.name, this.state.packageName,
+                this.state.temperatureZone, this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd,
                 this.state.nativeUnit, this.state.numUnitPerPackage, this.state.numUnit, this.state.space, sessionId, function(res){
                   if (res.status == 400) {
                       alert(res.data);
@@ -223,6 +231,7 @@ class AddIngredientForm extends React.Component{
                       alert(" Ingredient Successfully edited! ");
                   }
               });
+      this.setState({isDisabled:true});
     }
       // Call function to send data to backend
 
@@ -314,6 +323,8 @@ class AddIngredientForm extends React.Component{
                 <MenuItem value={'pail'}>Pail</MenuItem>
                 <MenuItem value={'drum'}>Drum</MenuItem>
                 <MenuItem value={'supersack'}>Supersack</MenuItem>
+                <MenuItem value={'truckload'}>Truckload</MenuItem>
+                <MenuItem value={'railcar'}>Railcar</MenuItem>
               </Select>
             </FormControl>
             <FormGroup>
@@ -327,7 +338,7 @@ class AddIngredientForm extends React.Component{
             />}
             {(!this.state.isDisabled) && <SelectVendors initialArray={this.state.vendorsArray} handleChange={this.updateVendors}/>}
             </FormGroup>
-            {!this.state.isCreateNew && 
+            {!this.state.isCreateNew &&
               <div>
               <p><font size="6">Inventory Information</font></p>
               <FormGroup>
