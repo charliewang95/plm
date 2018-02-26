@@ -60,8 +60,8 @@ async function getUserAsync(userId, sessionId){
  * sessionId: string, id of the current session
  * user: JSON object representing the updated info about the user
  */
-async function updateUser(userId, sessionId, user) {
-	return await genericActions.updateById(baseUrl, property, userId, sessionId, user);
+async function updateUser(userId, sessionId, user, callback) {
+	return await genericActions.updateById(baseUrl, property, userId, sessionId, user, callback);
 };
 
 /* 

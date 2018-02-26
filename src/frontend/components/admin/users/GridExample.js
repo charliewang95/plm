@@ -229,7 +229,42 @@ export default class SampleTable extends React.PureComponent {
     }
     if (changed) {
     	console.log("entering changed");
-      rows = rows.map(row => (changed[row.id] ? { ...row, ...changed[row.id] } : row));
+      // rows = rows.map(row => (changed[row.id] ? { ...row, ...changed[row.id] } : row));
+      console.log("parameter 'changed':");
+      console.log(changed);
+      console.log('type:' + typeof changed);
+      const changedRows = rows.filter(row => changed[row.id]);
+      console.log("the following row has changed:");
+      console.log(changedRows);
+      for (var i = 0; i < changedRows.length; i++){
+        const userObject = changedRows[i];
+        const userId = userObject.userId;
+        const rowId = userObject.id;
+        const afterChange = changed[rowId];
+        console.log("Row is changed into");
+        console.log(afterChange);
+        const userDataRetrieved = await userInterface.getUserAsync(userId, sessionId);
+        console.log("Retrieved info from database:");
+        console.log(userDataRetrieved);
+        //parse data
+        const newUserName = afterChange.username;
+        const newEmail = afterChange.email;
+        const oldPassword = userDataRetrieved.password;
+        var newIsAdmin = false;
+        var newIsManager = false;
+        const privilegeLevel = afterChange.privilege.toLowerCase();
+        if ( privilegeLevel === 'admin'){
+          newIsAdmin = true;
+          newIsManager = true;
+        } else if (privilegeLevel === 'manager' ){
+          newIsManager = true
+        }
+        const newFromDukeOAuth = afterChange.fromDukeOAuth;
+        const oldLoggedIn = userDataRetrieved.loggedIn; 
+        await userInterface.updateUser(userId, newUserName, newEmail, oldPassword, newIsAdmin,
+          newIsManager, newFromDukeOAuth, oldLoggedIn, sessionId, res => this.refreshTable());
+        
+      }
     }
     if (deleted) {
     	console.log("entering deleted")

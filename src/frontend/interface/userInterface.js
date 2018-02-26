@@ -122,9 +122,9 @@ async function getUserAsync(userId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-async function updateUser(userId, email, username, password, isAdmin, loggedIn, sessionId) {
-	var updatedUser = packIntoJson(email, username, password, isAdmin, loggedIn);
-	return await userActions.updateUser(userId, sessionId, updatedUser);
+async function updateUser(userId, username, email, password, isAdmin, isManager, fromDukeOAuth, loggedIn, sessionId, callback) {
+	var updatedUser = packIntoJson(username, email, password, isAdmin, isManager, fromDukeOAuth, loggedIn);
+	return await userActions.updateUser(userId, sessionId, updatedUser,callback);
 };
 
 /* 

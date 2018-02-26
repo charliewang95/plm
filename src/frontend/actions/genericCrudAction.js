@@ -155,7 +155,7 @@ async function updateById(url, propertyName, objectId, sessionId, newObject, cal
         return;
     }
     catch(e) {
-        console.log(newObject);
+      console.log(newObject);
       console.log('there was an error');
       console.log(e);
       //TODO: different error message for different types of error
