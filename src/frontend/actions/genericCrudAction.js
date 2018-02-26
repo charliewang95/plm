@@ -8,9 +8,14 @@ helper functions
 /**
  * appends session Id info to the end of url to accomodate changes made in routing
  * url: string, base url
- * sessionId: string, the id of the current session stored in the front end
+ * sessionId: string
+ * fromDukeOAuth: boolean, indicates
 **/
 function appendSessionIdToUrl(url, sessionId){
+	// const sessionId = sessionId.sessionId;
+	// const fromDukeOAuth = sessionId.fromDukeOAuth;
+	console.log('sessionId: ' + sessionId );
+	// console.log('fromDukeOAuth: ' + fromDukeOAuth);
 	const userString = 'user';
 	return appendSegmentsToUrl(url, [userString, sessionId]);
 };
@@ -31,6 +36,20 @@ function appendSegmentsToUrl(originalUrl, additionalSegments){
 	return completeUrl;
 };
 
+/**
+ * Generates a url for posting, for axios methods that relates to a specific
+ * object id
+ * urlHeac: string, start of the url
+ * propertyName: string, descrbies the object such as "ingredient"
+ * objectId: string, id of the object
+ * sessionId: string
+ */
+function getCompleteUrlWithObjectId(urlHead, propertyName, objectId, sessionId){
+	const urlWithoutSessionId = appendSegmentsToUrl(urlHead, [propertyName, objectId]);
+	const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
+	return completeUrl;
+}
+
 /*************************
 exported methods
 *************************/
@@ -40,13 +59,14 @@ exported methods
 /* create a new entry in the database
  * url: string, the url for the post request
  * object: JSON object
- * sessionId: string, id of the current session
+ * sessionId: string
  * callback: a function
  */
 async function create(url, object, sessionId, callback) {
     console.log('generic creating');
 	console.log(object);
-	var completeUrl = appendSessionIdToUrl(url,sessionId);
+	const completeUrl = appendSessionIdToUrl(url,sessionId);
+	console.log("Sending create request to url " + completeUrl);
 	try {
       	const res = await axios.post(completeUrl, object);
 		const result = res.data;
@@ -65,45 +85,20 @@ async function create(url, object, sessionId, callback) {
       }
     }
 	
-	/*
-	.then(function (response) {
-		console.log(response);
-		return response;
-	})
-	.catch(function (error) {
-		console.log(error);
-	});*/
 };
+
 
 /* 
  * get all objects of a kind
  * url: string, the url for the get request
- */
- /*
-function getAll(url) {
-	//deprecated because somehow front end does not work?
-	//use getAllAsync instead
-	axios.get(url)
-	.then(function (response) {
-		console.log(response);
-		return response;
-	})
-	.catch(function (error) {
-		console.log(error);
-	});
-};
-*/
-
-/* 
- * get all objects of a kind
- * url: string, the url for the get request
- * sessionId: string, id of the current session
+ * sessionId: string
  */
 async function getAllAsync(url, sessionId) {
 	var completeUrl = appendSessionIdToUrl(url,sessionId);
 	console.log("generic CRUD: getAllAsync()");
 	console.log("url: " + completeUrl);
-	console.log("sessionId: " + sessionId);
+	console.log("sessionId: ");
+	console.log(sessionId);
 
 	const res = await axios.get(completeUrl);
 	const result = res.data;
@@ -113,37 +108,22 @@ async function getAllAsync(url, sessionId) {
 
 /* 
  * get one object with a specfic id
- * deprecated, use getByIdAsync instead
- * objectId: string, the id of the ingredient
- * url: string, the url for the get request
- */
- /*
-function getById(objectId, url) {
-	axios.get(url.concat(objectId))
-	.then(function (response) {
-		console.log(response);
-		return response;
-	})
-	.catch(function (error) {
-		console.log(error);
-	});
-};
-*/
-
-/* 
- * get one object with a specfic id
  * url: string, the base url for the get request
  * propertyName: string, segment in front of the objectId in the complete url used to identify what 
  * the next segment is
  * objectId: string, the id of the object as returned from the database
- * sessionId: string, id of the current session
+ * sessionId: string
  */
 async function getByIdAsync(url, propertyName, objectId, sessionId) {
-	const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName, objectId]);
-	const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
-	console.log("generic CRUD: getByIdAsync()");
+	// const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName, objectId]);
+	// const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
+
+	const completeUrl = getCompleteUrlWithObjectId(url, propertyName, objectId, sessionId);
+
+	// console.log("generic CRUD: getByIdAsync()");
 	console.log("url: " + completeUrl);
-	console.log("sessionId: " + sessionId);
+	// console.log("sessionId: ");
+	// console.log(sessionId);
 
 	const res = await axios.get(completeUrl);
 	const result = res.data;
@@ -158,24 +138,14 @@ async function getByIdAsync(url, propertyName, objectId, sessionId) {
  * propertyName: string, segment in front of the objectId in the complete url used to identify what 
  * the next segment is
  * objectId: string, the id of the object
- * sessionId: string, id of the current session
+ * sessionId: string
  * newObject: JSON object representing the updated info about the object
  */
 async function updateById(url, propertyName, objectId, sessionId, newObject, callback) {
-	const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName, objectId]);
-	const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
-	//const res = await axios.put(completeUrl, newObject)//
-	//const result = res.data;
-	//console.log(result);
-	//return result;
+	// const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName, objectId]);
+	// const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
 
-	// .then(function (response) {
-	// 	console.log(response);
-	// 	return response;
-	// })
-	// .catch(function (error) {
-	// 	console.log(error);
-	// });
+	const completeUrl = getCompleteUrlWithObjectId(url, propertyName, objectId, sessionId);
 
 	try {
 	    console.log(newObject);
@@ -185,6 +155,7 @@ async function updateById(url, propertyName, objectId, sessionId, newObject, cal
         callback(res);
     }
     catch(e) {
+      console.log(newObject);
       console.log('there was an error');
       console.log(e);
       //TODO: different error message for different types of error
@@ -201,30 +172,25 @@ async function updateById(url, propertyName, objectId, sessionId, newObject, cal
  * propertyName: string, segment in front of the objectId in the complete url used to identify what 
  * the next segment is
  * objectId: string, the id of the object
- * sessionId: string, id of the current session
+ * sessionId: string
  */
 async function deleteById(url, propertyName, objectId, sessionId) {
-	const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName, objectId]);
-	const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
+	// const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName, objectId]);
+	// const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
+
+	const completeUrl = getCompleteUrlWithObjectId(url, propertyName, objectId, sessionId);
+	
 	const res = await axios.delete(completeUrl);
 	const result = res.data;
 	console.log(result);
 	return result;
-
-	// .then(function (response) {
-	// 	console.log(response);
-	// 	return response;
-	// })
-	// .catch(function (error) {
-	// 	console.log(error);
-	// });
 };
 
 /* 
  * delete all existing objects at a certain url
  * url: string, the url for the delete request
  * propertyName: string, segment following the base url
- * sessionId: string, id of the current session
+ * sessionId: string
  */
 async function deleteAll(url, propertyName, sessionId, callback) {
 

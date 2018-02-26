@@ -57,7 +57,7 @@ export default class Demo extends React.PureComponent {
 
     // try{
        if(READ_FROM_DATABASE){
-         sessionId = JSON.parse(localStorage.getItem('user'))._id;
+         sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
          rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
        }else{
          rawData = dummyData;

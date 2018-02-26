@@ -55,7 +55,7 @@ export default class ProductionReport extends React.PureComponent {
 
     // try{
        if(READ_FROM_DATABASE){
-         sessionId = JSON.parse(localStorage.getItem('user'))._id;
+         sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
          rawData = await formulaActions.getAllFormulasAsync(sessionId);
        }else{
          rawData = dummyData;

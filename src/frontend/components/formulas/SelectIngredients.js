@@ -77,8 +77,8 @@ class SelectIngredients extends Component {
 
   async loadCodeNameArray(){
    // var startingIndex = 0;
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
-    userId = JSON.parse(localStorage.getItem('user'))._id;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    userId = JSON.parse(sessionStorage.getItem('user'))._id;
 
     var rawData = [];
     try{

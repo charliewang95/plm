@@ -75,7 +75,7 @@ class ProductionReview extends React.Component {
 
     this.productionReview = async() =>{
       //TODO: add to cart
-      sessionId = JSON.parse(localStorage.getItem('user'))._id;
+      sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
       console.log(" get production review");
       // console.log(this.state.formulaRows[0]._id + " , " +
       //             parseInt(this.state.addedQuantity,10) + ", " + sessionId);
@@ -125,7 +125,7 @@ class ProductionReview extends React.Component {
 
   async addToShoppingCart(){
     //TODO: send to back end
-    userId = JSON.parse(localStorage.getItem('user'))._id;
+    userId = JSON.parse(sessionStorage.getItem('user'))._id;
 
     console.log("add To cart" + JSON.stringify(this.state.ingredientsToOrder));
     // ADD the ingredients with needed amount to
@@ -178,7 +178,7 @@ class ProductionReview extends React.Component {
 
   componentWillMount(){
     // console.log(" Formula Rows " + JSON.stringify(this.state.formulaRows));
-    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
   }
 
     cancel(){

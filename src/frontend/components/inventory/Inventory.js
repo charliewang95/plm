@@ -217,9 +217,9 @@ class Inventory extends React.PureComponent {
    }
 
    componentWillMount(){
-     userId = JSON.parse(localStorage.getItem('user'))._id;
-     isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
-     sessionId = JSON.parse(localStorage.getItem('user'))._id;
+     userId = JSON.parse(sessionStorage.getItem('user'))._id;
+     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
    }
 
 // Initial loading of data
@@ -233,7 +233,7 @@ class Inventory extends React.PureComponent {
     //TODO: Initialize data
     var rawData=[];
      if(READ_FROM_DATABASE){
-       sessionId = JSON.parse(localStorage.getItem('user'))._id;
+       sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
        rawData = await inventoryActions.getAllInventoriesAsync(sessionId);
      } else {
       rawData = dummyData;

@@ -451,7 +451,7 @@ class AdminIngredients extends React.PureComponent {
   componentWillMount(){
     //this.loadCodeNameArray();
     this.loadAllIngredients();
-    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
   }
 
   componentDidMount(){
@@ -461,7 +461,7 @@ class AdminIngredients extends React.PureComponent {
   async loadCodeNameArray(){
    // var startingIndex = 0;
     var rawData = [];
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     //rawData = await formulaInterface.getAllIngredientNamesCodesAsync(sessionId);
     console.log("loadCodeNameArray was called");
     console.log(rawData.data);
@@ -488,7 +488,7 @@ class AdminIngredients extends React.PureComponent {
   }
 
   async loadAllIngredients(){
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     var rawData = await formulaInterface.getAllFormulasAsync(sessionId);
     if(rawData.length==0){
       return;

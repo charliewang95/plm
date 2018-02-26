@@ -35,7 +35,7 @@ var pickerStyle = {
 var sessionId = "";
 
 var isAdmin =  "";
-// JSON.parse(localStorage.getItem('user')).isAdmin;
+// JSON.parse(sessionStorage.getItem('user')).isAdmin;
 
 const Cell = (props)=>{
   if(props.column.name=="item" && props.row.model == 'ingredients'){
@@ -161,7 +161,7 @@ class Log extends React.PureComponent {
   }
 
   componentWillMount(){
-    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
   }
 
 
@@ -171,7 +171,7 @@ class Log extends React.PureComponent {
 
   async loadLogInfo(){
       var rawData = [];
-      sessionId = JSON.parse(localStorage.getItem('user'))._id;
+      sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
       rawData = await logActions.getAllLogsAsync(sessionId);
       var tempDates = [];
        for (var i = 0; i<rawData.length; i++) {

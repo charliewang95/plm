@@ -11,12 +11,10 @@ var config = {
 var UserSchema = new Schema({
 	email: {
 	    type: String,
-	    //required: true
 	},
 	username: {
 		type: String,
 		trim: true,
-		unique: true,
 		required: true
 	},
 	password: {
@@ -31,6 +29,10 @@ var UserSchema = new Schema({
 	    type: Boolean,
 	    required: true
 	},
+	fromDukeOAuth: {
+		type: Boolean,
+		require: true
+	},
 	loggedIn: {
 	    type: Boolean,
         required: true
@@ -41,6 +43,8 @@ var UserSchema = new Schema({
 	//providerData: {},
 	//todos: {}//we will use this in the next tutorial to store TODOs
 });
+
+UserSchema.index({ username: 1, fromDukeOAuth: 1}, { unique: true });
 
 UserSchema.pre('save', 
 	function(next) {
