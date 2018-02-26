@@ -11,6 +11,10 @@ import {
   EditingState,
 } from '@devexpress/dx-react-grid';
 import {
+  PagingState,
+  IntegratedPaging,
+} from '@devexpress/dx-react-grid';
+import {
   Grid,
   Table,
   TableHeaderRow,
@@ -18,6 +22,7 @@ import {
   TableFilterRow,
   TableEditColumn,
   TableColumnReordering,
+  PagingPanel,
 } from '@devexpress/dx-react-grid-material-ui';
 
 import {EditButton,CommitButton,CancelButton} from '../vendors/Buttons.js';
@@ -111,6 +116,9 @@ class Log extends React.PureComponent {
       dates: [],
       startDate: new Date(2018, 0, 1, 0, 0, 0, 0),
       endDate: new Date(2018, 11, 31, 23, 59, 59, 0),
+      currentPage: 0,
+      pageSize: 10,
+      pageSizes: [10, 25, 50],
       //filters: [{ columnName: 'date', value: this.startDate }],
       //editingRowIds: [],
       //rowChanges: {},
@@ -118,6 +126,8 @@ class Log extends React.PureComponent {
 
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
+    this.changeCurrentPage = currentPage => this.setState({ currentPage });
+    this.changePageSize = pageSize => this.setState({ pageSize });
     //this.changeFilters = filters => this.setState({ filters });
    }
 
@@ -200,7 +210,8 @@ class Log extends React.PureComponent {
 
   render() {
     // const {classes} = this.props;
-    const { integratedFilteringColumnExtensions, rows,columns, dates, startDate, endDate, filters, unchangedRows} = this.state;
+    const { integratedFilteringColumnExtensions, rows,columns, dates, startDate, endDate, filters, unchangedRows, 
+      pageSize, pageSizes, currentPage} = this.state;
 
     return (
       <Paper>
@@ -226,12 +237,21 @@ class Log extends React.PureComponent {
           columns={columns}
           getRowId={getRowId}
         >
-            <FilteringState defaultFilters={[]} />
-            <IntegratedFiltering />
-
+          <FilteringState defaultFilters={[]} />
+          <IntegratedFiltering />
+          <PagingState
+            currentPage={currentPage}
+            onCurrentPageChange={this.changeCurrentPage}
+            pageSize={pageSize}
+            onPageSizeChange={this.changePageSize}
+          />
+          <IntegratedPaging />
           <Table cellComponent={Cell}/>
           <TableHeaderRow />
           <TableFilterRow />
+          <PagingPanel
+            pageSizes={pageSizes}
+          />
         </Grid>
 
       </Paper>

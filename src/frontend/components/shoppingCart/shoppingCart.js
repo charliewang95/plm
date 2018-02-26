@@ -124,26 +124,25 @@ class ShoppingCart extends React.Component {
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
 
-    this.commitChanges =  async ({ changed, deleted }) => {
+    this.commitChanges =  ({ changed, deleted }) => {
       let { rows } = this.state;
       var temp = this;
 
       if(changed){
           for(var i = 0; i < rows.length;i++){
-            console.log( " Changed Id " + JSON.stringify(changed[rows[i].id]));
             if(changed[rows[i].id]){
               if(changed[rows[i].id].packageNum){
                 // Validate
                 const re =/^[1-9]\d*$/;
                 var enteredQuantity = Number(changed[rows[i].id].packageNum);
-                var vendor = rows[i].selectedVendorName ? rows[i].selectedVendorName : rows[i].vendorOptions[0].price;
-                var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].vendorName;
+                var vendor = rows[i].selectedVendorName ? rows[i].selectedVendorName : rows[i].vendorOptions[0].vendorName;
+                var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].price;
                 if (!re.test(enteredQuantity)) {
                   alert(" Number of packages must be a positive integer");
                 }else{
                   // TODO: Update back end
-                  console.log(rows[i]);
-                  await orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
+                  rows[i].packageNum = changed[rows[i].id].packageNum;
+                  orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
                         vendor, enteredQuantity ,price,sessionId,function(res){
                           // TODO: Display error on exceeding storage capacity
                           // if(res.status==)
@@ -152,7 +151,7 @@ class ShoppingCart extends React.Component {
                           console.log('called');
                           if (res.status != 400 && res.status != 500 ){
 //                            rows[i].packageNum = enteredQuantity;
-                              window.location.reload();
+                              //window.location.reload();
                           }
 
                         });
@@ -161,14 +160,27 @@ class ShoppingCart extends React.Component {
 
                if (changed[rows[i].id].vendors){
                  // TODO: Update Back End -- No error status so no callback??
-                 await orderActions.updateOrder(userId,rows[i].ingredientId,rows[i].ingredientName,
+                 console.log("changed vendors");
+                 console.log(rows[i]);
+                 rows[i].vendors = changed[rows[i].id].vendors.label;
+                 rows[i].vendorName = changed[rows[i].id].vendors.vendorName;
+                 rows[i].selectedVendorId =changed[rows[i].id].vendors.vendorId;
+                 console.log("selected vendor: ");
+                 console.log(changed[rows[i].id].vendors.vendorName);
+                 console.log(changed[rows[i].id].vendors.price);
+                 orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
                        changed[rows[i].id].vendors.vendorName,rows[i].packageNum,
-                       changed[rows[i].id].vendors.price,sessionId);
+                       changed[rows[i].id].vendors.price,sessionId, function(res){
+                        console.log(res); 
+                         if (res.status != 400 && res.status != 500 ){
+//                            rows[i].packageNum = enteredQuantity;
+                              console.log(res);
+                          }
+                       });
 
                  // update table
-                  rows[i].vendors = changed[rows[i].id].vendors.label;
+                  
                   // update selectedVendor in row
-                  rows[i].selectedVendorId =changed[rows[i].id].vendors.vendorId;
                   // TODO: Add SnackBar
               }
             }
