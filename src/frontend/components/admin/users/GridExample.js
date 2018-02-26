@@ -57,15 +57,8 @@ const getRowId = row => row.id;
 const BooleanFormatter = ({ value }) =>
   <Chip label={value ? 'Yes' : 'No'} />;
 const BooleanEditor = ({ value, onValueChange }) => (
-  <Select
-    input={<Input />}
-    value={value ? 'Yes' : 'No'}
-    onChange={event => onValueChange(event.target.value === 'Yes')}
-    style={{ width: '100%', marginTop: '4px' }}
-  >
-    <MenuItem value="Yes">Yes</MenuItem>
-    <MenuItem value="No">No</MenuItem>
-  </Select>
+  <Chip label={value ? 'Yes' : 'No'} />
+  
 );
 const BooleanTypeProvider = props => (
   <DataTypeProvider
