@@ -95,6 +95,21 @@ const PrevilegeTypeProvider = props => (
     {...props}
   />
 );
+//username
+const UsernameFormatter = ({ value }) =>
+  <label>{value}</label>
+
+const UsernameEditor = ({ value, onValueChange }) => (
+  <label>{value}</label>
+);
+
+const UsernameTypeProvider = props => (
+  <DataTypeProvider
+    formatterComponent={UsernameFormatter}
+    editorComponent={UsernameEditor}
+    {...props}
+  />
+);
 
 const PrevilegeFilterCellBase = ({ filter, onFilter, classes }) => (
   <TableCell className={classes.cell} >
@@ -170,8 +185,9 @@ export default class SampleTable extends React.PureComponent {
       		],
           rows: [],
           //for filtering
-          booleanColumns: ['dukeUser'],
+          dukeUserColumns: ['dukeUser'],
       		privilegeColumns: ['privilege'],
+          usernameColumns: ['username'],
           //for sorting
       		sorting: [{ columnName: 'username', direction: 'asc' }],
           //for editing
@@ -349,7 +365,7 @@ export default class SampleTable extends React.PureComponent {
 
 	render() {
 		const { columns, sorting, editingColumnExtensions, 
-      privilegeColumns, booleanColumns,
+      privilegeColumns, dukeUserColumns, usernameColumns,
       pageSize, pageSizes, currentPage, } = this.state;
     const { rows } = this.props;
 		return(
@@ -367,11 +383,14 @@ export default class SampleTable extends React.PureComponent {
 				/>
 				<IntegratedSorting />
         <DukeUserTypeProvider
-          for={booleanColumns}
+          for={dukeUserColumns}
         />
 				<PrevilegeTypeProvider
 					for={privilegeColumns}
 				/>
+        <UsernameTypeProvider
+          for={usernameColumns}
+        />
 				<EditingState
             		columnExtensions={editingColumnExtensions}
             		onCommitChanges={this.commitChanges}
