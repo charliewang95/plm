@@ -52,27 +52,11 @@ exports.validate = function(model, item, res, next, callback) {
 };
 
 var validateStorage = function(item, res, next, callback) { //check if capacity below inventory quantity
-    var temperatureZone = item.temperatureZone;
-    var temperatureZoneUsed, capacity, space = 0;
-    Inventory.find({temperatureZone: temperatureZone}, function(err1, items){
-        if (err1) return next(err1);
-        else if (!item) {
-            res.status(400);
-            res.send("Ingredient doesn't exist");
-        }
-        else {
-            for (var i = 0; i < items.length; i++) {
-                var inventory = items[i];
-                if (inventory.packageName != 'truckload' && inventory.packageName != 'railcar')
-                    space+=inventory.space;
-            }
-            if (item.capacity < space) {
-                res.status(400);
-                res.send("Capacity -- "+item.capacity+" sqft will be exceeded by current space "+ space +" sqft for "+temperatureZone);
-            }
-            else callback(err1, true);
-        }
-    });
+    var capacity = item.capacity;
+    if (capacity < item.currentOccupiedSpace)
+        return res.status(400).send("Action denied. Capacity cannot be below current storage.");
+    else
+        callback(false, true);
 };
 
 var validateCart = function(item, res, next, callback) { //check if checked out items exceed inventory quantity
