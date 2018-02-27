@@ -173,6 +173,14 @@ The system is being developed at this GitHub repo: <https://github.com/charliewa
 
 * Additionally, 2 scripts are provided to ease shutting down and starting the server. Running `./startNonStoppingServer.sh` will start the server that will not be shut down when the terminal is closed; Running `./shutdownServer.sh` shuts down the server by killing all processes of the system
 
+## Troubleshooting
 
+* If when starting the server you get the following error
+
+	```
+	Module not found: Can't resolve 'react-transition-group/CSSTransition' in '/home/plm/node_modules/material-ui/transitions'
+	```
+	
+	Please try running the this command `sudo npm install react-transition-group@^1`. This will resolve the error. (from https://github.com/reactjs/react-transition-group/issues/36) 
 
 
