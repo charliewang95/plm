@@ -261,6 +261,7 @@ class Orders extends React.PureComponent{
         					options={ingredient_options}
         					onChange={(option) => this.handleIngredientChange(option)}
                   value = {ingredientId}
+                  placeholder="Type to select an ingredient..."
                 />
               </div>
             <div style = {styles.buttons}>
@@ -295,6 +296,7 @@ class Orders extends React.PureComponent{
                   options={vendor_options}
                   onChange={(option) => this.handleVendorChange(option)}
                   value = {vendorId}
+                  placeholder="Type to select a Venodr..."
                 />
               </div>
               <br></br>
