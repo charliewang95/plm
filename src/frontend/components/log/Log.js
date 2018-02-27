@@ -43,11 +43,11 @@ var isAdmin =  "";
 // JSON.parse(sessionStorage.getItem('user')).isAdmin;
 
 const Cell = (props)=>{
-  if(props.column.name=="item" && props.row.model == 'ingredients'){
+  if(props.column.name=="item" && props.row.model == 'ingredients' && props.row.action!='delete'){
     return <Table.Cell {...props}>
     <Link to={{pathname: '/ingredient-details', state:{ingredientId: props.row.itemId, fromLogs: true} }}>{props.row.item}</Link>
     </Table.Cell>
-  }else if(props.column.name=="item" && props.row.model == 'formulas'){
+  }else if(props.column.name=="item" && props.row.model == 'formulas' && props.row.action!='delete'){
     return <Table.Cell {...props}>
     <Link to={{pathname: '/formula-details', state:{formulaId: props.row.itemId, fromLogs: true} }}>{props.row.item}</Link>
     </Table.Cell>

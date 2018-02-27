@@ -255,6 +255,8 @@ handleMouseDownPassword(event){
                    primary="true" type="Submit" >LOGIN</RaisedButton>
                   
                   <RaisedButton raised
+                  style={{marginLeft: 10}}
+                  color = "primary"
                                 href = "https://oauth.oit.duke.edu/oauth/authorize.php?
                                 response_type=token&
                                 redirect_uri=https%3A%2F%2Flocalhost&

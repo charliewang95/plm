@@ -56,6 +56,7 @@ var sessionId = "";
 
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 var isAdmin = "";
+var isManager = "";
 
 const styles = theme => ({
   lookupEditCell: {
@@ -506,6 +507,7 @@ class AdminIngredients extends React.PureComponent {
     this.loadCodeNameArray();
     this.loadAllIngredients();
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
   }
 
   componentDidMount(){
@@ -781,10 +783,10 @@ class AdminIngredients extends React.PureComponent {
       </div>
     }
 
-      <Button raised color="primary"
+      {(isAdmin || isManager) && <Button raised color="primary"
       component={Link} to="/orders"
       style = {{marginLeft: 380, marginBottom: 30}}
-      > ORDER INGREDIENTS</Button>
+      > ORDER INGREDIENTS</Button>}
 
     </div>
     );
