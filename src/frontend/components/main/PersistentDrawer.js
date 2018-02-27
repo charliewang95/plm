@@ -205,7 +205,7 @@ class PersistentDrawer extends React.Component {
           <Divider />
           {isAdmin && <List className={classes.list}>{UserListItems}</List> }
           <Divider />
-          <MainList> </MainList>
+          <MainList > </MainList>
         </div>
       </Drawer>
     );

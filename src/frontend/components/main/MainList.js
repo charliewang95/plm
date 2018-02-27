@@ -31,6 +31,12 @@ const styles = theme => ({
 });
 
 function ListItemComposition(props) {
+
+  const user = JSON.parse(sessionStorage.getItem('user'));
+  console.log(typeof user);
+  const isAdmin = (user == null) ? false : user["isAdmin"];
+  const isManager = (user == null) ? false : user["isManager"];
+
   const { classes } = props;
 
   return (
@@ -57,12 +63,14 @@ function ListItemComposition(props) {
           <ListItemText classes={{ primary: classes.primary }} inset primary="Ingredients" />
         </MenuItem>
 
+        { (isManager || isAdmin) &&
         <MenuItem className={classes.menuItem} component={Link} to="/cart" button>
           <ListItemIcon className={classes.icon}>
             <ShoppingCartIcon />
           </ListItemIcon>
           <ListItemText classes={{ primary: classes.primary }} inset primary="Cart" />
         </MenuItem>
+        }
 
         <MenuItem className={classes.menuItem} component={Link} to="/formula" button>
           <ListItemIcon className={classes.icon}>
@@ -92,18 +100,15 @@ function ListItemComposition(props) {
           <ListItemText classes={{ primary: classes.primary }} inset primary="Production Report" />
         </MenuItem>
 
+        {(isManager || isAdmin) &&
         <MenuItem className={classes.menuItem} component={Link} to="/log" button>
           <ListItemIcon className={classes.icon}>
             <BugReportIcon />
           </ListItemIcon>
           <ListItemText classes={{ primary: classes.primary }} inset primary="Logs" />
         </MenuItem>
-
+        }
       </MenuList>
-
-
-
-
     </div>
   );
 }
