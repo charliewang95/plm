@@ -22,12 +22,15 @@ exports.loggingInViaOAuth = function(req, res, next) {
             utils.bypassAndDo(req, res, next, User, 'create', null);
             }
             else {
+
         	   user.update(
                     {
                         loggedIn: true,
         				email: req.body.email
                     }, 
                     function(err, obj){
+                        console.log("***************");
+                        console.log(user);
         				res.json(user);
         	        }
                 )

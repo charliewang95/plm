@@ -3,6 +3,7 @@ var Vendor = require('mongoose').model('Vendor');
 var User = require('mongoose').model('User');
 var Storage = require('mongoose').model('Storage');
 var utils = require('../utils/utils');
+var logger = require('../utils/logger');
 var fs = require('fs');
 var Converter = require("csvtojson").Converter;
 
@@ -17,13 +18,16 @@ exports.bulkImportIngredients = function(req, res, next, contents, callback) {
     })
     .on('done',()=>{
 //          console.log(jsonArray);
-        validateBulkImport(req, res, next, jsonArray, 0, 0, 0, 0, function(){
-            //do bulk import
-            doBulkImport(req, res, next, jsonArray, 0, function(){
-                res.send("Bulk import success!");
-                callback();
-            });
-        })
+        User.findById(req.params.userId, function(err, user){
+            validateBulkImport(req, res, next, jsonArray, 0, 0, 0, 0, function(){
+                //do bulk import
+                doBulkImport(user.username, req, res, next, jsonArray, 0, function(){
+                    res.send("Bulk import success!");
+                    callback();
+                });
+            })
+        });
+
     })
 };
 
@@ -234,7 +238,7 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
     }
 };
 
-var doBulkImport = function(req, res, next, array, i, callback){ // TODO: update inventory and storage
+var doBulkImport = function(username, req, res, next, array, i, callback){ // TODO: update inventory and storage
     if (i == array.length)
         callback();
     else {
@@ -287,7 +291,8 @@ var doBulkImport = function(req, res, next, array, i, callback){ // TODO: update
                             var newNumUnit = Number(obj.numUnit) + Number(amount);
                             obj.update({vendors: vendors, space: newSpace, numUnit:newNumUnit}, function(err, obj3){
                                 if (err) return next(err);
-                                doBulkImport(req, res, next, array, i+1, callback);
+                                logger.log(username, 'update', obj, Ingredient);
+                                doBulkImport(username, req, res, next, array, i+1, callback);
                             })
                         });
                     }
@@ -317,7 +322,8 @@ var doBulkImport = function(req, res, next, array, i, callback){ // TODO: update
 
                             newIngredient.save(function(err){
                                 if (err) return next(err);
-                                doBulkImport(req, res, next, array, i+1, callback);
+                                logger.log(username, 'create', newIngredient, Ingredient);
+                                doBulkImport(username, req, res, next, array, i+1, callback);
                             });
                         });
                     } else {
@@ -334,7 +340,8 @@ var doBulkImport = function(req, res, next, array, i, callback){ // TODO: update
 
                         newIngredient.save(function(err){
                             if (err) return next(err);
-                            doBulkImport(req, res, next, array, i+1, callback);
+                            logger.log(username, 'create', newIngredient, Ingredient);
+                            doBulkImport(username, req, res, next, array, i+1, callback);
                         });
                     }
                 }

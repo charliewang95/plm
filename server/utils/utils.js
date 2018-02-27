@@ -78,7 +78,6 @@ var list = function(req, res, next, model, username) {
 			return next(err);
 		}
 		else {
-		    console.log(items);
 			res.json(items);
 		}
 	});
@@ -87,7 +86,6 @@ var list = function(req, res, next, model, username) {
 var listPartial = function(req, res, next, model, itemId, username) {
 	model.find({userId: itemId}, function(err, items) {
 
-		console.log(itemId);
 		if (err) {
 			return next(err);
 		}
@@ -99,7 +97,6 @@ var listPartial = function(req, res, next, model, itemId, username) {
 
 var create = function(req, res, next, model, username) {
 	var item = new model(req.body);
-	console.log(req.body);
 	var modifiedItem;
 	console.log("creating, modifying");
     modifierCreateUpdate.modify('create', model, item, '', res, next, function(err, obj){
@@ -307,7 +304,7 @@ var checkoutOrders = function(req, res, next, model, userId, username) {
             validateOrders(items, res, next, function(wSpace, rSpace, fSpace){
                 console.log("Orders validated.");
                 res.send(items);
-                postProcessor.process(model, items, '', res, next);
+                deleteProcessor.process(model, items, '', res, next);
                 logger.log(username, 'checkout', items[0], model);
                 updateStorage(wSpace, rSpace, fSpace);
             });
@@ -370,10 +367,7 @@ var validateOrdersHelper = function(i, items, res, next, wSpace, rSpace, fSpace,
                 if (temperatureZone == 'warehouse' && obj.packageName != 'railcar' && obj.packageName != 'truckload') wSpace += space;
                 else if (temperatureZone == 'refrigerator' && obj.packageName != 'railcar' && obj.packageName != 'truckload') rSpace += space;
                 else if (temperatureZone == 'freezer' && obj.packageName != 'railcar' && obj.packageName != 'truckload') fSpace += space;
-                else {
-                    res.status(400).send('Temperature zone '+temperatureZone+' does not exist.');
-                    return;
-                }
+                console.log('***********'+space);
                 validateOrdersHelper(i+1, items, res, next, wSpace, rSpace, fSpace, callback);
             }
         });

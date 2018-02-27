@@ -27,29 +27,7 @@ exports.process = function(model, item, itemId, res, next) {
 //    }
 };
 
-var processOrder = function(items, res, next) {
-    processOrderHelper(0, items, res, next);
-};
 
-var processOrderHelper = function(i, items, res, next) {
-    if (i == items.length) {
-        return;
-    } else {
-        var order = items[i];
-        Ingredient.findOne({nameUnique: order.ingredientName.toLowerCase()}, function(err, ingredient){
-            var newSpace = ingredient.space + order.space;
-            var numUnit = ingredient.numUnit + order.numUnit;
-            var moneySpent = ingredient.moneySpent + order.totalPrice;
-            ingredient.update({numUnit: numUnit, space: newSpace, moneySpent: moneySpent}, function(err, obj){
-                if (err) return next(err);
-                order.remove(function(err){
-                    if (err) return next(err);
-                    else processOrderHelper(i+1, items, res, next);
-                });
-            })
-        })
-    }
-};
 
 var processIngredient = function(item, itemId, res, next) {
     var oldItem = item;
