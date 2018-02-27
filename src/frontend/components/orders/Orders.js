@@ -126,6 +126,7 @@ class Orders extends React.PureComponent{
     }
 
     console.log("Vendors " + JSON.stringify(ingredientDetails.vendors));
+    ingredientDetails.vendors.sort(function(a, b) {return a.price - b.price });
 
     var parsedVendorOptions = [...ingredientDetails.vendors.map((row,index)=> ({
         value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
@@ -135,6 +136,9 @@ class Orders extends React.PureComponent{
     ];
     console.log("Vendor options " + JSON.stringify(parsedVendorOptions));
     this.setState({vendor_options:parsedVendorOptions});
+    this.setState({vendorId:parsedVendorOptions[0].value});
+    this.setState({price: parsedVendorOptions[0].price});
+    this.setState({vendorName: parsedVendorOptions[0].vendorName});
   }
 
 // event handler when a vendor is selected from the drop down
@@ -252,7 +256,7 @@ class Orders extends React.PureComponent{
     return (
         <div>
          <p><font size="6">Place an Order</font></p>
-            <form onSubmit={this.onFormSubmit} >
+            <form style={{width:400}} onSubmit={this.onFormSubmit} >
               <div style = {styles.buttons}>
                  <p><font size="3">Ingredient Name:</font></p>
                 <Select
@@ -296,7 +300,7 @@ class Orders extends React.PureComponent{
                   options={vendor_options}
                   onChange={(option) => this.handleVendorChange(option)}
                   value = {vendorId}
-                  placeholder="Type to select a Venodr..."
+                  placeholder="Type to select a Vendor..."
                 />
               </div>
               <br></br>

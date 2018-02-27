@@ -195,7 +195,11 @@ class ShoppingCart extends React.Component {
 
     this.deleteRows = () => {
       const rows = this.state.rows.slice();
+<<<<<<< HEAD
       this.state.deletingRows.forEach(async (rowId) => {
+=======
+      this.state.deletingRows.forEach((rowId) => {
+>>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
         const index = rows.findIndex(row => row.id === rowId);
         if (index > -1) {
           var orderId = rows[index]._id;
@@ -219,7 +223,11 @@ class ShoppingCart extends React.Component {
       await orderActions.checkoutOrder(sessionId, function(res){
         if (res.status == 400) {
             if (!alert(res.data)) {
+<<<<<<< HEAD
                 window.location.reload();
+=======
+                //window.location.reload();
+>>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
                 //temp.setState({rows:rows});
             }
         } else {

@@ -122,14 +122,22 @@ Command.propTypes = {
 const AddToProdButton = ({selectedFormula, onExecute}) => (
   // formulaSentToProduction = selectedFormula,
   // alert(formulaSentToProduction),
+<<<<<<< HEAD
    <div>
     <Button
+=======
+    <Button
+      style={{width:50}}
+>>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
       color="primary"
       title="Send formula to production"
       component={Link} to={{pathname: '/production-review', state:{selectedFormula: selectedFormula} }}
     > <AddShoppingCartIcon title="Send formula to production"/>
     </Button>
+<<<<<<< HEAD
    </div>
+=======
+>>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
 );
 AddToProdButton.propTypes = {
   onExecute: PropTypes.func.isRequired,
@@ -147,8 +155,13 @@ var isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
   }else if (props.column.key=='sendToProd' && (isAdmin||isManager)){
     // <Link to={{pathname: '/product-review', state:{selectedFormula: props.row} }}}
     console.log('send to prod');
+<<<<<<< HEAD
     return <Table.Cell {...props} style={{width:100}}>
             <AddToProdButton  selectedFormula = {props.row}/>
+=======
+    return <Table.Cell {...props}>
+            <AddToProdButton selectedFormula = {props.row}/>
+>>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
             </Table.Cell>
   }
   else return <Table.Cell {...props} />;

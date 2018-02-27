@@ -42,7 +42,10 @@ class ProductionReview extends React.Component {
   constructor(props) {
     super(props);
     // var dummyObject = new Object();
+<<<<<<< HEAD
     // const selectedFormula = (props.location.state.selectedFormula)?(props.location.state.selectedFormula):dummyObject;
+=======
+>>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
     this.state = {
       columns:[],
       formulaColumns: [
@@ -52,9 +55,14 @@ class ProductionReview extends React.Component {
         { name: 'ingredients', title: 'Ingredient / Quantity' },
         {key: 'sendToProd', title:''},
       ],
+<<<<<<< HEAD
         formulaRows:(props.location.state.selectedFormula) ? [props.location.state.selectedFormula] : [],
         open : true,
 
+=======
+        formulaRows:(props.location.state) ? [props.location.state.selectedFormula] : [],
+        open : true,
+>>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
         columns:[
           {name: "ingredientName" , title: "Ingredient Name " },
           {name: "totalAmountNeeded" , title: "Amount Needed"},
@@ -62,7 +70,11 @@ class ProductionReview extends React.Component {
           {name: "delta" , title:'Additional Required Amount'},
         ],
         rows:[],
+<<<<<<< HEAD
         addedQuantity:'',
+=======
+        addedQuantity:(props.location.state) ? (props.location.state.selectedFormula.unitsProvided) : '',
+>>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
         // needToOrderIngredients:false,
         ingredientsToOrder:[],
     };
@@ -206,6 +218,10 @@ class ProductionReview extends React.Component {
     const {formulaRows,rows,columns,formulaColumns, } = this.state;
     return (
       <div>
+<<<<<<< HEAD
+=======
+      <p><font size="6">Production Review</font></p>
+>>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
       <Paper>
         <Grid
           allowColumnResizing = {true}
@@ -267,7 +283,11 @@ class ProductionReview extends React.Component {
           </Dialog>
       </Paper>
       <div style={styles.buttons}>
+<<<<<<< HEAD
         {(this.state.ingredientsToOrder.length!=0) && <p>You do not have enough ingredients. Order the difference?</p>}
+=======
+        {(this.state.ingredientsToOrder.length!=0) && <p><font size="5">You do not have enough ingredients. Order the difference?</font></p>}
+>>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
         {(this.state.ingredientsToOrder.length!=0) &&
           <Tooltip id="tooltip-bottom" title="Ingredients with additional amount > 0 added to cart " placement="bottom">
             <RaisedButton raised
@@ -291,8 +311,14 @@ class ProductionReview extends React.Component {
             </Tooltip>}
 
         <RaisedButton color="default"
+<<<<<<< HEAD
           component={Link} to='/formula'
           style = {{marginTop: 5, marginLeft: 5}}
+=======
+        raised
+          component={Link} to='/formula'
+          style = {{marginLeft: 10}}
+>>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
           > BACK </RaisedButton>
      </div>
    </div>
