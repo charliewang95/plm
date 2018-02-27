@@ -17,7 +17,7 @@ exports.bulkImportIngredients = function(req, res, next, contents, callback) {
        jsonArray.push(jsonObj);
     })
     .on('done',()=>{
-//          console.log(jsonArray);
+          console.log(jsonArray);
         User.findById(req.params.userId, function(err, user){
             validateBulkImport(req, res, next, jsonArray, 0, 0, 0, 0, function(){
                 //do bulk import

@@ -38,6 +38,8 @@ var processIngredient = function(item, itemId, res, next) {
         var newSpace = newItem.space;
         var newTemperatureZone = newItem.temperatureZone;
         if (oldTemperatureZone == newTemperatureZone) {
+            console.log("()()()()()"+newSpace);
+            console.log("<><><><><>"+oldSpace);
             Storage.findOne({temperatureZone: newTemperatureZone}, function(err, storage){
                 var capacity = storage.capacity;
                 var occupied = storage.currentOccupiedSpace;
@@ -56,15 +58,15 @@ var processIngredient = function(item, itemId, res, next) {
                 var newEmpty = capacity - newOccupied;
                 storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
                     console.log(oldSpace+' '+newSpace);
+                    console.log(newOccupied+' '+newEmpty);
                     if (err) return next(err);
                     else {
-                        Storage.findOne({temperatureZone: newTemperatureZone}, function(err, storage2){
+                        Storage.findOne({temperatureZone: oldTemperatureZone}, function(err, storage2){
                             var capacity2 = storage2.capacity;
                             var occupied2 = storage2.currentOccupiedSpace;
                             var newOccupied2 = occupied2 - oldSpace;
                             var newEmpty2 = capacity2 - newOccupied2;
                             storage2.update({currentOccupiedSpace: newOccupied2, currentEmptySpace: newEmpty2}, function(err, obj){
-                                console.log(oldSpace2+' '+newSpace2);
                                 if (err) return next(err);
                             });
                         });
