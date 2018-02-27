@@ -189,7 +189,7 @@ class SelectVendors extends Component {
     console.log(price);
     const re = /^\d*\.?\d*$/;
       if ( index>=0 && (price==''|| (price>0 && re.test(price)))) {
-        this.state.vendorsArray[index].price = parseFloat(price);
+        this.state.vendorsArray[index].price = isNaN(parseFloat(price)) ? '' : parseFloat(price);
         this.setState({vendorsArray: this.state.vendorsArray});
         console.log("this is the price [updated]");
         console.log(this.state.vendorsArray);

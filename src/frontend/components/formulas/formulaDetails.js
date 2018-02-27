@@ -67,6 +67,7 @@ class FormulaDetails extends React.Component{
     this.computeIngredientsString = this.computeIngredientsString.bind(this);
     this.handleUnitsProvidedChange = this.handleUnitsProvidedChange.bind(this);
     this.isValid = this.isValid.bind(this);
+    this.loadFormula = this.loadFormula.bind(this);
 
     }
 
@@ -76,6 +77,39 @@ class FormulaDetails extends React.Component{
   }
 
   componentDidMount(){
+    if(this.props.location.state.fromLogs){
+      this.loadFormula();
+    }
+    this.computeIngredientsString();
+  }
+
+async loadFormula(){
+    var details = [];
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    userId = JSON.parse(sessionStorage.getItem('user'))._id;
+    // sessionId = '5a8b99a669b5a9637e9cc3bb';
+    // userId = '5a8b99a669b5a9637e9cc3bb';
+    details = await formulaActions.getFormulaAsync(this.props.location.state.formulaId, sessionId);
+
+    var formatIngredientsArray = new Array();
+      for (var j=0; j<details.ingredients.length; j++){
+        //var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].codeUnique);
+        var ingredientName = details.ingredients[j].ingredientName;
+        var quantity = details.ingredients[j].quantity;
+        var ingredientObject = new Object();
+        ingredientObject.ingredientName = ingredientName;
+        ingredientObject.quantity = quantity;
+        formatIngredientsArray.push(ingredientObject);
+      }
+
+    this.setState({
+      ingredientsArray: formatIngredientsArray,
+      ingredientId: this.props.location.state.ingredientId,
+      name:details.name,
+      description: details.description,
+      unitsProvided: details.unitsProvided,
+      ingredients: details.ingredients,
+    });
     this.computeIngredientsString();
   }
 
