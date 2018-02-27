@@ -126,6 +126,7 @@ class Orders extends React.PureComponent{
     }
 
     console.log("Vendors " + JSON.stringify(ingredientDetails.vendors));
+    ingredientDetails.vendors.sort(function(a, b) {return a.price - b.price });
 
     var parsedVendorOptions = [...ingredientDetails.vendors.map((row,index)=> ({
         value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
@@ -133,8 +134,9 @@ class Orders extends React.PureComponent{
         vendorName: row.vendorName,
       })),
     ];
-    console.log("Vendor options " + JSON.stringify(parsedVendorOptions));
-    this.setState({vendor_options:parsedVendorOptions});
+    this.setState({vendorId:parsedVendorOptions[0].value});
+    this.setState({price: parsedVendorOptions[0].price});
+    this.setState({vendorName: parsedVendorOptions[0].vendorName});
   }
 
 // event handler when a vendor is selected from the drop down
