@@ -413,19 +413,11 @@ class AdminIngredients extends React.PureComponent {
               rows[i].nativeUnit = changed[rows[i].id].nativeUnit;
             }
             if(changed[rows[i].id].numUnitPerPackage){
-<<<<<<< HEAD
-              const re = /^[0-9\b]+$/;
-              if(re.test(changed[rows[i].id].numUnitPerPackage)){
-                rows[i].numUnitPerPackage = changed[rows[i].id].numUnitPerPackage;
-              }else{
-                alert("Quantity must be a number!");
-=======
               const re = /^\d*\.?\d*$/;
               if(changed[rows[i].id].numUnitPerPackage>0 && re.test(changed[rows[i].id].numUnitPerPackage)){
                 rows[i].numUnitPerPackage = changed[rows[i].id].numUnitPerPackage;
               }else{
                 alert("Quantity must be a number greater than 0!");
->>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
               }
             }
             var vendors_string = "";

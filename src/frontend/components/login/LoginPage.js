@@ -259,11 +259,7 @@ handleMouseDownPassword(event){
                   color = "primary"
                                 href = "https://oauth.oit.duke.edu/oauth/authorize.php?
                                 response_type=token&
-<<<<<<< HEAD
                                 redirect_uri=https%3A%2F%2Freal-producers.colab.duke.edu&
-=======
-                                redirect_uri=https%3A%2F%2Flocalhost&
->>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
                                 scope=basic&
                                 state=1129&
                                 client_id=production-life-manager&

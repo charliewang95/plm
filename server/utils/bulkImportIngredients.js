@@ -262,10 +262,6 @@ var doBulkImport = function(username, req, res, next, array, i, callback){ // TO
             return;
         }
         //console.log("processing "+ingredientName);
-<<<<<<< HEAD
-
-=======
->>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
         Ingredient.findOne({nameUnique: ingredientName.toLowerCase()}, function(err, obj){
             Ingredient.getPackageSpace(packageName, function(singleSpace){
                 var space = singleSpace*Math.ceil(1.0*amount/numUnitPerPackage);
