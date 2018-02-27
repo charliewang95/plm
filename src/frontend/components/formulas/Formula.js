@@ -137,11 +137,13 @@ AddToProdButton.propTypes = {
 const Cell = (props) => {
 //  console.log(" CELL props value: ");
 //  console.log(props);
+isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
   if(props.column.name=='name'){
     return <Table.Cell {...props}>
     <Link to={{pathname: '/formula-details', state:{details: props.row} }}>{props.row.name}</Link>
     </Table.Cell>
-  }else if (props.column.key=='sendToProd'){
+  }else if (props.column.key=='sendToProd' && (isAdmin||isManager)){
     // <Link to={{pathname: '/product-review', state:{selectedFormula: props.row} }}}
     console.log('send to prod');
     return <Table.Cell {...props}>
@@ -189,9 +191,15 @@ class Formula extends React.PureComponent {
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
 
-    this.commitChanges = async ({ deleted }) => {
+    this.commitChanges = ({ deleted }) => {
       let { rows } = this.state;
       this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
+     // if (deleted) {
+     //  const deletedSet = new Set(deleted);
+     //  rows = rows.filter(row => !deletedSet.has(row.id));
+     // }
+     // this.setState({ rows });
+
     };
 
     this.cancelDelete = () => this.setState({ deletingRows: [] });
@@ -199,7 +207,7 @@ class Formula extends React.PureComponent {
     this.deleteRows = () => {
       const rows = this.state.rows.slice();
 
-      this.state.deletingRows.forEach(async (rowId) => {
+      this.state.deletingRows.forEach((rowId) => {
         const index = rows.findIndex(row => row.id === rowId);
         if (index > -1) {
           // This line removes the data from the rows
@@ -207,7 +215,7 @@ class Formula extends React.PureComponent {
 
           var formulaId = rows[index]._id;
 
-          await formulaActions.deleteFormula(formulaId, sessionId);
+          formulaActions.deleteFormula(formulaId, sessionId);
           
           console.log("delete");
           console.log(rows[index].name);
