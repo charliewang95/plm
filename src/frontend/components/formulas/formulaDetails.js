@@ -38,6 +38,7 @@ const styles = {
 
 var sessionId = "";
 var userId = "";
+var isAdmin = "";
 
 class FormulaDetails extends React.Component{
   constructor(props) {
@@ -77,6 +78,7 @@ class FormulaDetails extends React.Component{
   }
 
   componentDidMount(){
+    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
     if(this.props.location.state.fromLogs){
       this.loadFormula();
     }
@@ -144,9 +146,9 @@ async loadFormula(){
     for(var i =0; i < this.state.ingredientsArray.length; i++){
           var ingredient = this.state.ingredientsArray[i];
           //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
-          ingredients_string += ingredient.ingredientName + " / " + ingredient.quantity + ingredient.nativeUnit;
+          ingredients_string += ingredient.ingredientName + " / " + ingredient.quantity + " " + ingredient.nativeUnit;
           if(i!= (this.state.ingredientsArray.length - 1)){
-            ingredients_string+=', ';
+            ingredients_string+='\n';
           }
         }
     this.setState({ingredientsString: ingredients_string });
@@ -271,6 +273,7 @@ async loadFormula(){
                 margin="normal"
                 disabled = {this.state.isDisabled}
                 // style={styles.unitsProvided}
+                multiline
                 required
               />
             </FormGroup>
@@ -282,12 +285,14 @@ async loadFormula(){
               value={this.state.ingredientsString}
               margin="normal"
               disabled = {this.state.isDisabled}
+              multiline
               required
+              style={{lineHeight:1.5}}
             />}
             {(!this.state.isDisabled) && <SelectIngredients initialArray={this.state.ingredientsArray} handleChange={this.updateIngredients}/>}
             </FormGroup>
               <div style={styles.buttons}>
-                {(this.state.isDisabled) && <RaisedButton raised color = "secondary" onClick={()=>{this.setState({isDisabled:false});}} >EDIT</RaisedButton>}
+                {(this.state.isDisabled && isAdmin) && <RaisedButton raised color = "secondary" onClick={()=>{this.setState({isDisabled:false});}} >EDIT</RaisedButton>}
                 {(!this.state.isDisabled) && <RaisedButton raised
                           color="primary"
                           // className=classes.button
@@ -297,11 +302,11 @@ async loadFormula(){
                           > {(this.state.isCreateNew)? 'ADD' : 'SAVE'} </RaisedButton>}
 
                 {this.props.location.state.fromLogs?
-                  <RaisedButton color="default" component={Link} to='/log'
-                  style = {{marginTop: 5, marginLeft: 5}}> BACK </RaisedButton>:
-                  <RaisedButton color="default"
+                  <RaisedButton raised color="default" component={Link} to='/log'
+                  style = {{marginLeft: 10}}> BACK </RaisedButton>:
+                  <RaisedButton raised color="default"
                   component={Link} to='/formula'
-                  style = {{marginTop: 5, marginLeft: 5}}
+                  style = {{marginLeft: 10}}
                   > BACK </RaisedButton>
                 }
              </div>

@@ -304,7 +304,7 @@ class Orders extends React.PureComponent{
               <Divider></Divider>
               <p><font size="6">Total Quantity: {this.state.totalQuantity} {this.state.nativeUnit}</font></p>
               <p><font size="6">Total Floor Space: {this.state.totalFloorSpace} sqft</font></p>
-              <p><font size="6">Current Total: $ {this.state.total}</font></p>
+              <p><font size="6">Current Total: $ {this.state.total.toFixed(2)}</font></p>
               <br></br>
               <div style={styles.buttons}>
                   <RaisedButton raised
