@@ -158,17 +158,26 @@ var modifyVendor = function(action, item, itemId, res, next, callback) { //add u
 var modifyIngredient = function(action, item, itemId, res, next, callback) {
     var vendors = item.vendors;
     var ingredientName = item.name;
-    var str = JSON.stringify(item).slice(0,-1)+',"nameUnique":"'+ingredientName.toLowerCase()+'"}';
-    item = JSON.parse(str);
-    if (vendors == null || vendors.length == 0){
-        callback(0, item);
-    } else {
-        var newVendors = [];
-        helperIngredient(vendors, 0, res, next, newVendors, function(err, obj){
-            item.vendors = obj;
-            callback(0, item);
-        })
-    }
+    var packageName = item. packageName;
+//    Ingredient.getPackageSpace(packageName, function(singleSpace){
+//        if (singleSpace == -1) return res.status(400).send('Package name does\'t exist');
+//        else {
+//            console.log(Math.ceil(1.0 * item.numUnit / item.numUnitPerPackage));
+//            var newSpace = Math.ceil(1.0 * item.numUnit / item.numUnitPerPackage) * singleSpace;
+            var str = JSON.stringify(item).slice(0,-1)+',"nameUnique":"'+ingredientName.toLowerCase()+'"}';
+            item = JSON.parse(str);
+//            item.space = newSpace;
+            if (vendors == null || vendors.length == 0){
+                callback(0, item);
+            } else {
+                var newVendors = [];
+                helperIngredient(vendors, 0, res, next, newVendors, function(err, obj){
+                    item.vendors = obj;
+                    callback(0, item);
+                })
+            }
+//        }
+//    });
 };
 
 var helperIngredient = function(vendors, i, res, next, array, callback) {
@@ -204,11 +213,13 @@ var modifyFormula = function(action, item, itemId, res, next, callback) { //add 
         callback(0, item);
     } else {
         var newIngredients = [];
-//        helperFormula(ingredients, 0, res, next, newIngredients, function(err, obj){
-//            item.ingredients = obj;
-//            callback(0, item);
-//        })
-        callback(0, item);
+        console.log('************');
+        console.log(ingredients);
+        helperFormula(ingredients, 0, res, next, newIngredients, function(err, obj){
+            item.ingredients = obj;
+            callback(0, item);
+        })
+//        callback(0, item);
     }
 
 };
@@ -220,17 +231,17 @@ var helperFormula = function(ingredients, i, res, next, array, callback) {
         ingredient = ingredients[i];
 //        console.log(vendor);
         var newIngredient;
-        Ingredient.findOne({name: ingredient.ingredientName}, function(err, obj){
+        Ingredient.findOne({nameUnique: ingredient.ingredientName.toLowerCase()}, function(err, obj){
             if (err) next(err);
             else if (!obj) {
                 res.send('Ingredient '+ingredient.ingredientName+' does not exist.');
             }
             else {
 //                console.log(i);
-//                var str = JSON.stringify(ingredient).slice(0,-1)+',"ingredientId":"'+obj._id+'"}';
-//                newIngredient = JSON.parse(str);
-//                array.push(newIngredient);
-//                console.log(newIngredient);
+                var str = JSON.stringify(ingredient).slice(0,-1)+',"nativeUnit":"'+obj.nativeUnit+'"}';
+                newIngredient = JSON.parse(str);
+                array.push(newIngredient);
+                console.log(newIngredient);
                 helperFormula(ingredients, i+1, res, next, array, callback);
             }
         });

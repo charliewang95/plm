@@ -77,7 +77,7 @@ const AddButton = ({ onExecute }) => (
   <div style={{ textAlign: 'center' }}>
     <Button
       color="primary"
-      title="Create New Ingredient"
+      title="Create New Formula"
       component={Link} to={{pathname: '/formula-details', state:{isCreateNew: true} }}
     >
       New
@@ -121,14 +121,14 @@ Command.propTypes = {
 const AddToProdButton = ({selectedFormula, onExecute}) => (
   // formulaSentToProduction = selectedFormula,
   // alert(formulaSentToProduction),
-  // <div style={{ textAlign: 'center' }}>
+   <div>
     <Button
       color="primary"
       title="Send formula to production"
       component={Link} to={{pathname: '/production-review', state:{selectedFormula: selectedFormula} }}
     > <AddShoppingCartIcon title="Send formula to production"/>
     </Button>
-  // </div>
+   </div>
 );
 AddToProdButton.propTypes = {
   onExecute: PropTypes.func.isRequired,
@@ -148,7 +148,7 @@ const Cell = (props) => {
             <AddToProdButton  selectedFormula = {props.row}/>
             </Table.Cell>
   }
-  return <Table.Cell {...props} />;
+  else return <Table.Cell {...props} />;
 };
 
 Cell.propTypes = {
@@ -251,7 +251,7 @@ class Formula extends React.PureComponent {
 
         for(var j = 0; j < ingredientsArray.length;j++){
           ingredientsString+=ingredientsArray[j].ingredientName + " / " +
-                          ingredientsArray[j].quantity;
+                          ingredientsArray[j].quantity +' '+ingredientsArray[j].nativeUnit;
 
           if(j!= ingredientsArray.length -1){
             ingredientsString+=', ';
@@ -260,6 +260,7 @@ class Formula extends React.PureComponent {
         // NEEDS TO BE BEFORE
         rawData[i].ingredientsArray = rawData[i].ingredients;
         rawData[i].ingredients = ingredientsString;
+        rawData[i].formulaId = rawData[i]._id;
       }
 
         var processedData = [...rawData.map((row, index)=> ({

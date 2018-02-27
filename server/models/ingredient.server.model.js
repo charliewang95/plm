@@ -94,24 +94,24 @@ IngredientSchema.statics.getPackageSpace = function(packageName, callback) {
         callback(-1);
 };
 
-IngredientSchema.pre('save',
-	function(next) {
-	    if (this.moneySpent)
-	        this.moneySpent = this.moneySpent - this.moneySpent % 0.01;
-        if (this.moneyProd)
-	        this.moneyProd = this.moneyProd - this.moneyProd % 0.01;
-	    next();
-	}
-);
-
-IngredientSchema.pre('update',
-	function(next) {
-	    if (this._update.moneySpent)
-	        this._update.moneySpent = this._update.moneySpent - this._update.moneySpent % 0.01;
-        if (this._update.moneyProd)
-	        this._update.moneyProd = this._update.moneyProd - this._update.moneyProd % 0.01;
-	    next();
-	}
-);
+//IngredientSchema.pre('save',
+//	function(next) {
+//	    if (this.moneySpent)
+//	        this.moneySpent = this.moneySpent - this.moneySpent % 0.01;
+//        if (this.moneyProd)
+//	        this.moneyProd = this.moneyProd - this.moneyProd % 0.01;
+//	    next();
+//	}
+//);
+//
+//IngredientSchema.pre('update',
+//	function(next) {
+//	    if (this._update.moneySpent)
+//	        this._update.moneySpent = this._update.moneySpent - this._update.moneySpent % 0.01;
+//        if (this._update.moneyProd)
+//	        this._update.moneyProd = this._update.moneyProd - this._update.moneyProd % 0.01;
+//	    next();
+//	}
+//);
 
 mongoose.model('Ingredient', IngredientSchema);

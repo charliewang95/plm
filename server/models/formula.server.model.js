@@ -15,7 +15,12 @@ var IngredientQuantitySchema = new Schema({
     quantity: {
         type: Number,
         required: true
-    }
+    },
+    nativeUnit: {
+        type: String,
+        required: true
+    },
+
 });
 mongoose.model('IngredientQuantity', IngredientQuantitySchema);
 
@@ -50,21 +55,21 @@ var FormulaSchema = new Schema({
     ingredients : [IngredientQuantitySchema]
 });
 
-FormulaSchema.pre('save',
-	function(next) {
-	    if (this.totalCost)
-	        this.totalCost = this.totalCost - this.totalCost % 0.01;
-	    next();
-	}
-);
-
-FormulaSchema.pre('update',
-	function(next) {
-	    if (this._update.totalCost)
-	        this._update.totalCost = this._update.totalCost - this._update.totalCost % 0.01;
-	    next();
-	}
-);
+//FormulaSchema.pre('save',
+//	function(next) {
+//	    if (this.totalCost)
+//	        this.totalCost = this.totalCost - this.totalCost % 0.01;
+//	    next();
+//	}
+//);
+//
+//FormulaSchema.pre('update',
+//	function(next) {
+//	    if (this._update.totalCost)
+//	        this._update.totalCost = this._update.totalCost - this._update.totalCost % 0.01;
+//	    next();
+//	}
+//);
 
 
 mongoose.model('Formula', FormulaSchema);

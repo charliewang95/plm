@@ -175,22 +175,22 @@ var update = function(req, res, next, model, itemId, username) {
                 else if (valid) {
                     console.log("updating, validated");
                     console.log("updating, updating");
-                    model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
-                        if (err) {
-                            return next(err);
-                        }
-                        else if (obj2){
-                            console.log("updating, updated");
-                            logger.log(username, 'update', obj2, model);
-                            if (model == Storage) {
-                                postProcessor.process(model, obj, itemId, res, next);
-                            }
-                            res.json(obj2);
-                        } else {
-                            res.status(400);
-                            res.send("Object doesn't exist");
-                        }
-                    });
+                   model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
+                       if (err) {
+                           return next(err);
+                       }
+                       else if (obj2){
+                           console.log("updating, updated");
+                           logger.log(username, 'update', obj2, model);
+                           if (model == Storage || model == Ingredient) {
+                               postProcessor.process(model, obj, itemId, res, next);
+                           }
+                           res.json(obj2);
+                       } else {
+                           res.status(400);
+                           res.send("Object doesn't exist");
+                       }
+                   });
                 }
             });
         }
@@ -482,7 +482,7 @@ var updateIngredientHelper = function(req, res, next, multiplier, ingredients, n
         Ingredient.findOne({nameUnique: ingredientQuantity.ingredientName.toLowerCase()}, function(err, ingredient){
             var numUnit = ingredient.numUnit;
             var newNumUnit = numUnit - ingredientQuantity.quantity*multiplier;
-            var remainingPackages = Math.ceil(newNumUnit/ingredient.numUnitPerPackage);
+            var remainingPackages = Math.ceil(1.0*newNumUnit/ingredient.numUnitPerPackage);
 
             var moneyProd = ingredient.moneyProd;
             var moneySpent = ingredient.moneySpent;
@@ -498,7 +498,7 @@ var updateIngredientHelper = function(req, res, next, multiplier, ingredients, n
                             var capacity = storage.capacity;
                             var capacityEmpty = storage.currentEmptySpace;
                             var capacityOccupied = storage.currentOccupiedSpace;
-                            var subSpace = retSpace*Math.ceil(ingredientQuantity.quantity*multiplier/ingredient.numUnitPerPackage);
+                            var subSpace = retSpace*Math.ceil(1.0*ingredientQuantity.quantity*multiplier/ingredient.numUnitPerPackage);
                             storage.update({currentOccupiedSpace: capacityOccupied-subSpace, currentEmptySpace: capacity-capacityOccupied+subSpace}, function(err, obj){
                                 if (err) return next(err);
                                 else {
