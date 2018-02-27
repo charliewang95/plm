@@ -82,9 +82,7 @@ class FormulaDetails extends React.Component{
     if(this.props.location.state.fromLogs){
       this.loadFormula();
     }
-    else{
       this.computeIngredientsString();
-    }
   }
 
 async loadFormula(){
@@ -137,6 +135,7 @@ async loadFormula(){
 
   updateIngredients(updatedArray){
     this.setState({'ingredientsArray': updatedArray});
+    this.computeIngredientsString();
   }
 
   computeIngredientsString(){
