@@ -257,7 +257,7 @@ handleMouseDownPassword(event){
                   <RaisedButton raised
                                 href = "https://oauth.oit.duke.edu/oauth/authorize.php?
                                 response_type=token&
-                                redirect_uri=https%3A%2F%2Flocalhost&
+                                redirect_uri=https%3A%2F%2Freal-producers-test.colab.duke.edu&
                                 scope=basic&
                                 state=1129&
                                 client_id=production-life-manager&
