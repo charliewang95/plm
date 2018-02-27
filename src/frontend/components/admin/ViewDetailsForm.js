@@ -90,6 +90,7 @@ class AddIngredientForm extends React.Component{
     this.handleQuantityChange = this.handleQuantityChange.bind(this);
     this.loadIngredient = this.loadIngredient.bind(this);
     this.handleNumUnitChange = this.handleNumUnitChange.bind(this);
+    this.handlePackageChange = this.handlePackageChange.bind(this);
   }
 
   handleOnChange (option) {
@@ -269,12 +270,20 @@ class AddIngredientForm extends React.Component{
   handleNumUnitChange(event){
      const re = /^[0-9\b]+$/;
       if ( event.target.value == '' || (re.test(event.target.value))) {
-         var computeSpace = event.target.value * this.packageSpace(this.state.packageName);
+         var computeSpace = Math.ceil(event.target.value) * this.packageSpace(this.state.packageName);
          this.setState({numUnit: event.target.value});
          this.setState({space: computeSpace});
       }else{
         alert(" Quantity must be a number");
       }
+  }
+
+  handlePackageChange(event){
+    this.setState({packageName:event.target.value});
+    var computeSpace = Math.ceil(this.state.numUnit) * this.packageSpace(event.target.value);
+    console.log('computespace');
+    console.log(computeSpace);
+    this.setState({space: computeSpace});
   }
 
   packageSpace(input){
@@ -352,7 +361,7 @@ class AddIngredientForm extends React.Component{
               <InputLabel htmlFor="packageName">Package</InputLabel>
               <Select
                 value={this.state.packageName}
-                onChange={this.handleChange('packageName')}
+                onChange={this.handlePackageChange}
                 inputProps={{
                   name: 'Package',
                   id: 'packageName',
@@ -410,21 +419,14 @@ class AddIngredientForm extends React.Component{
                   disabled
                   id="moneySpent"
                   label="Total Money Spent"
-                  value={this.state.moneySpent}
+                  value={Math.round(this.state.moneySpent*100)/100}
                   margin="normal"
                 />
                 <TextField
                   disabled
                   id="moneyProd"
                   label="Money Spent in Production"
-                  value={this.state.moneyProd}
-                  margin="normal"
-                />
-                <TextField
-                  disabled
-                  id="price"
-                  label="Average Price in Stock"
-                  value={this.state.price}
+                  value={Math.round(this.state.moneyProd*100)/100}
                   margin="normal"
                 />
               </FormGroup></div>}
