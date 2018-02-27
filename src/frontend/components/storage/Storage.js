@@ -29,7 +29,7 @@ var sessionId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 var isAdmin =  "";
-// JSON.parse(localStorage.getItem('user')).isAdmin;
+// JSON.parse(sessionStorage.getItem('user')).isAdmin;
 
 
 const Cell = (props)=>{
@@ -84,7 +84,9 @@ class Storage extends React.PureComponent {
     this.state = {
       columns: [
         { name: 'temperatureZone', title: 'Temperature Zone' },
-        { name: 'capacity', title: 'Capacity (lbs)' },
+        { name: 'capacity', title: 'Capacity (sqft)' },
+        { name: 'currentOccupiedSpace', title: 'Space Occupied (sqft)' },
+        { name: 'currentEmptySpace', title: 'Space Left (sqft)' },
       ],
       rows:[],
       editingRowIds: [],
@@ -102,7 +104,7 @@ class Storage extends React.PureComponent {
     this.commitChanges = async ({ changed}) => {
 
       let { rows } = this.state;
-
+      var temp = this;
       console.log(JSON.stringify(rows));
       console.log("changed " + JSON.stringify(changed));
 
@@ -126,7 +128,7 @@ class Storage extends React.PureComponent {
             console.log("zone " + rows[i].temperatureZone);
 
             await storageActions.updateStorage(rows[i]._id,
-                rows[i].temperatureZone, Number(enteredQuantity), sessionId, function(res){
+                rows[i].temperatureZone, Number(enteredQuantity), rows[i].currentOccupiedSpace, sessionId, function(res){
                     if (res.status == 400) {
 
                     console.log(rows);
@@ -136,6 +138,7 @@ class Storage extends React.PureComponent {
                           console.log(oldCap);
                         }
                       }else{
+                        temp.loadStorageInfo();
                         alert(" Storage capacity updated successfully! ");
                       }
                   });
@@ -147,7 +150,7 @@ class Storage extends React.PureComponent {
       }
 
   componentWillMount(){
-    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
+    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
   }
 
 
@@ -158,7 +161,7 @@ class Storage extends React.PureComponent {
   async loadStorageInfo(){
     var rawData = [];
     if(READ_FROM_DATABASE){
-      sessionId = JSON.parse(localStorage.getItem('user'))._id;
+      sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
       rawData = await storageActions.getAllStoragesAsync(sessionId);
     } else {
      rawData = dummyData;

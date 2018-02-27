@@ -37,14 +37,22 @@ class AddVendorForm extends React.Component{
     // this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.redirectToVendorsFrom = this.redirectToVendorsFrom.bind(this);
+    this.clearFields = this.clearFields.bind(this);
   }
 
   componentWillMount(){
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
   }
 
   vendorSuccessfullyAdded() {
     alert('Vendor ' + this.state.name + ' is added successfully');
+    this.clearFields();
+  }
+
+  clearFields(){
+    this.setState({name:''});
+    this.setState({contact:''});
+    this.setState({code:''});
   }
   redirectToVendorsFrom() {
     this.setState({ fireRedirect: true });

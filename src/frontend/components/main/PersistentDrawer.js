@@ -21,6 +21,8 @@ import cookie from 'react-cookies';
 import Button from 'material-ui/Button';
 import {Link} from 'react-router-dom';
 import ExitToApp from 'material-ui-icons/ExitToApp';
+import {MenuList} from 'material-ui/Menu';
+import MainList from './MainList'
 
 const drawerWidth = 240;
 
@@ -126,8 +128,8 @@ class PersistentDrawer extends React.Component {
         this.state = {
           open: false,
           anchor: 'left',
-          loggedIn: (localStorage.getItem('user')!=null),
-          isAdmin: ((localStorage.getItem('user')!=null)?(localStorage.getItem('user').isAdmin):false),
+          loggedIn: (sessionStorage.getItem('user')!=null),
+          isAdmin: ((sessionStorage.getItem('user')!=null)?(sessionStorage.getItem('user').isAdmin):false),
         };
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
@@ -138,25 +140,29 @@ class PersistentDrawer extends React.Component {
     //this.setState({loggedIn:key});
     //this.setState({user:JSON.stringify(user)});
     //this.setState({ user:user });
-    //localStorage.getItem('user') = user;
-    console.log("login");
-    console.log(key);
+    //sessionStorage.getItem('user') = user;
+    console.log("entered login()");
+    console.log("key:" + key);
     this.handleDrawerOpen();
     this.setState({isAdmin: key});
-    this.setState({loggedIn: (localStorage.getItem('user')!=null)});
+    this.setState({loggedIn: (sessionStorage.getItem('user')!=null)});
 
-    //console.log(localStorage.getItem('user'));
+    //console.log(sessionStorage.getItem('user'));
   }
 
   componentDidMount(){
     console.log("component did mount");
-    console.log(((localStorage.getItem('user')!=null)?(localStorage.getItem('user').isAdmin):false));
+    console.log(sessionStorage.getItem('user'));
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    console.log(typeof user);
+    const isAdmin = user == null ? false : user["isAdmin"];
+    console.log("user is admin: " + isAdmin);
   }
 
   logout(){
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('user');
     this.handleDrawerClose();
-    this.setState({loggedIn: (localStorage.getItem('user')!=null)});
+    this.setState({loggedIn: (sessionStorage.getItem('user')!=null)});
   }
 
   handleDrawerOpen = () => {
@@ -174,7 +180,11 @@ class PersistentDrawer extends React.Component {
   };
 
   render() {
-    console.log("isAdmin ", this.state.isAdmin);
+    //copied from login() to make sure refreshing does not result in incorrect rendering
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    console.log(typeof user);
+    const isAdmin = (user == null) ? false : user["isAdmin"];
+    console.log("user is admin: " + isAdmin);
     const { classes, theme } = this.props;
     const { anchor, open } = this.state;
     const drawer = (
@@ -193,9 +203,9 @@ class PersistentDrawer extends React.Component {
             </IconButton>
           </div>
           <Divider />
-          {this.state.isAdmin && <List className={classes.list}>{UserListItems}</List> }
+          {isAdmin && <List className={classes.list}>{UserListItems}</List> }
           <Divider />
-          <List className={classes.list}>{MainListItems}</List>
+          <MainList> </MainList>
         </div>
       </Drawer>
     );

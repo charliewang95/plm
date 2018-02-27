@@ -10,7 +10,10 @@ module.exports = function() {
 	require('../server/models/storage.server.model');
 	require('../server/models/order.server.model');
 	require('../server/models/inventory.server.model');
+	require('../server/models/formula.server.model');
 	require('../server/models/cart.server.model');
+	require('../server/models/dukeUser.server.model');
+	require('../server/models/log.server.model');
 
 	return db;
 };

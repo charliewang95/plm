@@ -13,11 +13,12 @@ ingredientId: string, id of the type of ingredient being storageed
 temperatureZone: string 'freezer', 'refrigerator', 'warehouse', 'Freezer', 'Refrigerator', 'Warehouse'
 capacity: number, the maximum amount of the ingredient tha can be stored, in units of pounds
 **/
-function packIntoJson(temperatureZone, capacity){
+function packIntoJson(temperatureZone, capacity, currentOccupiedSpace){
 	var storageJson = new Object();
 	//storageJson.ingredientId = ingredientId;
 	storageJson.temperatureZone = temperatureZone;
 	storageJson.capacity = capacity;
+	storageJson.currentOccupiedSpace = currentOccupiedSpace;
 	console.log("JSON");
 	console.log(storageJson);
 	return storageJson;
@@ -55,8 +56,8 @@ async function getStorageAsync(storageId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-async function updateStorage(storageId, temperatureZone, capacity, sessionId, callback) {
-	var updatedStorage = packIntoJson(temperatureZone, capacity);
+async function updateStorage(storageId, temperatureZone, capacity, currentOccupiedSpace, sessionId, callback) {
+	var updatedStorage = packIntoJson(temperatureZone, capacity, currentOccupiedSpace);
 	storageActions.updateStorage(storageId, sessionId, updatedStorage, function(res){
 	    callback(res);
 	});

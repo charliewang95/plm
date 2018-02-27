@@ -44,6 +44,7 @@
     "material-ui-datatables": "^0.18.2",
     "material-ui-icons": "^1.0.0-beta.17",
     "material-ui-search-bar": "^0.4.1",
+    "moment": "^2.20.1",
     "mongoose": "^5.0.2",
     "multer": "^1.3.0",
     "nodemon": "^1.14.11",
@@ -52,8 +53,12 @@
     "passport-local": "^1.0.0",
     "passport-twitter": "^1.0.4",
     "prop-types": "^15.6.0",
+    "query-string": "^5.1.0",
+    "rc-datepicker": "^5.0.10",
     "react": "^16.2.0",
     "react-cookies": "^0.1.0",
+    "react-date-picker-cs": "^0.1.28",
+    "react-datepicker": "^1.2.1",
     "react-dom": "^16.2.0",
     "react-jss": "^8.2.1",
     "react-pdf": "^2.5.3",
@@ -66,10 +71,13 @@
     "react-select": "^1.2.1",
     "react-slick": "^0.12.5",
     "react-tap-event-plugin": "^2.0.1",
+    "react-transition-group": "^1.2.1",
     "react-view-engine": "0.0.1",
+    "reactstrap": "^4.8.0",
     "redirect-https": "^1.1.4",
     "redux": "^3.7.2",
     "redux-form": "^7.2.1",
-    "redux-form-material-ui": "^5.0.0-beta.2"
+    "redux-form-material-ui": "^5.0.0-beta.2",
+    "url_parser": "^1.0.5"
   }
 }

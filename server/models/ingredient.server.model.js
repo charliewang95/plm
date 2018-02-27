@@ -18,7 +18,8 @@ var VendorPriceSchema = new Schema({
     },
     price: {
         type: Number,
-        required: true
+        required: true,
+        min: [0, 'Price cannot be negative'],
     }
 });
 mongoose.model('VendorPrice', VendorPriceSchema);
@@ -27,7 +28,10 @@ var IngredientSchema = new Schema({
     name: {
         type: String,
         required: true,
-        lowercase: true,
+        unique: true
+    },
+    nameUnique: {
+        type: String,
         unique: true
     },
     packageName: {
@@ -49,24 +53,65 @@ var IngredientSchema = new Schema({
         type: Number,
         default: 0
     },
+    nativeUnit: {
+        type: String,
+        required: true
+    },
+    numUnitPerPackage: {
+        type: Number,
+        required: true,
+        min: [0, 'Number cannot be negative'],
+    },
+    numUnit: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    space: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     vendors : [VendorPriceSchema]
 });
 
 //IngredientSchema.index({ name: 1, packageName: 1}, { unique: true });
 
-IngredientSchema.methods.getPackagePounds = function(packageName, callback) {
-    if (packageName == 'sack' || packageName == 'pail')
-        callback(50);
+IngredientSchema.statics.getPackageSpace = function(packageName, callback) {
+    if (packageName == 'sack')
+        callback(0.5);
+    else if (packageName == 'pail')
+        callback(1);
     else if (packageName == 'drum')
-        callback(500);
+        callback(3);
     else if (packageName == 'supersack')
-        callback(2000);
+        callback(16);
     else if (packageName == 'truckload')
-        callback(50000);
-    else if (packageName == 'railcar')
-        callback(280000);
-    else
         callback(0);
+    else if (packageName == 'railcar')
+        callback(0);
+    else
+        callback(-1);
 };
+
+//IngredientSchema.pre('save',
+//	function(next) {
+//	    if (this.moneySpent)
+//	        this.moneySpent = this.moneySpent - this.moneySpent % 0.01;
+//        if (this.moneyProd)
+//	        this.moneyProd = this.moneyProd - this.moneyProd % 0.01;
+//	    next();
+//	}
+//);
+//
+//IngredientSchema.pre('update',
+//	function(next) {
+//	    if (this._update.moneySpent)
+//	        this._update.moneySpent = this._update.moneySpent - this._update.moneySpent % 0.01;
+//        if (this._update.moneyProd)
+//	        this._update.moneyProd = this._update.moneyProd - this._update.moneyProd % 0.01;
+//	    next();
+//	}
+//);
 
 mongoose.model('Ingredient', IngredientSchema);

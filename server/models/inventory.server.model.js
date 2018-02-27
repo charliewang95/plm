@@ -4,10 +4,6 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 var InventorySchema = new Schema({
-	userId: {
-		type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-	},
 	ingredientId: {
 	    type: mongoose.Schema.Types.ObjectId,
 	    ref: 'Ingredient',
@@ -30,9 +26,19 @@ var InventorySchema = new Schema({
         lowercase: true,
         required: true
     },
-    quantity: { //in pounds
+    space: { //in sqft
         type: Number,
-        required: true
+        min: [0, 'Inventory quantity cannot be negative'],
+        //required: true
+    },
+    nativeUnit: { //in sqft
+        type: String,
+        //required: true
+    },
+    numUnit: {
+        type: Number,
+        min: [0, 'Inventory quantity cannot be negative'],
+        //required: true
     }
 });
 
