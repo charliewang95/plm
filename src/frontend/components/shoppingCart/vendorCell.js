@@ -1,7 +1,7 @@
 
 import React,{Component}  from 'react';
 import PropTypes from 'prop-types';
-import Select from 'react-select';
+import Select from './Select.js';
 import Styles from  'react-select/dist/react-select.css';
 import { withStyles } from 'material-ui/styles';
 import Input from 'material-ui/Input';
