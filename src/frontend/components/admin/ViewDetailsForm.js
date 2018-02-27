@@ -54,8 +54,6 @@ var sessionId = "";
 var userId="";
 var isAdmin = "";
 
-<<<<<<< HEAD
-=======
 // const InStockFilterCellBase = ({ filter, onFilter, classes }) => (
 //   <TableCell  >
 //     <Select
@@ -71,7 +69,6 @@ var isAdmin = "";
 //   </TableCell>
 // );
 
->>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
 class AddIngredientForm extends React.Component{
 
   constructor(props) {
@@ -200,11 +197,7 @@ class AddIngredientForm extends React.Component{
   }
 
   isValid(){
-<<<<<<< HEAD
-    const re = /^[0-9\b]+$/;
-=======
     const re = /^\d*\.?\d*$/;
->>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
     for(var i=0; i<this.state.vendorsArray.length; i++){
       if(this.state.vendorsArray[i].price==0 || this.state.vendorsArray[i].price==""){
         alert("Price for " + this.state.vendorsArray[i].vendorName + " should be greater than 0");
@@ -212,13 +205,8 @@ class AddIngredientForm extends React.Component{
       }
     }
 
-<<<<<<< HEAD
-    if (this.state.numUnitPerPackage < 0 || this.state.numUnitPerPackage == '' || !re.test(this.state.numUnitPerPackage)) {
-      alert(" Quantity must be a positive number or 0 (not in stock).");
-=======
     if (this.state.numUnitPerPackage <= 0 || this.state.numUnitPerPackage == '' || !re.test(this.state.numUnitPerPackage)) {
       alert(" Quantity must be a positive number");
->>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
       return false;
     }
     else if(this.state.temperatureZone==null || this.state.temperatureZone==''){
@@ -302,15 +290,6 @@ class AddIngredientForm extends React.Component{
   }
 
   handleQuantityChange(event){
-<<<<<<< HEAD
-  const re = /^[0-9\b]+$/;
-      if ( event.target.value == '' || (event.target.value>=0 && re.test(event.target.value))) {
-         this.setState({numUnitPerPackage: event.target.value});
-         var computeSpace = Math.ceil(this.state.numUnit/event.target.value) * this.packageSpace(this.state.packageName);
-         this.setState({space: computeSpace});
-      }else{
-        alert(" Quantity must be a positive number or 0 (not in stock).");
-=======
    const re = /^\d*\.?\d*$/;
       if ( event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
          this.setState({numUnitPerPackage: event.target.value});
@@ -320,27 +299,17 @@ class AddIngredientForm extends React.Component{
          this.setState({space: computeSpace});
       }else{
         alert("Quantity must be a positive number");
->>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
       }
   }
 
   handleNumUnitChange(event){
-<<<<<<< HEAD
-     const re = /^[0-9\b]+$/;
-      if ( event.target.value == '' || (re.test(event.target.value))) {
-=======
     const re = /^\d*\.?\d*$/;
       if ( event.target.value == '' || (event.target.value>=0 && re.test(event.target.value))) {
->>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
          var computeSpace = Math.ceil(event.target.value/this.state.numUnitPerPackage) * this.packageSpace(this.state.packageName);
          this.setState({numUnit: event.target.value});
          this.setState({space: computeSpace});
       }else{
-<<<<<<< HEAD
-        alert(" Quantity must be a number");
-=======
         alert("Quantity must be a number");
->>>>>>> 0cc2f9eebf5b698fdf2a88f83446eebdd81513cb
       }
   }
 
