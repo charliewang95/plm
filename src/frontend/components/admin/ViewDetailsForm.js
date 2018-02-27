@@ -315,7 +315,7 @@ class AddIngredientForm extends React.Component{
 
   handlePackageChange(event){
     this.setState({packageName:event.target.value});
-    var computeSpace = Math.ceil(this.state.numUnit) * this.packageSpace(event.target.value);
+    var computeSpace = Math.ceil(this.state.numUnit/this.state.numUnitPerPackage) * this.packageSpace(event.target.value);
     console.log('computespace');
     console.log(computeSpace);
     this.setState({space: computeSpace});
