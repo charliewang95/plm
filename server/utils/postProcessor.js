@@ -11,62 +11,67 @@ var Cart = mongoose.model('Cart');
 
 exports.process = function(model, item, itemId, res, next) {
     if (model == Vendor) {
-        processVendor(itemId, res, next);
+        processVendor(item, itemId, res, next);
     }
     else if (model == Ingredient) {
         processIngredient(item, itemId, res, next);
     }
-    else if (model == Cart) {
-        processCart(item, res, next);
-    }
+//    else if (model == Cart) {
+//        processCart(item, res, next);
+//    }
     else if (model == Storage) {
         processStorage(item, itemId, res, next);
     }
-    else if (model == Order) {
-        processOrder(item, res, next);
-    }
+//    else if (model == Order) {
+//        processOrder(item, res, next);
+//    }
 };
 
-var processOrder = function(items, res, next) {
-    processOrderHelper(0, items, res, next);
-};
 
-var processOrderHelper = function(i, items, res, next) {
-    if (i == items.length) {
-        return;
-    } else {
-        var order = items[i];
-        Ingredient.findOne({nameUnique: order.ingredientName.toLowerCase()}, function(err, ingredient){
-            var newSpace = ingredient.space + order.space;
-            var numUnit = ingredient.numUnit + order.numUnit;
-            var moneySpent = ingredient.moneySpent + order.totalPrice;
-            ingredient.update({numUnit: numUnit, space: newSpace, moneySpent: moneySpent}, function(err, obj){
-                if (err) return next(err);
-                order.remove(function(err){
-                    if (err) return next(err);
-                    else processOrderHelper(i+1, items, res, next);
-                });
-            })
-        })
-    }
-};
 
 var processIngredient = function(item, itemId, res, next) {
     var oldItem = item;
+    var oldTemperatureZone = item.temperatureZone;
     var oldSpace = oldItem.space;
+    console.log(itemId);
     Ingredient.findById(itemId, function(err, newItem){
         var newSpace = newItem.space;
-        var temperatureZone = newItem.temperatureZone;
-        Storage.findOne({temperatureZone: temperatureZone}, function(err, storage){
-            var capacity = storage.capacity;
-            var occupied = storage.currentOccupiedSpace;
-            var newOccupied = occupied - oldSpace + newSpace;
-            var newEmpty = capacity - newOccupied;
-            storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
-                console.log(oldSpace+' '+newSpace);
-                if (err) return next(err);
+        var newTemperatureZone = newItem.temperatureZone;
+        if (oldTemperatureZone == newTemperatureZone) {
+            Storage.findOne({temperatureZone: newTemperatureZone}, function(err, storage){
+                var capacity = storage.capacity;
+                var occupied = storage.currentOccupiedSpace;
+                var newOccupied = occupied - oldSpace + newSpace;
+                var newEmpty = capacity - newOccupied;
+                storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+                    console.log(oldSpace+' '+newSpace);
+                    if (err) return next(err);
+                });
             });
-        })
+        } else {
+            Storage.findOne({temperatureZone: newTemperatureZone}, function(err, storage){
+                var capacity = storage.capacity;
+                var occupied = storage.currentOccupiedSpace;
+                var newOccupied = occupied + newSpace;
+                var newEmpty = capacity - newOccupied;
+                storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+                    console.log(oldSpace+' '+newSpace);
+                    if (err) return next(err);
+                    else {
+                        Storage.findOne({temperatureZone: newTemperatureZone}, function(err, storage2){
+                            var capacity2 = storage2.capacity;
+                            var occupied2 = storage2.currentOccupiedSpace;
+                            var newOccupied2 = occupied2 - oldSpace;
+                            var newEmpty2 = capacity2 - newOccupied2;
+                            storage2.update({currentOccupiedSpace: newOccupied2, currentEmptySpace: newEmpty2}, function(err, obj){
+                                console.log(oldSpace2+' '+newSpace2);
+                                if (err) return next(err);
+                            });
+                        });
+                    }
+                });
+            });
+        }
     });
 };
 
@@ -124,7 +129,17 @@ var updateIngredient = function(ingredientId, cartQuantity, oldQuantity, res, ne
     });
 };
 
-var processVendor = function(itemId, res, next) {
+
+var processStorage = function(item, itemId, res, next) {
+    console.log('changing empty space');
+    var newLeft = item.capacity - item.currentOccupiedSpace;
+    console.log(newLeft);
+    Storage.findByIdAndUpdate(itemId, {currentEmptySpace: newLeft}, function(err, obj) {
+        if (err) return next(err);
+    });
+};
+
+var processVendor = function(item, itemId, res, next) {
     Ingredient.find({}, function(err, ingredients){
         if (err) return next(err);
         else {
@@ -135,14 +150,10 @@ var processVendor = function(itemId, res, next) {
                 for (var j = 0; j<vendors.length; j++) {
                     var vendor = vendors[j];
                     console.log(vendor);
-                    if (vendor.vendorId.toString() !== itemId) {
-                        newVendors.push(vendor);
-//                        VendorPrice.find({_id: vendor._id}, function(err, obj) {
-//                            console.log(vendor._id);
-//                            console.log(obj);
-//                            if (err) return next(err);
-//                        });
+                    if (vendor.vendorId.toString() === itemId) {
+                        vendor.vendorName = item.name;
                     }
+                    newVendors.push(vendor);
                 }
                 currentIngredient.update({vendors: newVendors}, function(err, obj){
                     if (err) return next(err);
@@ -150,13 +161,4 @@ var processVendor = function(itemId, res, next) {
             }
         }
     });
-};
-
-var processStorage = function(item, itemId, res, next) {
-    console.log('changing empty space');
-    var newLeft = item.capacity - item.currentOccupiedSpace;
-    console.log(newLeft);
-    Storage.findByIdAndUpdate(itemId, {currentEmptySpace: newLeft}, function(err, obj) {
-        if (err) return next(err);
-    });
-};
+}

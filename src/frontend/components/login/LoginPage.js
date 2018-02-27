@@ -114,7 +114,7 @@ class LoginPage extends React.Component{
       var temp = this;
       // add user to DukeUser Database if user does not exist previously
       var userAdded = false;
-      await userActions.addDukeUserAutomaticAsync(email, username, false, false, false, (res) =>{
+      await userActions.addDukeUserAutomaticAsync(email, username, false, false, true, (res) =>{
         // console.log(res);
         if (res.status == 400) {
             // message = res.data;

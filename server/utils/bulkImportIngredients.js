@@ -3,6 +3,7 @@ var Vendor = require('mongoose').model('Vendor');
 var User = require('mongoose').model('User');
 var Storage = require('mongoose').model('Storage');
 var utils = require('../utils/utils');
+var logger = require('../utils/logger');
 var fs = require('fs');
 var Converter = require("csvtojson").Converter;
 
@@ -17,13 +18,16 @@ exports.bulkImportIngredients = function(req, res, next, contents, callback) {
     })
     .on('done',()=>{
 //          console.log(jsonArray);
-        validateBulkImport(req, res, next, jsonArray, 0, 0, 0, 0, function(){
-            //do bulk import
-            doBulkImport(req, res, next, jsonArray, 0, function(){
-                res.send("Bulk import success!");
-                callback();
-            });
-        })
+        User.findById(req.params.userId, function(err, user){
+            validateBulkImport(req, res, next, jsonArray, 0, 0, 0, 0, function(){
+                //do bulk import
+                doBulkImport(user.username, req, res, next, jsonArray, 0, function(){
+                    res.send("Bulk import success!");
+                    callback();
+                });
+            })
+        });
+
     })
 };
 
@@ -94,13 +98,13 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
         var ingredient = array[i];
         //console.log(ingredient);
         var ingredientName = ingredient.INGREDIENT;
-        var packageName = ingredient.PACKAGE.toLowerCase();
-        var vendorCode = ingredient["VENDOR FREIGHT CODE"].toLowerCase();
+        var packageName = ingredient.PACKAGE;
+        var vendorCode = ingredient["VENDOR FREIGHT CODE"];
         var vendorPrice = ingredient["PRICE PER PACKAGE"];
         var nativeUnit = ingredient["NATIVE UNIT"];
         var numUnitPerPackage = ingredient["UNITS PER PACKAGE"];
         var amount = ingredient["AMOUNT (NATIVE UNITS)"];
-        var temperatureZone = ingredient.TEMPERATURE.toLowerCase();
+        var temperatureZone = ingredient.TEMPERATURE;
 
         if (ingredientName == null || ingredientName == '') {
             res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Ingredient name cannot be empty');
@@ -127,6 +131,10 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
             res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Temperature zone cannot be empty');
             return;
         }
+
+        var packageName = ingredient.PACKAGE.toLowerCase();
+        var vendorCode = ingredient["VENDOR FREIGHT CODE"].toLowerCase();
+        var temperatureZone = ingredient.TEMPERATURE.toLowerCase();
 
         if (temperatureZone == 'room temperature') temperatureZone = 'warehouse';
         else if (temperatureZone == 'frozen') temperatureZone = 'freezer';
@@ -175,7 +183,7 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
                                     res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Ingredient '+ingredientName+' - package name does not exist.');
                                     return;
                                 } else {
-                                    var space = singleSpace*amount/numUnitPerPackage;
+                                    var space = singleSpace*Math.ceil(1.0*amount/numUnitPerPackage);
                                     if (temperatureZone == 'warehouse' && packageName != 'railcar' && packageName != 'truckload') wSpace += space;
                                     else if (temperatureZone == 'refrigerator' && packageName != 'railcar' && packageName != 'truckload') rSpace += space;
                                     else if (temperatureZone == 'freezer' && packageName != 'railcar' && packageName != 'truckload') fSpace += space;
@@ -209,7 +217,7 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
                                             res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Ingredient '+ingredientName+' - package name does not exist.');
                                             return;
                                         } else {
-                                            var space = singleSpace*amount/numUnitPerPackage;
+                                            var space = singleSpace*Math.ceil(1.0*amount/numUnitPerPackage);
                                             if (temperatureZone == 'warehouse' && packageName != 'railcar' && packageName != 'truckload') wSpace += space;
                                             else if (temperatureZone == 'refrigerator' && packageName != 'railcar' && packageName != 'truckload') rSpace += space;
                                             else if (temperatureZone == 'freezer' && packageName != 'railcar' && packageName != 'truckload') fSpace += space;
@@ -230,7 +238,7 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
     }
 };
 
-var doBulkImport = function(req, res, next, array, i, callback){ // TODO: update inventory and storage
+var doBulkImport = function(username, req, res, next, array, i, callback){ // TODO: update inventory and storage
     if (i == array.length)
         callback();
     else {
@@ -257,7 +265,7 @@ var doBulkImport = function(req, res, next, array, i, callback){ // TODO: update
 
         Ingredient.findOne({nameUnique: ingredientName.toLowerCase()}, function(err, obj){
             Ingredient.getPackageSpace(packageName, function(singleSpace){
-                var space = singleSpace*amount/numUnitPerPackage;
+                var space = singleSpace*Math.ceil(1.0*amount/numUnitPerPackage);
 
                 console.log("processing "+ingredientName);
                 console.log(obj);
@@ -278,11 +286,13 @@ var doBulkImport = function(req, res, next, array, i, callback){ // TODO: update
                             newVendor.price = Number(vendorPrice);
                             vendors.push(newVendor);
 
-                            var newSpace = obj.space + space;
-                            var newNumUnit = obj.numUnit + amount;
+                        console.log(obj.space+' '+space+' '+obj.numUnit+' '+amount);
+                            var newSpace = Number(obj.space) + Number(space);
+                            var newNumUnit = Number(obj.numUnit) + Number(amount);
                             obj.update({vendors: vendors, space: newSpace, numUnit:newNumUnit}, function(err, obj3){
                                 if (err) return next(err);
-                                doBulkImport(req, res, next, array, i+1, callback);
+                                logger.log(username, 'update', obj, Ingredient);
+                                doBulkImport(username, req, res, next, array, i+1, callback);
                             })
                         });
                     }
@@ -312,7 +322,8 @@ var doBulkImport = function(req, res, next, array, i, callback){ // TODO: update
 
                             newIngredient.save(function(err){
                                 if (err) return next(err);
-                                doBulkImport(req, res, next, array, i+1, callback);
+                                logger.log(username, 'create', newIngredient, Ingredient);
+                                doBulkImport(username, req, res, next, array, i+1, callback);
                             });
                         });
                     } else {
@@ -329,7 +340,8 @@ var doBulkImport = function(req, res, next, array, i, callback){ // TODO: update
 
                         newIngredient.save(function(err){
                             if (err) return next(err);
-                            doBulkImport(req, res, next, array, i+1, callback);
+                            logger.log(username, 'create', newIngredient, Ingredient);
+                            doBulkImport(username, req, res, next, array, i+1, callback);
                         });
                     }
                 }

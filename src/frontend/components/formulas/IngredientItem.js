@@ -49,7 +49,7 @@ class IngredientItem extends Component {
               id="adornment-amount"
               value={ingredient.quantity}
               style={{marginLeft: 10, width:50}}
-              startAdornment={<InputAdornment position="start">$</InputAdornment>}
+              startAdornment={<InputAdornment position="start"></InputAdornment>}
               onChange={(event)=>{this.props.updateQuantity(event, index)}}
             />
           </FormControl>
