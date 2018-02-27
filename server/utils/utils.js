@@ -383,17 +383,17 @@ var checkSpaces = function(res, next, wSpace, rSpace, fSpace, callback) {
                 console.log(obj.temperatureZone);
                 if (obj.temperatureZone == 'warehouse' && wSpace > obj.currentEmptySpace) {
                     res.status(400).send('Capacity left: '+obj.currentEmptySpace+' sqft will be exceeded for '+ obj.temperatureZone +
-                    '. The total space that will be occupied by items in your cart for this temperature is '+ wSpace+'.');
+                    '. The total space that will be occupied by items in your cart for warehouse is '+ wSpace+'.');
                     return;
                 }
                 if (obj.temperatureZone == 'refrigerator' && rSpace > obj.currentEmptySpace) {
                     res.status(400).send('Capacity left: '+obj.currentEmptySpace+' sqft will be exceeded for '+ obj.temperatureZone +
-                    '. The total space that will be occupied by items in your cart for this temperature is '+ rSpace+'.');
+                    '. The total space that will be occupied by items in your cart for refrigerator is '+ rSpace+'.');
                     return;
                 }
                 if (obj.temperatureZone == 'freezer' && fSpace > obj.currentEmptySpace) {
                     res.status(400).send('Capacity left: '+obj.currentEmptySpace+' sqft will be exceeded for '+ obj.temperatureZone +
-                    '. The total space that will be occupied by items in your cart for this temperature is '+ fSpace+'.');
+                    '. The total space that will be occupied by items in your cart for freezer is '+ fSpace+'.');
                     return;
                 }
             }

@@ -782,8 +782,9 @@ class AdminIngredients extends React.PureComponent {
         Click <a href="./BulkImportEV2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
       </div>
     }
-
+        <br/>
       {(isAdmin || isManager) && <Button raised color="primary"
+      align="left"
       component={Link} to="/orders"
       style = {{marginLeft: 380, marginBottom: 30}}
       > ORDER INGREDIENTS</Button>}
