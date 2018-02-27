@@ -48,6 +48,7 @@ import formulaData from './dummyData';
 //TODO: Set the user ID
 var sessionId = "";
 var isAdmin = "";
+var isManager = "";
 var userId;
 
 var formulaSentToProduction={};
@@ -146,7 +147,7 @@ var isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
   }else if (props.column.key=='sendToProd' && (isAdmin||isManager)){
     // <Link to={{pathname: '/product-review', state:{selectedFormula: props.row} }}}
     console.log('send to prod');
-    return <Table.Cell {...props}>
+    return <Table.Cell {...props} style={{width:100}}>
             <AddToProdButton  selectedFormula = {props.row}/>
             </Table.Cell>
   }
@@ -163,14 +164,21 @@ const getRowId = row => row.id;
 class Formula extends React.PureComponent {
   constructor(props) {
     super(props);
+    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
     this.state = {
       idToNameMap:{},
-      columns: [
+      columns: (isAdmin||isManager)?[
         { name: 'name', title: 'Name' },
         { name: 'description', title: 'Description' },
         { name: 'unitsProvided', title: 'Product Units ' },
         { name: 'ingredients', title: 'Ingredient / Quantity' },
         {key: 'sendToProd', title:''},
+      ]:[
+        { name: 'name', title: 'Name' },
+        { name: 'description', title: 'Description' },
+        { name: 'unitsProvided', title: 'Product Units ' },
+        { name: 'ingredients', title: 'Ingredient / Quantity' },
       ],
       rows:[],
       // sorting: [],

@@ -52,7 +52,7 @@ const styles = {
 
 var sessionId = "";
 var userId="";
-
+var isAdmin = "";
 
 class AddIngredientForm extends React.Component{
 
@@ -125,13 +125,14 @@ class AddIngredientForm extends React.Component{
           var namePrice = vendorName + " / $" + vendorObject.price;
           vendors_string += namePrice;
           if(i!= (this.state.vendorsArray.length -1)){
-            vendors_string+=', ';
+            vendors_string+='\n';
           }
         }
     this.setState({vendorString: vendors_string });
   }
 
   componentDidMount(){
+    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
     console.log("logs");
     if(this.props.location.state.fromLogs){
       this.loadIngredient();
@@ -399,10 +400,12 @@ class AddIngredientForm extends React.Component{
             {this.state.isDisabled && <TextField
               id="selectVendors"
               label="Vendors"
+              multiline
               value={this.state.vendorString}
               margin="normal"
               disabled = {this.state.isDisabled}
               required
+              style={{lineHeight: 1.5}}
             />}
             {(!this.state.isDisabled) && <SelectVendors initialArray={this.state.vendorsArray} handleChange={this.updateVendors}/>}
             </FormGroup>
@@ -448,7 +451,7 @@ class AddIngredientForm extends React.Component{
                 />
               </FormGroup></div>}
               <div style={styles.buttons}>
-                {(this.state.isDisabled) && <RaisedButton raised color = "secondary" onClick={()=>{this.setState({isDisabled:false});}} >EDIT</RaisedButton>}
+                {(this.state.isDisabled && isAdmin) && <RaisedButton raised color = "secondary" onClick={()=>{this.setState({isDisabled:false});}} >EDIT</RaisedButton>}
                 {(!this.state.isDisabled) && <RaisedButton raised
                           color="primary"
                           // className=classes.button
@@ -457,7 +460,8 @@ class AddIngredientForm extends React.Component{
                           primary="true"> {(this.state.isCreateNew)? 'ADD' : 'SAVE'} </RaisedButton>}
                 <RaisedButton color="default"
                   component={Link} to='/admin-ingredients'
-                  style = {{marginTop: 5, marginLeft: 5}}
+                  style = {{marginLeft: 10}}
+                  raised
                   > BACK </RaisedButton>
              </div>
            </form>
