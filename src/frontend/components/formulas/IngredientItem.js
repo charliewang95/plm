@@ -49,9 +49,10 @@ class IngredientItem extends Component {
               id="adornment-amount"
               value={ingredient.quantity}
               style={{marginLeft: 10, width:50}}
-              startAdornment={<InputAdornment position="start"></InputAdornment>}
+              endAdornment={<InputAdornment style={{color:'gray'}} position="end"> {ingredient.nativeUnit}</InputAdornment>}
               onChange={(event)=>{this.props.updateQuantity(event, index)}}
             />
+
           </FormControl>
           <IconButton aria-label="Delete" onClick={()=>{this.props.deleteIngredient(index, ingredient.ingredientName);}}>
             <RemoveCircleIcon />
