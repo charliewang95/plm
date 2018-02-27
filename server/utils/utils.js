@@ -182,10 +182,7 @@ var update = function(req, res, next, model, itemId, username) {
                        else if (obj2){
                            console.log("updating, updated");
                            logger.log(username, 'update', obj2, model);
-                           if (model == Storage) {
-                               postProcessor.process(model, obj, itemId, res, next);
-                           }
-                           if (model == Ingredient) {
+                           if (model == Storage || model == Ingredient) {
                                postProcessor.process(model, obj, itemId, res, next);
                            }
                            res.json(obj2);

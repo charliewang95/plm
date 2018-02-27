@@ -29,7 +29,7 @@ const styles = {
       width: 100,
     },
     unitsProvided:{
-      width: 100,
+      width: 120,
     },
     formControl: {
       width: 400
@@ -50,7 +50,7 @@ class FormulaDetails extends React.Component{
       ingredientsString:"",
       ingredientsArray: (details.ingredientsArray)?(details.ingredientsArray):[],
   		value:undefined,
-      formulaId: (details._id)?(details.ingredientId):'',
+      formulaId: (details.formulaId)?(details.formulaId):'',
       name:(details.name)?(details.name):'',
       description:(details.description)?(details.description):'',
       unitsProvided:(details.unitsProvided)?(details.unitsProvided):'',
@@ -106,7 +106,7 @@ class FormulaDetails extends React.Component{
     for(var i =0; i < this.state.ingredientsArray.length; i++){
           var ingredient = this.state.ingredientsArray[i];
           //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
-          ingredients_string += ingredient.ingredientName + " / " + ingredient.quantity;
+          ingredients_string += ingredient.ingredientName + " / " + ingredient.quantity + ingredient.nativeUnit;
           if(i!= (this.state.ingredientsArray.length - 1)){
             ingredients_string+=', ';
           }
@@ -166,17 +166,18 @@ class FormulaDetails extends React.Component{
             });
     }else if (this.isValid()){
       console.log("update formula ");
+      console.log(this.state);
       await formulaActions.updateFormula(this.state.formulaId, this.state.name,
-        this.state.description,this.state.unitsProvided, this.state.ingredients, sessionId, function(res){
+        this.state.description,this.state.unitsProvided, this.state.ingredientsArray, sessionId, function(res){
           //TODO: Update error status
-          if(res.status){
-            alert(res.data==400);
+          if(res.status == 400){
+            alert(res.data);
           }else{
             //TODO: SnackBar
             alert(" Formula successfully updated. ");
           }
         });
-
+    this.setState({isDisabled:true});
     }
   }
 
