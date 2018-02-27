@@ -8,6 +8,7 @@ var modifierCreateUpdate = require('./modifierCreateUpdate');
 //var modifierDelete = require('./modifierDelete');
 var validator = require('./validator');
 var postProcessor = require('./postProcessor');
+var deleteProcessor = require('./deleteProcessor');
 var logger = require('./logger');
 
 exports.doWithAccess = function(req, res, next, model, action, userId, itemId, AdminRequired, ManagerRequired) {
@@ -182,9 +183,9 @@ var update = function(req, res, next, model, itemId, username) {
                        else if (obj2){
                            console.log("updating, updated");
                            logger.log(username, 'update', obj2, model);
-                           if (model == Storage || model == Ingredient) {
+//                           if (model == Storage || model == Ingredient || model == Vendor) {
                                postProcessor.process(model, obj, itemId, res, next);
-                           }
+//                           }
                            res.json(obj2);
                        } else {
                            res.status(400);
@@ -264,15 +265,14 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) 
         }
         else {
             var temp = item;
-            //console.log(temp);
             item.remove(function(err) {
                 if (err) {
                     return next(err);
                 }
                 else {
-                    postProcessor.process(model, temp, temp._id, res, next);
+                    deleteProcessor.process(model, item, itemId, res, next);
                     logger.log(username, 'delete', temp, model);
-                    res.json(item);
+                    res.json(temp);
                 }
             });
         }

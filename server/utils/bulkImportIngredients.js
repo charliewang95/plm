@@ -179,7 +179,7 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
                                     res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Ingredient '+ingredientName+' - package name does not exist.');
                                     return;
                                 } else {
-                                    var space = singleSpace*amount/numUnitPerPackage;
+                                    var space = singleSpace*Math.ceil(1.0*amount/numUnitPerPackage);
                                     if (temperatureZone == 'warehouse' && packageName != 'railcar' && packageName != 'truckload') wSpace += space;
                                     else if (temperatureZone == 'refrigerator' && packageName != 'railcar' && packageName != 'truckload') rSpace += space;
                                     else if (temperatureZone == 'freezer' && packageName != 'railcar' && packageName != 'truckload') fSpace += space;
@@ -213,7 +213,7 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
                                             res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Ingredient '+ingredientName+' - package name does not exist.');
                                             return;
                                         } else {
-                                            var space = singleSpace*amount/numUnitPerPackage;
+                                            var space = singleSpace*Math.ceil(1.0*amount/numUnitPerPackage);
                                             if (temperatureZone == 'warehouse' && packageName != 'railcar' && packageName != 'truckload') wSpace += space;
                                             else if (temperatureZone == 'refrigerator' && packageName != 'railcar' && packageName != 'truckload') rSpace += space;
                                             else if (temperatureZone == 'freezer' && packageName != 'railcar' && packageName != 'truckload') fSpace += space;
@@ -261,7 +261,7 @@ var doBulkImport = function(req, res, next, array, i, callback){ // TODO: update
 
         Ingredient.findOne({nameUnique: ingredientName.toLowerCase()}, function(err, obj){
             Ingredient.getPackageSpace(packageName, function(singleSpace){
-                var space = singleSpace*amount/numUnitPerPackage;
+                var space = singleSpace*Math.ceil(1.0*amount/numUnitPerPackage);
 
                 console.log("processing "+ingredientName);
                 console.log(obj);
@@ -282,6 +282,7 @@ var doBulkImport = function(req, res, next, array, i, callback){ // TODO: update
                             newVendor.price = Number(vendorPrice);
                             vendors.push(newVendor);
 
+                        console.log(obj.space+' '+space+' '+obj.numUnit+' '+amount);
                             var newSpace = Number(obj.space) + Number(space);
                             var newNumUnit = Number(obj.numUnit) + Number(amount);
                             obj.update({vendors: vendors, space: newSpace, numUnit:newNumUnit}, function(err, obj3){

@@ -11,20 +11,20 @@ var Cart = mongoose.model('Cart');
 
 exports.process = function(model, item, itemId, res, next) {
     if (model == Vendor) {
-        processVendor(itemId, res, next);
+        processVendor(item, itemId, res, next);
     }
     else if (model == Ingredient) {
         processIngredient(item, itemId, res, next);
     }
-    else if (model == Cart) {
-        processCart(item, res, next);
-    }
+//    else if (model == Cart) {
+//        processCart(item, res, next);
+//    }
     else if (model == Storage) {
         processStorage(item, itemId, res, next);
     }
-    else if (model == Order) {
-        processOrder(item, res, next);
-    }
+//    else if (model == Order) {
+//        processOrder(item, res, next);
+//    }
 };
 
 var processOrder = function(items, res, next) {
@@ -55,6 +55,7 @@ var processIngredient = function(item, itemId, res, next) {
     var oldItem = item;
     var oldTemperatureZone = item.temperatureZone;
     var oldSpace = oldItem.space;
+    console.log(itemId);
     Ingredient.findById(itemId, function(err, newItem){
         var newSpace = newItem.space;
         var newTemperatureZone = newItem.temperatureZone;
@@ -150,7 +151,17 @@ var updateIngredient = function(ingredientId, cartQuantity, oldQuantity, res, ne
     });
 };
 
-var processVendor = function(itemId, res, next) {
+
+var processStorage = function(item, itemId, res, next) {
+    console.log('changing empty space');
+    var newLeft = item.capacity - item.currentOccupiedSpace;
+    console.log(newLeft);
+    Storage.findByIdAndUpdate(itemId, {currentEmptySpace: newLeft}, function(err, obj) {
+        if (err) return next(err);
+    });
+};
+
+var processVendor = function(item, itemId, res, next) {
     Ingredient.find({}, function(err, ingredients){
         if (err) return next(err);
         else {
@@ -161,14 +172,10 @@ var processVendor = function(itemId, res, next) {
                 for (var j = 0; j<vendors.length; j++) {
                     var vendor = vendors[j];
                     console.log(vendor);
-                    if (vendor.vendorId.toString() !== itemId) {
-                        newVendors.push(vendor);
-//                        VendorPrice.find({_id: vendor._id}, function(err, obj) {
-//                            console.log(vendor._id);
-//                            console.log(obj);
-//                            if (err) return next(err);
-//                        });
+                    if (vendor.vendorId.toString() === itemId) {
+                        vendor.vendorName = item.name;
                     }
+                    newVendors.push(vendor);
                 }
                 currentIngredient.update({vendors: newVendors}, function(err, obj){
                     if (err) return next(err);
@@ -176,13 +183,4 @@ var processVendor = function(itemId, res, next) {
             }
         }
     });
-};
-
-var processStorage = function(item, itemId, res, next) {
-    console.log('changing empty space');
-    var newLeft = item.capacity - item.currentOccupiedSpace;
-    console.log(newLeft);
-    Storage.findByIdAndUpdate(itemId, {currentEmptySpace: newLeft}, function(err, obj) {
-        if (err) return next(err);
-    });
-};
+}
