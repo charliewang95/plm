@@ -113,12 +113,13 @@ class SelectIngredients extends Component {
     }
   }
 
-  resetArray(name, action){
+  resetArray(name, nativeUnit, action){
     var ans = [];
      if(action=="delete"){
        var obj = new Object();
        obj.ingredientName = name;
        obj.label = name;
+       obj.nativeUnit = nativeUnit;
        this.state.options.push(obj);
        console.log("what's up");
        console.log(this.state.options);
@@ -144,7 +145,8 @@ class SelectIngredients extends Component {
     // console.log( updateIngredient);
     this.state.ingredientsArray.push(newIngredient);
     this.setState({ingredientsArray:this.state.ingredientsArray});
-    this.resetArray(tempId, "add");
+    this.resetArray(tempId, this.state.nativeUnit, "add");
+    this.setState({nativeUnit: ''});
     this.setState({inputQuantity : 0});
     this.setState({selectName: ""})
     console.log(this.state.ingredientsArray);
@@ -159,9 +161,12 @@ class SelectIngredients extends Component {
       // console.log("deletedArray");
       // console.log(updateIngredient);
       // this.setState({ingredientsArray: updateIngredient});
+      var searchedIngredient = this.state.ingredientsArray.find(function(element){
+        return element.ingredientName==name;
+      });
       this.state.ingredientsArray.splice(index, 1);
       this.setState({ingredientsArray:this.state.ingredientsArray});
-      this.resetArray(name, "delete");
+      this.resetArray(name, searchedIngredient.nativeUnit, "delete");
       this.props.handleChange(this.state.ingredientsArray);
     }
 
