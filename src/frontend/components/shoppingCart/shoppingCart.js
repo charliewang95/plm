@@ -239,6 +239,7 @@ class ShoppingCart extends React.Component {
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     userId =  JSON.parse(sessionStorage.getItem('user'))._id;
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    this.loadCartData();
   }
 
   componentWillMount(){

@@ -29,8 +29,8 @@ export default class Demo extends React.PureComponent {
     this.state = {
       columns: [
         { name: 'name', title: 'Ingredient Name' },
-        { name: 'moneySpent', title: 'Expenditure (Orders) /$ ' },
-        { name: 'moneyProd', title: 'Expenditure (Production) /$' },
+        { name: 'moneySpent', title: 'Orders Expenditure ($) ' },
+        { name: 'moneyProd', title: 'Production Expenditure ($)' },
       ],
       rows: [],
       sorting:[],

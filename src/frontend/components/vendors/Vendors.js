@@ -76,7 +76,7 @@ Cell.propTypes = {
 };
 
 const EditCell = (props) => {
-  return <TableEditRow.Cell {...props} />;
+  return <TableEditRow.Cell {...props} style={{backgroundColor:'aliceblue'}}/>;
 };
 
 EditCell.propTypes = {

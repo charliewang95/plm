@@ -80,7 +80,9 @@ class FormulaDetails extends React.Component{
     if(this.props.location.state.fromLogs){
       this.loadFormula();
     }
-    this.computeIngredientsString();
+    else{
+      this.computeIngredientsString();
+    }
   }
 
 async loadFormula(){
@@ -96,9 +98,11 @@ async loadFormula(){
         //var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].codeUnique);
         var ingredientName = details.ingredients[j].ingredientName;
         var quantity = details.ingredients[j].quantity;
+        var nativeUnit = details.ingredients[j].nativeUnit;
         var ingredientObject = new Object();
         ingredientObject.ingredientName = ingredientName;
         ingredientObject.quantity = quantity;
+        ingredientObject.nativeUnit = nativeUnit;
         formatIngredientsArray.push(ingredientObject);
       }
 
@@ -292,10 +296,14 @@ async loadFormula(){
                           primary="true"
                           > {(this.state.isCreateNew)? 'ADD' : 'SAVE'} </RaisedButton>}
 
-                <RaisedButton color="default"
+                {this.props.location.state.fromLogs?
+                  <RaisedButton color="default" component={Link} to='/log'
+                  style = {{marginTop: 5, marginLeft: 5}}> BACK </RaisedButton>:
+                  <RaisedButton color="default"
                   component={Link} to='/formula'
                   style = {{marginTop: 5, marginLeft: 5}}
                   > BACK </RaisedButton>
+                }
              </div>
            </form>
     )

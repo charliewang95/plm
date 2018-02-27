@@ -180,11 +180,11 @@ class ProductionReview extends React.Component {
   }
 
   handleFormulaQuantity(event){
-  const re = /^[0-9\b]+$/;
-      if (event.target.value == '' || re.test(event.target.value)) {
+  const re = /^\d*\.?\d*$/;
+      if (event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
          this.setState({addedQuantity: event.target.value})
       }else{
-        alert(" Quantity must be a number.");
+        alert(" Quantity must be a positive number.");
       }
   }
 
@@ -244,6 +244,7 @@ class ProductionReview extends React.Component {
                   margin="dense"
                   id="quantity"
                   label="Enter Quantity"
+                  value = {this.state.addedQuantity}
                   fullWidth = {false}
                   onChange={(event) => this.handleFormulaQuantity(event)}
                   // verticalSpacing= "desnse"
@@ -266,6 +267,7 @@ class ProductionReview extends React.Component {
           </Dialog>
       </Paper>
       <div style={styles.buttons}>
+        {(this.state.ingredientsToOrder.length!=0) && <p>You do not have enough ingredients. Order the difference?</p>}
         {(this.state.ingredientsToOrder.length!=0) &&
           <Tooltip id="tooltip-bottom" title="Ingredients with additional amount > 0 added to cart " placement="bottom">
             <RaisedButton raised
@@ -273,7 +275,7 @@ class ProductionReview extends React.Component {
                   // className=classes.button
                   style={styles.orderIngredientsButton}
                   onClick = {(event) => this.addToShoppingCart(event)}
-                  component = {Link} to = "/formula"
+                  component = {Link} to = "/cart"
                   primary="true"> Order Ingredients </RaisedButton>
           </Tooltip> }
 
