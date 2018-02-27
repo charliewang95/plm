@@ -3,6 +3,7 @@ var User = mongoose.model('User');
 var Log = mongoose.model('Log');
 var Storage = mongoose.model('Storage');
 var Formula = mongoose.model('Formula');
+var Vendor = mongoose.model('Vendor');
 var Ingredient = mongoose.model('Ingredient');
 var modifierCreateUpdate = require('./modifierCreateUpdate');
 //var modifierDelete = require('./modifierDelete');
@@ -174,22 +175,29 @@ var update = function(req, res, next, model, itemId, username) {
                 else if (valid) {
                     console.log("updating, validated");
                     console.log("updating, updating");
-                   model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
-                       if (err) {
-                           return next(err);
-                       }
-                       else if (obj2){
-                           console.log("updating, updated");
-                           logger.log(username, 'update', obj2, model);
-//                           if (model == Storage || model == Ingredient || model == Vendor) {
-                               postProcessor.process(model, obj, itemId, res, next);
-//                           }
-                           res.json(obj2);
-                       } else {
-                           res.status(400);
-                           res.send("Object doesn't exist");
-                       }
-                   });
+                    if (model == Ingredient)
+                        Ingredient.findById(itemId, function(err, ingredient){
+                            var temp = ingredient;
+                            console.log(temp);
+                               model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
+                                   if (err) {
+                                       return next(err);
+                                   }
+                                   else if (obj2){
+                                       console.log("updating, updated");
+                                       logger.log(username, 'update', obj2, model);
+                                       if (model == Storage || model == Vendor) {
+                                           postProcessor.process(model, obj, itemId, res, next);
+                                       } else if (model == Ingredient) {
+                                           postProcessor.process(model, temp, itemId, res, next);
+                                       }
+                                       res.json(obj2);
+                                   } else {
+                                       res.status(400);
+                                       res.send("Object doesn't exist");
+                                   }
+                               });
+                        });
                 }
             });
         }
