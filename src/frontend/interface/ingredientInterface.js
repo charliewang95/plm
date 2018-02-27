@@ -5,23 +5,37 @@
 //and calls actions to send the actual requests
 import * as dummyIngredient from '../dummyDatas/ingredient.js'
 import * as ingredientActions from '../actions/ingredientAction'
+import axios from 'axios'
 
 /**
-takes in various properties of ingredient,
-returns a Json object that encapsulates all properties
-name: string
-packageType: string 'Sack', 'Pail', 'Drum', 'Supersack', 'Truckload', 'Railcar', or lowercase
-temperatureZone: string 'freezer', 'refrigerator', 'warehouse', 'Freezer', 'Refrigerator', 'Warehouse'
-vendors: array of objects following the VendorPriceSchema
+ * takes in various properties of ingredient,
+ * returns a Json object that encapsulates all properties
+ * name: string, the name of the ingredient
+ * packageType: string 'Sack', 'Pail', 'Drum', 'Supersack', 'Truckload', 'Railcar', or lowercase
+ * temperatureZone: string 'freezer', 'refrigerator', 'warehouse', 'Freezer', 'Refrigerator', 'Warehouse'
+ * vendors: array of objects following the VendorPriceSchema
+ * moneySpent: number, the total amount of money spent on purchasing this ingredient
+ * moneyOnProduction: number, the total amount of money spent on the portion that were used in production
+ * nativeUnit: string, the native unit of this ingredient, such as pounds, gallon 
+ * amountInNativeUnitPerPackage: number, amount in native unit per package.
 **/
-function packIntoJson(name, packageType, temperatureZone, vendors, moneySpent, moneyProd){
+function packIntoJson(name, packageType, temperatureZone, vendors, moneySpent,
+	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space){
 	var ingredientJson = new Object();
 	ingredientJson.name = name;
 	ingredientJson.packageName = packageType;
 	ingredientJson.temperatureZone = temperatureZone;
 	ingredientJson.vendors = vendors;
 	ingredientJson.moneySpent = moneySpent;
-	ingredientJson.moneyProd = moneyProd;
+	ingredientJson.moneyProd = moneyOnProduction;
+	ingredientJson.nativeUnit = nativeUnit;
+	ingredientJson.numUnit = numUnit;
+	ingredientJson.space = space;
+	ingredientJson.numUnitPerPackage = amountInNativeUnitPerPackage;
+	console.log("An ingredient with the following details has been prepared to be \
+		sent to the back-end:");
+	console.log(ingredientJson);
+	console.log("The ingredient has the following vendors:");
 	console.log(vendors);
 	return ingredientJson;
 }
@@ -29,10 +43,13 @@ function packIntoJson(name, packageType, temperatureZone, vendors, moneySpent, m
 /* add one ingredient
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
+ * callback: function, function to be executed after attempting to add the ingredient to the database
  */
-async function addIngredient(name, packageType, temperatureZone, vendors, sessionId, callback) {
-	console.log("add ingredients");
-	var newIngredient = packIntoJson(name, packageType, temperatureZone, vendors, 0, 0);
+async function addIngredient(name, packageType, temperatureZone, vendors, moneySpent,
+	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, sessionId, callback) {
+	console.log("add ingredient");
+	var newIngredient = packIntoJson(name, packageType, temperatureZone, vendors, moneySpent,
+	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space);
 	//return await ingredientActions.addIngredient(newIngredient, sessionId);
 	ingredientActions.addIngredient(newIngredient, sessionId, function(res){
 	    callback(res);
@@ -76,14 +93,21 @@ async function getIngredientAsync(ingredientId, sessionId) {
 	return await ingredientActions.getIngredientAsync(ingredientId, sessionId);
 };
 
+async function getAllIngredientNamesAsync(sessionId) {
+   const res = await axios.get('/ingredients/ingredientNames/user/'+sessionId);
+   return res;
+}
 /*
  * update one ingredient
  * ingredientId: string, the id of the ingredient
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
+ * callback: function, the function that will be executed after attempting to update the ingredient
  */
-async function updateIngredient(ingredientId, name, packageType, temperatureZone, vendors, moneySpent, moneyProd, sessionId, callback) {
-	var updatedIngredient = packIntoJson(name, packageType, temperatureZone, vendors, moneySpent, moneyProd);
+async function updateIngredient(ingredientId, name, packageType, temperatureZone, vendors, moneySpent,
+	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, sessionId, callback) {
+	var updatedIngredient = packIntoJson(name, packageType, temperatureZone, vendors, moneySpent,
+	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space);
 	//return await ingredientActions.updateIngredient(ingredientId, sessionId, updatedIngredient);
 	ingredientActions.updateIngredient(ingredientId, sessionId, updatedIngredient, function(res){
 	    callback(res);
@@ -95,9 +119,12 @@ async function updateIngredient(ingredientId, name, packageType, temperatureZone
  * ingredientId: string, the id of the ingredient
  * sessionId: string, id of the current session
  */
-async function deleteIngredient(ingredientId, sessionId) {
-	return await ingredientActions.deleteIngredient(ingredientId, sessionId);
+async function deleteIngredient(ingredientId, sessionId, callback) {
+	return await ingredientActions.deleteIngredient(ingredientId, sessionId, function(res){
+	    callback(res);
+	});
+
 };
 
 //export functions above for use by other modules
-export { addIngredient, getAllIngredientsAsync, getIngredientAsync, updateIngredient, deleteIngredient};
+export { addIngredient, getAllIngredientsAsync, getIngredientAsync, updateIngredient, deleteIngredient, getAllIngredientNamesAsync};

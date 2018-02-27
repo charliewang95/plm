@@ -1,13 +1,19 @@
 import React, {Component} from 'react';
 import TextField from 'material-ui/TextField';
-import { FormControl, FormHelperText } from 'material-ui/Form';
-import Select from 'react-select';
+//import Select from 'react-select';
 import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
 import AddCircleIcon from 'material-ui-icons/AddCircle';
 import VendorItem from './VendorItem';
 import * as vendorActions from '../../interface/vendorInterface.js';
 import * as testConfig from '../../../resources/testConfig.js';
+import Tooltip from 'material-ui/Tooltip';
+import Select from 'material-ui/Select';
+import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
+import { FormControl, FormGroup, FormHelperText } from 'material-ui/Form';
+import { MenuItem } from 'material-ui/Menu';
+import Button from 'material-ui/Button';
+
 
 const VENDORS = require('./dummyVendors');
 
@@ -24,7 +30,7 @@ class SelectVendors extends Component {
     super(props)
     this.state = {
       selectName: "",
-      inputPrice: 0,
+      inputPrice: '',
       options: [],
       vendorsArray: this.props.initialArray,
       idToNameMap: {}, //id = key, name=value
@@ -35,6 +41,7 @@ class SelectVendors extends Component {
     this.updatePrice = this.updatePrice.bind(this);
     this.loadVendorsArray = this.loadVendorsArray.bind(this);
     this.loadCodeNameArray = this.loadCodeNameArray.bind(this);
+//    this.updateName = this.updateName.bind(this);
 //    this.createMap = this.createMap.bind(this);
     this.resetArray = this.resetArray.bind(this);
   }
@@ -95,7 +102,7 @@ class SelectVendors extends Component {
        obj.vendorName = name;
        obj.label = name;
        this.state.options.push(obj);
-       console.log("what's up");
+       console.log('qqqqqq');
        console.log(this.state.options);
        this.setState({options:this.state.options});
      } else{
@@ -131,7 +138,7 @@ class SelectVendors extends Component {
     var newVendor = new Object();
     console.log("addVendor() was called");
     console.log(this.state.selectName);
-    var tempId = this.state.selectName.vendorName;
+    var tempId = this.state.selectName;
     var priceFloat = parseFloat(this.state.inputPrice);
     newVendor = {vendorName: tempId, price: priceFloat};
     console.log(newVendor);
@@ -142,7 +149,7 @@ class SelectVendors extends Component {
     this.state.vendorsArray.push(newVendor);
     this.setState({vendorsArray:this.state.vendorsArray});
     this.resetArray(tempId, "add");
-    this.setState({inputPrice : 0});
+    this.setState({inputPrice : ''});
     this.setState({selectName: ""})
     console.log(this.state.vendorsArray);
     this.props.handleChange(this.state.vendorsArray);
@@ -177,57 +184,89 @@ class SelectVendors extends Component {
   }
 
   updatePrice (newPrice, index){
-    console.log("this is the price");
-    var price = parseFloat(newPrice.target.value);
-    console.log(typeof (price));
-
-    var isEmpty = (!price || (price.length==0));
-
-    console.log(index);
-    if(index>=0 && !isEmpty){
-      // var updateVendor = this.state.vendorsArray.slice();
-      // updateVendor[index].price = newPrice.target.value;
-      // this.setState({vendorsArray: updateVendor});
-      this.state.vendorsArray[index].price = price;
-      this.setState({vendorsArray: this.state.vendorsArray});
-      this.props.handleChange(this.state.vendorsArray);
-    }
+    var price = newPrice.target.value;
+    console.log("price");
+    console.log(price);
+    const re = /^\d*\.?\d*$/;
+      if ( index>=0 && (price==''|| (price>0 && re.test(price)))) {
+        this.state.vendorsArray[index].price = price;
+        this.setState({vendorsArray: this.state.vendorsArray});
+        console.log("this is the price [updated]");
+        console.log(this.state.vendorsArray);
+        this.props.handleChange(this.state.vendorsArray);
+      }else{
+        alert("Price must be a positive number.");
+      }
   }
 
-  updatePriceHere(newPrice){
-    this.setState({inputPrice: newPrice.target.value});
-  }
+  //   if(index>=0 && !isEmpty){
+  //     // var updateVendor = this.state.vendorsArray.slice();
+  //     // updateVendor[index].price = newPrice.target.value;
+  //     // this.setState({vendorsArray: updateVendor});
+      
+  //   }
+  // }
 
-  updateName(value){
-    console.log("updateName");
-    console.log(value);
-    this.setState({selectName: value});
+  // updatePriceHere(newPrice){
+  //   this.setState({inputPrice: newPrice.target.value});
+  // }
+
+updatePriceHere(event){
+  const re = /^\d*\.?\d*$/;
+      if ( event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
+         this.setState({inputPrice: event.target.value})
+      }else{
+        alert("Price must be a positive number.");
+      }
   }
+  // updateName(value){
+  //   console.log("updateName");
+  //   console.log(value);
+  //   this.setState({selectName: value});
+  // }
+
+   handleChange = name => event => {
+    console.log("handling changes:");
+    console.log(event.target.value);
+    this.setState({
+      [name]: event.target.value,
+    });
+  };
 
   render() {
     return (
     	<div>
-      <Grid container spacing={16}>
-        <Grid item sm={7}>
-         <Select
-          placeholder="Select New Vendor"
-          name="Vendor Name"
-          options={this.state.options}
-          valueKey="vendorName"
-          value={this.state.selectName} //value displayed
-          onChange={this.updateName.bind(this)}
+          <p>Vendors:</p>
+          <FormControl style={{marginLeft: 20, width:150}}>
+            <InputLabel htmlFor="vendorName">Vendor</InputLabel>
+            <Select
+             disabled={this.state.options.length==0}
+             value={this.state.selectName}
+             onChange={this.handleChange('selectName')}
+             inputProps={{
+              name: 'vendorName',
+              id: 'vendorName',
+             }}>
+            {this.state.options.map((vendor, index)=>(<MenuItem key={index} value={vendor.vendorName}>{vendor.vendorName}</MenuItem>))}
+            </Select>
+            {/* {this.state.selectName && (this.state.inputPrice>0) && <FormHelperText>Press  to add vendor</FormHelperText>} */}
+         </FormControl>
+         <FormControl style={{marginLeft:10}}>
+          <InputLabel htmlFor="amount">Price</InputLabel>
+          <Input
+            style={{width:50}}
+            id="adornment-amount"
+            onChange={(value)=>{this.updatePriceHere(value);}}
+            value={this.state.inputPrice}
+            startAdornment={<InputAdornment position="start">$</InputAdornment>}
           />
-        </Grid>
-        <Grid item sm={3}>
-          <TextField value={this.state.inputPrice} onChange={(value)=>{this.updatePriceHere(value);}}/>
-        </Grid>
-        <Grid item sm={1}>
-          <IconButton aria-label="Add" onClick={()=>{this.addVendor();}}>
-            <AddCircleIcon />
-          </IconButton>
-        </Grid>
-      </Grid>
-      <VendorItem idToNameMap = {this.state.idToNameMap} vendorsArray={this.state.vendorsArray} deleteVendor={this.deleteVendor} updateId={this.updateId} updatePrice={this.updatePrice} options={this.state.options} />
+         </FormControl>
+         {this.state.selectName && (this.state.inputPrice>0) && 
+         <Button raised style={{marginLeft:10}} onClick={()=>{this.addVendor();}}>ADD VENDOR</Button>}
+ <br/>
+
+      
+      {(this.state.vendorsArray.length>0) && <VendorItem idToNameMap = {this.state.idToNameMap} vendorsArray={this.state.vendorsArray} deleteVendor={this.deleteVendor} updateId={this.updateId} updatePrice={this.updatePrice} options={this.state.options} />}
       </div>
     );
   }

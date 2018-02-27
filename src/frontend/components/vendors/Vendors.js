@@ -29,7 +29,7 @@ import * as testConfig from '../../../resources/testConfig.js';
 import cookie from 'react-cookies';
 
 // TODO: get session Id from the user
-//var sessionId = (localStorage.getItem('user') == null) ? null: JSON.parse(localStorage.getItem('user'))._id;
+//var sessionId = (sessionStorage.getItem('user') == null) ? null: JSON.parse(sessionStorage.getItem('user'))._id;
 var sessionId = '';
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 var isAdmin = '';
@@ -76,7 +76,7 @@ Cell.propTypes = {
 };
 
 const EditCell = (props) => {
-  return <TableEditRow.Cell {...props} />;
+  return <TableEditRow.Cell {...props} style={{backgroundColor:'aliceblue'}}/>;
 };
 
 EditCell.propTypes = {
@@ -199,8 +199,8 @@ class Vendors extends React.PureComponent
   }
 
   componentWillMount(){
-    isAdmin = JSON.parse(localStorage.getItem('user')).isAdmin;
-    sessionId = JSON.parse(localStorage.getItem('user'))._id;
+    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
   }
 
   componentDidMount(){
@@ -214,7 +214,7 @@ class Vendors extends React.PureComponent
     var rawData = [];
     if(READ_FROM_DATABASE){
       //TODO: Initialize data
-      sessionId = JSON.parse(localStorage.getItem('user'))._id;
+      sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
       rawData = await vendorActions.getAllVendorsAsync(sessionId);
       //commented out because collectively done after rawData is determined
       /*

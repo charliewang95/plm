@@ -29,8 +29,8 @@ export default class Demo extends React.PureComponent {
     this.state = {
       columns: [
         { name: 'name', title: 'Ingredient Name' },
-        { name: 'moneySpent', title: 'Expenditure (Orders) /$ ' },
-        { name: 'moneyProd', title: 'Expenditure (Production) /$' },
+        { name: 'moneySpent', title: 'Orders Expenditure ($) ' },
+        { name: 'moneyProd', title: 'Production Expenditure ($)' },
       ],
       rows: [],
       sorting:[],
@@ -57,7 +57,7 @@ export default class Demo extends React.PureComponent {
 
     // try{
        if(READ_FROM_DATABASE){
-         sessionId = JSON.parse(localStorage.getItem('user'))._id;
+         sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
          rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
        }else{
          rawData = dummyData;
@@ -68,7 +68,10 @@ export default class Demo extends React.PureComponent {
      // }
      // adds integer values as row id
      var processedData = [...rawData.map((row, index)=> ({
-         id: index,...row,
+         id: index,
+         ...row,
+         moneySpent: Math.round(row.moneySpent*100)/100, 
+         moneyProd: Math.round(row.moneyProd*100)/100,
        })),
      ];
      this.setState({rows:processedData});

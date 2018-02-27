@@ -2,7 +2,7 @@
 
 The system is being developed at this GitHub repo: <https://github.com/charliewang95/plm>
 
-## Basic Set-up and Assumptions
+## Basic Set-Up and Assumptions
 
 * The system is supposed to be deployed on a Linux Ubuntu server. Current release is developed and tested on Ubuntu 16.04 LTS. Support for other versions of Ubuntu has not been verified yet.
 
@@ -60,4 +60,127 @@ The system is being developed at this GitHub repo: <https://github.com/charliewa
 
 5. Enable the UFW by typing `sudo ufw enable`
 
-* For more options regarding setting your firewall, refer to the link above.
+* For more options regarding setting your firewall, refer to [this link](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-ubuntu-14-04).
+
+## Set up the development environment
+
+### Install Node.js (adopted from <http://mean.io/blog/>)
+
+* In order to manage Node.js we will use the __Node Version Manager__ (NVM). Follow these steps to install the NVM (adopted from the README at <https://github.com/creationix/nvm#installation>):
+
+1. Run `curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash`
+
+2. Run this command:
+	
+	```
+	export NVM_DIR="$HOME/.nvm"
+	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+	```
+
+3. Verify that nvm is installed by typing `command -v nvm`.  On Linux if you get `nvm: command not found` or see no feedback from the terminal, close the current terminal, open a new terminal, and try verify again. For more troubleshooting tips and information see [this link](https://github.com/creationix/nvm#installation)
+
+4. Install Node.js 6.11.4 by running this command `nvm install 6.11.4`. After the installation completes, use installed version of Node 6.11.4 by running `nvm use 6.11.4`.  
+
+### Install MongoDB (adopted from <http://mean.io/blog/>)
+
+1. Import the GPG keys for the official MongoDB repository by running 
+
+	```
+	sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
+	```
+
+2. Add MongoDB repository details to your system by running 
+	
+	```
+	echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+	```
+
+3. Update the package list by running 
+
+	```
+	sudo apt-get update
+	```
+
+4. Install the MongoDB package itself:
+
+	```
+	sudo apt-get install -y mongodb-org
+	```
+
+5. Add MongoDB as a service in Ubuntu by typing this command 
+
+	```
+	sudo nano /etc/systemd/system/mongodb.service
+	```
+
+	Paste the following instructions to the file you just opend by running the above command, save it, and close it.
+	
+	```
+	[Unit]
+	Description=High-performance, schema-free document-oriented database
+	After=network.target
+
+	[Service]
+	User=mongodb
+	ExecStart=/usr/bin/mongod --quiet --config /etc/mongod.conf
+
+	[Install]
+	WantedBy=multi-user.target
+	```
+
+6. Start the MongoDB instance: 
+
+	```
+	sudo systemctl start mongodb
+	```
+
+7. Check the status of MongoDB by running this command:
+
+	```
+	sudo systemctl status mongodb
+	```
+
+8. If you wish to start MongoDB on system boot, use the following command:
+
+	```
+	sudo systemctl enable mongodb
+	```
+
+### Deploy our system 
+
+1. Clone the repository from GitHub by running 
+
+	```
+	git clone https://github.com/charliewang95/plm.git
+	```
+
+2. Check out the production server by running 
+
+	```
+	git fetch
+	git checkout production-server
+	```
+
+3. Run `sudo npm install` to install all dependencies
+
+4. If you wish to run the server locally and access it as localhost, remove the `.env` file. If you wish the system to be accessed on the Internet, open the `.env` file (create one if does not exist), and add the following entry:
+
+	```
+	HOST=<your-domain-url>
+	```
+
+5. Start the server by running the command `sudo npm run start-https`. This will start the system while the terminal is open and running. Addtionally, if you want to just start the system and have it operate after you close the terminal, run `sudo nohup npm run start-https >/dev/null 2>&1 &`. __Note: It is strongly recommended thta you run `sudo npm run start-https` first to make sure the system operates correctly, as the second command will produce no output on the terminal.__
+
+* Additionally, 2 scripts are provided to ease shutting down and starting the server. Running `./startNonStoppingServer.sh` will start the server that will not be shut down when the terminal is closed; Running `./shutdownServer.sh` shuts down the server by killing all processes of the system
+
+## Troubleshooting
+
+* If when starting the server you get the following error
+
+	```
+	Module not found: Can't resolve 'react-transition-group/CSSTransition' in '/home/plm/node_modules/material-ui/transitions'
+	```
+	
+	Please try running the this command `sudo npm install react-transition-group@^1`. This will resolve the error. (from https://github.com/reactjs/react-transition-group/issues/36) 
+
+

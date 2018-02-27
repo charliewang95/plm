@@ -25,12 +25,12 @@ function createData(packageName, weight) {
 }
 
 const data = [
-  createData('Sack', 50),
-  createData('Pail', 50),
-  createData('Drum', 500),
-  createData('Supersack', 2000),
-  createData('Truckload', 50000),
-  createData('Railcar', 280000),
+  createData('Sack', 0.5),
+  createData('Pail', 1),
+  createData('Drum', 3),
+  createData('Supersack', 16),
+  createData('Truckload', 'N/A'),
+  createData('Railcar', 'N/A'),
 ];
 
 function SimpleTable(props) {
@@ -42,18 +42,16 @@ function SimpleTable(props) {
         <TableHead>
           <TableRow>
             <TableCell className={classes.tableCell}> Package Name </TableCell>
-            <TableCell > Weight (lbs) </TableCell>
+            <TableCell > Floor Space (sqft) </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map(n => {
-            return (
-              <TableRow key={n.id}>
+          {data.map((n, index) => (
+              <TableRow key={index}>
                 <TableCell className={classes.tableCell}>{n.packageName}</TableCell>
                 <TableCell>{n.weight}</TableCell>
               </TableRow>
-            );
-          })}
+          ))}
         </TableBody>
       </Table>
     </Paper>
