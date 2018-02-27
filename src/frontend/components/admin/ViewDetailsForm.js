@@ -89,6 +89,7 @@ class AddIngredientForm extends React.Component{
     this.isValid = this.isValid.bind(this);
     this.handleQuantityChange = this.handleQuantityChange.bind(this);
     this.loadIngredient = this.loadIngredient.bind(this);
+    this.handleNumUnitChange = this.handleNumUnitChange.bind(this);
   }
 
   handleOnChange (option) {
@@ -229,6 +230,11 @@ class AddIngredientForm extends React.Component{
                   }
               });
     }else if(isValid){
+      if(this.state.numUnit==''){
+        this.setState({numUnit:0});
+      }
+      console.log("saved edited");
+      console.log(this.state.numUnit);
       ingredientInterface.updateIngredient(this.state.ingredientId, this.state.name, this.state.packageName,
                 this.state.temperatureZone, this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd,
                 this.state.nativeUnit, this.state.numUnitPerPackage, this.state.numUnit, this.state.space, sessionId, function(res){
@@ -258,6 +264,32 @@ class AddIngredientForm extends React.Component{
       }else{
         alert(" Quantity must be a positive number or 0 (not in stock).");
       }
+  }
+
+  handleNumUnitChange(event){
+     const re = /^[0-9\b]+$/;
+      if ( event.target.value == '' || (re.test(event.target.value))) {
+         var computeSpace = event.target.value * this.packageSpace(this.state.packageName);
+         this.setState({numUnit: event.target.value});
+         this.setState({space: computeSpace});
+      }else{
+        alert(" Quantity must be a number");
+      }
+  }
+
+  packageSpace(input){
+    if(input=='drum'){
+      return 3;
+    }
+    else if(input=='supersack'){
+      return 16;
+    }else if(input=='sack'){
+      return 0.5;
+    }else if(input=='pail'){
+      return 1;
+    }else{
+      return 0;
+    }
   }
 
   render (){
@@ -357,11 +389,11 @@ class AddIngredientForm extends React.Component{
                   id="numUnit"
                   label={"Current Quantity " + "(" + this.state.nativeUnit +")"}
                   value={this.state.numUnit}
-                  onChange={this.handleChange('numUnit')}
+                  onChange={this.handleNumUnitChange}
                   margin="normal"
                 />
                 <TextField
-                  disabled = {this.state.isDisabled}
+                  disabled
                   id="space"
                   label="Space Occupied (sqft)"
                   value={this.state.space}
