@@ -253,7 +253,7 @@ var doBulkImport = function(username, req, res, next, array, i, callback){ // TO
         var amount = ingredient["AMOUNT (NATIVE UNITS)"];
         var temperatureZone = ingredient.TEMPERATURE.toLowerCase();
 
-        if (amount == null || amount < 0) amount = 0;
+        if (!amount || amount < 0) amount = 0;
         if (temperatureZone == 'room temperature') temperatureZone = 'warehouse';
         else if (temperatureZone == 'frozen') temperatureZone = 'freezer';
         else if (temperatureZone == 'refrigerated') temperatureZone = 'refrigerator';

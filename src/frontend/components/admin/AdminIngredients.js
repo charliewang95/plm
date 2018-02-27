@@ -484,6 +484,7 @@ class AdminIngredients extends React.PureComponent {
                 } else {
                     alert(" Ingredient successfully deleted ! ");
                     rows.splice(index, 1);
+                    window.location.reload();
                 }
           });
 
