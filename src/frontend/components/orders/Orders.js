@@ -256,7 +256,7 @@ class Orders extends React.PureComponent{
     return (
         <div>
          <p><font size="6">Place an Order</font></p>
-            <form onSubmit={this.onFormSubmit} >
+            <form style={{width:400}} onSubmit={this.onFormSubmit} >
               <div style = {styles.buttons}>
                  <p><font size="3">Ingredient Name:</font></p>
                 <Select
