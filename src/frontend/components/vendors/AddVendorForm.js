@@ -108,7 +108,6 @@ class AddVendorForm extends React.Component{
                     margin="normal"
                 />
                 <TextField
-                    required
                     fullWidth={true}
                     id="contact"
                     label="Contact"

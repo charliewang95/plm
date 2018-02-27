@@ -238,7 +238,7 @@ class PersistentDrawer extends React.Component {
                 <MenuIcon />
               </IconButton>
               <Typography type="title" className={classes.flex} color="inherit" noWrap>
-                Real Producer
+                Real Producers
               </Typography>
               <Button raised color="secondary" onClick={this.logout} component={Link} to="/"><ExitToApp className={classes.icon}/> Logout</Button>
             </Toolbar>

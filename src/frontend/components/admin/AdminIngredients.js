@@ -478,11 +478,19 @@ class AdminIngredients extends React.PureComponent {
           var packageName = rows[index].packageName;
           console.log("delete");
           console.log(rows[index].ingredientId);
-          ingredientInterface.deleteIngredient(rows[index].ingredientId, sessionId);
-          rows.splice(index, 1);
+          ingredientInterface.deleteIngredient(rows[index].ingredientId, sessionId, function(res){
+                if (res.status == 400) {
+                    alert(res.data);
+                } else {
+                    alert(" Ingredient successfully deleted ! ");
+                    rows.splice(index, 1);
+                }
+          });
+
 
           //Alert the user
-          alert(" Ingredient successfully deleted ! ");
+
+
         }
 
       });

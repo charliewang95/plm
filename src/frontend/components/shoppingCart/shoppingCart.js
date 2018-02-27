@@ -389,13 +389,13 @@ class ShoppingCart extends React.Component {
         <div
           style = {{marginTop: 30,
                   float: 'center'}}>
-        <Button raised
+        {this.state.rows.length!=0 && <Button raised
                   color="primary"
                   component = {Link} to = "/cart" //commented out because it overrides onSubmit
                   style={{marginLeft: 500, marginBottom: 30, float: 'center'}}
                   type="submit"
                   onClick = {this.handleCheckOut}
-                  primary="true"> Checkout </Button>
+                  primary="true"> Checkout </Button>}
       </div>
       </Paper>
 

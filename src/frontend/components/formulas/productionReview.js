@@ -243,7 +243,7 @@ class ProductionReview extends React.Component {
                   autoFocus
                   margin="dense"
                   id="quantity"
-                  label="Enter Quantity (lbs)"
+                  label="Enter Quantity"
                   fullWidth = {false}
                   onChange={(event) => this.handleFormulaQuantity(event)}
                   // verticalSpacing= "desnse"

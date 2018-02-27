@@ -8,6 +8,7 @@ var modifierCreateUpdate = require('./modifierCreateUpdate');
 //var modifierDelete = require('./modifierDelete');
 var validator = require('./validator');
 var postProcessor = require('./postProcessor');
+var validatorDelete = require('./validatorDelete');
 var deleteProcessor = require('./deleteProcessor');
 var logger = require('./logger');
 
@@ -262,15 +263,17 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) 
         }
         else {
             var temp = item;
-            item.remove(function(err) {
-                if (err) {
-                    return next(err);
-                }
-                else {
-                    deleteProcessor.process(model, item, itemId, res, next);
-                    logger.log(username, 'delete', temp, model);
-                    res.json(temp);
-                }
+            validatorDelete.validate(model, item, res, next, function(){
+                item.remove(function(err) {
+                    if (err) {
+                        return next(err);
+                    }
+                    else {
+                        deleteProcessor.process(model, item, itemId, res, next);
+                        logger.log(username, 'delete', temp, model);
+                        res.json(temp);
+                    }
+                });
             });
         }
     });

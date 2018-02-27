@@ -229,6 +229,7 @@ class AddIngredientForm extends React.Component{
                       alert(" Ingredient Successfully added! ");
                   }
               });
+     // this.clearFields();
     }else if(isValid){
       if(this.state.numUnit==''){
         this.setState({numUnit:0});
@@ -253,6 +254,21 @@ class AddIngredientForm extends React.Component{
 
     }
 
+    clearFields(){
+    this.setState({
+      vendors:[],
+      vendorsArray: [],
+      ingredientId: '',
+      name:'',
+      packageName:'',
+      temperatureZone:'',
+      nativeUnit: '',
+      numUnitPerPackage: 0,
+      vendorString: "",
+      isCreateNew: true
+      })
+    }
+
     handleNewOptionClick(option){
       console.log("New Option was clicked: " + option.value);
   }
@@ -260,7 +276,9 @@ class AddIngredientForm extends React.Component{
   handleQuantityChange(event){
   const re = /^[0-9\b]+$/;
       if ( event.target.value == '' || (event.target.value>=0 && re.test(event.target.value))) {
-         this.setState({numUnitPerPackage: event.target.value})
+         this.setState({numUnitPerPackage: event.target.value});
+         var computeSpace = Math.ceil(this.state.numUnit/event.target.value) * this.packageSpace(this.state.packageName);
+         this.setState({space: computeSpace});
       }else{
         alert(" Quantity must be a positive number or 0 (not in stock).");
       }
@@ -269,7 +287,7 @@ class AddIngredientForm extends React.Component{
   handleNumUnitChange(event){
      const re = /^[0-9\b]+$/;
       if ( event.target.value == '' || (re.test(event.target.value))) {
-         var computeSpace = Math.ceil(event.target.value) * this.packageSpace(this.state.packageName);
+         var computeSpace = Math.ceil(event.target.value/this.state.numUnitPerPackage) * this.packageSpace(this.state.packageName);
          this.setState({numUnit: event.target.value});
          this.setState({space: computeSpace});
       }else{

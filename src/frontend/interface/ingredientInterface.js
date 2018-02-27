@@ -119,8 +119,11 @@ async function updateIngredient(ingredientId, name, packageType, temperatureZone
  * ingredientId: string, the id of the ingredient
  * sessionId: string, id of the current session
  */
-async function deleteIngredient(ingredientId, sessionId) {
-	return await ingredientActions.deleteIngredient(ingredientId, sessionId);
+async function deleteIngredient(ingredientId, sessionId, callback) {
+	return await ingredientActions.deleteIngredient(ingredientId, sessionId, function(res){
+	    callback(res);
+	});
+
 };
 
 //export functions above for use by other modules
