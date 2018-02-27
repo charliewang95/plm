@@ -204,10 +204,7 @@ class ProductionReview extends React.Component {
     const {formulaRows,rows,columns,formulaColumns, } = this.state;
     return (
       <div>
-<<<<<<< HEAD
-=======
       <p><font size="6">Production Review</font></p>
->>>>>>> master
       <Paper>
         <Grid
           allowColumnResizing = {true}
@@ -269,11 +266,7 @@ class ProductionReview extends React.Component {
           </Dialog>
       </Paper>
       <div style={styles.buttons}>
-<<<<<<< HEAD
-        {(this.state.ingredientsToOrder.length!=0) && <p>You do not have enough ingredients. Order the difference?</p>}
-=======
         {(this.state.ingredientsToOrder.length!=0) && <p><font size="5">You do not have enough ingredients. Order the difference?</font></p>}
->>>>>>> master
         {(this.state.ingredientsToOrder.length!=0) &&
           <Tooltip id="tooltip-bottom" title="Ingredients with additional amount > 0 added to cart " placement="bottom">
             <RaisedButton raised
@@ -297,14 +290,9 @@ class ProductionReview extends React.Component {
             </Tooltip>}
 
         <RaisedButton color="default"
-<<<<<<< HEAD
-          component={Link} to='/formula'
-          style = {{marginTop: 5, marginLeft: 5}}
-=======
         raised
           component={Link} to='/formula'
           style = {{marginLeft: 10}}
->>>>>>> master
           > BACK </RaisedButton>
      </div>
    </div>
