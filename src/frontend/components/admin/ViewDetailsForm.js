@@ -212,7 +212,6 @@ class AddIngredientForm extends React.Component{
 
 
   onFormSubmit(e) {
-
     e.preventDefault();
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     var isValid = this.isValid();

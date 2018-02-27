@@ -187,6 +187,7 @@ class Log extends React.PureComponent {
       var rawData = [];
       sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
       rawData = await logActions.getAllLogsAsync(sessionId);
+      rawData = rawData.reverse();
       var tempDates = [];
        for (var i = 0; i<rawData.length; i++) {
            var date = rawData[i].date;

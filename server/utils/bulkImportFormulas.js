@@ -110,33 +110,35 @@ var doBulkImport = function(req, res, next, array, i, callback){
         var ingredient = new Object();
         ingredient.ingredientName = ingredientName;
         ingredient.quantity = ingredientUnits;
+        Ingredient.findOne({nameUnique: ingredientName.toLowerCase()}, function(err, oo){
+            ingredient.nativeUnit = oo.nativeUnit;
+            Formula.findOne({nameUnique: formulaName.toLowerCase()}, function(err, obj){
+                if (err) next(err);
+                else if (obj) {
+                    console.log('Formula '+formulaName+' exists');
+                    var ingredients = obj.ingredients;
+                    ingredients.push(ingredient);
+                    obj.update({ingredients: ingredients}, function(err, obj3){
+                        if (err) return next(err);
+                        else doBulkImport(req, res, next, array, i+1, callback);
+                    });
+                } else {
+                    console.log('Formula '+formulaName+' does not exist yet');
+                    var ingredients = [];
+                    ingredients.push(ingredient);
+                    var newFormula = new Formula();
+                    newFormula.name = formulaName;
+                    newFormula.nameUnique = formulaName.toLowerCase();
+                    newFormula.description = description;
+                    newFormula.unitsProvided = unitsProvided;
+                    newFormula.ingredients = ingredients;
 
-        Formula.findOne({nameUnique: formulaName.toLowerCase()}, function(err, obj){
-            if (err) next(err);
-            else if (obj) {
-                console.log('Formula '+formulaName+' exists');
-                var ingredients = obj.ingredients;
-                ingredients.push(ingredient);
-                obj.update({ingredients: ingredients}, function(err, obj3){
-                    if (err) return next(err);
-                    else doBulkImport(req, res, next, array, i+1, callback);
-                });
-            } else {
-                console.log('Formula '+formulaName+' does not exist yet');
-                var ingredients = [];
-                ingredients.push(ingredient);
-                var newFormula = new Formula();
-                newFormula.name = formulaName;
-                newFormula.nameUnique = formulaName.toLowerCase();
-                newFormula.description = description;
-                newFormula.unitsProvided = unitsProvided;
-                newFormula.ingredients = ingredients;
-
-                newFormula.save(function(err){
-                    if (err) return next(err);
-                    else doBulkImport(req, res, next, array, i+1, callback);
-                });
-            }
+                    newFormula.save(function(err){
+                        if (err) return next(err);
+                        else doBulkImport(req, res, next, array, i+1, callback);
+                    });
+                }
+            });
         });
     }
 };
