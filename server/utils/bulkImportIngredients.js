@@ -94,13 +94,13 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
         var ingredient = array[i];
         //console.log(ingredient);
         var ingredientName = ingredient.INGREDIENT;
-        var packageName = ingredient.PACKAGE.toLowerCase();
-        var vendorCode = ingredient["VENDOR FREIGHT CODE"].toLowerCase();
+        var packageName = ingredient.PACKAGE;
+        var vendorCode = ingredient["VENDOR FREIGHT CODE"];
         var vendorPrice = ingredient["PRICE PER PACKAGE"];
         var nativeUnit = ingredient["NATIVE UNIT"];
         var numUnitPerPackage = ingredient["UNITS PER PACKAGE"];
         var amount = ingredient["AMOUNT (NATIVE UNITS)"];
-        var temperatureZone = ingredient.TEMPERATURE.toLowerCase();
+        var temperatureZone = ingredient.TEMPERATURE;
 
         if (ingredientName == null || ingredientName == '') {
             res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Ingredient name cannot be empty');
@@ -127,6 +127,10 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
             res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Temperature zone cannot be empty');
             return;
         }
+
+        var packageName = ingredient.PACKAGE.toLowerCase();
+        var vendorCode = ingredient["VENDOR FREIGHT CODE"].toLowerCase();
+        var temperatureZone = ingredient.TEMPERATURE.toLowerCase();
 
         if (temperatureZone == 'room temperature') temperatureZone = 'warehouse';
         else if (temperatureZone == 'frozen') temperatureZone = 'freezer';
@@ -278,8 +282,8 @@ var doBulkImport = function(req, res, next, array, i, callback){ // TODO: update
                             newVendor.price = Number(vendorPrice);
                             vendors.push(newVendor);
 
-                            var newSpace = obj.space + space;
-                            var newNumUnit = obj.numUnit + amount;
+                            var newSpace = Number(obj.space) + Number(space);
+                            var newNumUnit = Number(obj.numUnit) + Number(amount);
                             obj.update({vendors: vendors, space: newSpace, numUnit:newNumUnit}, function(err, obj3){
                                 if (err) return next(err);
                                 doBulkImport(req, res, next, array, i+1, callback);

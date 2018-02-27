@@ -263,13 +263,15 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) 
             return next(err);
         }
         else {
+            var temp = item;
+            //console.log(temp);
             item.remove(function(err) {
                 if (err) {
                     return next(err);
                 }
                 else {
-                    postProcessor.process(model, item, itemId, res, next);
-                    logger.log(username, 'delete', item, model);
+                    postProcessor.process(model, temp, temp._id, res, next);
+                    logger.log(username, 'delete', temp, model);
                     res.json(item);
                 }
             });

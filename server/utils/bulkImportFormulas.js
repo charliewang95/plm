@@ -43,7 +43,6 @@ var validateBulkImport = function(req, res, next, array, i, callback){
         var unitsProvided = formula["PRODUCT UNITS"];
         var description = formula.DESCRIPTION;
         var ingredientName = formula.INGREDIENT;
-        var ingredientNameUnique = formula.INGREDIENT.toLowerCase();
         var ingredientUnits = formula["INGREDIENT UNITS"];
 
         if (formulaName == null || formulaName == '') {
@@ -54,7 +53,7 @@ var validateBulkImport = function(req, res, next, array, i, callback){
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Units provided cannot be empty or zero');
             return;
         }
-        if (ingredientNameUnique == null || ingredientNameUnique == '') {
+        if (ingredientName == null || ingredientName == '') {
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Ingredient name cannot be empty');
             return;
         }
@@ -66,6 +65,8 @@ var validateBulkImport = function(req, res, next, array, i, callback){
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Units provided must be an integer.');
             return;
         }
+
+        var ingredientNameUnique = formula.INGREDIENT.toLowerCase();
 
         Formula.findOne({nameUnique: formulaName.toLowerCase()}, function(err, obj){
             if (err) return next(err);

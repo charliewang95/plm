@@ -53,20 +53,46 @@ var processOrderHelper = function(i, items, res, next) {
 
 var processIngredient = function(item, itemId, res, next) {
     var oldItem = item;
+    var oldTemperatureZone = item.temperatureZone;
     var oldSpace = oldItem.space;
     Ingredient.findById(itemId, function(err, newItem){
         var newSpace = newItem.space;
-        var temperatureZone = newItem.temperatureZone;
-        Storage.findOne({temperatureZone: temperatureZone}, function(err, storage){
-            var capacity = storage.capacity;
-            var occupied = storage.currentOccupiedSpace;
-            var newOccupied = occupied - oldSpace + newSpace;
-            var newEmpty = capacity - newOccupied;
-            storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
-                console.log(oldSpace+' '+newSpace);
-                if (err) return next(err);
+        var newTemperatureZone = newItem.temperatureZone;
+        if (oldTemperatureZone == newTemperatureZone) {
+            Storage.findOne({temperatureZone: newTemperatureZone}, function(err, storage){
+                var capacity = storage.capacity;
+                var occupied = storage.currentOccupiedSpace;
+                var newOccupied = occupied - oldSpace + newSpace;
+                var newEmpty = capacity - newOccupied;
+                storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+                    console.log(oldSpace+' '+newSpace);
+                    if (err) return next(err);
+                });
             });
-        })
+        } else {
+            Storage.findOne({temperatureZone: newTemperatureZone}, function(err, storage){
+                var capacity = storage.capacity;
+                var occupied = storage.currentOccupiedSpace;
+                var newOccupied = occupied + newSpace;
+                var newEmpty = capacity - newOccupied;
+                storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+                    console.log(oldSpace+' '+newSpace);
+                    if (err) return next(err);
+                    else {
+                        Storage.findOne({temperatureZone: newTemperatureZone}, function(err, storage2){
+                            var capacity2 = storage2.capacity;
+                            var occupied2 = storage2.currentOccupiedSpace;
+                            var newOccupied2 = occupied2 - oldSpace;
+                            var newEmpty2 = capacity2 - newOccupied2;
+                            storage2.update({currentOccupiedSpace: newOccupied2, currentEmptySpace: newEmpty2}, function(err, obj){
+                                console.log(oldSpace2+' '+newSpace2);
+                                if (err) return next(err);
+                            });
+                        });
+                    }
+                });
+            });
+        }
     });
 };
 
