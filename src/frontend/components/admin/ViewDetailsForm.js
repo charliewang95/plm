@@ -109,6 +109,7 @@ class AddIngredientForm extends React.Component{
 
   updateVendors(updatedArray){
     this.setState({'vendorsArray': updatedArray});
+    this.computeVendorString();
   }
 
   computeVendorString(){
@@ -179,11 +180,18 @@ class AddIngredientForm extends React.Component{
 
   isValid(){
     const re = /^[0-9\b]+$/;
-      if (this.state.numUnitPerPackage < 0 || this.state.numUnitPerPackage == '' || !re.test(this.state.numUnitPerPackage)) {
-        alert(" Quantity must be a positive number or 0 (not in stock).");
+    for(var i=0; i<this.state.vendorsArray.length; i++){
+      if(this.state.vendorsArray[i].price==0 || this.state.vendorsArray[i].price==""){
+        alert("Price for " + this.state.vendorsArray[i].vendorName + " should be greater than 0");
         return false;
       }
-    if(this.state.temperatureZone==null || this.state.temperatureZone==''){
+    }
+
+    if (this.state.numUnitPerPackage < 0 || this.state.numUnitPerPackage == '' || !re.test(this.state.numUnitPerPackage)) {
+      alert(" Quantity must be a positive number or 0 (not in stock).");
+      return false;
+    }
+    else if(this.state.temperatureZone==null || this.state.temperatureZone==''){
       alert("Please fill out temperature.");
       return false;
     }else if(this.state.packageName==null || this.state.packageName==''){
@@ -193,7 +201,8 @@ class AddIngredientForm extends React.Component{
     else if(this.state.vendorsArray.length==0 || this.state.vendorsArray == null){
       alert("Please add a vendor.");
       return false;
-    }else if (!(/^[A-z]+$/).test(this.state.nativeUnit)){
+    }
+    else if (!(/^[A-z]+$/).test(this.state.nativeUnit)){
         alert('Native unit must be a string. ');
     }else
       return true;
@@ -204,7 +213,8 @@ class AddIngredientForm extends React.Component{
 
     e.preventDefault();
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    if(this.isValid() && this.state.isCreateNew){
+    var isValid = this.isValid();
+    if(isValid && this.state.isCreateNew){
       console.log(" Add ingredient ");
       ingredientInterface.addIngredient(this.state.name, this.state.packageName, this.state.temperatureZone,
         this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, this.state.nativeUnit,
@@ -218,7 +228,7 @@ class AddIngredientForm extends React.Component{
                       alert(" Ingredient Successfully added! ");
                   }
               });
-    }else{
+    }else if(isValid){
       ingredientInterface.updateIngredient(this.state.ingredientId, this.state.name, this.state.packageName,
                 this.state.temperatureZone, this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd,
                 this.state.nativeUnit, this.state.numUnitPerPackage, this.state.numUnit, this.state.space, sessionId, function(res){

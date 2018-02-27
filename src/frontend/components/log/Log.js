@@ -47,6 +47,10 @@ const Cell = (props)=>{
     return <Table.Cell {...props}>
     <Link to={{pathname: '/ingredient-details', state:{ingredientId: props.row.itemId, fromLogs: true} }}>{props.row.item}</Link>
     </Table.Cell>
+  }else if(props.column.name=="item" && props.row.model == 'formulas'){
+    return <Table.Cell {...props}>
+    <Link to={{pathname: '/formula-details', state:{formulaId: props.row.itemId, fromLogs: true} }}>{props.row.item}</Link>
+    </Table.Cell>
   }
   return <Table.Cell {...props}
     style={{
