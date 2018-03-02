@@ -6,8 +6,6 @@ var IngredientPrice = mongoose.model('IngredientPrice');
 var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
-var Inventory = mongoose.model('Inventory');
-var Cart = mongoose.model('Cart');
 var Log = mongoose.model('Log');
 
 exports.log = function(username, action, item, model){

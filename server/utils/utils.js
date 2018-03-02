@@ -8,9 +8,9 @@ var Ingredient = mongoose.model('Ingredient');
 var modifierCreateUpdate = require('./modifierCreateUpdate');
 //var modifierDelete = require('./modifierDelete');
 var validator = require('./validator');
-var postProcessor = require('./postProcessor');
+var postProcessor = require('./postProcessorCreateUpdate');
 var validatorDelete = require('./validatorDelete');
-var deleteProcessor = require('./deleteProcessor');
+var deleteProcessor = require('./postProcessorDelete');
 var logger = require('./logger');
 
 exports.doWithAccess = function(req, res, next, model, action, userId, itemId, AdminRequired, ManagerRequired) {

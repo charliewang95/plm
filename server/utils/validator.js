@@ -4,8 +4,6 @@ var Order = mongoose.model('Order');
 var Vendor = mongoose.model('Vendor');
 var Ingredient = mongoose.model('Ingredient');
 var Storage = mongoose.model('Storage');
-var Inventory = mongoose.model('Inventory');
-var Cart = mongoose.model('Cart');
 
 exports.validate = function(model, itemId, item, res, next, callback) {
     console.log(item);
