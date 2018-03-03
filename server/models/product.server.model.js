@@ -16,15 +16,15 @@ var ProductSchema = new Schema({
 	},
 	date: {
 	    type: Date,
-	    //required: true
+	    required: true
 	},
 	lotNumber: {
         type: String,
-        //required: true
+        required: true
     },
     lotNumberUnique: { //auto
         type: String,
-        //required: true
+        required: true
     }
 });
 

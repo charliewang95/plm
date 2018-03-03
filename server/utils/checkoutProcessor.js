@@ -16,6 +16,12 @@ var deleteProcessor = require('./postProcessorDelete');
 var checkoutProcessor = require('./checkoutProcessor');
 var logger = require('./logger');
 
+/*************
+
+CHECKOUT ORDER PROCESSOR
+
+*************/
+
 exports.checkoutOrders = function(req, res, next, model, userId, username) {
     model.find({userId: userId}, function(err, items) {
         if (err) {
@@ -125,7 +131,11 @@ var checkSpaces = function(res, next, wSpace, rSpace, fSpace, callback) {
 };
 
 
+/*************
 
+CHECKOUT FORMULA PROCESSOR
+
+*************/
 
 exports.checkoutFormula = function(req, res, next, model, username) {
     var formulaId = req.params.formulaId;

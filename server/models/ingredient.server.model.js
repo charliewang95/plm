@@ -74,7 +74,7 @@ var IngredientSchema = new Schema({
     },
     isIntermediate: {
         type: Boolean,
-        //required: true
+        required: true
     },
     vendors : [VendorPriceSchema]
 });
