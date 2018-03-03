@@ -7,6 +7,9 @@ var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
 var Formula = mongoose.model('Formula');
+var Product = mongoose.model('Product');
+var IngredientLot = mongoose.model('IngredientLot');
+
 
 exports.modify = function(action, model, item, itemId, res, next, callback) {
     if (model == Order) {
@@ -41,6 +44,22 @@ exports.modify = function(action, model, item, itemId, res, next, callback) {
             }
         });
     }
+    else if (model == Product) {
+        modifyProduct(action, item, itemId, res, next, function(err, obj){
+            if (err) next(err);
+            else {
+                callback(err, obj);
+            }
+        });
+    }
+    else if (model == IngredientLot) {
+            modifyIngredientLot(action, item, itemId, res, next, function(err, obj){
+                if (err) next(err);
+                else {
+                    callback(err, obj);
+                }
+            });
+        }
     else callback(false, item);
 };
 
@@ -164,4 +183,16 @@ var helperFormula = function(ingredients, i, res, next, array, callback) {
             }
         });
     }
+};
+
+var modifyProduct = function(action, item, itemId, res, next, callback) { //add unique lowercase code to check code uniqueness
+    var str = JSON.stringify(item).slice(0,-1)+',"lotNumberUnique":"'+item.lotNumber.toLowerCase()+',"nameUnique":"'+item.name.toLowerCase()+'"}';
+    item = JSON.parse(str);
+    callback(0, item);
+};
+
+var modifyIngredientLot = function(action, item, itemId, res, next, callback) { //add unique lowercase code to check code uniqueness
+    var str = JSON.stringify(item).slice(0,-1)+',"lotNumberUnique":"'+item.lotNumber.toLowerCase()+',"ingredientNameUnique":"'+item.ingredientName.toLowerCase()+'"}';
+    item = JSON.parse(str);
+    callback(0, item);
 };
