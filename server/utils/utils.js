@@ -8,9 +8,9 @@ var Ingredient = mongoose.model('Ingredient');
 var modifierCreateUpdate = require('./modifierCreateUpdate');
 //var modifierDelete = require('./modifierDelete');
 var validator = require('./validator');
-var postProcessor = require('./postProcessor');
+var postProcessor = require('./postProcessorCreateUpdate');
 var validatorDelete = require('./validatorDelete');
-var deleteProcessor = require('./deleteProcessor');
+var deleteProcessor = require('./postProcessorDelete');
 var logger = require('./logger');
 
 exports.doWithAccess = function(req, res, next, model, action, userId, itemId, AdminRequired, ManagerRequired) {
@@ -168,7 +168,7 @@ var update = function(req, res, next, model, itemId, username) {
         else if (obj) {
             console.log("updating, modified");
             console.log("updating, validating");
-            validator.validate(model, obj, res, next, function(err, valid){
+            validator.validate(model, itemId, obj, res, next, function(err, valid){
                 if (err) {
                     return next(err);
                 }
@@ -224,7 +224,7 @@ var updateWithUserAccess = function(req, res, next, model, userId, itemId, usern
                 else if (obj) {
                     console.log("updating, modified");
                     console.log("updating, validating");
-                    validator.validate(model, obj, res, next, function(err, valid){
+                    validator.validate(model, itemId, obj, res, next, function(err, valid){
                         if (err) {
                             return next(err);
                         }
@@ -271,7 +271,7 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) 
         }
         else {
             var temp = item;
-            validatorDelete.validate(model, item, res, next, function(){
+            validatorDelete.validate(model, itemId, item, res, next, function(){
                 item.remove(function(err) {
                     if (err) {
                         return next(err);

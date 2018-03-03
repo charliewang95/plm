@@ -7,8 +7,6 @@ var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
 var Formula = mongoose.model('Formula');
-var Inventory = mongoose.model('Inventory');
-var Cart = mongoose.model('Cart');
 
 exports.validate = function(model, item, res, next, callback) {
     if (model == Ingredient) {
