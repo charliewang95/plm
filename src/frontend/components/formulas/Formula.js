@@ -172,12 +172,14 @@ class Formula extends React.PureComponent {
         { name: 'description', title: 'Description' },
         { name: 'unitsProvided', title: 'Product Units ' },
         { name: 'ingredients', title: 'Ingredient / Quantity' },
+        { name: 'isIntermediate', title: 'Intermediate Product' },
         {key: 'sendToProd', title:''},
       ]:[
         { name: 'name', title: 'Name' },
         { name: 'description', title: 'Description' },
         { name: 'unitsProvided', title: 'Product Units ' },
         { name: 'ingredients', title: 'Ingredient / Quantity' },
+        { name: 'isIntermediate', title: 'Intermediate Product' },
       ],
       rows:[],
       // sorting: [],
@@ -188,7 +190,7 @@ class Formula extends React.PureComponent {
       deletingRows: [],
       pageSize: 10,
       pageSizes: [5, 10, 0],
-      columnOrder: ['name', 'description', 'unitsProvided', 'ingredients','sendToProd'],
+      columnOrder: ['name', 'description', 'unitsProvided', 'ingredients', 'sendToProd', 'isIntermediate'],
       options:[],
       productionFormula:{},
     };
@@ -283,7 +285,8 @@ class Formula extends React.PureComponent {
           })),
         ];
 
-      console.log(" PROCESSED DATA " + JSON.stringify(processedData));
+      console.log(" PROCESSED DATA ")
+       console.log(processedData);
       this.setState({rows: processedData});
 
       }

@@ -36,14 +36,6 @@ exports.validate = function(model, itemId, item, res, next, callback) {
               }
           });
       }
-      else if (model == Inventory) {
-             validateInventory(item, res, next, function(err, obj){
-                 if (err) return next(err);
-                 else {
-                     callback(err, obj);
-                 }
-             });
-         }
     else {
         callback(false, true);
     }
@@ -93,40 +85,4 @@ var validateIngredient = function(itemId, item, res, next, callback) { //check i
             }
         });
     });
-};
-
-var validateInventory = function(item, res, next, callback) { //check if ingredient haa vendors that doesn't exist
-    var ingredientId = item.ingredientId;
-    var space = item.space;
-    var packageName = item.packageName;
-    var temperatureZone = item.temperatureZone;
-    var capacity;
-    Storage.findOne({temperatureZone: temperatureZone}, function(err, storage){
-        if (err) return next(err);
-        else if (!storage) {
-            res.status(400);
-            res.send("Storage capacity needs to be set for "+temperatureZone);
-        }
-        else {
-            var capacity = storage.capacity;
-            var currentSpace = 0;
-            Inventory.find({temperatureZone: temperatureZone}, function(err, items){
-                for (var i = 0; i < items.length; i++) {
-                    var inventory = items[i];
-                    if (inventory.packageName != 'truckload' && inventory.packageName != 'railcar')
-                        currentSpace+=inventory.space;
-                    if (inventory.ingredientId == ingredientId && inventory.packageName == packageName)
-                        currentSpace-=inventory.space;
-                }
-                var newSpace = 0;
-                newSpace = space + currentSpace;
-                if (capacity < newSpace) {
-                    res.status(400);
-                    res.send("Capacity -- "+capacity+" sqft will be exceeded by current quantity "+ newQuantity +" sqft for "+temperatureZone);
-                }
-                else callback(err, true);
-            })
-
-        }
-    })
 };

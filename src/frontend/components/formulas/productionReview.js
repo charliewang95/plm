@@ -96,6 +96,7 @@ class ProductionReview extends React.Component {
 
               else {
                  review = res.data;
+                 console.log(review);
                  var review = [...review.map((row, index)=> ({
                      id:index,...row,
                      })),
@@ -134,6 +135,7 @@ class ProductionReview extends React.Component {
     console.log("add To cart" + JSON.stringify(this.state.ingredientsToOrder));
     // ADD the ingredients with needed amount to
     var success = false;
+    console.log(this.state.ingredientsToOrder);
     for(var i = 0; i < this.state.ingredientsToOrder.length;i++){
       var row = this.state.ingredientsToOrder[i];
       var vendorName = "";
