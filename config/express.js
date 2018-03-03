@@ -43,6 +43,8 @@ module.exports = function() {
 	require('../server/routes/dukeUsers.server.routes.js')(app);
 	require('../server/routes/logs.server.routes.js')(app);
 	require('../server/routes/formulas.server.routes.js')(app);
+	require('../server/routes/products.server.routes.js')(app);
+	require('../server/routes/ingredientLots.server.routes.js')(app);
 	app.use(express.static('./public'));
 
 	return app;

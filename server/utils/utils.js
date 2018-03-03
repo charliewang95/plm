@@ -11,6 +11,7 @@ var validator = require('./validator');
 var postProcessor = require('./postProcessorCreateUpdate');
 var validatorDelete = require('./validatorDelete');
 var deleteProcessor = require('./postProcessorDelete');
+var checkoutProcessor = require('./checkoutProcessor');
 var logger = require('./logger');
 
 exports.doWithAccess = function(req, res, next, model, action, userId, itemId, AdminRequired, ManagerRequired) {
@@ -40,8 +41,8 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             else if (action == 'updateWithUserAccess') updateWithUserAccess(req, res, next, model, userId, itemId, user.username);
             else if (action == 'delete') deleteWithoutUserAccess(req, res, next, model, itemId, user.username);
             else if (action == 'deleteWithUserAccess') deleteWithUserAccess(req, res, next, model, userId, itemId, user.username);
-            else if (action == 'checkoutOrders') checkoutOrders(req, res, next, model, userId, user.username);
-            else if (action == 'checkoutFormula') checkoutFormula(req, res, next, model, user.username);
+            else if (action == 'checkoutOrders') checkoutProcessor.checkoutOrders(req, res, next, model, userId, user.username);
+            else if (action == 'checkoutFormula') checkoutProcessor.checkoutFormula(req, res, next, model, user.username);
             else if (action == 'read') read(req, res, next, model, itemId, user.username);
             else if (action == 'readWithUserAccess') readWithUserAccess(req, res, next, model, userId, itemId, user.username);
             else {
@@ -110,7 +111,7 @@ var create = function(req, res, next, model, username) {
             console.log("creating, validating");
             modifiedItem = new model(obj);
             console.log(modifiedItem);
-            validator.validate(model, modifiedItem, res, next, function(err, valid){
+            validator.validate(model, modifiedItem, '', res, next, function(err, valid){
                 if (err) {
                     return next(err);
                 }
