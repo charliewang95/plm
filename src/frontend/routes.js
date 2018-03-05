@@ -10,6 +10,7 @@ import Storage from './components/storage/Storage';
 import Vendors from './components/vendors/Vendors';
 import AddVendorForm from './components/vendors/AddVendorForm';
 import Report from './components/report/Report';
+import Product from './components/product/Product';
 import Login from './components/login/LoginPage';
 import Register from './components/login/RegisterPage';
 import AdminUserPage from './components/admin/users/userPage'
@@ -47,6 +48,7 @@ const Routes = () => (
             <Route path="/production-review" component={ProductionReview}/>
             <Route path="/formula-details" component={FormulaDetails}/>
             <Route path="/admin-users" component={AdminUserPage} />
+            <Route path="/product" component={Product} />
 		  </Switch>
       </div>
 

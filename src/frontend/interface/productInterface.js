@@ -73,7 +73,7 @@ async function getProductAsync(productId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-async function updateProduct(name, numUnit, date, lotNumber, sessionId, callback) {
+async function updateProduct(productId, name, numUnit, date, lotNumber, sessionId, callback) {
 	var updatedProduct = packIntoJson(name, numUnit, date, lotNumber);
 	//return await productActions.updateProduct(productId, sessionId, updatedProduct);
 	productActions.updateProduct(productId, sessionId, updatedProduct, function(res){

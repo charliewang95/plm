@@ -149,31 +149,65 @@ exports.checkoutFormula = function(req, res, next, model, username) {
             if (quantity < unitsProvided) {
                 return res.status(400).send('The amount provided must be at least '+unitsProvided+'.');
             } else {
-                var multiplier = quantity/unitsProvided;
-                var ingredients = formula.ingredients;
-                checkIngredientHelper(req, res, next, multiplier, 0, ingredients, [], true, function(array, viable){
-                      if (req.params.action == 'review') {
-                          res.json(array);
-                      } else {
-                          if (viable) {
-                              updateIngredientHelper(req, res, next, multiplier, ingredients, 0, 0, function(newSpentMoney) {
-                                  logger.log(username, 'checkout', formula, model);
-                                  var totalProvided = formula.totalProvided;
-                                  var totalCost = formula.totalCost;
-                                  formula.update({totalProvided: Number(totalProvided)+Number(quantity), totalCost:totalCost+newSpentMoney}, function(err, obj) {
-                                      if (err) return next(err);
-                                      else return res.send(formula);
-                                  });
-                              });
+                checkNewStorageHelper(req, res, next, formula, quantity, function(totalSpace){
+                    var multiplier = quantity/unitsProvided;
+                    var ingredients = formula.ingredients;
+                    checkIngredientHelper(req, res, next, multiplier, 0, ingredients, [], true, function(array, viable){
+                          if (req.params.action == 'review') {
+                              res.json(array);
                           } else {
-                              return res.status(406).json(array);
+                              if (viable) {
+                                  updateIngredientHelper(req, res, next, multiplier, ingredients, 0, 0, function(newSpentMoney) {
+                                      logger.log(username, 'checkout', formula, model);
+                                      var totalProvided = formula.totalProvided;
+                                      var totalCost = formula.totalCost;
+                                      formula.update({totalProvided: Number(totalProvided)+Number(quantity), totalCost:totalCost+newSpentMoney}, function(err, obj) {
+                                          if (err) return next(err);
+                                          else {
+                                            updateStorageAfterCheckoutIP(res, req, next, totalSpace);
+                                            return res.send(formula);
+                                            //TODO: add ingredient object or product object
+                                          }
+                                      });
+                                  });
+                              } else {
+                                  return res.status(406).json(array);
+                              }
                           }
-                      }
+                    });
                 });
             }
         }
     });
 };
+
+var checkNewStorageHelper = function(req, res, next, formula, quantity, callback) {
+    if (formula.isIntermediate){
+        Storage.findOne({temperatureZone: formula.temperatureZone}, function(err, storage){
+            var currentEmpty = storage.currentEmptySpace;
+            Ingredient.getPackageSpace(formula.packageName, function(space){
+                var totalSpace = Math.ceil(quantity/formula.numUnitPerPackage)*space;
+                if (totalSpace > currentEmpty) {
+                    res.status(400).send('Storage left for '+formula.temperatureZone+' will be exceeded by the produced product\'s total space: '+totalSpace);
+                } else
+                    callback(totalSpace);
+            });
+        });
+    } else {
+        callback(0);
+    }
+};
+
+var updateStorageAfterCheckoutIP = function(req, res, next, totalSpace){
+    Storage.findOne({temperatureZone: formula.temperatureZone}, function(err, storage){
+        var capacity = storage.capacity;
+        var newOccupied = storage.currentOccupiedSpace + totalSpace;
+        var newEmpty = capacity - newOccupied;
+        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+
+        });
+    });
+}
 
 var checkIngredientHelper = function(req, res, next, multiplier, i, ingredients, missingIngredientArray, viable, callback) {
     if (i == ingredients.length) {

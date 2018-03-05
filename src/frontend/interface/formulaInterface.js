@@ -13,13 +13,15 @@ packageType: string 'Sack', 'Pail', 'Drum', 'Supersack', 'Truckload', 'Railcar',
 temperatureZone: string 'freezer', 'refrigerator', 'warehouse', 'Freezer', 'Refrigerator', 'Warehouse'
 vendors: array of objects following the VendorPriceSchema
 **/
-function packIntoJson(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone){
+function packIntoJson(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage){
 	var formulaJson = new Object();
 	formulaJson.name = name;
 	formulaJson.description = description;
 	formulaJson.ingredients = ingredients;
 	formulaJson.unitsProvided = unitsProvided;
 	formulaJson.isIntermediate = isIntermediate;
+	formulaJson.nativeUnit = (numUnitPerPackage == null || numUnitPerPackage == 0) ? null : numUnitPerPackage;
+	formulaJson.nativeUnit = (nativeUnit == null || nativeUnit == '') ? '' : nativeUnit;
 	formulaJson.packageName = (packageName == null || packageName == '') ? null : packageName;
 	formulaJson.temperatureZone = (temperatureZone == null || temperatureZone == '') ? null : temperatureZone;
 	//console.log(ingredients);
@@ -30,9 +32,9 @@ function packIntoJson(name, description, unitsProvided, ingredients, isIntermedi
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-async function addFormula(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, sessionId, callback) {
+async function addFormula(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage, sessionId, callback) {
 	console.log("add formulas");
-	var newFormula = packIntoJson(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone);
+	var newFormula = packIntoJson(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage);
 	//return await formulaActions.addFormula(newFormula, sessionId);
 	formulaActions.addFormula(newFormula, sessionId, function(res){
 	    callback(res);
@@ -82,8 +84,8 @@ async function getFormulaAsync(formulaId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-async function updateFormula(formulaId, name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, sessionId, callback) {
-	var updatedFormula = packIntoJson(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone);
+async function updateFormula(formulaId, name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage, sessionId, callback) {
+	var updatedFormula = packIntoJson(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage);
 	//return await formulaActions.updateFormula(formulaId, sessionId, updatedFormula);
 	formulaActions.updateFormula(formulaId, sessionId, updatedFormula, function(res){
 	    callback(res);

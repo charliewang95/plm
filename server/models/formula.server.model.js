@@ -60,6 +60,14 @@ var FormulaSchema = new Schema({
         type: String,
         enum: ['freezer', 'refrigerator', 'warehouse']
     },
+    nativeUnit: {
+        type: String,
+        //
+    },
+    numUnitPerPackage: {
+        type: Number,
+        //
+    },
     ingredients : [IngredientQuantitySchema]
 });
 

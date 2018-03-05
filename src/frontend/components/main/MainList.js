@@ -79,6 +79,13 @@ function ListItemComposition(props) {
           <ListItemText classes={{ primary: classes.primary }} inset primary="Formula" />
         </MenuItem>
 
+        <MenuItem className={classes.menuItem} component={Link} to="/product" button>
+          <ListItemIcon className={classes.icon}>
+            <RestaurantIcon />
+          </ListItemIcon>
+          <ListItemText classes={{ primary: classes.primary }} inset primary="Product" />
+        </MenuItem>
+
         <MenuItem className={classes.menuItem} component={Link} to="/storage" button>
           <ListItemIcon className={classes.icon}>
             <KitchenIcon />
