@@ -172,14 +172,14 @@ class Formula extends React.PureComponent {
         { name: 'description', title: 'Description' },
         { name: 'unitsProvided', title: 'Product Units ' },
         { name: 'ingredients', title: 'Ingredient / Quantity' },
-        { name: 'isIntermediate', title: 'Intermediate Product' },
+        { name: 'productType', title: 'Product Type ' },
         {key: 'sendToProd', title:''},
       ]:[
         { name: 'name', title: 'Name' },
         { name: 'description', title: 'Description' },
         { name: 'unitsProvided', title: 'Product Units ' },
         { name: 'ingredients', title: 'Ingredient / Quantity' },
-        { name: 'isIntermediate', title: 'Intermediate Product' },
+        { name: 'productType', title: 'Product Type ' }, // isIntermediate
       ],
       rows:[],
       // sorting: [],
@@ -190,7 +190,7 @@ class Formula extends React.PureComponent {
       deletingRows: [],
       pageSize: 10,
       pageSizes: [5, 10, 0],
-      columnOrder: ['name', 'description', 'unitsProvided', 'ingredients', 'sendToProd', 'isIntermediate'],
+      columnOrder: ['name', 'description', 'unitsProvided', 'ingredients', 'productType','sendToProd' ],
       options:[],
       productionFormula:{},
     };
@@ -225,7 +225,7 @@ class Formula extends React.PureComponent {
           var formulaId = rows[index]._id;
 
           formulaActions.deleteFormula(formulaId, sessionId);
-          
+
           console.log("delete");
           console.log(rows[index].name);
           rows.splice(index, 1);
@@ -281,14 +281,15 @@ class Formula extends React.PureComponent {
       }
 
         var processedData = [...rawData.map((row, index)=> ({
-          id:index,...row,
+          id:index,
+          // select based on whether it is Intermediate or Final
+          productType: (row.isIntermediate) ? "Intermediate" :"Final",...row,
           })),
         ];
 
       console.log(" PROCESSED DATA ")
        console.log(processedData);
       this.setState({rows: processedData});
-
       }
 
 
