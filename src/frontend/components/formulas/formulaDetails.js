@@ -30,6 +30,10 @@ const styles = {
     },
     unitsProvided:{
       width: 120,
+      marginRight: 30
+    },
+    productType:{
+      width: 200,
     },
     formControl: {
       width: 400
@@ -60,6 +64,11 @@ class FormulaDetails extends React.Component{
       isDisabled: (isCreateNew) ? false: true,
       isCreateNew: (isCreateNew),
       isValid: false,
+      // fields for the intermediate products
+      isIntermediate:(details.isIntermediate) ? (details.isIntermediate):false,
+      packageName:(details.packageName)?(details.packageName):'',
+      nativeUnit:(details.nativeUnit)?(details.nativeUnit):'',
+      temperatureZone:(details.temperatureZone)?(details.temperatureZone):'',
       }
 
     this.handleOnChange = this.handleOnChange.bind(this);
@@ -113,6 +122,11 @@ async loadFormula(){
       description: details.description,
       unitsProvided: details.unitsProvided,
       ingredients: details.ingredients,
+      packageName:details.packageName,
+      temperatureZone:details.temperatureZone,
+      nativeUnit: details.nativeUnit,
+      isIntermediate: details.isIntermediate,
+
     });
     this.computeIngredientsString();
   }
@@ -154,7 +168,6 @@ async loadFormula(){
   }
 
 
-
   isValid(){
     const re =/^[1-9]\d*$/;
     if(!this.state.name){
@@ -166,6 +179,18 @@ async loadFormula(){
     }else if (!re.test(this.state.unitsProvided)) {
       alert(" Units of product of formula must be a positive integer. ");
       return false;
+      // Add checks for intermediateProductFields
+    }else if ((this.state.isIntermediate)){
+       if((!(/^[A-z]+$/).test(this.state.nativeUnit))) {
+          alert(" Native unit must be a string!");
+          return false;
+        }else if (!this.state.temperatureZone){
+          alert(" please select a temperature zone ");
+          return false;
+        }else if(!this.state.packageName){
+          alert("Please select a package ");
+          return false;
+        }
     }else if (this.state.ingredientsArray.length==0){
       alert(" Please add ingredients needed for the formula.");
       return false;
@@ -178,10 +203,10 @@ async loadFormula(){
         }
       }
       return true;
-    }else{
-      return true;
     }
+      return true;
   }
+
 
   async onFormSubmit(e) {
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
@@ -193,8 +218,10 @@ async loadFormula(){
 
       console.log(" Array " + JSON.stringify(this.state.ingredientsArray));
       //TODO: Check for adding order
+      
       await formulaActions.addFormula(this.state.name, this.state.description,
-            this.state.unitsProvided, this.state.ingredientsArray, sessionId, function(res){
+            this.state.unitsProvided, this.state.ingredientsArray, this.state.isIntermediate,
+            this.state.packageName,this.state.temperatureZone,sessionId, function(res){
               //TODO: Please update the error accordingly
               if(res.status==400){
                 alert(res.data);
@@ -207,7 +234,9 @@ async loadFormula(){
       console.log("update formula ");
       console.log(this.state);
       await formulaActions.updateFormula(this.state.formulaId, this.state.name,
-        this.state.description,this.state.unitsProvided, this.state.ingredientsArray, sessionId, function(res){
+        this.state.description,this.state.unitsProvided, this.state.ingredientsArray,
+        this.state.isIntermediate,this.state.packageName,this.state.temperatureZone,
+        sessionId, function(res){
           //TODO: Update error status
           if(res.status == 400){
             alert(res.data);
@@ -234,7 +263,8 @@ async loadFormula(){
   }
 
   render (){
-    const { formulaId,name, description, unitsProvided, ingredients, isCreateNew,isDisabled} = this.state;
+    const { formulaId,name, description, unitsProvided, ingredients, isCreateNew,
+      isDisabled,isIntermediate,packageName,nativeUnit,temperatureZone} = this.state;
     return (
       // <PageBase title = 'Add Ingredients' navigation = '/Application Form'>
       <form onSubmit={this.onFormSubmit} style={styles.formControl}>
@@ -251,17 +281,6 @@ async loadFormula(){
               required
             />
             </FormGroup>
-            <TextField
-              required
-              id="unitsProvided"
-              label="Product Units"
-              value={this.state.unitsProvided}
-              onChange={(event)=>this.handleUnitsProvidedChange(event)}
-              margin="normal"
-              disabled = {this.state.isDisabled}
-
-              style={styles.unitsProvided}
-            />
 
             <FormGroup>
               <TextField
@@ -271,11 +290,95 @@ async loadFormula(){
                 onChange={this.handleChange('description')}
                 margin="normal"
                 disabled = {this.state.isDisabled}
-                // style={styles.unitsProvided}
-                multiline
                 required
               />
             </FormGroup>
+
+            <TextField
+              required
+              id="unitsProvided"
+              label="Product Units"
+              value={this.state.unitsProvided}
+              onChange={(event)=>this.handleUnitsProvidedChange(event)}
+              margin="normal"
+              disabled = {this.state.isDisabled}
+              style={styles.unitsProvided}
+            />
+               <FormControl style={styles.packageName}>
+                 <InputLabel htmlFor="Product Type ">Product Type</InputLabel>
+                 <Select
+                   value={this.state.isIntermediate}
+                   onChange={this.handleChange('isIntermediate')}
+                   inputProps={{
+                     name: 'productType',
+                     id: 'productType',
+                   }}
+                   disabled = {this.state.isDisabled}
+                   required
+                   style={styles.productType}
+
+                 >
+                   <MenuItem value={true}>Intermediate</MenuItem>
+                   <MenuItem value={false}>Final</MenuItem>
+                 </Select>
+               </FormControl>
+
+
+
+            {this.state.isIntermediate &&  <TextField
+              id="nativeUnit"
+              label="Native Units"
+              value={this.state.nativeUnit}
+              onChange={this.handleChange('nativeUnit')}
+              margin="normal"
+              disabled = {this.state.isDisabled}
+              style = {styles.unitsProvided}
+              required
+            />}
+
+           <FormControl style={styles.packageName}>
+            {this.state.isIntermediate &&
+              <InputLabel htmlFor="temperatureZone">Temperature</InputLabel> }
+                   {this.state.isIntermediate &&  <Select
+                    value={this.state.temperatureZone}
+                    onChange={this.handleChange('temperatureZone')}
+                    inputProps={{
+                      name: 'temperatureZone',
+                      id: 'temperatureZone',
+                    }}
+                    disabled = {this.state.isDisabled}
+                    required
+                    style={styles.productType}
+                  >
+                    <MenuItem value={'freezer'}>Frozen</MenuItem>
+                    <MenuItem value={'warehouse'}>Room Temperature</MenuItem>
+                    <MenuItem value={'refrigerator'}>Refrigerated</MenuItem>
+                  </Select> }
+                </FormControl>
+
+              <FormGroup>
+              {this.state.isIntermediate &&
+              <InputLabel htmlFor="packageName" style = {{marginTop: 30}}>Package</InputLabel> }
+                {this.state.isIntermediate && <Select
+                value={this.state.packageName}
+                onChange={this.handleChange('packageName')}
+                inputProps={{
+                  name: 'Package',
+                  id: 'packageName',
+                }}
+                disabled = {this.state.isDisabled}
+                required
+                style = {{marginBottom: 10}}
+
+              >
+                <MenuItem value={'sack'}>Sack</MenuItem>
+                <MenuItem value={'pail'}>Pail</MenuItem>
+                <MenuItem value={'drum'}>Drum</MenuItem>
+                <MenuItem value={'supersack'}>Supersack</MenuItem>
+                <MenuItem value={'truckload'}>Truckload</MenuItem>
+                <MenuItem value={'railcar'}>Railcar</MenuItem>
+              </Select> }
+          </FormGroup>
 
             <FormGroup>
             {this.state.isDisabled && <TextField
@@ -290,6 +393,7 @@ async loadFormula(){
             />}
             {(!this.state.isDisabled) && <SelectIngredients initialArray={this.state.ingredientsArray} handleChange={this.updateIngredients}/>}
             </FormGroup>
+
               <div style={styles.buttons}>
                 {(this.state.isDisabled && isAdmin) && <RaisedButton raised color = "secondary" onClick={()=>{this.setState({isDisabled:false});}} >EDIT</RaisedButton>}
                 {(!this.state.isDisabled) && <RaisedButton raised
