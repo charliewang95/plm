@@ -53,12 +53,12 @@ var FormulaSchema = new Schema({
     },
     packageName: {
         type: String,
-        enum: ['sack', 'pail', 'drum', 'supersack', 'truckload', 'railcar'],
+        enum: ['sack', 'pail', 'drum', 'supersack', 'truckload', 'railcar', ''],
         lowercase: true
     },
     temperatureZone: {
         type: String,
-        enum: ['freezer', 'refrigerator', 'warehouse']
+        enum: ['freezer', 'refrigerator', 'warehouse', '']
     },
     nativeUnit: {
         type: String,
