@@ -34,10 +34,10 @@ var IngredientLotSchema = new Schema({
     },
     vendorName : {
         type: String,
-        required: true
+        //required: true
     }
 });
 
-IngredientLotSchema.index({ ingredientName: 1, lotNumber: 1, date: 1, vendorName: 1}, { unique: true });
+IngredientLotSchema.index({ ingredientNameUnique: 1, lotNumberUnique: 1, date: 1, vendorName: 1}, { unique: true });
 
 mongoose.model('IngredientLot', IngredientLotSchema);

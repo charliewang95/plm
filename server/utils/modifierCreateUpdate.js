@@ -53,13 +53,13 @@ exports.modify = function(action, model, item, itemId, res, next, callback) {
         });
     }
     else if (model == IngredientLot) {
-            modifyIngredientLot(action, item, itemId, res, next, function(err, obj){
-                if (err) next(err);
-                else {
-                    callback(err, obj);
-                }
-            });
-        }
+        modifyIngredientLot(action, item, itemId, res, next, function(err, obj){
+            if (err) next(err);
+            else {
+                callback(err, obj);
+            }
+        });
+    }
     else callback(false, item);
 };
 
