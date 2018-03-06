@@ -20,10 +20,10 @@ function packIntoJson(name, description, unitsProvided, ingredients, isIntermedi
 	formulaJson.ingredients = ingredients;
 	formulaJson.unitsProvided = unitsProvided;
 	formulaJson.isIntermediate = isIntermediate;
-	formulaJson.nativeUnit = (numUnitPerPackage == null || numUnitPerPackage == 0) ? null : numUnitPerPackage;
-	formulaJson.nativeUnit = (nativeUnit == null || nativeUnit == '') ? '' : nativeUnit;
-	formulaJson.packageName = (packageName == null || packageName == '') ? null : packageName;
-	formulaJson.temperatureZone = (temperatureZone == null || temperatureZone == '') ? null : temperatureZone;
+	formulaJson.numUnitPerPackage = numUnitPerPackage;
+	formulaJson.nativeUnit = nativeUnit;
+	formulaJson.packageName = packageName;
+	formulaJson.temperatureZone = temperatureZone;
 	//console.log(ingredients);
 	return formulaJson;
 }
