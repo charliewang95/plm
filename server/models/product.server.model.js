@@ -1,6 +1,18 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
+var IngredientLotUsedInProductSchema = new Schema({
+    ingredientName: {
+        type: String,
+        required: true
+    },
+    lotNumber: [{
+        type: String,
+        required: true
+    }]
+});
+mongoose.model('IngredientLotUsedInProduct', IngredientLotUsedInProductSchema);
+
 var ProductSchema = new Schema({
 	name: {
 	    type: String,
@@ -25,9 +37,10 @@ var ProductSchema = new Schema({
     lotNumberUnique: { //auto
         type: String,
         required: true
-    }
+    },
+    ingredients: [IngredientLotUsedInProductSchema]
 });
 
-ProductSchema.index({ name: 1, lotNumber: 1, date: 1}, { unique: true });
+ProductSchema.index({ nameUnique: 1, lotNumberUnique: 1, date: 1}, { unique: true });
 
 mongoose.model('Product', ProductSchema);

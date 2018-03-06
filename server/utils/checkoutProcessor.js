@@ -156,17 +156,25 @@ exports.checkoutFormula = function(req, res, next, model, username) {
                           if (req.params.action == 'review') {
                               res.json(array);
                           } else {
-                              if (viable) {
+                              if (viable) { //check complete
                                   updateIngredientHelper(req, res, next, multiplier, ingredients, 0, 0, function(newSpentMoney) {
-                                      logger.log(username, 'checkout', formula, model);
                                       var totalProvided = formula.totalProvided;
                                       var totalCost = formula.totalCost;
                                       formula.update({totalProvided: Number(totalProvided)+Number(quantity), totalCost:totalCost+newSpentMoney}, function(err, obj) {
                                           if (err) return next(err);
                                           else {
-                                            updateStorageAfterCheckoutIP(res, req, next, totalSpace);
-                                            return res.send(formula);
-                                            //TODO: add ingredient object or product object
+                                            updateStorageAfterCheckoutIP(res, req, next, formula, totalSpace);
+                                            if (formula.isIntermediate) {
+                                                //TODO: add ingredientLotUsedInProduct in the product object
+                                                addProduct(req, res, next, formula, quantity, function() {
+                                                    logger.log(username, 'checkout', formula, model);
+                                                    return res.send(formula);
+                                                });
+                                            } else {
+                                                //TODO: add ingredient and ingerdientLot object if intermediate
+                                                addIntermediateProductIngredientLot(req, res, next, formula, numUnit, totalSpace, function(){
+                                                });
+                                            }
                                           }
                                       });
                                   });
@@ -189,8 +197,13 @@ var checkNewStorageHelper = function(req, res, next, formula, quantity, callback
                 var totalSpace = Math.ceil(quantity/formula.numUnitPerPackage)*space;
                 if (totalSpace > currentEmpty) {
                     res.status(400).send('Storage left for '+formula.temperatureZone+' will be exceeded by the produced product\'s total space: '+totalSpace);
-                } else
-                    callback(totalSpace);
+                } else {
+                    if (formula.packageName == null || formula.temperatureZone == null || formula.nativeUnit == null || formula.nativeUnit == '' || formula.numUnitPerPackage == null){
+                        return res.status(400).send('Not all information (package name/temperature zone/native unit/native units per package) is given for this intermediate product.');
+                    } else {
+                        callback(totalSpace);
+                    }
+                }
             });
         });
     } else {
@@ -198,15 +211,17 @@ var checkNewStorageHelper = function(req, res, next, formula, quantity, callback
     }
 };
 
-var updateStorageAfterCheckoutIP = function(req, res, next, totalSpace){
-    Storage.findOne({temperatureZone: formula.temperatureZone}, function(err, storage){
-        var capacity = storage.capacity;
-        var newOccupied = storage.currentOccupiedSpace + totalSpace;
-        var newEmpty = capacity - newOccupied;
-        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+var updateStorageAfterCheckoutIP = function(req, res, next, formula, totalSpace){
+    if (formula.isIntermediate) {
+        Storage.findOne({temperatureZone: formula.temperatureZone}, function(err, storage){
+            var capacity = storage.capacity;
+            var newOccupied = storage.currentOccupiedSpace + totalSpace;
+            var newEmpty = capacity - newOccupied;
+            storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
 
+            });
         });
-    });
+    }
 }
 
 var checkIngredientHelper = function(req, res, next, multiplier, i, ingredients, missingIngredientArray, viable, callback) {
@@ -276,4 +291,75 @@ var updateIngredientHelper = function(req, res, next, multiplier, ingredients, n
             });
         });
     }
+};
+
+var addProduct = function(req, res, next, formula, numUnit, callback){
+    var product = new Product();
+    product.name = formula.name;
+    product.nameUnique = formula.name.toLowerCase();
+    product.numUnit = numUnit;
+    product.date = new Date();
+    var date = product.date;
+    product.lotNumber = 'PR'+date.getTime();
+    product.lotNumberUnique = product.lotNumber.toLowerCase();
+    product.save(function(err){
+        if (err) return next(err);
+        else callback();
+    })
+};
+
+var addIntermediateProductIngredientLot = function(req, res, next, formula, numUnit, totalSpace, callback){
+    Ingredient.findOne({nameUnique: formula.nameUnique}, function(err, ingredient){
+        if (err) return next(err);
+        else if (!ingredient){
+            var newIngredient = new Ingredient();
+            //TODO: update moneyspent and moneyprod, if needed
+            newIngredient.name = formula.name;
+            newIngredient.nameUnique = formula.nameUnique;
+            newIngredient.packageName = formula.packageName;
+            newIngredient.temperatureZone = formula.temperatureZone;
+            newIngredient.nativeUnit = formula.nativeUnit;
+            newIngredient.numUnitPerPackage = formula.numUnitPerPackage;
+            newIngredient.numUnit = numUnit;
+            newIngredient.space = totalSpace;
+            newIngredient.isIntermediate = true;
+            newIngredient.save(function(err){
+                if (err) return next(err);
+                else {
+                    Ingredient.findOne({nameUnique: newIngredient.nameUnique}, function(err, obj){
+                        var ingredientLot = new IngredientLot();
+                        ingredientLot.ingredientName = newIngredient.name;
+                        ingredientLot.ingredientNameUnique = newIngredient.nameUnique;
+                        ingredientLot.ingredientId = obj._id;
+                        ingredientLot.numUnit = numUnit;
+                        var date = new Date();
+                        ingredientLot.date = date;
+                        ingredientLot.lotNumber = 'IP'+date.getTime();
+                        ingredientLot.lotNumberUnique = ingredientLot.lotNumber.toLowerCase();
+                        //ingredientLot.vendorName = '(Intermediate Product)';
+                        ingredientLot.save(function(err){
+                            if (err) return next(err);
+                        });
+                    });
+                }
+            });
+        } else {
+            var newNumUnit = ingredient.numUnit + numUnit;
+            var newSpace = ingredient.space + totalSpace;
+            ingredient.update({numUnit: newNumUnit, space: newSpace}, function(err, obj){
+                var ingredientLot = new IngredientLot();
+                ingredientLot.ingredientName = ingredient.name;
+                ingredientLot.ingredientNameUnique = ingredient.nameUnique;
+                ingredientLot.ingredientId = ingredient._id;
+                ingredientLot.numUnit = newNumUnit;
+                var date = new Date();
+                ingredientLot.date = date;
+                ingredientLot.lotNumber = 'IP'+date.getTime();
+                ingredientLot.lotNumberUnique = ingredientLot.lotNumber.toLowerCase();
+                ingredientLot.save(function(err){
+                    if (err) return next(err);
+                });
+            });
+        }
+    });
 };
