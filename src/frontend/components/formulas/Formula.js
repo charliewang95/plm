@@ -224,15 +224,15 @@ class Formula extends React.PureComponent {
 
           var formulaId = rows[index]._id;
 
-          formulaActions.deleteFormula(formulaId, sessionId);
-
-          console.log("delete");
-          console.log(rows[index].name);
+          // TODO: Delete does not work
+         formulaActions.deleteFormula(formulaId, sessionId);
+          console.log("delete " );
+          console.log(rows[index]._id);
+          console.log(sessionId);
           rows.splice(index, 1);
           // TODO: Add snackbar
           // alert(" Ingredient successfully deleted ! ");
         }
-
       });
       this.setState({ rows, deletingRows: [] });
     };

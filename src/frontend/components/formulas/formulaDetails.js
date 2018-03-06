@@ -69,6 +69,7 @@ class FormulaDetails extends React.Component{
       packageName:(details.packageName)?(details.packageName):'',
       nativeUnit:(details.nativeUnit)?(details.nativeUnit):'',
       temperatureZone:(details.temperatureZone)?(details.temperatureZone):'',
+      numUnitPerPackage: (details.numUnitPerPackage)?(details.numUnitPerPackage):0,
       }
 
     this.handleOnChange = this.handleOnChange.bind(this);
@@ -76,6 +77,7 @@ class FormulaDetails extends React.Component{
     this.updateIngredients = this.updateIngredients.bind(this);
     this.computeIngredientsString = this.computeIngredientsString.bind(this);
     this.handleUnitsProvidedChange = this.handleUnitsProvidedChange.bind(this);
+    this.handleNumUnitPerPackage = this.handleNumUnitPerPackage.bind(this);
     this.isValid = this.isValid.bind(this);
     this.loadFormula = this.loadFormula.bind(this);
 
@@ -126,6 +128,7 @@ async loadFormula(){
       temperatureZone:details.temperatureZone,
       nativeUnit: details.nativeUnit,
       isIntermediate: details.isIntermediate,
+      numUnitPerPackage : details.numUnitPerPackage,
 
     });
     this.computeIngredientsString();
@@ -218,10 +221,11 @@ async loadFormula(){
 
       console.log(" Array " + JSON.stringify(this.state.ingredientsArray));
       //TODO: Check for adding order
-      
+
       await formulaActions.addFormula(this.state.name, this.state.description,
             this.state.unitsProvided, this.state.ingredientsArray, this.state.isIntermediate,
-            this.state.packageName,this.state.temperatureZone,sessionId, function(res){
+            this.state.packageName,this.state.temperatureZone,this.state.nativeUnit,this.state.numUnitPerPackage,
+            sessionId, function(res){
               //TODO: Please update the error accordingly
               if(res.status==400){
                 alert(res.data);
@@ -233,10 +237,11 @@ async loadFormula(){
     }else if (this.isValid()){
       console.log("update formula ");
       console.log(this.state);
+
       await formulaActions.updateFormula(this.state.formulaId, this.state.name,
         this.state.description,this.state.unitsProvided, this.state.ingredientsArray,
         this.state.isIntermediate,this.state.packageName,this.state.temperatureZone,
-        sessionId, function(res){
+        this.state.nativeUnit,this.state.numUnitPerPackage,sessionId, function(res){
           //TODO: Update error status
           if(res.status == 400){
             alert(res.data);
@@ -261,6 +266,16 @@ async loadFormula(){
         alert("The units of product must be a positive integer. ");
       }
   }
+
+  handleNumUnitPerPackage(event){
+    const re = /^[0-9\b]+$/;
+      if ( event.target.value == '' || (event.target.value>=0 && re.test(event.target.value))) {
+         this.setState({numUnitPerPackage: event.target.value})
+      }else{
+        alert("The units of product must be a positive integer. ");
+      }
+  }
+
 
   render (){
     const { formulaId,name, description, unitsProvided, ingredients, isCreateNew,
@@ -304,6 +319,7 @@ async loadFormula(){
               disabled = {this.state.isDisabled}
               style={styles.unitsProvided}
             />
+
                <FormControl style={styles.packageName}>
                  <InputLabel htmlFor="Product Type ">Product Type</InputLabel>
                  <Select
@@ -356,29 +372,38 @@ async loadFormula(){
                   </Select> }
                 </FormControl>
 
-              <FormGroup>
-              {this.state.isIntermediate &&
-              <InputLabel htmlFor="packageName" style = {{marginTop: 30}}>Package</InputLabel> }
-                {this.state.isIntermediate && <Select
-                value={this.state.packageName}
-                onChange={this.handleChange('packageName')}
-                inputProps={{
-                  name: 'Package',
-                  id: 'packageName',
-                }}
-                disabled = {this.state.isDisabled}
-                required
-                style = {{marginBottom: 10}}
+                {this.state.isIntermediate && <TextField
+                  required
+                  id="numUnitPerPackage"
+                  label="Quantity"
+                  value={this.state.numUnitPerPackage}
+                  onChange={(event)=>this.handleNumUnitPerPackage(event)}
+                  margin="normal"
+                  disabled = {this.state.isDisabled}
+                  style={styles.unitsProvided}
+                />}
 
-              >
-                <MenuItem value={'sack'}>Sack</MenuItem>
-                <MenuItem value={'pail'}>Pail</MenuItem>
-                <MenuItem value={'drum'}>Drum</MenuItem>
-                <MenuItem value={'supersack'}>Supersack</MenuItem>
-                <MenuItem value={'truckload'}>Truckload</MenuItem>
-                <MenuItem value={'railcar'}>Railcar</MenuItem>
-              </Select> }
-          </FormGroup>
+          <FormControl style={styles.packageName}>
+            {this.state.isIntermediate && <InputLabel htmlFor="packageName">Package</InputLabel>}
+            {this.state.isIntermediate && <Select
+              value={this.state.packageName}
+              onChange={this.handlePackageChange}
+              inputProps={{
+                name: 'Package',
+                id: 'packageName',
+              }}
+              disabled = {this.state.isDisabled}
+              required
+            >
+              <MenuItem value={'sack'}>Sack</MenuItem>
+              <MenuItem value={'pail'}>Pail</MenuItem>
+              <MenuItem value={'drum'}>Drum</MenuItem>
+              <MenuItem value={'supersack'}>Supersack</MenuItem>
+              <MenuItem value={'truckload'}>Truckload</MenuItem>
+              <MenuItem value={'railcar'}>Railcar</MenuItem>
+            </Select> }
+          </FormControl>
+
 
             <FormGroup>
             {this.state.isDisabled && <TextField

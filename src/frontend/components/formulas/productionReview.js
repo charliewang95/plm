@@ -20,6 +20,7 @@ import * as formulaActions from '../../interface/formulaInterface';
 import Tooltip from 'material-ui/Tooltip';
 import RaisedButton from 'material-ui/Button';
 import * as orderActions from '../../interface/orderInterface';
+import * as productActions from '../../interface/productInterface';
 
 import {reviewData} from './dummyData';
 
@@ -81,7 +82,7 @@ class ProductionReview extends React.Component {
 
       // TODO: get
       var temp = this;
-
+      //TODO: Check this
       console.log(this.state.formulaRows[0]._id+' '+Number(this.state.addedQuantity));
       await formulaActions.checkoutFormula("review",this.state.formulaRows[0]._id,
                           Number(this.state.addedQuantity),sessionId, function(res){
@@ -93,7 +94,6 @@ class ProductionReview extends React.Component {
               } else if (res.status == 500){
                 alert(res.data)
               }
-
               else {
                  review = res.data;
                  console.log(review);
@@ -146,12 +146,16 @@ class ProductionReview extends React.Component {
       vendorName = vendors[0].vendorName;
       price = vendors[0].price;
 
-      await orderActions.addOrder(userId,row.ingredientId, row.ingredientName,vendorName,_package,price,sessionId,function(res){
+      console.log(" ADD ORDER ");
+      // TODO: Add order based on numUnitPerPackage
+      await orderActions.addOrder(userId,row.ingredientId,
+        row.ingredientName,vendorName,_package,price,sessionId,function(res){
         //TODO: Please update this
         if(res.status == 400){
           alert(res.data);
         }else{
           success = true;
+          alert(" Ingredients Successfully added to cart. ");
         }
       });
     }
@@ -164,7 +168,7 @@ class ProductionReview extends React.Component {
   }
 
   async checkOutFormula(event){
-    //TODO: Checkout formula
+    //TODO: Checkout formula - Send to Production
     console.log(" checkout , why is this called first");
     console.log(JSON.stringify(this.state));
     await formulaActions.checkoutFormula("checkout",this.state.formulaRows[0]._id,
@@ -175,9 +179,9 @@ class ProductionReview extends React.Component {
             alert('Successfully added to production.');
          }
       });
-    //TODO: Snackbar
     event.stopPropagation();
-  }
+  };
+
 
   handleFormulaQuantity(event){
   const re = /^\d*\.?\d*$/;
@@ -287,7 +291,7 @@ class ProductionReview extends React.Component {
                     // className=classes.button
                     style={styles.orderIngredientsButton}
                     onClick = {(event) => this.checkOutFormula(event)}
-                    component = {Link} to = "/formula"
+                    component = {Link} to = "/product"
                     primary="true">Send to production</RaisedButton>
             </Tooltip>}
 
