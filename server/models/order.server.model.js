@@ -5,6 +5,18 @@ var mongoose = require('mongoose'),
     VendorPrice = require('mongoose').model('VendorPrice'),
 	Schema = mongoose.Schema;
 
+var IngredientLotUsedInOrderSchema = new Schema({
+    lotNumber: {
+        type: String,
+        required: true
+    },
+    package: {
+        type: Number,
+        required: true
+    }
+});
+mongoose.model('IngredientLotUsedInOrder', IngredientLotUsedInOrderSchema);
+
 var OrderSchema = new Schema({
 	userId: {
 		type: mongoose.Schema.Types.ObjectId,
@@ -44,6 +56,7 @@ var OrderSchema = new Schema({
         type: Number,
         required: true
     },
+    ingredientLots: [IngredientLotUsedInOrderSchema]
 });
 
 OrderSchema.index({ userId: 1, ingredientName: 1}, { unique: true });

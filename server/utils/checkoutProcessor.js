@@ -30,13 +30,56 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
         else {
             validateOrders(items, res, next, function(wSpace, rSpace, fSpace){
                 console.log("Orders validated.");
-                res.send(items);
-                deleteProcessor.process(model, items, '', res, next);
-                logger.log(username, 'checkout', items[0], model);
-                updateStorage(wSpace, rSpace, fSpace);
+                addIngredientLots(req, res, next, items, 0, function(){
+                    deleteProcessor.process(model, items, '', res, next);
+                    updateStorage(wSpace, rSpace, fSpace);
+                    logger.log(username, 'checkout', items[0], model);
+                    res.send(items);
+                });
             });
         }
     });
+};
+
+var addIngredientLots = function(req, res, next, items, i, callback){
+    if (i == items.length) {
+        callback();
+    } else {
+        var order = items[i];
+        var assignments = order.ingredientLots;
+        for (var j = 0; j<assignments.length; j++) {
+            var assignment = assignments[i];
+            var lotNumber = assignment.lotNumber;
+            var lotNumberUnique = assignment.lotNumber.toLowerCase();
+            var numPackage = assignment.package();
+//            IngredientLot.findOne({ingredientNameUnique: order.ingredientName.toLowerCase(),
+//                                   vendorNameUnique: order.vendorName.toLowerCase(),
+//                                   lotNumberUnique: lotNumberUnique}, function(err, ingredientLot){
+//                 if (err) return next(err);
+//                 else if (!ingredientLot) {
+                    Ingredient.findOne({nameUnique: order.ingredientName.toLowerCase()}, function(err, ingredient){
+                        if (err) return next(err);
+                        else if (!ingredient) return res.status(400).send('Ingredient '+order.ingredientName+' does not exist.');
+                        else {
+                            var newIngredientLot = new IngredientLot();
+                            newIngredientLot.ingredientName = order.ingredientName;
+                            newIngredientLot.ingredientNameUnique = order.ingredientName.toLowerCase();
+                            newIngredientLot.ingredientId = order.ingredientId;
+                            newIngredientLot.numUnit = numPackage * ingredient.numUnitPerPackage;
+                            newIngredientLot.date = new Date();
+                            newIngredientLot.lotNumber = lotNumber;
+                            newIngredientLot.lotNumberUnique = lotNumberUnique;
+                            newIngredientLot.vendorName = order.vendorName;
+                            newIngredientLot.vendorNameUnique = order.vendorName.toLowerCase();
+                            newIngredientLot.save(function(err){
+
+                            });
+                        }
+                    });
+//                 }
+//            });
+        }
+    }
 };
 
 var updateStorage = function(wSpace, rSpace, fSpace) {
@@ -164,7 +207,8 @@ exports.checkoutFormula = function(req, res, next, model, username) {
                                           if (err) return next(err);
                                           else {
                                             updateStorageAfterCheckoutIP(res, req, next, formula, totalSpace);
-                                            if (formula.isIntermediate) {
+                                            console.log(formula.isIntermediate);
+                                            if (!formula.isIntermediate) {
                                                 //TODO: add ingredientLotUsedInProduct in the product object
                                                 addProduct(req, res, next, formula, quantity, function() {
                                                     logger.log(username, 'checkout', formula, model);
@@ -172,7 +216,9 @@ exports.checkoutFormula = function(req, res, next, model, username) {
                                                 });
                                             } else {
                                                 //TODO: add ingredient and ingerdientLot object if intermediate
-                                                addIntermediateProductIngredientLot(req, res, next, formula, numUnit, totalSpace, function(){
+                                                addIntermediateProductIngredientLot(req, res, next, formula, quantity, totalSpace, function(){
+                                                    logger.log(username, 'checkout', formula, model);
+                                                    return res.send(formula);
                                                 });
                                             }
                                           }

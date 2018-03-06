@@ -35,6 +35,10 @@ var IngredientLotSchema = new Schema({
     vendorName : {
         type: String,
         //required: true
+    },
+    vendorNameUnique : {
+        type: String,
+        //required: true
     }
 });
 

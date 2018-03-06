@@ -6,10 +6,14 @@ var IngredientLotUsedInProductSchema = new Schema({
         type: String,
         required: true
     },
-    lotNumber: [{
+    vendorName: {
         type: String,
         required: true
-    }]
+    },
+    lotNumber: {
+        type: String,
+        required: true
+    }
 });
 mongoose.model('IngredientLotUsedInProduct', IngredientLotUsedInProductSchema);
 
