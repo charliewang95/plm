@@ -26,6 +26,20 @@ exports.delete = function(req, res, next) {
     utils.doWithAccess(req, res, next, Ingredient, 'delete', req.params.userId, req.params.ingredientId, true, true);
 };
 
+exports.listAllIngredients = function(req, res, next){
+    Ingredient.find({isIntermediate: true}, function(err, items){
+        if (err) return next(err);
+        else res.send(items);
+    });
+};
+
+exports.listIntermediate = function(req, res, next){
+    Ingredient.find({isIntermediate: false}, function(err, items){
+        if (err) return next(err);
+        else res.send(items);
+    });
+};
+
 exports.listNames = function(req, res, next) {
     Ingredient.aggregate([
         { "$project": {
