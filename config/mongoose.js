@@ -2,8 +2,8 @@ var config = require('./config'),
 	mongoose = require('mongoose');
 
 module.exports = function() {
-	var db = mongoose.connect(config.db);
-
+	// var db = mongoose.connect(config.db); //without authentication
+	var db = mongoose.connect(config.dbWithAuth); //with authentication
 	require('../server/models/user.server.model');
 	require('../server/models/vendor.server.model');
 	require('../server/models/ingredient.server.model');

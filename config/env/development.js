@@ -3,7 +3,7 @@ var port = 1337;
 module.exports = {
 	port: port,
 	db: 'mongodb://localhost/plm',
-
+	dbWithAuth: 'mongodb://plmAdmin:whatismongoose@localhost:27017/plm', //for authentication
 	facebook: {
 		clientID: '513828288756645',
 		clientSecret: '2d7cc991efddb864e9af61f307980b9a',
