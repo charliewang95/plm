@@ -21,7 +21,7 @@ import ProductionReview from './components/formulas/productionReview.js';
 import FormulaDetails from './components/formulas/formulaDetails.js';
 import ProductionReport from './components/productionReport/ProductionReport';
 import PageNotFound from './components/error/PageNotFound';
-
+import BackupTestPages from '../testing/backup/backupTestPage'
 
 const Routes = () => (
       <div>
@@ -47,7 +47,8 @@ const Routes = () => (
             <Route path="/production-review" component={ProductionReview}/>
             <Route path="/formula-details" component={FormulaDetails}/>
             <Route path="/admin-users" component={AdminUserPage} />
-		  </Switch>
+		<Route path="/backup-test" component={BackupTestPages} />
+            </Switch>
       </div>
 
 );
