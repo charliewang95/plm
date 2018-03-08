@@ -188,10 +188,7 @@ exports.checkoutFormula = function(req, res, next, model, username) {
         else if (!formula){
             return res.status(400).send('Formula does not exist');
         } else {
-            var unitsProvided = formula.unitsProvided;
-            if (quantity < unitsProvided) {
-                return res.status(400).send('The amount provided must be at least '+unitsProvided+'.');
-            } else {
+            checkProductAmount(req, res, next, formula, quantity, function(){
                 checkNewStorageHelper(req, res, next, formula, quantity, function(totalSpace){
                     var multiplier = quantity/unitsProvided;
                     var ingredients = formula.ingredients;
@@ -230,9 +227,18 @@ exports.checkoutFormula = function(req, res, next, model, username) {
                           }
                     });
                 });
-            }
+            });
         }
     });
+};
+
+var checkProductAmount = function(req, res, next, formula, quantity, callback) {
+    var unitsProvided = formula.unitsProvided;
+    if (quantity < unitsProvided) {
+        return res.status(400).send('The amount provided must be at least '+unitsProvided+'.');
+    } else {
+        callback();
+    }
 };
 
 var checkNewStorageHelper = function(req, res, next, formula, quantity, callback) {
