@@ -190,7 +190,7 @@ exports.checkoutFormula = function(req, res, next, model, username) {
         } else {
             checkProductAmount(req, res, next, formula, quantity, function(){
                 checkNewStorageHelper(req, res, next, formula, quantity, function(totalSpace){
-                    var multiplier = quantity/unitsProvided;
+                    var multiplier = quantity/formula.unitsProvided;
                     var ingredients = formula.ingredients;
                     checkIngredientHelper(req, res, next, multiplier, 0, ingredients, [], true, function(array, viable){
                           if (req.params.action == 'review') {
@@ -305,12 +305,12 @@ var checkIngredientHelper = function(req, res, next, multiplier, i, ingredients,
     }
 }
 
-var updateIngredientHelper = function(req, res, next, multiplier, ingredients, newSpentMoney, i, arrayInProductOut, callback) {
+var updateIngredientHelper = function(req, res, next, multiplier, ingredients, newSpentMoney, i, arrayInProduct, callback) {
     if (i == ingredients.length) {
-        callback(newSpentMoney, arrayInProductOut);
+        callback(newSpentMoney, arrayInProduct);
     } else {
         var ingredientQuantity = ingredients[i];
-        lotPickerHelper(req, res, next, ingredientQuantity.ingredientName, ingredientQuantity.quantity, arrayInProduct, function(arrayInProductOut){
+        lotPickerHelper(req, res, next, ingredientQuantity.ingredientName, ingredientQuantity.quantity*multiplier, arrayInProduct, function(arrayInProductOut){
 
             Ingredient.findOne({nameUnique: ingredientQuantity.ingredientName.toLowerCase()}, function(err, ingredient){
                 var numUnit = ingredient.numUnit;
@@ -362,7 +362,7 @@ var lotPickerHelper = function(req, res, next, ingredientName, quantity, arrayIn
             lot.update({numUnit: newNumUnit}, function(err, obj){
                 callback(arrayInProduct);
             });
-        } else if (ingredientQuantity.quantity == lot.numUnit) {
+        } else if (quantity == lot.numUnit) {
             lot.remove(function(err){
                 callback(arrayInProduct);
             });
