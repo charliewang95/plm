@@ -192,7 +192,11 @@ var modifyProduct = function(action, item, itemId, res, next, callback) { //add 
 };
 
 var modifyIngredientLot = function(action, item, itemId, res, next, callback) { //add unique lowercase code to check code uniqueness
-    var str = JSON.stringify(item).slice(0,-1)+',"lotNumberUnique":"'+item.lotNumber.toLowerCase()+',"ingredientNameUnique":"'+item.ingredientName.toLowerCase()+'"}';
-    item = JSON.parse(str);
+    //var str = JSON.stringify(item).slice(0,-1)+',"lotNumberUnique":"'+item.lotNumber.toLowerCase()+',"ingredientNameUnique":"'+item.ingredientName.toLowerCase()+',"vendorNameUnique":"'+item.vendorName.toLowerCase()+'"}';
+    //item = JSON.parse(str);
+    item.lotNumberUnique = item.lotNumber.toLowerCase();
+    item.ingredientNameUnique = item.ingredientName.toLowerCase();
+    item.vendorNameUnique = item.vendorName.toLowerCase();
+    if (item.date == null) item.date = new Date();
     callback(0, item);
 };

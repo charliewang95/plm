@@ -8,4 +8,5 @@ module.exports = function(app) {
     app.route('/ingredients/allIngredients/user/:userId').get(ingredients.listIngredients);
     app.route('/ingredients/allIntermediates/user/:userId').get(ingredients.listIntermediate);
     app.route('/ingredients/allLotNumbers/ingredient/:ingredientId/user/:userId').get(ingredients.listLotNumbers);
+    app.route('/ingredients/oldestLot/ingredient/:ingredientId/user/:userId').get(ingredients.getOldestLot);
 };
