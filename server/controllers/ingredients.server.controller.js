@@ -91,9 +91,8 @@ exports.listNames = function(req, res, next) {
 
 exports.getFresh = function(req, res, next) {
     freshness.getLatestInfo(res, next, req.params.ingredientName, function(){
-        IngredientFreshness.findOne({ingredientNameUnique: req.params.ingredientName.toLowerCase()}, function(err, fresh){
+        IngredientFreshness.find(function(err, fresh){
             if (err) return next(err);
-            else if (!fresh) return res.status(400).send('Ingredient '+ingredientName+' does not exist.');
             else return res.json(fresh);
         })
     });
