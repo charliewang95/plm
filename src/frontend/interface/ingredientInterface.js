@@ -113,8 +113,13 @@ async function getAllLotNumbersAsync(ingredientId, sessionId) {
     return res;
 }
 
-async function getRecallAsync(ingredientName, sessionId) {
-    const res = await axios.get('/ingredients/recall/ingredient/'+ingredientName+'/user/'+sessionId);
+async function getRecallAsync(ingredientName, lotNumber, sessionId) {
+    const res = await axios.get('/ingredients/recall/ingredient/'+ingredientName+'/lot/'+lotNumber+'/user/'+sessionId);
+    return res;
+}
+
+async function getFreshAsync(ingredientName, sessionId) {
+    const res = await axios.get('/ingredients/fresh/ingredient/'+ingredientName+'/user/'+sessionId);
     return res;
 }
 

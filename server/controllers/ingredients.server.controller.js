@@ -1,9 +1,11 @@
 var Ingredient = require('mongoose').model('Ingredient');
 var IngredientLot = require('mongoose').model('IngredientLot');
 var IngredientProduct = require('mongoose').model('IngredientProduct');
+var IngredientFreshness = require('mongoose').model('IngredientFreshness');
 var Vendor = require('mongoose').model('Vendor');
 var User = require('mongoose').model('User');
 var utils = require('../utils/utils');
+var freshness = require('../utils/freshness');
 var bulkImport = require('../utils/bulkImportIngredients');
 var fs = require('fs');
 var Converter = require("csvtojson").Converter;
@@ -85,6 +87,16 @@ exports.listNames = function(req, res, next) {
     ], function(err, ingredients){
         res.json(ingredients);
     })
+}
+
+exports.getFresh = function(req, res, next) {
+    freshness.getLatestInfo(res, next, req.params.ingredientName, function(){
+        IngredientFreshness.findOne({ingredientNameUnique: req.params.ingredientName.toLowerCase()}, function(err, fresh){
+            if (err) return next(err);
+            else if (!fresh) return res.status(400).send('Ingredient '+ingredientName+' does not exist.');
+            else return res.json(fresh);
+        })
+    });
 }
 
 exports.bulkImportIngredients = function(req, res, next, contents, callback) {
