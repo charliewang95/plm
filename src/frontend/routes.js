@@ -19,7 +19,6 @@ import Formula from './components/formulas/Formula.js';
 import ShoppingCart from './components/shoppingCart/shoppingCart';
 import ProductionReview from './components/formulas/productionReview.js';
 import FormulaDetails from './components/formulas/formulaDetails.js';
-import ProductionReport from './components/productionReport/ProductionReport';
 import PageNotFound from './components/error/PageNotFound';
 import ProductDetails from './components/product/productDetails';
 import Report from './components/report/report.js';
@@ -42,7 +41,6 @@ const Routes = () => (
             <Route path="/addVendorForm" component={AddVendorForm} />
             <Route path="/cart" component={ShoppingCart} />
             <Route path="/report" component={Report} />
-            <Route path="/prod-report" component={ProductionReport} />
             <Route path="/log" component={Log} />
             <Route path="/formula" component={Formula} />
             <Route path="/pagenotfound" component={PageNotFound} />

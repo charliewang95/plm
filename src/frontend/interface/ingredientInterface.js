@@ -16,7 +16,7 @@ import axios from 'axios'
  * vendors: array of objects following the VendorPriceSchema
  * moneySpent: number, the total amount of money spent on purchasing this ingredient
  * moneyOnProduction: number, the total amount of money spent on the portion that were used in production
- * nativeUnit: string, the native unit of this ingredient, such as pounds, gallon 
+ * nativeUnit: string, the native unit of this ingredient, such as pounds, gallon
  * amountInNativeUnitPerPackage: number, amount in native unit per package.
 **/
 function packIntoJson(name, packageType, temperatureZone, vendors, moneySpent,
@@ -138,7 +138,6 @@ async function deleteIngredient(ingredientId, sessionId, callback) {
 	return await ingredientActions.deleteIngredient(ingredientId, sessionId, function(res){
 	    callback(res);
 	});
-
 };
 
 //export functions above for use by other modules
