@@ -1,122 +1,72 @@
 import React from 'react';
-import Paper from 'material-ui/Paper';
-import {
-  Grid,
-  Table,
-  TableHeaderRow,PagingPanel,DragDropProvider,TableColumnReordering,
-} from '@devexpress/dx-react-grid-material-ui';
-import {
-  SortingState, PagingState,
-  IntegratedPaging, IntegratedSorting,
-} from '@devexpress/dx-react-grid';
-import Styles from  'react-select/dist/react-select.css';
+import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import dummyData from '../orders/dummyData';
-import * as ingredientActions from '../../interface/ingredientInterface';
+import AppBar from 'material-ui/AppBar';
+import Tabs, { Tab } from 'material-ui/Tabs';
+import Typography from 'material-ui/Typography';
+import FinancialReport from './financialReport';
+import ProductionReport from './productionReport';
 
+function TabContainer(props) {
+  return (
+    <Typography component="div" style={{ padding: 8 * 3 }}>
+      {props.children}
+    </Typography>
+  );
+}
 
-import * as testConfig from '../../../resources/testConfig.js';
+TabContainer.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
-// const sessionId = testConfig.sessionId;
-var sessionId = "";
-const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
+const styles = theme => ({
+  root: {
+    flexGrow: 1,
+    width: '100%',
+    marginTop: theme.spacing.unit * 3,
+    backgroundColor: theme.palette.background.paper,
+  },
+});
 
+class ScrollableTabsButtonAuto extends React.Component {
+  state = {
+    value: 0,
+  };
 
-export default class Demo extends React.PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      columns: [
-        { name: 'name', title: 'Ingredient Name' },
-        { name: 'moneySpent', title: 'Orders Expenditure ($) ' },
-        { name: 'moneyProd', title: 'Production Expenditure ($)' },
-      ],
-      rows: [],
-      sorting:[],
-      currentPage: 0,
-      pageSize: 10,
-      pageSizes: [5, 10, 0],
-      columnOrder: ['name', 'moneySpent', 'moneyProd'],
-    };
-    this.changeSorting = sorting => this.setState({ sorting });
-    this.changeCurrentPage = currentPage => this.setState({ currentPage });
-    this.changePageSize = pageSize => this.setState({ pageSize });
-    this.changeColumnOrder = (order) => {
-      this.setState({ columnOrder: order });
-    };
-
-  }
-
-  componentDidMount(){
-    this.loadAllIngredients();
-  }
-
-  async loadAllIngredients(){
-      var rawData = [];
-
-    // try{
-       if(READ_FROM_DATABASE){
-         sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-         rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
-       }else{
-         rawData = dummyData;
-       }
-     // }catch(e){
-       // console.log("Error passed to front end");
-       // alert(e);
-     // }
-     // adds integer values as row id
-     var processedData = [...rawData.map((row, index)=> ({
-         id: index,
-         ...row,
-         moneySpent: Math.round(row.moneySpent*100)/100, 
-         moneyProd: Math.round(row.moneyProd*100)/100,
-       })),
-     ];
-     this.setState({rows:processedData});
-   }
-
+  handleChange = (event, value) => {
+    this.setState({ value });
+  };
 
   render() {
-    const {classes,} = this.props;
-    const { rows, columns ,sorting,currentPage,
-      pageSize,pageSizes,columnOrder} = this.state;
+    const { classes } = this.props;
+    const { value } = this.state;
+
     return (
-      <Paper>
-        <Grid
-          allowColumnResizing = {true}
-          rows={rows}
-          columns={columns}
-        >
-          <SortingState
-            sorting={sorting}
-            onSortingChange={this.changeSorting}
-          />
-          <PagingState
-            currentPage={currentPage}
-            onCurrentPageChange={this.changeCurrentPage}
-            pageSize={pageSize}
-            onPageSizeChange={this.changePageSize}
-          />
-
-          <IntegratedSorting />
-          <IntegratedPaging />
-          <DragDropProvider />
-
-          <Table />
-
-          <TableColumnReordering
-            order={columnOrder}
-            onOrderChange={this.changeColumnOrder}
-          />
-
-          <TableHeaderRow showSortingControls />
-          <PagingPanel
-            pageSizes={pageSizes}
-          />
-        </Grid>
-      </Paper>
+      <div className={classes.root}>
+        <AppBar position="static" color="default">
+          <Tabs
+            value={value}
+            onChange={this.handleChange}
+            indicatorColor="primary"
+            textColor="primary"
+            scrollable
+            scrollButtons="auto"
+          >
+            <Tab label="Financial Report" />
+            <Tab label="Production Report" />
+            <Tab label="Freshness Report" />
+          </Tabs>
+        </AppBar>
+        {value === 0 && <FinancialReport/>}
+        {value === 1 && <ProductionReport/>}
+        {value === 2 && <TabContainer>Item Three</TabContainer>}
+      </div>
     );
   }
 }
+
+ScrollableTabsButtonAuto.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(ScrollableTabsButtonAuto);

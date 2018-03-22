@@ -158,52 +158,26 @@ class ProductionReview extends React.Component {
         }
       });
     }
-
     //TODO: Snackbar
-//    if(success){
-//      alert("Ingredients successfully added to cart. Please check out your cart first to send this formula to production.")
-//    }
+   if(success){
+     alert("Ingredients successfully added to cart. Please check out your cart first to send this formula to production.")
+   }
     event.stopPropagation();
   }
 
   async checkOutFormula(event){
-    //TODO: Checkout formula - Send to Production
-    console.log(" CHECKOUT ");
-    console.log(JSON.stringify(this.state.formulaRows[0]));
-    // await formulaActions.checkoutFormula("checkout",this.state.formulaRows[0]._id,
-    //                           Number(this.state.addedQuantity),sessionId, function(res){
-    //      if (res.status == 400) {
-    //         alert('Please order the missing ingredients to proceed.');
-    //      } else {
-    //         alert('Successfully added to production.');
-    //      }
-    //   });
-
-    // Add to product
-    var name = this.state.formulaRows[0].name;
-    var numUnit = this.state.formulaRows[0].unitsProvided;
-    var date = new Date().toISOString();
-    var lotNumber =  this.randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
-
-    // addProduct(name, numUnit, date, lotNumber, sessionId, callback)
-    await productActions.addProduct(name,numUnit,date,lotNumber,sessionId,function(res){
-      if(res.status){
-        alert(res.data);
-      }else{
-        alert(" Formula successfully sent to Production! ");
-      }
-    });
+    console.log(" checkout formula ");
+    await formulaActions.checkoutFormula("checkout",this.state.formulaRows[0]._id,
+                              Number(this.state.formulaRows[0].unitsProvided),
+                              sessionId, function(res){
+         if (res.status == 400) {
+            alert('Please order the missing ingredients to proceed.');
+         } else {
+            alert('Successfully added to production.');
+         }
+      });
     event.stopPropagation();
   };
-
-
-randomString(length, chars) {
-      var result = '';
-      for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
-      return result;
-  }
-
-
   handleFormulaQuantity(event){
   const re = /^\d*\.?\d*$/;
       if (event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
@@ -216,13 +190,11 @@ randomString(length, chars) {
   componentWillMount(){
     console.log(" Formula Rows " + JSON.stringify(this.state.formulaRows));
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
-
   }
 
     cancel(){
       this.setState({open:false});
     }
-
   handleOnClose(){
     this.setState({open:false});
   }
@@ -316,7 +288,6 @@ randomString(length, chars) {
                     component = {Link} to = "/product"
                     primary="true">Send to production</RaisedButton>
             </Tooltip>}
-
         <RaisedButton color="default"
         raised
           component={Link} to='/formula'

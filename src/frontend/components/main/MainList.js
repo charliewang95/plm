@@ -84,7 +84,7 @@ function ListItemComposition(props) {
           <ListItemIcon className={classes.icon}>
             <CafeIcon />
           </ListItemIcon>
-          <ListItemText classes={{ primary: classes.primary }} inset primary="Product" />
+          <ListItemText classes={{ primary: classes.primary }} inset primary="Production History" />
         </MenuItem>
 
         <MenuItem className={classes.menuItem} component={Link} to="/storage" button>
@@ -98,15 +98,15 @@ function ListItemComposition(props) {
           <ListItemIcon className={classes.icon}>
             <ReportIcon />
           </ListItemIcon>
-          <ListItemText classes={{ primary: classes.primary }} inset primary="Financial Report" />
+          <ListItemText classes={{ primary: classes.primary }} inset primary="Report" />
         </MenuItem>
 
-        <MenuItem className={classes.menuItem} component={Link} to="/prod-report" button>
+        {/* <MenuItem className={classes.menuItem} component={Link} to="/prod-report" button>
           <ListItemIcon className={classes.icon}>
             <BalanceIcon />
           </ListItemIcon>
           <ListItemText classes={{ primary: classes.primary }} inset primary="Production Report" />
-        </MenuItem>
+        </MenuItem> */}
 
         {(isManager || isAdmin) &&
         <MenuItem className={classes.menuItem} component={Link} to="/log" button>

@@ -22,6 +22,7 @@ import {
 import RaisedButton from 'material-ui/Button';
 
 
+
 const styles = {
     buttons: {
       marginTop: 30,
@@ -41,7 +42,7 @@ class ProductDetails extends React.Component {
     super(props);
     // var dummyObject = new Object();
     this.state = {
-        productRows:(props.location.state) ? [props.location.state.details.IngredientLotUsedInProduct] : [],
+        productRows:(props.location.state) ? [props.location.state.details] : [],
         open : true,
         columns:[
           { name: 'ingredientName', title: 'Ingredient Name ' },
@@ -49,6 +50,8 @@ class ProductDetails extends React.Component {
           { name: 'lotNumber', title: 'Lot Number ' },
         ],
         rows:[],
+        productName:'',
+        time:'',
         // integratedGroupingColumnExtensions: [
         //   { columnName: 'ingredientName', criteria: ingredientNameGroupCriteria },
         // ],
@@ -60,83 +63,53 @@ class ProductDetails extends React.Component {
 
     this.changeGrouping = grouping => this.setState({ grouping });
 
-    this.cancelDetailView =() =>
-      this.setState({
-        rows:[],
-        productRows:[],
-        open: false,
-      });
-    console.log(this.state.productRows);
 }
 
   componentWillMount(){
     // console.log(" Formula Rows " + JSON.stringify(this.state.formulaRows));
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
-    var rawData = this.state.productRows[0];
+
+    var rawData = this.state.productRows[0].IngredientLotUsedInProduct;
+
     var processedData = [...rawData.map((row, index)=> ({
         id:index,...row,
       })),
     ];
     this.setState({rows: processedData});
+    this.setState({productName:this.state.productRows[0].name});
+    this.setState({time:this.state.productRows[0].date});
   }
 
-  // cancel(){
-  //     this.setState({open:false});
-  //   }
-  // handleOnClose(){
-  //   this.setState({open:false});
-  // }
+
 
   render() {
     const {productRows,rows,columns, grouping} = this.state;
     return (
       <div>
-      {/* <p><font size="6">Production Review</font></p> */}
+      <p><font size="4">Product Details for {this.state.productName} made in {this.state.time}</font></p>
       <Paper>
-        {/* <Grid
-          allowColumnResizing = {true}
-          rows={rows}
-          columns={columns}
+        <Grid
+          rows={this.state.rows}
+          columns={this.state.columns}
         >
-          <Table />
+          <GroupingState
+            grouping={grouping}
+          />
+          <IntegratedGrouping/>
+          <Table/>
           <TableHeaderRow />
-        </Grid> */}
-      <Divider/>
-          <Dialog
-            open={this.state.open}
-            onClose={this.cancelDetailView}
-          >
-            <DialogTitle>Product Details</DialogTitle>
-            <DialogContent>
-              <Paper>
-                <Grid
-                  rows={this.state.rows}
-                  columns={this.state.columns}
-                >
-                  <GroupingState
-                    grouping={grouping}
-                  />
-                  <IntegratedGrouping/>
-                  <Table/>
-                  <TableHeaderRow />
-                  <TableGroupRow/>
-                </Grid>
-              </Paper>
-              <Divider />
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={this.cancelDetailView}
-                color="primary"
-                component = {Link} to = "/product"
-                >Cancel</Button>
-              {/* <Button
-                component = {Link} to = "/product"
-                onClick={this.productionReview} color="secondary">Add To Production</Button> */}
-            </DialogActions>
-          </Dialog>
+          <TableGroupRow/>
+        </Grid>
+
+    <Divider />
       </Paper>
+      <Button color="default"
+        component={Link} to='/product'
+        style = {{marginTop: 10}}
+        raised
+        > BACK </Button>
    </div>
+
     );
   }
 }
