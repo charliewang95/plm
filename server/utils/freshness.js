@@ -7,7 +7,7 @@ var mongoose = require('mongoose'),
 exports.updateAverageAdd = function(res, next, ingredientName, date, numUnit, callback) {
     Ingredient.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, ingredient){
         if (err) return next(err);
-        else if (!ingredient) return res.status(400).send('Ingredient '+ingredientName+' does not exist.');
+        else if (!ingredient) return res.status(400).send('Ingredient '+ingredientName+' does not exist. 007');
         else {
             var oldNumUnit = ingredient.numUnit;
             IngredientFreshness.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, fresh){
@@ -35,7 +35,7 @@ exports.updateAverageAdd = function(res, next, ingredientName, date, numUnit, ca
 exports.updateAverageDelete = function(res, next, ingredientName, numUnit, callback) {
     Ingredient.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, ingredient){
         if (err) return next(err);
-        else if (!ingredient) return res.status(400).send('Ingredient '+ingredientName+' does not exist.');
+        //else if (!ingredient) return res.status(400).send('Ingredient '+ingredientName+' does not exist. 006');
         else {
             var oldNumUnit = ingredient.numUnit;
             IngredientFreshness.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, fresh){
@@ -57,7 +57,7 @@ exports.updateAverageDelete = function(res, next, ingredientName, numUnit, callb
 exports.updateOldestDelete = function(res, next, ingredientName, numUnit, callback) {
     Ingredient.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, ingredient){
         if (err) return next(err);
-        else if (!ingredient) return res.status(400).send('Ingredient '+ingredientName+' does not exist.');
+        //else if (!ingredient) return res.status(400).send('Ingredient '+ingredientName+' does not exist. 005');
         else {
             var oldNumUnit = ingredient.numUnit;
             IngredientFreshness.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, fresh){
@@ -80,9 +80,8 @@ exports.updateOldestDelete = function(res, next, ingredientName, numUnit, callba
 exports.getLatestInfo = function(res, next, ingredientName, callback) {
     IngredientFreshness.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, fresh){
         if (err) return next(err);
-        else if (!fresh) {
-            return res.status(400).send('Ingredient '+ingredientName+' does not exist.');
-        }
+        else if (!fresh)
+            return res.status(400).send('Ingredient '+ingredientName+' does not exist. 004');
         else {
             var nowDate = new Date();
             var nowTime = nowDate.getTime();

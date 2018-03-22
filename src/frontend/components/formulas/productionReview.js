@@ -171,7 +171,7 @@ class ProductionReview extends React.Component {
                               Number(this.state.formulaRows[0].unitsProvided),
                               sessionId, function(res){
          if (res.status == 400) {
-            alert('Please order the missing ingredients to proceed.');
+            alert(res.data);
          } else {
             alert('Successfully added to production.');
          }

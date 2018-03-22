@@ -61,7 +61,7 @@ var addIngredientLots = function(req, res, next, items, i, callback){
                  else if (!ingredientLot) {
                     Ingredient.findOne({nameUnique: order.ingredientName.toLowerCase()}, function(err, ingredient){
                         if (err) return next(err);
-                        else if (!ingredient) return res.status(400).send('Ingredient '+order.ingredientName+' does not exist.');
+                        else if (!ingredient) return res.status(400).send('Ingredient '+order.ingredientName+' does not exist. 001');
                         else {
                             var newIngredientLot = new IngredientLot();
                             newIngredientLot.ingredientName = order.ingredientName;
@@ -143,7 +143,7 @@ var validateOrdersHelper = function(i, items, res, next, wSpace, rSpace, fSpace,
         Ingredient.findOne({nameUnique: order.ingredientName.toLowerCase()}, function(err, obj){
             if (err) return next(err);
             else if (!obj) {
-                res.status(400).send('Ingredient '+order.ingredientName+' does not exist.');
+                res.status(400).send('Ingredient '+order.ingredientName+' does not exist. 002');
                 return;
             } else {
                 var temperatureZone = obj.temperatureZone;
@@ -211,9 +211,11 @@ exports.checkoutFormula = function(req, res, next, model, username) { //main che
                           } else {
                               if (viable) { //check complete
                                   var date = new Date();
+                                  console.log('Before update ingredient');
                                   updateIngredientHelper(req, res, next, multiplier, ingredients, formula, 0, 0, [], date, function(newSpentMoney, arrayInProductOut) {
                                       var totalProvided = formula.totalProvided;
                                       var totalCost = formula.totalCost;
+                                      console.log('Before update formula');
                                       formula.update({totalProvided: Number(totalProvided)+Number(quantity), totalCost:totalCost+newSpentMoney}, function(err, obj) {
                                           if (err) return next(err);
                                           else {
@@ -298,7 +300,7 @@ var checkIngredientHelper = function(req, res, next, multiplier, i, ingredients,
         var totalAmountNeeded = multiplier*ingredientQuantity.quantity;
         Ingredient.findOne({nameUnique: ingredientQuantity.ingredientName.toLowerCase()}, function(err, ingredient){
             if (err) return next(err);
-            else if (!ingredient) return res.status(400).send('Ingredient '+ingredientQuantity.ingredientName+' does not exist.');
+            else if (!ingredient) return res.status(400).send('Ingredient '+ingredientQuantity.ingredientName+' does not exist. 000');
             else {
                 if (totalAmountNeeded > ingredient.numUnit) {
                     viable = false;
@@ -325,6 +327,7 @@ var updateIngredientHelper = function(req, res, next, multiplier, ingredients, f
     } else {
         var ingredientQuantity = ingredients[i];
         lotPickerHelper(req, res, next, ingredientQuantity.ingredientName, ingredientQuantity.quantity*multiplier, arrayInProduct, date, formula, function(arrayInProductOut){
+            console.log('lot picker complete');
             Ingredient.findOne({nameUnique: ingredientQuantity.ingredientName.toLowerCase()}, function(err, ingredient){
                 var numUnit = ingredient.numUnit;
                 var newNumUnit = numUnit - ingredientQuantity.quantity*multiplier;
@@ -364,7 +367,9 @@ var updateIngredientHelper = function(req, res, next, multiplier, ingredients, f
 
 var lotPickerHelper = function(req, res, next, ingredientName, quantity, arrayInProduct, date, formula, callback) {
     IngredientLot.getOldestLot(res, ingredientName.toLowerCase(), function(lot){
+        console.log('Before update ingredient-product');
         updateIngredientProduct(req, res, next, ingredientName, formula, date, lot, function(){
+            console.log('After update ingredient-product');
             var ingredientLotUsedInProduct = new Object();
             ingredientLotUsedInProduct.ingredientName = ingredientName;
             ingredientLotUsedInProduct.vendorName = lot.vendorName;
@@ -373,32 +378,32 @@ var lotPickerHelper = function(req, res, next, ingredientName, quantity, arrayIn
             if (quantity < lot.numUnit) {
                 var newNumUnit = lot.numUnit - quantity;
                 lot.update({numUnit: newNumUnit}, function(err, obj){
-                    freshness.updateAverageDelete(res, next, ingredientName, quantity, function(){
+                    //freshness.updateAverageDelete(res, next, ingredientName, quantity, function(){
                         callback(arrayInProduct);
-                    });
+                    //});
                 });
             } else if (quantity == lot.numUnit) {
                 lot.remove(function(err){
-                    freshness.updateAverageDelete(res, next, ingredientName, quantity, function(){
-                        freshness.updateOldestDelete(res, next, ingredientName, quantity, function(){
+                    //freshness.updateAverageDelete(res, next, ingredientName, quantity, function(){
+                      //  freshness.updateOldestDelete(res, next, ingredientName, quantity, function(){
                             callback(arrayInProduct);
-                        });
-                    });
+                        //});
+                    //});
                 });
             } else {
                 lot.remove(function(err){
-                    freshness.updateAverageDelete(res, next, ingredientName, quantity, function(){
-                        freshness.updateOldestDelete(res, next, ingredientName, quantity, function(){
+                    //freshness.updateAverageDelete(res, next, ingredientName, quantity, function(){
+                       // freshness.updateOldestDelete(res, next, ingredientName, quantity, function(){
                             lotPickerHelper(req, res, next, ingredientName, quantity - lot.numUnit, arrayInProduct, callback);
-                        });
-                    });
+                        //});
+                    //});
                 });
             }
         });
     });
 };
 
-var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, callback){
+var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, date, callback){
     var product = new Product();
     product.name = formula.name;
     product.nameUnique = formula.name.toLowerCase();
@@ -408,12 +413,13 @@ var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, c
     product.ingredients = arrayInProductOut;
     product.lotNumberUnique = product.lotNumber.toLowerCase();
     product.save(function(err){
+        console.log('Product '+formula.name+' added');
         if (err) return next(err);
         else callback();
     })
 };
 
-var addIntermediateProductIngredientLot = function(req, res, next, formula, numUnit, totalSpace, callback){
+var addIntermediateProductIngredientLot = function(req, res, next, formula, numUnit, totalSpace, date, callback){
     Ingredient.findOne({nameUnique: formula.nameUnique}, function(err, ingredient){
         if (err) return next(err);
         else if (!ingredient){
@@ -445,7 +451,7 @@ var addIntermediateProductIngredientLot = function(req, res, next, formula, numU
                         ingredientLot.save(function(err){
                             if (err) return next(err);
                             else {
-                                updateIngredientProduct(req, res, next, formula.ingredients, 0);
+
                             }
                         });
                     });
@@ -479,10 +485,10 @@ var addIntermediateProductIngredientLot = function(req, res, next, formula, numU
 };
 
 var updateIngredientProduct = function(req, res, next, ingredientName, formula, date, lot, callback) {
-    if (i == ingredients.length) {
-        callback();
-    }
-    else {
+//    if (i == ingredients.length) {
+//        callback();
+//    }
+//    else {
         var newIngredientProduct = new IngredientProduct();
         newIngredientProduct.ingredientNameUnique = ingredientName.toLowerCase();
         newIngredientProduct.vendorNameUnique = lot.vendorNameUnique;
@@ -491,7 +497,8 @@ var updateIngredientProduct = function(req, res, next, ingredientName, formula, 
         newIngredientProduct.date = date;
         newIngredientProduct.lotNumber = (formula.isIntermediate) ? 'IP'+date.getTime() : 'PR'+date.getTime();
         newIngredientProduct.save(function(err){
-            updateIngredientProduct(req, res, next, ingredients, formula, date, i+1);
+            callback();
+//            updateIngredientProduct(req, res, next, ingredients, formula, date, i+1);
         });
-    }
+//    }
 };
