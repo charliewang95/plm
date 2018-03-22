@@ -30,13 +30,56 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
         else {
             validateOrders(items, res, next, function(wSpace, rSpace, fSpace){
                 console.log("Orders validated.");
-                res.send(items);
-                deleteProcessor.process(model, items, '', res, next);
-                logger.log(username, 'checkout', items[0], model);
-                updateStorage(wSpace, rSpace, fSpace);
+                addIngredientLots(req, res, next, items, 0, function(){
+                    deleteProcessor.process(model, items, '', res, next);
+                    updateStorage(wSpace, rSpace, fSpace);
+                    logger.log(username, 'checkout', items[0], model);
+                    res.send(items);
+                });
             });
         }
     });
+};
+
+var addIngredientLots = function(req, res, next, items, i, callback){
+    if (i == items.length) {
+        callback();
+    } else {
+        var order = items[i];
+        var assignments = order.ingredientLots;
+        for (var j = 0; j<assignments.length; j++) {
+            var assignment = assignments[i];
+            var lotNumber = assignment.lotNumber;
+            var lotNumberUnique = assignment.lotNumber.toLowerCase();
+            var numPackage = assignment.package();
+//            IngredientLot.findOne({ingredientNameUnique: order.ingredientName.toLowerCase(),
+//                                   vendorNameUnique: order.vendorName.toLowerCase(),
+//                                   lotNumberUnique: lotNumberUnique}, function(err, ingredientLot){
+//                 if (err) return next(err);
+//                 else if (!ingredientLot) {
+                    Ingredient.findOne({nameUnique: order.ingredientName.toLowerCase()}, function(err, ingredient){
+                        if (err) return next(err);
+                        else if (!ingredient) return res.status(400).send('Ingredient '+order.ingredientName+' does not exist.');
+                        else {
+                            var newIngredientLot = new IngredientLot();
+                            newIngredientLot.ingredientName = order.ingredientName;
+                            newIngredientLot.ingredientNameUnique = order.ingredientName.toLowerCase();
+                            newIngredientLot.ingredientId = order.ingredientId;
+                            newIngredientLot.numUnit = numPackage * ingredient.numUnitPerPackage;
+                            newIngredientLot.date = new Date();
+                            newIngredientLot.lotNumber = lotNumber;
+                            newIngredientLot.lotNumberUnique = lotNumberUnique;
+                            newIngredientLot.vendorName = order.vendorName;
+                            newIngredientLot.vendorNameUnique = order.vendorName.toLowerCase();
+                            newIngredientLot.save(function(err){
+
+                            });
+                        }
+                    });
+//                 }
+//            });
+        }
+    }
 };
 
 var updateStorage = function(wSpace, rSpace, fSpace) {
@@ -145,34 +188,34 @@ exports.checkoutFormula = function(req, res, next, model, username) {
         else if (!formula){
             return res.status(400).send('Formula does not exist');
         } else {
-            var unitsProvided = formula.unitsProvided;
-            if (quantity < unitsProvided) {
-                return res.status(400).send('The amount provided must be at least '+unitsProvided+'.');
-            } else {
+            checkProductAmount(req, res, next, formula, quantity, function(){
                 checkNewStorageHelper(req, res, next, formula, quantity, function(totalSpace){
-                    var multiplier = quantity/unitsProvided;
+                    var multiplier = quantity/formula.unitsProvided;
                     var ingredients = formula.ingredients;
                     checkIngredientHelper(req, res, next, multiplier, 0, ingredients, [], true, function(array, viable){
                           if (req.params.action == 'review') {
                               res.json(array);
                           } else {
                               if (viable) { //check complete
-                                  updateIngredientHelper(req, res, next, multiplier, ingredients, 0, 0, function(newSpentMoney) {
+                                  updateIngredientHelper(req, res, next, multiplier, ingredients, 0, 0, [], function(newSpentMoney, arrayInProductOut) {
                                       var totalProvided = formula.totalProvided;
                                       var totalCost = formula.totalCost;
                                       formula.update({totalProvided: Number(totalProvided)+Number(quantity), totalCost:totalCost+newSpentMoney}, function(err, obj) {
                                           if (err) return next(err);
                                           else {
                                             updateStorageAfterCheckoutIP(res, req, next, formula, totalSpace);
-                                            if (formula.isIntermediate) {
+                                            console.log(formula.isIntermediate);
+                                            if (!formula.isIntermediate) {
                                                 //TODO: add ingredientLotUsedInProduct in the product object
-                                                addProduct(req, res, next, formula, quantity, function() {
+                                                addProduct(req, res, next, formula, quantity, arrayInProductOut, function() {
                                                     logger.log(username, 'checkout', formula, model);
                                                     return res.send(formula);
                                                 });
                                             } else {
                                                 //TODO: add ingredient and ingerdientLot object if intermediate
-                                                addIntermediateProductIngredientLot(req, res, next, formula, numUnit, totalSpace, function(){
+                                                addIntermediateProductIngredientLot(req, res, next, formula, quantity, totalSpace, function(){
+                                                    logger.log(username, 'checkout', formula, model);
+                                                    return res.send(formula);
                                                 });
                                             }
                                           }
@@ -184,9 +227,18 @@ exports.checkoutFormula = function(req, res, next, model, username) {
                           }
                     });
                 });
-            }
+            });
         }
     });
+};
+
+var checkProductAmount = function(req, res, next, formula, quantity, callback) {
+    var unitsProvided = formula.unitsProvided;
+    if (quantity < unitsProvided) {
+        return res.status(400).send('The amount provided must be at least '+unitsProvided+'.');
+    } else {
+        callback();
+    }
 };
 
 var checkNewStorageHelper = function(req, res, next, formula, quantity, callback) {
@@ -253,47 +305,76 @@ var checkIngredientHelper = function(req, res, next, multiplier, i, ingredients,
     }
 }
 
-var updateIngredientHelper = function(req, res, next, multiplier, ingredients, newSpentMoney, i, callback) {
+var updateIngredientHelper = function(req, res, next, multiplier, ingredients, newSpentMoney, i, arrayInProduct, callback) {
     if (i == ingredients.length) {
-        callback(newSpentMoney);
+        callback(newSpentMoney, arrayInProduct);
     } else {
         var ingredientQuantity = ingredients[i];
-        Ingredient.findOne({nameUnique: ingredientQuantity.ingredientName.toLowerCase()}, function(err, ingredient){
-            var numUnit = ingredient.numUnit;
-            var newNumUnit = numUnit - ingredientQuantity.quantity*multiplier;
-            var remainingPackages = Math.ceil(1.0*newNumUnit/ingredient.numUnitPerPackage);
+        lotPickerHelper(req, res, next, ingredientQuantity.ingredientName, ingredientQuantity.quantity*multiplier, arrayInProduct, function(arrayInProductOut){
 
-            var moneyProd = ingredient.moneyProd;
-            var moneySpent = ingredient.moneySpent;
-            var newMoneyProd = moneyProd+1.0*ingredientQuantity.quantity*multiplier*(moneySpent-moneyProd)/numUnit;
-            newSpentMoney += 1.0*ingredientQuantity.quantity*multiplier*(moneySpent-moneyProd)/numUnit;
+            Ingredient.findOne({nameUnique: ingredientQuantity.ingredientName.toLowerCase()}, function(err, ingredient){
+                var numUnit = ingredient.numUnit;
+                var newNumUnit = numUnit - ingredientQuantity.quantity*multiplier;
+                var remainingPackages = Math.ceil(1.0*newNumUnit/ingredient.numUnitPerPackage);
 
-            Ingredient.getPackageSpace(ingredient.packageName, function(retSpace){
-                var newSpace = remainingPackages * retSpace;
-                ingredient.update({numUnit: newNumUnit, space: newSpace, moneyProd: newMoneyProd}, function(err, obj){
-                    if (err) return next(err);
-                    else {
-                        Storage.findOne({temperatureZone: ingredient.temperatureZone}, function(err, storage){
-                            var capacity = storage.capacity;
-                            var capacityEmpty = storage.currentEmptySpace;
-                            var capacityOccupied = storage.currentOccupiedSpace;
-                            var subSpace = retSpace*Math.ceil(1.0*ingredientQuantity.quantity*multiplier/ingredient.numUnitPerPackage);
-                            storage.update({currentOccupiedSpace: capacityOccupied-subSpace, currentEmptySpace: capacity-capacityOccupied+subSpace}, function(err, obj){
-                                if (err) return next(err);
-                                else {
-                                    console.log(subSpace+' '+retSpace+' '+ingredientQuantity.quantity*multiplier/ingredient.numUnitPerPackage);
-                                    updateIngredientHelper(req, res, next, multiplier, ingredients, newSpentMoney, i+1, callback);
-                                }
+                var moneyProd = ingredient.moneyProd;
+                var moneySpent = ingredient.moneySpent;
+                var newMoneyProd = moneyProd+1.0*ingredientQuantity.quantity*multiplier*(moneySpent-moneyProd)/numUnit;
+                newSpentMoney += 1.0*ingredientQuantity.quantity*multiplier*(moneySpent-moneyProd)/numUnit;
+
+                Ingredient.getPackageSpace(ingredient.packageName, function(retSpace){
+                    var newSpace = remainingPackages * retSpace;
+                    ingredient.update({numUnit: newNumUnit, space: newSpace, moneyProd: newMoneyProd}, function(err, obj){
+                        if (err) return next(err);
+                        else {
+                            Storage.findOne({temperatureZone: ingredient.temperatureZone}, function(err, storage){
+                                var capacity = storage.capacity;
+                                var capacityEmpty = storage.currentEmptySpace;
+                                var capacityOccupied = storage.currentOccupiedSpace;
+                                var subSpace = retSpace*Math.ceil(1.0*ingredientQuantity.quantity*multiplier/ingredient.numUnitPerPackage);
+                                storage.update({currentOccupiedSpace: capacityOccupied-subSpace, currentEmptySpace: capacity-capacityOccupied+subSpace}, function(err, obj){
+                                    if (err) return next(err);
+                                    else {
+                                        console.log(subSpace+' '+retSpace+' '+ingredientQuantity.quantity*multiplier/ingredient.numUnitPerPackage);
+                                        updateIngredientHelper(req, res, next, multiplier, ingredients, newSpentMoney, i+1, arrayInProductOut, callback);
+                                    }
+                                });
                             });
-                        });
-                    }
+                        }
+                    });
                 });
             });
+
         });
+
     }
 };
 
-var addProduct = function(req, res, next, formula, numUnit, callback){
+var lotPickerHelper = function(req, res, next, ingredientName, quantity, arrayInProduct, callback) {
+    IngredientLot.getOldestLot(res, ingredientName.toLowerCase(), function(lot){
+        var ingredientLotUsedInProduct = new Object();
+        ingredientLotUsedInProduct.ingredientName = ingredientName;
+        ingredientLotUsedInProduct.vendorName = lot.vendorName;
+        ingredientLotUsedInProduct.lotNumber = lot.lotNumber;
+        arrayInProduct.push(ingredientLotUsedInProduct);
+        if (quantity < lot.numUnit) {
+            var newNumUnit = lot.numUnit - quantity;
+            lot.update({numUnit: newNumUnit}, function(err, obj){
+                callback(arrayInProduct);
+            });
+        } else if (quantity == lot.numUnit) {
+            lot.remove(function(err){
+                callback(arrayInProduct);
+            });
+        } else {
+            lot.remove(function(err){
+                lotPickerHelper(req, res, next, ingredientName, quantity - lot.numUnit, arrayInProduct, callback);
+            });
+        }
+    });
+};
+
+var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, callback){
     var product = new Product();
     product.name = formula.name;
     product.nameUnique = formula.name.toLowerCase();
@@ -301,6 +382,7 @@ var addProduct = function(req, res, next, formula, numUnit, callback){
     product.date = new Date();
     var date = product.date;
     product.lotNumber = 'PR'+date.getTime();
+    product.ingredients = arrayInProductOut;
     product.lotNumberUnique = product.lotNumber.toLowerCase();
     product.save(function(err){
         if (err) return next(err);

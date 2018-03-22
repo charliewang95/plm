@@ -1,4 +1,5 @@
 var Ingredient = require('mongoose').model('Ingredient');
+var IngredientLot = require('mongoose').model('IngredientLot');
 var Vendor = require('mongoose').model('Vendor');
 var User = require('mongoose').model('User');
 var utils = require('../utils/utils');
@@ -26,15 +27,42 @@ exports.delete = function(req, res, next) {
     utils.doWithAccess(req, res, next, Ingredient, 'delete', req.params.userId, req.params.ingredientId, true, true);
 };
 
-exports.listAllIngredients = function(req, res, next){
-    Ingredient.find({isIntermediate: true}, function(err, items){
+exports.getOldestLot = function(req, res, next) {
+    IngredientLot.find({ingredientId: req.params.ingredientId}, {},
+               {sort: {date: 1} },function(err, lots){
+        if (err) return next(err);
+        else if (lots.length == 0) res.send(lots);
+        else {
+            res.send(lots[0]);
+        }
+    });
+};
+
+exports.listLotNumbers = function(req, res, next) {
+    IngredientLot.find({ingredientId: req.params.ingredientId}, function(err, items){
+        var numberArray = [];
+        var numberUniqueArray = [];
+        for (var i = 0; i < items.length; i++) {
+            var lotNumber = items[i].lotNumber;
+            var lotNumberUnique = items[i].lotNumberUnique;
+            if (!numberUniqueArray.includes(lotNumberUnique)){
+                numberArray.push(lotNumber);
+                numberUniqueArray.push(lotNumberUnique);
+            }
+        }
+        res.send(numberArray);
+    });
+}
+
+exports.listIngredients = function(req, res, next){
+    Ingredient.find({isIntermediate: false}, function(err, items){
         if (err) return next(err);
         else res.send(items);
     });
 };
 
 exports.listIntermediate = function(req, res, next){
-    Ingredient.find({isIntermediate: false}, function(err, items){
+    Ingredient.find({isIntermediate: true}, function(err, items){
         if (err) return next(err);
         else res.send(items);
     });

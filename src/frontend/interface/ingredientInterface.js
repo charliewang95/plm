@@ -97,6 +97,21 @@ async function getAllIngredientNamesAsync(sessionId) {
    const res = await axios.get('/ingredients/ingredientNames/user/'+sessionId);
    return res;
 }
+
+async function getAllIngredientsOnlyAsync(sessionId) {
+    const res = await axios.get('/ingredients/allIngredients/user/'+sessionId);
+    return res;
+}
+
+async function getAllIntermediatesOnlyAsync(sessionId) {
+    const res = await axios.get('/ingredients/allIntermediates/user/'+sessionId);
+    return res;
+}
+
+async function getAllLotNumbersAsync(ingredientId, sessionId) {
+    const res = await axios.get('/ingredients/allLotNumbers/ingredient/'+ingredientId+'/user/'+sessionId);
+    return res;
+}
 /*
  * update one ingredient
  * ingredientId: string, the id of the ingredient
