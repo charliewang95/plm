@@ -4,8 +4,15 @@ var mongoose = require('mongoose'),
 var IngredientProductSchema = new Schema({
     ingredientNameUnique: {
         type: String,
-        required: true,
-        unique: true
+        required: true
+    },
+    vendorNameUnique: {
+        type: String,
+        required: true
+    },
+    lotNumberUnique: {
+        type: String,
+        required: true
     },
     productName: {
         type: String,

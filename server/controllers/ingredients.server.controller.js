@@ -56,7 +56,7 @@ exports.listLotNumbers = function(req, res, next) {
 };
 
 exports.getRecall = function(req, res, next) {
-    IngredientProduct.find({ingredientNameUnique: req.params.ingredientName}, function(err, ingredients){
+    IngredientProduct.find({ingredientNameUnique: req.params.ingredientName.toLowerCase(), lotNumberUnique: req.params.lotNumber.toLowerCase()}, function(err, ingredients){
         if (err) return next(err);
         else res.json(ingredients);
     });
