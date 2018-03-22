@@ -68,8 +68,7 @@ class ProductDetails extends React.Component {
   componentWillMount(){
     // console.log(" Formula Rows " + JSON.stringify(this.state.formulaRows));
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
-
-    var rawData = this.state.productRows[0].IngredientLotUsedInProduct;
+    var rawData = this.state.productRows[0].ingredients;
 
     var processedData = [...rawData.map((row, index)=> ({
         id:index,...row,
