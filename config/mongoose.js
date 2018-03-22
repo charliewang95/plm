@@ -13,6 +13,8 @@ module.exports = function() {
 	require('../server/models/log.server.model');
 	require('../server/models/product.server.model');
     require('../server/models/ingredientLot.server.model');
+    require('../server/models/ingredientProduct.server.model');
+    require('../server/models/ingredientFreshness.server.model');
 
 	return db;
 };

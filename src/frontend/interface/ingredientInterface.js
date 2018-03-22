@@ -112,6 +112,17 @@ async function getAllLotNumbersAsync(ingredientId, sessionId) {
     const res = await axios.get('/ingredients/allLotNumbers/ingredient/'+ingredientId+'/user/'+sessionId);
     return res;
 }
+
+async function getRecallAsync(ingredientName, lotNumber, sessionId) {
+    const res = await axios.get('/ingredients/recall/ingredient/'+ingredientName+'/lot/'+lotNumber+'/user/'+sessionId);
+    return res;
+}
+
+async function getFreshAsync(ingredientName, sessionId) {
+    const res = await axios.get('/ingredients/fresh/ingredient/'+ingredientName+'/user/'+sessionId);
+    return res;
+}
+
 /*
  * update one ingredient
  * ingredientId: string, the id of the ingredient
