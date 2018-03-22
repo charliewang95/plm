@@ -131,7 +131,6 @@ class ProductionReview extends React.Component {
   async addToShoppingCart(event){
     //TODO: send to back end
     userId = JSON.parse(sessionStorage.getItem('user'))._id;
-
     console.log("add To cart" + JSON.stringify(this.state.ingredientsToOrder));
     // ADD the ingredients with needed amount to
     var success = false;
@@ -169,18 +168,40 @@ class ProductionReview extends React.Component {
 
   async checkOutFormula(event){
     //TODO: Checkout formula - Send to Production
-    console.log(" checkout , why is this called first");
-    console.log(JSON.stringify(this.state));
-    await formulaActions.checkoutFormula("checkout",this.state.formulaRows[0]._id,
-                              Number(this.state.addedQuantity),sessionId, function(res){
-         if (res.status == 400) {
-            alert('Please order the missing ingredients to proceed.');
-         } else {
-            alert('Successfully added to production.');
-         }
-      });
+    console.log(" CHECKOUT ");
+    console.log(JSON.stringify(this.state.formulaRows[0]));
+    // await formulaActions.checkoutFormula("checkout",this.state.formulaRows[0]._id,
+    //                           Number(this.state.addedQuantity),sessionId, function(res){
+    //      if (res.status == 400) {
+    //         alert('Please order the missing ingredients to proceed.');
+    //      } else {
+    //         alert('Successfully added to production.');
+    //      }
+    //   });
+
+    // Add to product
+    var name = this.state.formulaRows[0].name;
+    var numUnit = this.state.formulaRows[0].unitsProvided;
+    var date = new Date().toISOString();
+    var lotNumber =  this.randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+
+    // addProduct(name, numUnit, date, lotNumber, sessionId, callback)
+    await productActions.addProduct(name,numUnit,date,lotNumber,sessionId,function(res){
+      if(res.status){
+        alert(res.data);
+      }else{
+        alert(" Formula successfully sent to Production! ");
+      }
+    });
     event.stopPropagation();
   };
+
+
+randomString(length, chars) {
+      var result = '';
+      for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+      return result;
+  }
 
 
   handleFormulaQuantity(event){
@@ -193,8 +214,9 @@ class ProductionReview extends React.Component {
   }
 
   componentWillMount(){
-    // console.log(" Formula Rows " + JSON.stringify(this.state.formulaRows));
+    console.log(" Formula Rows " + JSON.stringify(this.state.formulaRows));
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+
   }
 
     cancel(){

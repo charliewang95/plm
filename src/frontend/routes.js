@@ -22,6 +22,7 @@ import ProductionReview from './components/formulas/productionReview.js';
 import FormulaDetails from './components/formulas/formulaDetails.js';
 import ProductionReport from './components/productionReport/ProductionReport';
 import PageNotFound from './components/error/PageNotFound';
+import ProductDetails from './components/product/productDetails';
 
 
 const Routes = () => (
@@ -49,6 +50,7 @@ const Routes = () => (
             <Route path="/formula-details" component={FormulaDetails}/>
             <Route path="/admin-users" component={AdminUserPage} />
             <Route path="/product" component={Product} />
+            <Route path="/product-details" component={ProductDetails} />
 		  </Switch>
       </div>
 
