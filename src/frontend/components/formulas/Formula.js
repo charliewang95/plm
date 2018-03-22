@@ -236,10 +236,7 @@ class Formula extends React.PureComponent {
       });
       this.setState({ rows, deletingRows: [] });
     };
-
     this.uploadFile = this.uploadFile.bind(this);
-
-
   }
 
   componentWillMount(){
