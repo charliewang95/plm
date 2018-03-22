@@ -1,5 +1,6 @@
 var Ingredient = require('mongoose').model('Ingredient');
 var IngredientLot = require('mongoose').model('IngredientLot');
+var IngredientProduct = require('mongoose').model('IngredientProduct');
 var Vendor = require('mongoose').model('Vendor');
 var User = require('mongoose').model('User');
 var utils = require('../utils/utils');
@@ -52,7 +53,14 @@ exports.listLotNumbers = function(req, res, next) {
         }
         res.send(numberArray);
     });
-}
+};
+
+exports.getRecall = function(req, res, next) {
+    IngredientProduct.find({ingredientNameUnique: req.params.ingredientName}, function(err, ingredients){
+        if (err) return next(err);
+        else res.json(ingredients);
+    });
+};
 
 exports.listIngredients = function(req, res, next){
     Ingredient.find({isIntermediate: false}, function(err, items){
