@@ -67,8 +67,8 @@ export default class ProductionReport extends React.PureComponent {
      // adds integer values as row id
      var processedData = [...rawData.map((row, index)=> ({
          id: index,...row,
-         totalProvided: Math.round(row.totalProvided*1000)/1000, 
-         totalCost: Math.round(row.totalCost*100)/100, 
+         totalProvided: Math.round(row.totalProvided*1000)/1000,
+         totalCost: Math.round(row.totalCost*100)/100,
        })),
      ];
      this.setState({rows:processedData});

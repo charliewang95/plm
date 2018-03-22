@@ -9,7 +9,6 @@ import Orders from './components/orders/Orders';
 import Storage from './components/storage/Storage';
 import Vendors from './components/vendors/Vendors';
 import AddVendorForm from './components/vendors/AddVendorForm';
-import Report from './components/report/Report';
 import Product from './components/product/Product';
 import Login from './components/login/LoginPage';
 import Register from './components/login/RegisterPage';
@@ -23,6 +22,7 @@ import FormulaDetails from './components/formulas/formulaDetails.js';
 import ProductionReport from './components/productionReport/ProductionReport';
 import PageNotFound from './components/error/PageNotFound';
 import ProductDetails from './components/product/productDetails';
+import Report from './components/report/report.js';
 
 
 const Routes = () => (
@@ -53,7 +53,6 @@ const Routes = () => (
             <Route path="/product-details" component={ProductDetails} />
 		  </Switch>
       </div>
-
 );
 
 export default Routes;
