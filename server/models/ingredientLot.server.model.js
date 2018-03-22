@@ -20,6 +20,10 @@ var IngredientLotSchema = new Schema({
 	    type: Number,
 	    required: true
 	},
+	nativeUnit: {
+        type: String,
+        required: true
+    },
 	date: {
 	    type: Date,
 	    required: true

@@ -43,18 +43,23 @@ exports.getOldestLot = function(req, res, next) {
 
 exports.listLotNumbers = function(req, res, next) {
     IngredientLot.find({ingredientId: req.params.ingredientId}, function(err, items){
-        var numberArray = [];
-        var numberUniqueArray = [];
-        for (var i = 0; i < items.length; i++) {
-            var lotNumber = items[i].lotNumber;
-            var lotNumberUnique = items[i].lotNumberUnique;
-            if (!numberUniqueArray.includes(lotNumberUnique)){
-                numberArray.push(lotNumber);
-                numberUniqueArray.push(lotNumberUnique);
-            }
-        }
-        res.send(numberArray);
+//        var numberArray = [];
+//        var numberUniqueArray = [];
+//        for (var i = 0; i < items.length; i++) {
+//            var lotNumber = items[i].lotNumber;
+//            var lotNumberUnique = items[i].lotNumberUnique;
+//            if (!numberUniqueArray.includes(lotNumberUnique)){
+//                numberArray.push(lotNumber);
+//                numberUniqueArray.push(lotNumberUnique);
+//            }
+//        }
+//        res.send(numberArray);
+        res.json(items);
     });
+};
+
+exports.editLot = function(req, res, next) {
+    //var lotId = req.params.
 };
 
 exports.getRecall = function(req, res, next) {
