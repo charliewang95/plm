@@ -10,5 +10,5 @@ module.exports = function(app) {
     app.route('/ingredients/allLotNumbers/ingredient/:ingredientId/user/:userId').get(ingredients.listLotNumbers);
     app.route('/ingredients/oldestLot/ingredient/:ingredientId/user/:userId').get(ingredients.getOldestLot);
     app.route('/ingredients/recall/ingredient/:ingredientName/lot/:lotNumber/user/:userId').get(ingredients.getRecall);
-    app.route('/ingredients/fresh/ingredient/:ingredientName/user/:userId').get(ingredients.getFresh);
+    app.route('/ingredients/fresh/user/:userId').get(ingredients.getFresh);
 };
