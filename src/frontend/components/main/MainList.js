@@ -15,6 +15,7 @@ import ShoppingCartIcon from 'material-ui-icons/ShoppingCart'; // Cart
 import ReportIcon from 'material-ui-icons/Receipt'; // Report
 import BugReportIcon from 'material-ui-icons/BugReport'; // Logs
 import RestaurantIcon from 'material-ui-icons/Restaurant';
+import CafeIcon from 'material-ui-icons/LocalCafe';
 import BalanceIcon from 'material-ui-icons/AccountBalance';
 
 const styles = theme => ({
@@ -81,7 +82,7 @@ function ListItemComposition(props) {
 
         <MenuItem className={classes.menuItem} component={Link} to="/product" button>
           <ListItemIcon className={classes.icon}>
-            <RestaurantIcon />
+            <CafeIcon />
           </ListItemIcon>
           <ListItemText classes={{ primary: classes.primary }} inset primary="Product" />
         </MenuItem>
