@@ -25,7 +25,7 @@ exports.validate = function(model, item, res, next, callback) {
 //            }
 //        });
 //    }
-    else callback(false, item);
+    else callback();
 };
 
 var validateIngredient = function(item, res, next, callback) {

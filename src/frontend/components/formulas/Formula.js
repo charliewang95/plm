@@ -313,6 +313,32 @@ class Formula extends React.PureComponent {
          }
     }
 
+    async uploadFileInter(event) {
+      console.log(" UPLOAD FILE INTER");
+        let file = event.target.files[0];
+
+        console.log(file);
+
+        if (file) {
+          let form = new FormData();
+          form.append('file', file);
+          console.log(form);
+           await uploadInterface.uploadIntermediate(form, sessionId, function(res){
+                if (res.status == 400) {
+                    if (!alert(res.data))
+                        window.location.reload();
+                } else if (res.status == 500) {
+                    if (!alert('Duplicate Key on Formula (different package not allowed)'))
+                        window.location.reload();
+                } else if (res.status == 200) {
+                    console.log(res);
+                    if(!alert(res.data))
+                        window.location.reload();
+                }
+           });
+         }
+    }
+
   render() {
     const {classes,} = this.props;
     const {
@@ -419,6 +445,10 @@ class Formula extends React.PureComponent {
       {isAdmin && <input type="file"
         name="myFile"
         onChange={this.uploadFile} /> }
+      {isAdmin && <p><font size="5">Intermediate Product Formula Bulk Import</font></p>}
+      {isAdmin && <input type="file"
+        name="myFile"
+        onChange={this.uploadFileInter} /> }
       {isAdmin &&
       <div>
         <br></br>

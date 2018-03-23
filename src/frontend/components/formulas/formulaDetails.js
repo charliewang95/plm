@@ -387,7 +387,7 @@ async loadFormula(){
             {this.state.isIntermediate && <InputLabel htmlFor="packageName">Package</InputLabel>}
             {this.state.isIntermediate && <Select
               value={this.state.packageName}
-              onChange={this.handlePackageChange}
+              onChange={this.handleChange('packageName')}
               inputProps={{
                 name: 'Package',
                 id: 'packageName',

@@ -272,7 +272,7 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) 
         }
         else {
             var temp = item;
-            validatorDelete.validate(model, itemId, item, res, next, function(){
+            validatorDelete.validate(model, item, res, next, function(){
                 item.remove(function(err) {
                     if (err) {
                         return next(err);
