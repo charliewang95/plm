@@ -47,7 +47,9 @@ import MyPdfViewer from './PdfViewer';
 import {Link} from 'react-router-dom';
 import Snackbar from 'material-ui/Snackbar';
 import Chip from 'material-ui/Chip';
-
+import Tabs, {Tab} from 'material-ui/Tabs';
+import AppBar from 'material-ui/AppBar';
+import DummyLotNumberViewer from'./LotNumberSelector/DummyLotNumberViewer.js';
 // TODO: get session Id from the user
 
 // const sessionId = testConfig.sessionId;
@@ -309,6 +311,7 @@ class AdminIngredients extends React.PureComponent {
       pageSizes: [5, 10, 0],
       columnOrder: ['name', 'temperatureZone', 'packageNameString', 'numUnitString', 'space', 'vendors'],
       options:[],
+      currentTab: 0,
     };
 
     // console.log(" NAME : " + testData.tablePage.items[0].name);
@@ -334,7 +337,6 @@ class AdminIngredients extends React.PureComponent {
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
-
     this.commitChanges = async ({ added, changed, deleted }) => {
       console.log("Commit Changes");
       let { rows } = this.state;
@@ -523,6 +525,10 @@ class AdminIngredients extends React.PureComponent {
     //this.createMap();
   }
 
+  handleTabChange = (event, value) => {
+    this.setState({ currentTab: value });
+  };
+
   async loadCodeNameArray(){
    // var startingIndex = 0;
     var rawData = [];
@@ -681,11 +687,19 @@ class AdminIngredients extends React.PureComponent {
       deletingRows,
       pageSize,
       pageSizes,
-      columnOrder
+      columnOrder,
+      currentTab
     } = this.state;
 
     return (
       <div>
+      <AppBar position="static" color="default">
+      <Tabs value={currentTab} onChange={this.handleTabChange.bind(this)}>
+      <Tab label = "Ingredients" />
+      <Tab label = "Intermediate Ingredients" />
+      </Tabs>
+      </AppBar>
+      {currentTab === 0 &&
       <Paper>
         <Grid
           allowColumnResizing = {true}
@@ -779,7 +793,8 @@ class AdminIngredients extends React.PureComponent {
           </DialogActions>
         </Dialog>
       }
-      </Paper>
+      </Paper>}
+    {currentTab===1 && <Paper> <DummyLotNumberViewer/> </Paper>}
     {/* <Paper styles = {{color : "#42f4d9"}} > */}
       {isAdmin && <p><font size="5">Ingredient Bulk Import</font></p>}
       {isAdmin && <input type="file"
