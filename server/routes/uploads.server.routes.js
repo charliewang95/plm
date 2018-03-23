@@ -35,4 +35,17 @@ module.exports = function(app) {
 		}
 	});
 
+	app.route('/upload-intermediates/user/:userId').post(function(req, res, next){
+        if (req.files) {
+            console.log(util.inspect(req.files));
+            const filePath = './'.concat(req.files[0].path);
+            console.log(filePath);
+            const content = fs.readFileSync(filePath, 'utf8');
+            // console.log(content);
+            formulas.bulkImportIntermediate(req, res, next, content, function(){
+                fs.unlinkSync(filePath);
+            });
+        }
+    });
+
 };

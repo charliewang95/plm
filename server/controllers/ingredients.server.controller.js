@@ -109,3 +109,11 @@ exports.bulkImportIngredients = function(req, res, next, contents, callback) {
         callback();
     });
 };
+
+exports.editLot = function(req, res, next) {
+    var ingredientName = req.params.ingredientName;
+    var ingredientNameUnique = req.params.ingredientName.toLowerCase();
+    var lotNumber = req.params.lotNumber;
+    var lotNumberUnique = req.params.lotNumber.toLowerCase();
+    var quantity = req.params.quantity;
+};
