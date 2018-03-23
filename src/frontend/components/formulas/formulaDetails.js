@@ -259,7 +259,8 @@ async loadFormula(){
   }
 
   handleUnitsProvidedChange(event){
-    const re = /^[0-9\b]+$/;
+     const re = /^[0-9\b]+$/;
+     //const re = /^\d*\.?\d*$/;
       if ( event.target.value == '' || (event.target.value>=0 && re.test(event.target.value))) {
          this.setState({unitsProvided: event.target.value})
       }else{
@@ -268,11 +269,12 @@ async loadFormula(){
   }
 
   handleNumUnitPerPackage(event){
-    const re = /^[0-9\b]+$/;
+    //const re = /^[0-9\b]+$/;
+    const re = /^\d*\.?\d*$/;
       if ( event.target.value == '' || (event.target.value>=0 && re.test(event.target.value))) {
          this.setState({numUnitPerPackage: event.target.value})
       }else{
-        alert("The units of product must be a positive integer. ");
+        alert("The units of product must be a positive number. ");
       }
   }
 
