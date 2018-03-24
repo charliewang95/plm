@@ -25,7 +25,7 @@ class LotNumberSelector extends Component {
     this.updateCurrentLotNumber = this.updateCurrentLotNumber.bind(this);
     this.updateCurrentQuantity = this.updateCurrentQuantity.bind(this);
   }
-  
+
   componentDidUpdate(){
     console.log(this.state.currentQuantity);
     console.log(this.props.quantity);
@@ -126,7 +126,7 @@ class LotNumberSelector extends Component {
             disabled={this.props.totalAssigned>this.props.quantity}
           />
          </FormControl>
-        {this.state.currentQuantity && this.state.currentLotNumber && 
+        {this.state.currentQuantity && this.state.currentLotNumber &&
          <Button raised style={{marginLeft:10}} onClick={()=>{this.addLotNumberItem();}}>RECORD</Button>}
          </div>
          }

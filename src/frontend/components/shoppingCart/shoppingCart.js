@@ -8,7 +8,7 @@ import {
   TableHeaderRow,TableEditColumn,PagingPanel,TableEditRow,
 } from '@devexpress/dx-react-grid-material-ui';
 import {
-  EditingState,PagingState,IntegratedPaging,
+  EditingState,PagingState,IntegratedPaging,DataTypeProvider
 } from '@devexpress/dx-react-grid';
 
 import * as testConfig from '../../../resources/testConfig.js';
@@ -35,7 +35,7 @@ import * as orderActions from '../../interface/orderInterface.js';
 import * as ingredientActions from '../../interface/ingredientInterface.js';
 
 import {cartData, ingredientData} from './dummyData';
-
+import LotNumberButton from '../admin/LotNumberSelector/LotNumberButton.js';
 
 // TODO: Get the user ID
 const READ_FROM_DATABASE = true;
@@ -44,20 +44,31 @@ var userId = "";
 var sessionId = "";
 
 const Cell = (props)=>{
-  return <Table.Cell {...props}/>
+  console.log("CELL");
+  console.log("hi i am cell");
+  // console.log(JSON.stringify(props))
+  const value = props.row.selectedVendorId;
+  const quantity = props.row.packageNum;
+  // if(props.column.name == 'lotNumberArray'){
+//    return (props.row.totalAssigned!=props.row.packageNum) ? <TableCell><p><font color="red">Actions Needed</font></p></TableCell> :
+//    <TableCell><p><font color="green">Completed</font></p></TableCell>;
+      // return <Table.Cell{...props}>"HI"</Table.Cell>
+  // }else
+  // if(props.column.name == 'lotNumberArray'){
+   // return <LotNumberButton quantity = {quantity} handleChange = {props.onValueChange}></LotNumberButton>
+ // }else
+   return <Table.Cell {...props}/>
 };
 
 Cell.propTypes = {
   column: PropTypes.shape({ name: PropTypes.string }).isRequired,
 };
 
-
 const EditCell = (props) => {
   // selectedVendor.value is the vendor ID
   const vendorOptions = props.row.vendorOptions;
   const value = props.row.selectedVendorId;
-
-  console.log(" value " + JSON.stringify(value));
+  const quantity = props.row.packageNum;
 
   if(props.column.name == 'packageNum'){
     return <TableEditRow.Cell {...props}
@@ -66,6 +77,8 @@ const EditCell = (props) => {
   }else if(props.column.name == 'vendors'){
     return <VendorCell handleChange = {props.onValueChange}
               vendorOptions = {vendorOptions} value = {value}/>;
+  // }else if(props.column.name == 'lotNumberArray'){
+   // return <LotNumberButton quantity = {quantity} handleChange = {props.onValueChange}></LotNumberButton>
   }else{
     return <Cell {...props} style={{backgroundColor:'aliceblue'}}  />;
   }
@@ -96,6 +109,29 @@ Command.propTypes = {
   onExecute: PropTypes.func.isRequired,
 };
 
+const LotNumberFormatter = (props) =>{
+  console.log("Formatter");
+  console.log(props.row.lotAssigned);
+  if(!props.row.lotAssigned){
+    return <p><font color="red">Actions Needed</font></p>
+  }else{
+    return <p><font color="green">Completed</font></p>
+  }
+};
+
+const lotNumberEditor = (props) => {
+  const quantity = props.row.packageNum;
+  return <LotNumberButton quantity = {quantity} handleChange = {props.onValueChange}></LotNumberButton>
+};
+
+const LotNumberProvider = props => (
+  <DataTypeProvider
+    formatterComponent={LotNumberFormatter}
+    editorComponent={lotNumberEditor}
+    {...props}
+  />
+);
+
 const getRowId = row => row.id;
 
 class ShoppingCart extends React.Component {
@@ -107,7 +143,14 @@ class ShoppingCart extends React.Component {
         { name: 'ingredientName', title: 'Ingredient Name' },
         { name: 'packageNum', title: 'No. Of Packages' },
         { name: 'vendors', title: 'Vendor / Price ($)' },
+        // { key: 'lotNumberArray', title: 'Lot Numbers'}
+        { name: 'lotNumberArray',
+        title: 'Lot Numbers'}
+        // getCellValue: row => (props.row.totalAssigned!=props.row.packageNum) ? <TableCell><p><font color="red">Actions Needed</font></p></TableCell> :
+        //    <TableCell><p><font color="green">Completed</font></p></TableCell>
+
       ],
+      lotNumColumns: ['lotNumberArray'],
       rows: [],
       rowChanges: {},
       editingRowIds: [],
@@ -137,13 +180,14 @@ class ShoppingCart extends React.Component {
                 var enteredQuantity = Number(changed[rows[i].id].packageNum);
                 var vendor = rows[i].selectedVendorName ? rows[i].selectedVendorName : rows[i].vendorOptions[0].vendorName;
                 var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].price;
+                var ingredientLots = rows[i].ingredientLots;
                 if (!re.test(enteredQuantity)) {
                   alert(" Number of packages must be a positive integer");
                 }else{
                   // TODO: Update back end
                   rows[i].packageNum = changed[rows[i].id].packageNum;
                   orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
-                        vendor, enteredQuantity ,price,sessionId,function(res){
+                        vendor, enteredQuantity ,price,ingredientLots,sessionId,function(res){
                           // TODO: Display error on exceeding storage capacity
                           // if(res.status==)
                           // TODO: Add SnackBar
@@ -170,8 +214,8 @@ class ShoppingCart extends React.Component {
                  console.log(changed[rows[i].id].vendors.price);
                  orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
                        changed[rows[i].id].vendors.vendorName,rows[i].packageNum,
-                       changed[rows[i].id].vendors.price,sessionId, function(res){
-                        console.log(res); 
+                       changed[rows[i].id].vendors.price, rows[i].ingredientLots, sessionId, function(res){
+                        console.log(res);
                          if (res.status != 400 && res.status != 500 ){
 //                            rows[i].packageNum = enteredQuantity;
                               console.log(res);
@@ -179,10 +223,24 @@ class ShoppingCart extends React.Component {
                        });
 
                  // update table
-                  
+
                   // update selectedVendor in row
                   // TODO: Add SnackBar
               }
+
+               if (changed[rows[i].id].ingredientLots){
+                var vendor = rows[i].selectedVendorName ? rows[i].selectedVendorName : rows[i].vendorOptions[0].vendorName;
+                var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].price;
+                var ingredientLots = changed[rows[i].id].ingredientLots;
+                 orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
+                        vendor, rows[i].packageNum ,price,ingredientLots,sessionId,function(res){
+                        console.log(res);
+                         if (res.status != 400 && res.status != 500 ){
+//                            rows[i].packageNum = enteredQuantity;
+                              console.log(res);
+                          }
+                       });
+               }
             }
           }
         }
@@ -269,7 +327,6 @@ class ShoppingCart extends React.Component {
       singleData.packageNum = rawData[i].packageNum;
       singleData.ingredientId = rawData[i].ingredientId;
       singleData._id = rawData[i]._id;
-
       var singleIngredientData = {};
 
       // TODO: Get vendors from ingredients interface
@@ -298,7 +355,16 @@ class ShoppingCart extends React.Component {
         singleData.selectedVendorPrice= parsedVendorOptions[0].price;
         // Id is the value
         singleData.selectedVendorId = parsedVendorOptions[0].value;
+        singleData.lotNumberArray = rawData[i].ingredientLots;
+        singleData.lotAssigned = false;
 
+        var sum = 0;
+        if(rawData[i].ingredientLots.length>0){
+          for(var i=0; i<rawData[i].ingredientLots.length;i++){
+            sum+=parseInt(rawData[i].ingredientLots.package);
+          }
+        }
+        singleData.totalAssigned = sum;
         processedData.push(singleData);
   }
     // console.log("Vendor Options " + JSON.stringify(parsedVendorOptions));
@@ -314,7 +380,7 @@ class ShoppingCart extends React.Component {
   render() {
     // const {classes} = this.props;
     const { rows, columns,rowChanges,deletingRows,currentPage,
-      pageSize,pageSizes,editingRowIds } = this.state;
+      pageSize,pageSizes,editingRowIds,lotNumColumns } = this.state;
     return (
 
       <Paper>
@@ -325,6 +391,9 @@ class ShoppingCart extends React.Component {
           columns={columns}
           getRowId={getRowId}
         >
+          <LotNumberProvider
+            for={this.state.lotNumColumns}
+          />
           <PagingState
             currentPage={currentPage}
             onCurrentPageChange={this.changeCurrentPage}
@@ -334,9 +403,6 @@ class ShoppingCart extends React.Component {
           <IntegratedPaging />
           <Table />
           <TableHeaderRow />
-
-
-
             <EditingState
               editingRowIds={editingRowIds}
               onEditingRowIdsChange={this.changeEditingRowIds}
