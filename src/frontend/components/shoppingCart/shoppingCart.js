@@ -35,7 +35,7 @@ import * as orderActions from '../../interface/orderInterface.js';
 import * as ingredientActions from '../../interface/ingredientInterface.js';
 
 import {cartData, ingredientData} from './dummyData';
-
+import LotNumberButton from '../admin/LotNumberSelector/LotNumberButton.js';
 
 // TODO: Get the user ID
 const READ_FROM_DATABASE = true;
@@ -44,20 +44,25 @@ var userId = "";
 var sessionId = "";
 
 const Cell = (props)=>{
-  return <Table.Cell {...props}/>
+  console.log("hi i am cell");
+  console.log(props.column)
+  if(props.column.name == 'lotNumberArray'){
+//    return (props.row.totalAssigned!=props.row.packageNum) ? <TableCell><p><font color="red">Actions Needed</font></p></TableCell> : 
+//    <TableCell><p><font color="green">Completed</font></p></TableCell>;
+      return <TableCell><p>hi</p></TableCell>
+  }
+    return <Table.Cell {...props}/>
 };
 
 Cell.propTypes = {
   column: PropTypes.shape({ name: PropTypes.string }).isRequired,
 };
 
-
 const EditCell = (props) => {
   // selectedVendor.value is the vendor ID
   const vendorOptions = props.row.vendorOptions;
   const value = props.row.selectedVendorId;
-
-  console.log(" value " + JSON.stringify(value));
+  const quantity = props.row.packageNum;
 
   if(props.column.name == 'packageNum'){
     return <TableEditRow.Cell {...props}
@@ -66,6 +71,8 @@ const EditCell = (props) => {
   }else if(props.column.name == 'vendors'){
     return <VendorCell handleChange = {props.onValueChange}
               vendorOptions = {vendorOptions} value = {value}/>;
+  }else if(props.column.name == 'lotNumberArray'){
+   return <LotNumberButton quantity = {quantity} handleChange = {props.onValueChange}></LotNumberButton>
   }else{
     return <Cell {...props} style={{backgroundColor:'aliceblue'}}  />;
   }
@@ -107,6 +114,7 @@ class ShoppingCart extends React.Component {
         { name: 'ingredientName', title: 'Ingredient Name' },
         { name: 'packageNum', title: 'No. Of Packages' },
         { name: 'vendors', title: 'Vendor / Price ($)' },
+        { name: 'lotNumberArray', title: 'Lot Numbers'}
       ],
       rows: [],
       rowChanges: {},
@@ -137,13 +145,14 @@ class ShoppingCart extends React.Component {
                 var enteredQuantity = Number(changed[rows[i].id].packageNum);
                 var vendor = rows[i].selectedVendorName ? rows[i].selectedVendorName : rows[i].vendorOptions[0].vendorName;
                 var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].price;
+                var ingredientLots = rows[i].ingredientLots;
                 if (!re.test(enteredQuantity)) {
                   alert(" Number of packages must be a positive integer");
                 }else{
                   // TODO: Update back end
                   rows[i].packageNum = changed[rows[i].id].packageNum;
                   orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
-                        vendor, enteredQuantity ,price,sessionId,function(res){
+                        vendor, enteredQuantity ,price,ingredientLots,sessionId,function(res){
                           // TODO: Display error on exceeding storage capacity
                           // if(res.status==)
                           // TODO: Add SnackBar
@@ -170,7 +179,7 @@ class ShoppingCart extends React.Component {
                  console.log(changed[rows[i].id].vendors.price);
                  orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
                        changed[rows[i].id].vendors.vendorName,rows[i].packageNum,
-                       changed[rows[i].id].vendors.price,sessionId, function(res){
+                       changed[rows[i].id].vendors.price, rows[i].ingredientLots, sessionId, function(res){
                         console.log(res); 
                          if (res.status != 400 && res.status != 500 ){
 //                            rows[i].packageNum = enteredQuantity;
@@ -183,6 +192,20 @@ class ShoppingCart extends React.Component {
                   // update selectedVendor in row
                   // TODO: Add SnackBar
               }
+
+               if (changed[rows[i].id].ingredientLots){
+                var vendor = rows[i].selectedVendorName ? rows[i].selectedVendorName : rows[i].vendorOptions[0].vendorName;
+                var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].price;
+                var ingredientLots = changed[rows[i].id].ingredientLots;
+                 orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
+                        vendor, rows[i].packageNum ,price,ingredientLots,sessionId,function(res){
+                        console.log(res); 
+                         if (res.status != 400 && res.status != 500 ){
+//                            rows[i].packageNum = enteredQuantity;
+                              console.log(res);
+                          }
+                       });
+               }
             }
           }
         }
@@ -269,7 +292,6 @@ class ShoppingCart extends React.Component {
       singleData.packageNum = rawData[i].packageNum;
       singleData.ingredientId = rawData[i].ingredientId;
       singleData._id = rawData[i]._id;
-
       var singleIngredientData = {};
 
       // TODO: Get vendors from ingredients interface
@@ -298,7 +320,15 @@ class ShoppingCart extends React.Component {
         singleData.selectedVendorPrice= parsedVendorOptions[0].price;
         // Id is the value
         singleData.selectedVendorId = parsedVendorOptions[0].value;
+        singleData.lotNumberArray = rawData[i].ingredientLots;
 
+        var sum = 0;
+        if(rawData[i].ingredientLots.length>0){
+          for(var i=0; i<rawData[i].ingredientLots.length;i++){
+            sum+=parseInt(rawData[i].ingredientLots.package);
+          }
+        }
+        singleData.totalAssigned = sum;
         processedData.push(singleData);
   }
     // console.log("Vendor Options " + JSON.stringify(parsedVendorOptions));
@@ -334,9 +364,6 @@ class ShoppingCart extends React.Component {
           <IntegratedPaging />
           <Table />
           <TableHeaderRow />
-
-
-
             <EditingState
               editingRowIds={editingRowIds}
               onEditingRowIdsChange={this.changeEditingRowIds}

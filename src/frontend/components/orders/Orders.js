@@ -174,7 +174,7 @@ class Orders extends React.PureComponent{
    try{
      if(this.isValid()){
        await orderActions.addOrder(userId,this.state.ingredientId,this.state.ingredientName,
-       this.state.vendorName,parseInt(this.state.packageNum,10),this.state.price,sessionId,function(res){
+       this.state.vendorName,parseInt(this.state.packageNum,10),this.state.price,[], sessionId,function(res){
            if (res.status == 400) {
                alert(res.data);
            }else if (res.status == 500) {
