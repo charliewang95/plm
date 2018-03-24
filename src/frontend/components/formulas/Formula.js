@@ -137,8 +137,6 @@ AddToProdButton.propTypes = {
 const Cell = (props) => {
 //  console.log(" CELL props value: ");
 //  console.log(props);
-var isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
-var isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
   if(props.column.name=='name'){
     return <Table.Cell {...props}>
     <Link to={{pathname: '/formula-details', state:{details: props.row} }}>{props.row.name}</Link>
@@ -241,6 +239,7 @@ class Formula extends React.PureComponent {
 
   componentWillMount(){
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
     this.loadAllFormulas();
 
   }

@@ -77,6 +77,7 @@ class AddIngredientForm extends React.Component{
     const details = (props.location.state.details)?(props.location.state.details):dummyObject;
     console.log(details);
     const isCreateNew = props.location.state.isCreateNew;
+    const isIntermediate = props.location.state.isIntermediate;
     this.state = {
   		vendors: [],
       vendorString: "",
@@ -95,7 +96,8 @@ class AddIngredientForm extends React.Component{
       moneySpent: (details.moneySpent)?(details.moneySpent) : 0,
       moneyProd: (details.moneyProd) ? (details.moneyProd): 0,
       price: 0,
-      isCreateNew: (isCreateNew)
+      isCreateNew: (isCreateNew),
+      isIntermediate:(isIntermediate)
       }
     this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -216,7 +218,8 @@ class AddIngredientForm extends React.Component{
       alert("Please fill out package.");
       return false;
     }
-    else if(this.state.vendorsArray.length==0 || this.state.vendorsArray == null){
+    else if((!this.state.isIntermediate)&&
+            (this.state.vendorsArray.length==0 || this.state.vendorsArray == null)){
       alert("Please add a vendor.");
       return false;
     }
@@ -414,7 +417,7 @@ class AddIngredientForm extends React.Component{
               </Select>
             </FormControl>
             <FormGroup>
-            {this.state.isDisabled && <TextField
+            {(!this.state.isIntermediate)&&(this.state.isDisabled) && <TextField
               id="selectVendors"
               label="Vendors"
               multiline
@@ -424,7 +427,7 @@ class AddIngredientForm extends React.Component{
               required
               style={{lineHeight: 1.5}}
             />}
-            {(!this.state.isDisabled) && <SelectVendors initialArray={this.state.vendorsArray} handleChange={this.updateVendors}/>}
+            {(!this.state.isIntermediate)&&(!this.state.isDisabled) && <SelectVendors initialArray={this.state.vendorsArray} handleChange={this.updateVendors}/>}
             </FormGroup>
             {!this.state.isCreateNew &&
               <div>

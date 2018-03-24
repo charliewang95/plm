@@ -106,9 +106,7 @@ class Cart extends React.Component {
 
           // console.log(" Cart After Delete " + JSON.stringify(rows));
           alert(" Ingredient successfully removed from cart ! ");
-
         }
-
       });
 
       this.setState({ rows, deletingRows: [] });

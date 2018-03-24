@@ -35,7 +35,6 @@ import { withStyles } from 'material-ui/styles';
 
 import Styles from  'react-select/dist/react-select.css';
 import ReactSelect from 'react-select';
-import testData from './testIngredients';
 import SelectVendors from './SelectVendors';
 import * as ingredientInterface from '../../interface/ingredientInterface';
 import * as vendorInterface from '../../interface/vendorInterface';
@@ -45,11 +44,15 @@ import * as inventoryInterface from '../../interface/inventoryInterface';
 import * as testConfig from '../../../resources/testConfig.js';
 import MyPdfViewer from './PdfViewer';
 import {Link} from 'react-router-dom';
-import Snackbar from 'material-ui/Snackbar';
 import Chip from 'material-ui/Chip';
-import Tabs, {Tab} from 'material-ui/Tabs';
-import AppBar from 'material-ui/AppBar';
-import DummyLotNumberViewer from'./LotNumberSelector/DummyLotNumberViewer.js';
+import testData from './testIngredients';
+
+// import Snackbar from 'material-ui/Snackbar';
+
+// import Tabs, {Tab} from 'material-ui/Tabs';
+// import AppBar from 'material-ui/AppBar';
+// import Intermediates from './intermediates';
+
 // TODO: get session Id from the user
 
 // const sessionId = testConfig.sessionId;
@@ -235,7 +238,7 @@ const Cell = (props) => {
   console.log(props);
   if(props.column.name=='name'){
     return <Table.Cell {...props}>
-    <Link to={{pathname: '/ingredient-details', state:{details: props.row} }}>{props.row.name}</Link>
+    <Link to={{pathname: '/ingredient-details', state:{details: props.row , isIntermediate:false} }}>{props.row.name}</Link>
     {(props.row.numUnit>0)&&<Chip style={{marginLeft: 10}} label="In Stock"/>}
     </Table.Cell>
   }
@@ -311,7 +314,7 @@ class AdminIngredients extends React.PureComponent {
       pageSizes: [5, 10, 0],
       columnOrder: ['name', 'temperatureZone', 'packageNameString', 'numUnitString', 'space', 'vendors'],
       options:[],
-      currentTab: 0,
+      // currentTab: 0,
     };
 
     // console.log(" NAME : " + testData.tablePage.items[0].name);
@@ -489,13 +492,7 @@ class AdminIngredients extends React.PureComponent {
                     window.location.reload();
                 }
           });
-
-
-          //Alert the user
-
-
         }
-
       });
 
       this.setState({ rows, deletingRows: [] });
@@ -525,9 +522,9 @@ class AdminIngredients extends React.PureComponent {
     //this.createMap();
   }
 
-  handleTabChange = (event, value) => {
-    this.setState({ currentTab: value });
-  };
+  // handleTabChange = (event, value) => {
+  //   this.setState({ currentTab: value });
+  // };
 
   async loadCodeNameArray(){
    // var startingIndex = 0;
@@ -693,13 +690,13 @@ class AdminIngredients extends React.PureComponent {
 
     return (
       <div>
-      <AppBar position="static" color="default">
+      {/* <AppBar position="static" color="default">
       <Tabs value={currentTab} onChange={this.handleTabChange.bind(this)}>
       <Tab label = "Ingredients" />
-      <Tab label = "Intermediate Ingredients" />
+      <Tab label = "Intermediates" />
       </Tabs>
-      </AppBar>
-      {currentTab === 0 &&
+      </AppBar> */}
+      {/* {currentTab === 0 && */}
       <Paper>
         <Grid
           allowColumnResizing = {true}
@@ -793,8 +790,7 @@ class AdminIngredients extends React.PureComponent {
           </DialogActions>
         </Dialog>
       }
-      </Paper>}
-    {currentTab===1 && <Paper> <DummyLotNumberViewer/> </Paper>}
+      </Paper>
     {/* <Paper styles = {{color : "#42f4d9"}} > */}
       {isAdmin && <p><font size="5">Ingredient Bulk Import</font></p>}
       {isAdmin && <input type="file"
@@ -813,7 +809,9 @@ class AdminIngredients extends React.PureComponent {
       style = {{marginLeft: 380, marginBottom: 30}}
       > ORDER INGREDIENTS</Button>}
 
+      {/* {currentTab===1 && <Paper> <Intermediates/> </Paper>} */}
     </div>
+
     );
   }
 }
