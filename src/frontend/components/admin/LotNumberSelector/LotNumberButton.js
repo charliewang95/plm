@@ -35,34 +35,42 @@ class LotNumberButton extends Component {
     console.log("current sum " + sum);
     this.setState({lotNumberArray:inputArray});
     this.setState({totalAssigned:sum});
-    this.props.handleChange(this.lotNumberArray);
+    this.props.handleChange(this.state.lotNumberArray);
   }
 
   handleChange = name => event => {
+    console.log(" changed lot number");
+    console.log(event.target.value);
       this.setState({
         [name]: event.target.value,
       });
   }
 
-  handleCancel(){
+  handleCancel(e){
+    e.preventDefault();
     this.setState({open:false});
+    this.setState({lotNumberArray:[]});
   }
 
-  handleSave(){
+  handleSave(e){
+    console.log("save lots");
+    e.preventDefault();
     //send it to backend? or not yet
     this.setState({open:false});
   }
 
-  handleClickOpen(){
+  handleClickOpen(e){
+    e.preventDefault();
     this.setState({
       open: true,
     });
+    e.stopPropagation();
   }
 
   render() {
     return (
       <TableCell>
-        <Button raised onClick={this.handleClickOpen()}>Edit Lot Numbers</Button>
+        <Button raised onClick={(e)=>this.handleClickOpen(e)}>Edit Lot Numbers</Button>
         <Dialog open={this.state.open} >
             <DialogTitle>Edit Lot Number</DialogTitle>
             <DialogContent>
@@ -71,8 +79,8 @@ class LotNumberButton extends Component {
               </Paper>
             </DialogContent>
             <DialogActions>
-              <Button onClick={this.handleCancel} color="primary">Cancel</Button>
-              <Button onClick={this.handleSave} color="secondary">Save</Button>
+              <Button onClick={(e)=>this.handleCancel(e)} color="primary">Cancel</Button>
+              <Button onClick={(e)=>this.handleSave(e)} color="secondary">Save</Button>
             </DialogActions>
           </Dialog>
       </TableCell>
