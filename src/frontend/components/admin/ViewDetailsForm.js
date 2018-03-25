@@ -195,7 +195,7 @@ class AddIngredientForm extends React.Component{
       this.loadIngredient();
     }
     this.computeVendorString();
-    if(this.props.location.state.details.numUnit){
+    if((!this.state.isCreateNew)&&(this.props.location.state.details.numUnit)){
       this.loadLotNumbers();
       // this.computeLotNumberString();
     }
@@ -317,56 +317,56 @@ class AddIngredientForm extends React.Component{
       return true;
   }
 
-
   async onFormSubmit(e) {
     e.preventDefault();
+    var temp = this;
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    var isValid = this.isValid();
-    if(isValid && this.state.isCreateNew){
+    var isValid = temp.isValid();
+    if(isValid && temp.state.isCreateNew){
       console.log(" Add ingredient ");
-      await ingredientInterface.addIngredient(this.state.name, this.state.packageName, this.state.temperatureZone,
-        this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, this.state.nativeUnit,
-        this.state.numUnitPerPackage, this.state.numUnit, this.state.space, sessionId, function(res){
+      await ingredientInterface.addIngredient(temp.state.name, temp.state.packageName, temp.state.temperatureZone,
+        temp.state.vendorsArray, temp.state.moneySpent, temp.state.moneyProd, temp.state.nativeUnit,
+        temp.state.numUnitPerPackage, temp.state.numUnit, temp.state.space, sessionId, function(res){
                   if (res.status == 400) {
                       alert(res.data);
                   } else if (res.status == 500) {
                       alert('Ingredient name already exists');
                   } else{
                       // SnackBarPop("Row was successfully added!");
-                      this.setState({snackBarMessage : "Ingredient Successfully added! "});
-                      this.setState({snackBarOpen:true});
+                      temp.setState({snackBarMessage : "Ingredient Successfully added! "});
+                      temp.setState({snackBarOpen:true});
                       // alert(" Ingredient Successfully added! ");
                   }
               });
      // this.clearFields();
     }else if(isValid){
-      if(this.state.numUnit==''){
-        this.setState({numUnit:0});
+      if(temp.state.numUnit==''){
+        temp.setState({numUnit:0});
       }
 
       console.log("saved edited");
-      console.log(this.state.numUnit);
-      await ingredientInterface.updateIngredient(this.state.ingredientId, this.state.name, this.state.packageName,
-                this.state.temperatureZone, this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd,
-                this.state.nativeUnit, this.state.numUnitPerPackage, this.state.numUnit, this.state.space, sessionId, function(res){
+      console.log(temp.state.numUnit);
+      await ingredientInterface.updateIngredient(temp.state.ingredientId, temp.state.name, temp.state.packageName,
+                temp.state.temperatureZone, temp.state.vendorsArray, temp.state.moneySpent, temp.state.moneyProd,
+                temp.state.nativeUnit, temp.state.numUnitPerPackage, temp.state.numUnit, temp.state.space, sessionId, function(res){
                   if (res.status == 400) {
                       alert(res.data);
                   } else if (res.status == 500) {
                       alert('Ingredient name already exists');
                   } else {
 
-                    this.setState({snackBarMessage : "Ingredient Successfully edited! "});
-                    this.setState({snackBarOpen:true});
+                    temp.setState({snackBarMessage : "Ingredient Successfully edited! "});
+                    temp.setState({snackBarOpen:true});
                     // alert(" Ingredient Successfully edited! ");
                   }
               });
-      this.setState({isDisabled:true});
+      temp.setState({isDisabled:true});
 
       //Update lots lotId,
-      if(this.state.lotNumberArray.length > 0){
-        for(var i =0; i < this.state.lotNumberArray.length-1;i++){
-          await ingredientInterface.editLotAsync(lotIdMap[this.state.lotNumberArray[i].lotNumber],
-                    this.state.lotNumberArray[i].numUnit,sessionId );
+      if(temp.state.lotNumberArray.length > 0){
+        for(var i =0; i < temp.state.lotNumberArray.length-1;i++){
+          await ingredientInterface.editLotAsync(lotIdMap[temp.state.lotNumberArray[i].lotNumber],
+                    temp.state.lotNumberArray[i].numUnit,sessionId );
         }
       }
     }

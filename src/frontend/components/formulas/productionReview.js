@@ -100,10 +100,9 @@ class ProductionReview extends React.Component {
                  review = res.data;
                  console.log(review);
 
-
-
                  var review = [...review.map((row, index)=> ({
                      id:index,...row,
+                     delta:Math.round(row.delta*100)/100,
                      })),
                    ];
                    // console.log(" Formula " + JSON.stringify(review));
@@ -144,7 +143,7 @@ class ProductionReview extends React.Component {
     userId = JSON.parse(sessionStorage.getItem('user'))._id;
     console.log("add To cart" + JSON.stringify(this.state.ingredientsToOrder));
     // ADD the ingredients with needed amount to
-    var success = false;
+    // var success = false;
     console.log(this.state.ingredientsToOrder);
     for(var i = 0; i < this.state.ingredientsToOrder.length;i++){
       var row = this.state.ingredientsToOrder[i];
@@ -157,15 +156,17 @@ class ProductionReview extends React.Component {
       price = vendors[0].price;
 
       console.log(" ADD ORDER ");
-      // TODO: Add order based on numUnitPerPackage
+      // TODO: CHANGE THIS
       await orderActions.addOrder(userId,row.ingredientId,
         row.ingredientName,vendorName,_package,price,sessionId,function(res){
         //TODO: Please update this
+        console.log(res.status);
         if(res.status == 400){
           alert(res.data);
         }else{
-          success = true;
-          alert(" Ingredients Successfully added to cart. ");
+          // success = true;
+          this.setState({snackBarMessage : "Ingredients Successfully added to cart. "});
+          this.setState({snackBarOpen:true});
         }
       });
     }

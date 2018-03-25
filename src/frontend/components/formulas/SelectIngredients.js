@@ -192,14 +192,15 @@ class SelectIngredients extends Component {
     console.log(typeof (quantity));
     // const re =/^[1-9]\d*$/;
 
-    const re = /^\d*\.?\d*$/;
+
+    // const re = /^\d*\.?\d*$/;
+    const re = /^\d{0,10}(\.\d{0,2})?$/;
       if ( index>=0 && re.test(quantity) && quantity!=null) {
         this.state.ingredientsArray[index].quantity = quantity;
         this.setState({ingredientsArray: this.state.ingredientsArray});
         this.props.handleChange(this.state.ingredientsArray);
       }else
         alert("Quantity must be a positive number.");
-
   }
 
 
