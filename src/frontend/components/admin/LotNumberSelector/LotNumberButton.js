@@ -11,6 +11,7 @@ import Dialog, {
 import Paper from 'material-ui/Paper';
 import { TableCell } from 'material-ui/Table';
 
+
 class LotNumberButton extends Component {
 
   constructor(props) {
@@ -64,7 +65,7 @@ class LotNumberButton extends Component {
     this.setState({
       open: true,
     });
-    e.stopPropagation();
+    // e.stopPropagation();
   }
 
   render() {

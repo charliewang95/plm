@@ -1,24 +1,12 @@
 const data = {
     tablePage:{
     items: [
-      // ['pepper','sack','room temperatureZone','vendor 1'],
-      // ['pepper','sack','room temperatureZone','vendor 1'],
-      // ['pepper','sack','room temperatureZone','vendor 1'],
-      // ['pepper','sack','room temperatureZone','vendor 1'],
-      // ['pepper','sack','room temperatureZone','vendor 1'],
-      // ['pepper','sack','room temperatureZone','vendor 1'],
 
         {id : 0, name: "pepper",packageName: "sack",temperatureZone: "warehouse", vendors: null, isIntermediate:true},
         {id : 1, name: "salt",packageName: "sack",temperatureZone: "fridge", vendors: "vendor3/20, vendor4/30"},
         {id : 2, name: "oil",packageName: "pail",temperatureZone: "room", vendors: "target/35"},
         {id : 3, name: "chocolate",packageName: "sack",temperatureZone: "room", vendors: "vendor1/10, vendor2/20"},
         {id : 4, name: "milk",packageName: "sack",temperatureZone: "freezer", vendors: null, isIntermediate:true},
-
-        // {id : 4, name: "salt",packageName: "sack",temperatureZone: "fridge", vendors: "vendor3/20, vendor4/30"},
-        // {id: 5, name: "oil",packageName: "pail",temperatureZone: "room", vendors: "target/35"},
-        // {id: 6, name: "pepper",packageName: "sack",temperatureZone: "room", vendors: "vendor1/10, vendor2/20"},
-        // {id: 7, name: "salt",packageName: "sack",temperatureZone: "fridge", vendors: "vendor3/20, vendor4/30"},
-        // {id: 8, name: "oil",packageName: "pail",temperatureZone: "room", vendors: "target/35"},
       ],
 
    vendor_options2 : [
@@ -33,6 +21,7 @@ const data = {
           { value: 'vendor10', label: 'vendor10' }
        ],
 
+
   /* Replace with the data from the back end */
   ingredient_options : ['salt','pepper','cabbage','honey','lemons'],
 
@@ -41,20 +30,14 @@ const data = {
 
   package_options: ['sack', 'pail', 'drum', 'supersack', 'truckload', 'railcar'],
 
-   // package_options: [{value: 'sack', label: 'sack'},
-   //  {value: 'pail', label: 'pail'},
-   //  {value: 'drum', label: 'drum'},
-   //  {value: 'supersack', label: 'supersack'},
-   //  {value: 'truckload', label: 'truckload'},
-   //  {value: 'railcar', label: 'railcar'}],
+  temperatureZone_options:['freezer', 'refrigerator', 'warehouse'],
 
-
-  //  temperatureZone_options: [
-  //   { value: 'freezer', label: 'frozen' },
-  //   { value: 'warehouse', label: 'room temperature' },
-  //   { value: 'refrigerator', label: 'refrigerated' },
-  // ],
-   temperatureZone_options:['freezer', 'refrigerator', 'warehouse'],
+  lots_test:[{id:0,ingredientId:"5a92c99dc517006df7437477", moneySpent: 30,name: "peprika",
+            nativeUnit: "lbs", numUnit:50, numUnitPerPackage:34,numUnitString:"1 lbs",
+            packageName:"pail",packageNameString:"pail (34 lbs)",space:1,
+            temperatureZone:"warehouse",
+            vendors:[{vendorName: "Vendor 1", price: 10},{vendorName: "Vendor 3", price: 10}],
+            ingredientLots:[{numUnit:10,lotNumber:"A12"},{numUnit:40,lotNumber:"A13"}]}],
  },
 };
 

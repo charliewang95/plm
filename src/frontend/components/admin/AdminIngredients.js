@@ -180,7 +180,6 @@ const MultiSelectCellBase = ({
   onValueChange, vendorsArray, classes
 }) => (
   <TableCell className={classes.lookupEditCell}>
-
      <SelectVendors initialArray={vendorsArray} handleChange={onValueChange}/>
     {/* </ReactSelect> */}
   </TableCell>
@@ -566,7 +565,8 @@ class AdminIngredients extends React.PureComponent {
 
   async loadAllIngredients(){
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    var rawData = await ingredientInterface.getAllIngredientsAsync(sessionId);
+    var rawData = testData.tablePage.lots_test;
+    // var rawData = await ingredientInterface.getAllIngredientsAsync(sessionId);
     if(rawData.length==0){
       return
     }

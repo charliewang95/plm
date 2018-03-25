@@ -120,6 +120,8 @@ const LotNumberFormatter = (props) =>{
 };
 
 const lotNumberEditor = (props) => {
+  console.log("lotNumberEditor");
+  console.log(props);
   const quantity = props.row.packageNum;
   return <LotNumberButton quantity = {quantity} handleChange = {props.onValueChange}></LotNumberButton>
 };
@@ -145,7 +147,9 @@ class ShoppingCart extends React.Component {
         { name: 'vendors', title: 'Vendor / Price ($)' },
         // { key: 'lotNumberArray', title: 'Lot Numbers'}
         { name: 'lotNumberArray',
-        title: 'Lot Numbers'}
+        title: 'Lot Numbers'},
+        { key: 'lotNumberArrayKepper',
+        title: ''}
         // getCellValue: row => (props.row.totalAssigned!=props.row.packageNum) ? <TableCell><p><font color="red">Actions Needed</font></p></TableCell> :
         //    <TableCell><p><font color="green">Completed</font></p></TableCell>
 
@@ -158,7 +162,6 @@ class ShoppingCart extends React.Component {
       currentPage: 0,
       pageSize: 10,
       pageSizes: [5, 10, 0],
-
     };
     this.changeCurrentPage = currentPage => {
       this.setState({ currentPage });
@@ -176,7 +179,39 @@ class ShoppingCart extends React.Component {
         console.log(changed);
           for(var i = 0; i < rows.length;i++){
             if(changed[rows[i].id]){
+
+              if (changed[rows[i].id].vendors){
+                // TODO: Update Back End -- No error status so no callback??
+                console.log("changed vendors");
+                console.log(rows[i]);
+                rows[i].vendors = changed[rows[i].id].vendors.label;
+                rows[i].vendorName = changed[rows[i].id].vendors.vendorName;
+                rows[i].selectedVendorId =changed[rows[i].id].vendors.vendorId;
+                console.log("selected vendor: ");
+                console.log(changed[rows[i].id].vendors.vendorName);
+                console.log(changed[rows[i].id].vendors.price);
+                orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
+                      changed[rows[i].id].vendors.vendorName,rows[i].packageNum,
+                      changed[rows[i].id].vendors.price, rows[i].ingredientLots, sessionId, function(res){
+                       console.log(res);
+                        if (res.status != 400 && res.status != 500 ){
+//                            rows[i].packageNum = enteredQuantity;
+                             console.log(res);
+                         }
+                      });
+
+                // update table
+
+                 // update selectedVendor in row
+                 // TODO: Add SnackBar
+             }
+
               if(changed[rows[i].id].packageNum){
+
+                // Alert the user to Edit the package Numbers
+                if((changed[rows[i].id].packageNum) && (!changed[rows[i].id].lotNumberArray)){
+                  alert("Please assign lot numbers for the packages.")
+                }else{
                 // Validate
                 const re =/^[1-9]\d*$/;
                 var enteredQuantity = Number(changed[rows[i].id].packageNum);
@@ -199,50 +234,31 @@ class ShoppingCart extends React.Component {
 //                            rows[i].packageNum = enteredQuantity;
                               //window.location.reload();
                           }
-
                         });
+                      }
                     }
                 }
 
-               if (changed[rows[i].id].vendors){
-                 // TODO: Update Back End -- No error status so no callback??
-                 console.log("changed vendors");
-                 console.log(rows[i]);
-                 rows[i].vendors = changed[rows[i].id].vendors.label;
-                 rows[i].vendorName = changed[rows[i].id].vendors.vendorName;
-                 rows[i].selectedVendorId =changed[rows[i].id].vendors.vendorId;
-                 console.log("selected vendor: ");
-                 console.log(changed[rows[i].id].vendors.vendorName);
-                 console.log(changed[rows[i].id].vendors.price);
-                 orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
-                       changed[rows[i].id].vendors.vendorName,rows[i].packageNum,
-                       changed[rows[i].id].vendors.price, rows[i].ingredientLots, sessionId, function(res){
-                        console.log(res);
-                         if (res.status != 400 && res.status != 500 ){
-//                            rows[i].packageNum = enteredQuantity;
-                              console.log(res);
-                          }
-                       });
 
-                 // update table
 
-                  // update selectedVendor in row
-                  // TODO: Add SnackBar
+              if(changed[rows[i].id].lotNumberArray){
+                console.log("Changed lot NumberArray");
+                rows[i].lotAssigned = true;
               }
 
-               if (changed[rows[i].id].lotNumberArray){
-                var vendor = rows[i].selectedVendorName ? rows[i].selectedVendorName : rows[i].vendorOptions[0].vendorName;
-                var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].price;
-                var ingredientLots = changed[rows[i].id].lotNumberArray;
-                 orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
-                        vendor, rows[i].packageNum ,price,ingredientLots,sessionId,function(res){
-                        console.log(res);
-                         if (res.status != 400 && res.status != 500 ){
-//                            rows[i].packageNum = enteredQuantity;
-                              console.log(res);
-                          }
-                       });
-               }
+//                if (changed[rows[i].id].lotNumberArray){
+//                 var vendor = rows[i].selectedVendorName ? rows[i].selectedVendorName : rows[i].vendorOptions[0].vendorName;
+//                 var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].price;
+//                 var ingredientLots = changed[rows[i].id].lotNumberArray;
+//                  orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
+//                         vendor, rows[i].packageNum ,price,ingredientLots,sessionId,function(res){
+//                         console.log(res);
+//                          if (res.status != 400 && res.status != 500 ){
+// //                            rows[i].packageNum = enteredQuantity;
+//                               console.log(res);
+//                           }
+//                        });
+//                }
             }
           }
         }

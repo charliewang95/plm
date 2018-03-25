@@ -26,6 +26,11 @@ class LotNumberSelector extends Component {
     this.updateCurrentQuantity = this.updateCurrentQuantity.bind(this);
   }
 
+  componentDidMount(){
+    console.log("lotNumberSelector");
+    console.log(this.props.lotNumberArray);
+  }
+
   componentDidUpdate(){
     console.log(this.state.currentQuantity);
     console.log(this.props.quantity);
@@ -39,7 +44,8 @@ class LotNumberSelector extends Component {
       this.setState({currentQuantity:''});
     }
   }
-  addLotNumberItem(){
+  addLotNumberItem(e){
+    e.preventDefault();
     var newLotNumberItem = new Object();
     newLotNumberItem.package = this.state.currentQuantity;
     newLotNumberItem.lotNumber = this.state.currentLotNumber;
@@ -127,7 +133,7 @@ class LotNumberSelector extends Component {
           />
          </FormControl>
         {this.state.currentQuantity && this.state.currentLotNumber &&
-         <Button raised style={{marginLeft:10}} onClick={()=>{this.addLotNumberItem();}}>RECORD</Button>}
+         <Button raised style={{marginLeft:10}} onClick={(e)=>{this.addLotNumberItem(e);}}>RECORD</Button>}
          </div>
          }
       <br/>

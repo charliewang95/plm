@@ -13,7 +13,11 @@ import { FormControl, FormGroup, FormHelperText } from 'material-ui/Form';
 import { MenuItem } from 'material-ui/Menu';
 import Select from 'material-ui/Select';
 import Chip from 'material-ui/Chip';
+import LotNumberSelector from './LotNumberSelector/LotNumberSelector.js';
+
 import * as ingredientInterface from '../../interface/ingredientInterface';
+import testData from './testIngredients';
+
 import SelectVendors from './SelectVendors';
 /* Replace with the data from the back end */
 const ingredient_options = [
@@ -97,10 +101,16 @@ class AddIngredientForm extends React.Component{
       moneyProd: (details.moneyProd) ? (details.moneyProd): 0,
       price: 0,
       isCreateNew: (isCreateNew),
-      isIntermediate:(isIntermediate)
+      isIntermediate:(isIntermediate),
+      lotNumberArray:[],
+      // totalAssigned:(details.numUnit)?(details.numUnit):0,
+      totalAssigned:0,
+      // quantity:0,
+      lotNumberString:'',
       }
     this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
+
     this.updateVendors = this.updateVendors.bind(this);
     this.computeVendorString = this.computeVendorString.bind(this);
     this.isValid = this.isValid.bind(this);
@@ -108,6 +118,10 @@ class AddIngredientForm extends React.Component{
     this.loadIngredient = this.loadIngredient.bind(this);
     this.handleNumUnitChange = this.handleNumUnitChange.bind(this);
     this.handlePackageChange = this.handlePackageChange.bind(this);
+    this.updateArray = this.updateArray.bind(this);
+    this.loadIngredientLots= this.loadIngredientLots.bind(this);
+    this.computeLotNumberString= this.computeLotNumberString.bind(this);
+
   }
 
   handleOnChange (option) {
@@ -148,19 +162,64 @@ class AddIngredientForm extends React.Component{
     this.setState({vendorString: vendors_string });
   }
 
+  computeLotNumberString(){
+    var lotNumbers_string = "";
+    console.log("lot Number String");
+    console.log(this.state);
+    // var array = this.state.lotNumberArray;
+    var array = testData.tablePage.lots_test[0].ingredientLots;
+    var sum =0;
+    for(var i =0; i < array.length; i++){
+        console.log("inside loop");
+          var lotNumberObject = array[i];
+          //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
+          lotNumbers_string +=  lotNumberObject.lotNumber+ ": " + lotNumberObject.numUnit + " (number of Units)";
+          sum+=lotNumberObject.numUnit;
+          if(i!= (array.length -1)){
+            lotNumbers_string+='\n';
+          }
+        }
+    this.setState({lotNumberString: lotNumbers_string });
+    this.setState({totalAssigned: sum });
+  }
+
+  // await componentWillMount(){
+  //   var IngredientLots =
+  // }
   componentDidMount(){
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    userId = JSON.parse(sessionStorage.getItem('user'))._id;
+
     console.log("logs");
-    if(this.props.location.state.fromLogs){
-      this.loadIngredient();
+    // if(this.props.location.state.fromLogs){
+    //   this.loadIngredient();
+    // }
+    if(this.state.numUnit){
+      this.loadIngredientLots();
     }
     this.computeVendorString();
+
+    if(this.state.numUnit){
+      this.computeLotNumberString();
+    }
+    console.log("Component Did mount");
   }
+
+
+  loadIngredientLots(){
+     // props.row.numUnit means in stock
+
+     // var lotArray = await ingredientInterface.getAllLotNumbersAsync(this.state.ingredientId,sessionId);
+     var lotArray =  testData.tablePage.lots_test[0].ingredientLots;
+     console.log("load ingredient lots");
+     console.log(lotArray);
+     this.setState({lotNumberArray:lotArray});
+   }
+
 
   async loadIngredient(){
     var details = [];
-    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    userId = JSON.parse(sessionStorage.getItem('user'))._id;
     // sessionId = '5a8b99a669b5a9637e9cc3bb';
     // userId = '5a8b99a669b5a9637e9cc3bb';
     console.log("ingredient id");
@@ -196,6 +255,7 @@ class AddIngredientForm extends React.Component{
     });
 
     this.computeVendorString();
+    this.computeLotNumberString();
   }
 
   isValid(){
@@ -284,7 +344,10 @@ class AddIngredientForm extends React.Component{
       nativeUnit: '',
       numUnitPerPackage: 0,
       vendorString: "",
-      isCreateNew: true
+      isCreateNew: true,
+      lotNumberArray:[],
+      totalAssigned:0,
+
       })
     }
 
@@ -337,6 +400,21 @@ class AddIngredientForm extends React.Component{
     }else{
       return 0;
     }
+  }
+
+  updateArray(inputArray){
+    var sum = 0;
+    for(var i=0; i<inputArray.length;i++){
+      sum+=parseInt(inputArray[i].package);
+      console.log(inputArray[i].package);
+    }
+    if(!sum){
+      sum=0;
+    }
+    console.log("current sum " + sum);
+    this.setState({lotNumberArray:inputArray});
+    this.setState({totalAssigned:sum});
+    this.computeLotNumberString();
   }
 
   render (){
@@ -406,7 +484,6 @@ class AddIngredientForm extends React.Component{
                 }}
                 disabled = {this.state.isDisabled}
                 required
-
               >
                 <MenuItem value={'sack'}>Sack</MenuItem>
                 <MenuItem value={'pail'}>Pail</MenuItem>
@@ -427,7 +504,20 @@ class AddIngredientForm extends React.Component{
               required
               style={{lineHeight: 1.5}}
             />}
-            {(!this.state.isIntermediate)&&(!this.state.isDisabled) && <SelectVendors initialArray={this.state.vendorsArray} handleChange={this.updateVendors}/>}
+            {(!this.state.isIntermediate)&&(!this.state.isDisabled) &&
+              <SelectVendors initialArray={this.state.vendorsArray} handleChange={this.updateVendors}/>}
+
+            {(!this.state.isIntermediate)&&(this.state.isDisabled) && (this.state.numUnit)&& <TextField
+              id="lotNumbers"
+              label="quantity per lot"
+              multiline
+              value={this.state.lotNumberString}
+              margin="normal"
+              disabled = {this.state.isDisabled}
+              required
+              style={{lineHeight: 1.5}}
+            />}
+
             </FormGroup>
             {!this.state.isCreateNew &&
               <div>
@@ -441,6 +531,12 @@ class AddIngredientForm extends React.Component{
                   onChange={this.handleNumUnitChange}
                   margin="normal"
                 />
+                {(!this.state.isIntermediate)&&(!this.state.isDisabled) &&(this.state.numUnit)&&
+                  <LotNumberSelector
+                  quantity={this.state.numUnit}
+                  updateArray={this.updateArray}
+                  totalAssigned={this.state.totalAssigned}/>}
+
                 <TextField
                   disabled
                   id="space"
