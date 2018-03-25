@@ -229,9 +229,11 @@ If the backup is stored in the backup system, and the system is configured corre
 
 1. Copy the backup folder to the server, possibly using `scp`
 
-2. Log in to the server. Run the command `mongorestore --username "plmUser" --password "<plmUserPassword>" --authenticationDatabase plm <path-to-backup-folder> --drop --objcheck`. The `--drop` opiton will drop the database before attempt to restore, and `objecheck` will check for validity while attempting to restore. (__Note: we We recommend checking the validity of the backup before restoring it to your system. This means first try to restore it to a test server. If it can do so successfully, then restore it to the production server.__)
+2. Log in to the server. Run the command `mongorestore --username "plmUser" --password "<plmUserPassword>" --authenticationDatabase plm <path-to-backup-folder> --drop --objcheck`. The `--drop` opiton will drop the database before attempt to restore, and `objecheck` will check for validity while attempting to restore. 
 
-4. You will see command line outputs that indicate whether the restore was successful. In case of schema unmatch, you will also be notified on the command line.
+3. You will see command line outputs that indicate whether the restore was successful. In case of schema unmatch, you will also be notified on the command line.
+
+4. Further validate your data by running `db.plm.validate({full:true})` in your mongo shell. If you see `valid: true` in the output, the data is valid to use.
 
 ## Troubleshooting
 
