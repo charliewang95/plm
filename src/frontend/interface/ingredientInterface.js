@@ -123,6 +123,11 @@ async function getFreshAsync(sessionId) {
     return res;
 }
 
+async function editLotAsync(lotId, quantity, sessionId) {
+    const res = await axios.pus('/ingredients/lot/'+lotId+'/quantity/'+quantity+'/user/'+sessionId);
+    return res;
+}
+
 /*
  * update one ingredient
  * ingredientId: string, the id of the ingredient
