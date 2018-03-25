@@ -32,6 +32,7 @@ function packIntoJson(name, packageType, temperatureZone, vendors, moneySpent,
 	ingredientJson.numUnit = numUnit;
 	ingredientJson.space = space;
 	ingredientJson.numUnitPerPackage = amountInNativeUnitPerPackage;
+	ingredientJson.isIntermediate = false;
 	console.log("An ingredient with the following details has been prepared to be \
 		sent to the back-end:");
 	console.log(ingredientJson);
@@ -157,4 +158,4 @@ async function deleteIngredient(ingredientId, sessionId, callback) {
 };
 
 //export functions above for use by other modules
-export { addIngredient, getAllIngredientsAsync, getIngredientAsync, updateIngredient, deleteIngredient, getAllIngredientNamesAsync,getFreshAsync};
+export { addIngredient, getAllIngredientsAsync, getIngredientAsync, updateIngredient, editLotAsync,deleteIngredient, getAllIngredientNamesAsync,getAllLotNumbersAsync,getFreshAsync};
