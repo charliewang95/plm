@@ -173,6 +173,66 @@ The system is being developed at this GitHub repo: <https://github.com/charliewa
 
 * Additionally, 2 scripts are provided to ease shutting down and starting the server. Running `./startNonStoppingServer.sh` will start the server that will not be shut down when the terminal is closed; Running `./shutdownServer.sh` shuts down the server by killing all processes of the system
 
+### Migrate backed-up data to the system (Optional)
+
+After completion of the above steps that specify how to deploy our system, if you have a copy of backed up data (i.e. bson file produced by our backup system using mongodump) and wish to migrate the data to your newly deployed system, follow the steps below. This portion is adopted largely from our backup guide.
+
+#### Configuring the database
+1. `ssh` into the server, and start the mongo shell by typing `mongo`.
+
+2. Create the user administrator. 
+
+We want to create a user with the `userAdminAnyDatabase` role in the `admin` database. This user has privileges over creating users in other databases. Switch to the `admin` database by typing `use admin` in the mongo shell. Then, type the following command in the mongo shell:
+
+```
+db.createUser(
+  {
+    user: <username>,
+    pwd: <password>,
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
+  }
+)
+```
+
+`<username>` is a string such as `"myUserAdmin"`, and `<password>` is a string such as `"abc123"`.
+
+(Note: You can check for existing users in the database by typing `db.getUsers()`. If you would like to delete any existing user, use `db.dropUser(<username>)`)
+
+3. Create a user for your database. In our case, we want to add a user `plmUser` to our database `plm`. The user will have `readWrite` role in the `plm` database.
+
+```
+use plm
+db.createUser(
+  {
+    user: "plmUser",
+    pwd: <plmPassword>,
+    roles: [ { role: "readWrite", db: "plm" } ]
+  }
+)
+```
+
+`<plmPassword>` is a the password for your user, and it is a string such as `"abc123"`.
+
+4. Enable Auth and Open MongoDB access
+
+Edit your MongoDB config file for the mongodb service. First, find out the the path of your config file  by viewing the script to start your mongodb service. On our system, we typed `vi /etc/init.d/mongodb` . Inside the file you will see a line `CONF=<path-to-config-file>`. In our case `<path-to-config-file>` is `/etc/mongodb.conf`. Open the file by typing `sudo vi <path-to-config-file>`. Inside the file, uncomment the line `auth = true`, and change the line specifying `bind_ip` to `bind_ip = 0.0.0.0`.
+
+5. Open port 27017 on your server by typing `sudo ufw allow 27017`
+
+6. Restart the mongodb service by typing `sudo systemctl restart mongodb`. Make sure you can still log in with mongo while ssh’d into the server.
+
+Note: you can try to log in as the newly created `plmUser` by typing `mongo -u "plmUser" -p <plmPassword> --authenticationDatabase "plm"` on the server.
+
+#### Restoring data from backup
+
+If the backup is stored in the backup system, and the system is configured correctly according to our backup guide, you can follow section __Restoring from a backup__ in our backup guide. Otherwise, follow the steps listed below:
+
+1. Copy the backup folder to the server, possibly using `scp`
+
+2. Log in to the server. Run the command `mongorestore --username "plmUser" --password "<plmUserPassword>" --authenticationDatabase plm <path-to-backup-folder> --drop --objcheck`. The `--drop` opiton will drop the database before attempt to restore, and `objecheck` will check for validity while attempting to restore. (__Note: we We recommend checking the validity of the backup before restoring it to your system. This means first try to restore it to a test server. If it can do so successfully, then restore it to the production server.__)
+
+4. You will see command line outputs that indicate whether the restore was successful. In case of schema unmatch, you will also be notified on the command line.
+
 ## Troubleshooting
 
 * If when starting the server you get the following error
