@@ -124,7 +124,7 @@ async function getFreshAsync(sessionId) {
 }
 
 async function editLotAsync(lotId, quantity, sessionId) {
-    const res = await axios.pus('/ingredients/lot/'+lotId+'/quantity/'+quantity+'/user/'+sessionId);
+    const res = await axios.put('/ingredients/lot/'+lotId+'/quantity/'+quantity+'/user/'+sessionId);
     return res;
 }
 

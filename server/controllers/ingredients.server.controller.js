@@ -4,6 +4,7 @@ var IngredientProduct = require('mongoose').model('IngredientProduct');
 var IngredientFreshness = require('mongoose').model('IngredientFreshness');
 var Vendor = require('mongoose').model('Vendor');
 var User = require('mongoose').model('User');
+var Storage = require('mongoose').model('Storage');
 var utils = require('../utils/utils');
 var freshness = require('../utils/freshness');
 var bulkImport = require('../utils/bulkImportIngredients');
@@ -127,12 +128,14 @@ exports.editLot = function(req, res, next) {
                     var numUnitDiff = newNumUnit - oldNumUnit;
                     Ingredient.findOne({nameUnique: lot.ingredientNameUnique}, function(err, ingredient){
                         if (numUnitDiff > 0) {
-                            checkSpace(numUnitDiff, ingredient, lot, function(totalIncreasedSpace){
-                                updateSpaceIncrease(lot, newNumUnit, oldNumUnit, totalIncreasedSpace, ingredient);
+                            checkSpace(req, res, next, numUnitDiff, ingredient, lot, function(totalIncreasedSpace){
+                                console.log('editLot: increased space '+totalIncreasedSpace);
+                                updateSpaceIncrease(req, res, next, lot, newNumUnit, oldNumUnit, totalIncreasedSpace, ingredient);
                             });
                         } else {
-                            checkSpace(numUnitDiff, ingredient, lot, function(totalDecreasedSpace){
-                                updateSpaceDecrease(lot, newNumUnit, oldNumUnit, totalDecreasedSpace, ingredient);
+                            checkSpace(req, res, next, -numUnitDiff, ingredient, lot, function(totalDecreasedSpace){
+                                console.log('editLot: decreased space '+totalDecreasedSpace);
+                                updateSpaceDecrease(req, res, next, lot, newNumUnit, oldNumUnit, totalDecreasedSpace, ingredient);
                             });
                         }
                     });
@@ -142,7 +145,7 @@ exports.editLot = function(req, res, next) {
     });
 };
 
-var checkSpace = function(numUnitDiff, ingredient, lot, callback) {
+var checkSpace = function(req, res, next, numUnitDiff, ingredient, lot, callback) {
     Ingredient.getPackageSpace(ingredient.packageName, function(spacePerPackage){
         var totalChangedSpace = Math.ceil(numUnitDiff/ingredient.numUnitPerPackage)*spacePerPackage;
         if (numUnitDiff > 0) {
@@ -156,7 +159,7 @@ var checkSpace = function(numUnitDiff, ingredient, lot, callback) {
     });
 };
 
-var updateSpaceIncrease = function(lot, newNumUnit, oldNumUnit, totalIncreasedSpace, ingredient) {
+var updateSpaceIncrease = function(req, res, next, lot, newNumUnit, oldNumUnit, totalIncreasedSpace, ingredient) {
     var diff = newNumUnit - oldNumUnit;
     lot.update({numUnit: newNumUnit}, function(err, obj){
         if (err) return next(err);
@@ -184,7 +187,7 @@ var updateSpaceIncrease = function(lot, newNumUnit, oldNumUnit, totalIncreasedSp
     });
 };
 
-var updateSpaceDecrease = function(lot, newNumUnit, oldNumUnit, totalDecreasedSpace, ingredient) {
+var updateSpaceDecrease = function(req, res, next, lot, newNumUnit, oldNumUnit, totalDecreasedSpace, ingredient) {
     var diff = oldNumUnit - newNumUnit;
     lot.update({numUnit: newNumUnit}, function(err, obj){
         if (err) return next(err);
