@@ -308,7 +308,7 @@ class AdminIngredients extends React.PureComponent {
       editingRowIds: [],
       addedRows: [],
       rowChanges: {},
-      currentPage: 5,
+      currentPage: 0,
       deletingRows: [],
       pageSize: 10,
       pageSizes: [5, 10, 0],
