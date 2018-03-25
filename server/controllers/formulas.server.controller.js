@@ -7,6 +7,7 @@ var fs = require('fs');
 var Converter = require("csvtojson").Converter;
 var converter = new Converter({});
 var bulkImport = require('../utils/bulkImportFormulas');
+var bulkImportInter = require('../utils/bulkImportIntermediate');
 
 exports.create = function(req, res, next) {
     utils.doWithAccess(req, res, next, Formula, 'create', req.params.userId, '', true, true);
@@ -25,6 +26,7 @@ exports.update = function(req, res, next) {
 };
 
 exports.delete = function(req, res, next) {
+    console.log('3.23 '+req.params.formulaId);
     utils.doWithAccess(req, res, next, Formula, 'delete', req.params.userId, req.params.formulaId, true, true);
 };
 
@@ -34,6 +36,13 @@ exports.checkout = function(req, res, next) {
 
 exports.bulkImportFormulas = function(req, res, next, contents, callback) {
     bulkImport.bulkImportFormulas(req, res, next, contents, function() {
+        //res.send(contents);
+        callback();
+    });
+};
+
+exports.bulkImportIntermediate = function(req, res, next, contents, callback) {
+    bulkImportInter.bulkImportIntermediates(req, res, next, contents, function() {
         //res.send(contents);
         callback();
     });

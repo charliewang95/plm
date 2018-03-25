@@ -109,3 +109,105 @@ exports.bulkImportIngredients = function(req, res, next, contents, callback) {
         callback();
     });
 };
+
+//
+exports.editLot = function(req, res, next) {
+    User.findById(req.params.userId, function(err, user){
+        if (err) return next(err);
+        else if (!user || !user.isAdmin) return res.status(400).send('Access denied');
+        else {
+            var lotId = req.params.lotId;
+            var quantity = req.params.quantity;
+            IngredientLot.findById(lotId, function(err, lot){
+                if (err) return next(err);
+                else if (!lot) return res.status(400).send('Lot not found');
+                else {
+                    var oldNumUnit = lot.numUnit;
+                    var newNumUnit = quantity;
+                    var numUnitDiff = newNumUnit - oldNumUnit;
+                    Ingredient.findOne({nameUnique: lot.ingredientNameUnique}, function(err, ingredient){
+                        if (numUnitDiff > 0) {
+                            checkSpace(numUnitDiff, ingredient, lot, function(totalIncreasedSpace){
+                                updateSpaceIncrease(lot, newNumUnit, oldNumUnit, totalIncreasedSpace, ingredient);
+                            });
+                        } else {
+                            checkSpace(numUnitDiff, ingredient, lot, function(totalDecreasedSpace){
+                                updateSpaceDecrease(lot, newNumUnit, oldNumUnit, totalDecreasedSpace, ingredient);
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+};
+
+var checkSpace = function(numUnitDiff, ingredient, lot, callback) {
+    Ingredient.getPackageSpace(ingredient.packageName, function(spacePerPackage){
+        var totalChangedSpace = Math.ceil(numUnitDiff/ingredient.numUnitPerPackage)*spacePerPackage;
+        if (numUnitDiff > 0) {
+            Storage.findOne({temperatureZone: ingredient.temperatureZone}, function(err, storage){
+                if (storage.currentEmptySpace < totalChangedSpace) return res.status(400).send('Action denied on lot '+lot.lotNumber+'. Storage limit '+storage.currentEmptySpace+' exceeded');
+                else callback(totalChangedSpace);
+            });
+        } else {
+            callback(totalChangedSpace);
+        }
+    });
+};
+
+var updateSpaceIncrease = function(lot, newNumUnit, oldNumUnit, totalIncreasedSpace, ingredient) {
+    var diff = newNumUnit - oldNumUnit;
+    lot.update({numUnit: newNumUnit}, function(err, obj){
+        if (err) return next(err);
+        else {
+            var oldTotalNumUnit = ingredient.numUnit;
+            var newTotalNumUnit = oldTotalNumUnit + diff;
+            var oldSpace = ingredient.space;
+            var newSpace = oldSpace + totalIncreasedSpace;
+            ingredient.update({space: newSpace, numUnit: newTotalNumUnit}, function(err, obj2){
+                if (err) return next(err);
+                else {
+                    Storage.findOne({temperatureZone: ingredient.temperatureZone}, function(err, storage){
+                        var currentOccupiedSpace = storage.currentOccupiedSpace;
+                        var currentEmptySpace = storage.currentEmptySpace;
+                        var newCurrentOccupiedSpace = currentOccupiedSpace + totalIncreasedSpace;
+                        var newCurrentEmptySpace = currentEmptySpace - totalIncreasedSpace;
+                        storage.update({currentOccupiedSpace: newCurrentOccupiedSpace, currentEmptySpace:newCurrentEmptySpace}, function(err, obj3){
+                            if (err) return next(err);
+                            else return res.json(lot);
+                        })
+                    });
+                }
+            });
+        }
+    });
+};
+
+var updateSpaceDecrease = function(lot, newNumUnit, oldNumUnit, totalDecreasedSpace, ingredient) {
+    var diff = oldNumUnit - newNumUnit;
+    lot.update({numUnit: newNumUnit}, function(err, obj){
+        if (err) return next(err);
+        else {
+            var oldTotalNumUnit = ingredient.numUnit;
+            var newTotalNumUnit = oldTotalNumUnit - diff;
+            var oldSpace = ingredient.space;
+            var newSpace = oldSpace - totalDecreasedSpace;
+            ingredient.update({space: newSpace, numUnit: newTotalNumUnit}, function(err, obj2){
+                if (err) return next(err);
+                else {
+                    Storage.findOne({temperatureZone: ingredient.temperatureZone}, function(err, storage){
+                        var currentOccupiedSpace = storage.currentOccupiedSpace;
+                        var currentEmptySpace = storage.currentEmptySpace;
+                        var newCurrentOccupiedSpace = currentOccupiedSpace - totalDecreasedSpace;
+                        var newCurrentEmptySpace = currentEmptySpace + totalDecreasedSpace;
+                        storage.update({currentOccupiedSpace: newCurrentOccupiedSpace, currentEmptySpace:newCurrentEmptySpace}, function(err, obj3){
+                            if (err) return next(err);
+                            else return res.json(lot);
+                        })
+                    });
+                }
+            });
+        }
+    });
+};

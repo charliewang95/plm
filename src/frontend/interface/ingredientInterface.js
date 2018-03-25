@@ -124,6 +124,11 @@ async function getFreshAsync(sessionId) {
     return res;
 }
 
+async function editLotAsync(lotId, quantity, sessionId) {
+    const res = await axios.put('/ingredients/lot/'+lotId+'/quantity/'+quantity+'/user/'+sessionId);
+    return res;
+}
+
 /*
  * update one ingredient
  * ingredientId: string, the id of the ingredient
@@ -153,4 +158,4 @@ async function deleteIngredient(ingredientId, sessionId, callback) {
 };
 
 //export functions above for use by other modules
-export { addIngredient, getAllIngredientsAsync, getIngredientAsync, updateIngredient, deleteIngredient, getAllIngredientNamesAsync,getFreshAsync};
+export { addIngredient, getAllIngredientsAsync, getIngredientAsync, updateIngredient, editLotAsync,deleteIngredient, getAllIngredientNamesAsync,getAllLotNumbersAsync,getFreshAsync};
