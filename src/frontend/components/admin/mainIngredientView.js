@@ -35,6 +35,7 @@ class MainIngredientView extends React.Component {
   };
 
   handleChange = (event, value) => {
+    event.preventDefault();
     this.setState({ value });
   };
 

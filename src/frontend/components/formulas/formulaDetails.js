@@ -13,6 +13,7 @@ import Chip from 'material-ui/Chip';
 import * as ingredientActions from '../../interface/ingredientInterface';
 import * as formulaActions from '../../interface/formulaInterface';
 import SelectIngredients from './SelectIngredients';
+import SnackBarDisplay from '../snackBar/snackBarDisplay';
 
 
 const styles = {
@@ -70,6 +71,8 @@ class FormulaDetails extends React.Component{
       nativeUnit:(details.nativeUnit)?(details.nativeUnit):'',
       temperatureZone:(details.temperatureZone)?(details.temperatureZone):'',
       numUnitPerPackage: (details.numUnitPerPackage)?(details.numUnitPerPackage):0,
+      snackBarOpen:false,
+      snackBarMessage:'',
       }
 
     this.handleOnChange = this.handleOnChange.bind(this);
@@ -80,6 +83,7 @@ class FormulaDetails extends React.Component{
     this.handleNumUnitPerPackage = this.handleNumUnitPerPackage.bind(this);
     this.isValid = this.isValid.bind(this);
     this.loadFormula = this.loadFormula.bind(this);
+    this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
 
     }
 
@@ -231,7 +235,9 @@ async loadFormula(){
                 alert(res.data);
               }else{
                 // TODO: Snackbar
-                alert(" Formula successfully added! ");
+                this.setState({snackBarMessage : "Formula successfully added"});
+                this.setState({snackBarOpen:true});
+                // alert(" Formula successfully added! ");
               }
             });
     }else if (this.isValid()){
@@ -247,7 +253,9 @@ async loadFormula(){
             alert(res.data);
           }else{
             //TODO: SnackBar
-            alert(" Formula successfully updated. ");
+            this.setState({snackBarMessage : "Formula successfully updated."});
+            this.setState({snackBarOpen:true});
+            // alert(" Formula successfully updated. ");
           }
         });
     this.setState({isDisabled:true});
