@@ -113,8 +113,8 @@ async function getAllLotNumbersAsync(ingredientId, sessionId) {
     return res;
 }
 
-async function getRecallAsync(ingredientName, lotNumber, sessionId) {
-    const res = await axios.get('/ingredients/recall/ingredient/'+ingredientName+'/lot/'+lotNumber+'/user/'+sessionId);
+async function getRecallAsync(lotId, sessionId) {
+    const res = await axios.get('/ingredients/recall/lot/'+lotId+'/user/'+sessionId);
     return res;
 }
 
@@ -157,4 +157,5 @@ async function deleteIngredient(ingredientId, sessionId, callback) {
 };
 
 //export functions above for use by other modules
-export { addIngredient, getAllIngredientsAsync, getIngredientAsync, updateIngredient, deleteIngredient, getAllIngredientNamesAsync};
+export { addIngredient, getAllIngredientsAsync, getIngredientAsync, updateIngredient, deleteIngredient, getAllIngredientNamesAsync,
+getAllIngredientsOnlyAsync, getAllIntermediatesOnlyAsync, getAllLotNumbersAsync, getRecallAsync, getFreshAsync, editLotAsync};

@@ -12,6 +12,7 @@ import {
 import Styles from  'react-select/dist/react-select.css';
 import { withStyles } from 'material-ui/styles';
 import dummyData from '../orders/dummyData';
+import * as ingredientActions from '../../interface/ingredientInterface';
 
 import * as testConfig from '../../../resources/testConfig.js';
 
@@ -53,13 +54,15 @@ export default class FreshnessReport extends React.PureComponent {
   async loadAllIngredients(){
     var rawData = [];
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    // rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
+     console.log('getting fresh data '+sessionId);
+     rawData = await ingredientActions.getFreshAsync(sessionId);
+     console.log(rawData);
 
-     var processedData = [...rawData.map((row, index)=> ({
+     var processedData = [...rawData.data.map((row, index)=> ({
          id: index,
          ...row,
-         averageWaitTime: row.averageDay + " d  " + row.averageHour + " : " + row.averageMinute,
-         worstWaitTime: row.oldestDay + " d  " + row.oldestHour + " : " + row.oldestMinute,
+         averageWaitTime: row.averageDay + "d " + row.averageHour + "h " + row.averageMinute + "m ",
+         worstWaitTime: row.oldestDay + "d " + row.oldestHour + "h " + row.oldestMinute + "m ",
        })),
      ];
      this.setState({rows:processedData});

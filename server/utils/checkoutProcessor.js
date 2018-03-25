@@ -33,9 +33,10 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
             validateOrders(items, res, next, function(wSpace, rSpace, fSpace){
                 console.log("Orders validated.");
                 addIngredientLots(req, res, next, items, 0, function(){
-                    deleteProcessor.process(model, items, '', res, next);
-                    updateStorage(wSpace, rSpace, fSpace);
-                    logger.log(username, 'checkout', items[0], model);
+//                    deleteProcessor.process(model, items, '', res, next);
+//                    updateStorage(wSpace, rSpace, fSpace);
+//                    logger.log(username, 'checkout', items[0], model);
+                    console.log('order logged');
                     res.send(items);
                 });
             });
@@ -53,13 +54,13 @@ var addIngredientLots = function(req, res, next, items, i, callback){
             var assignment = assignments[i];
             var lotNumber = assignment.lotNumber;
             var lotNumberUnique = assignment.lotNumber.toLowerCase();
-            var numPackage = assignment.package();
+            var numPackage = assignment.package;
             IngredientLot.findOne({ingredientNameUnique: order.ingredientName.toLowerCase(),
                                    vendorNameUnique: order.vendorName.toLowerCase(),
                                    lotNumberUnique: lotNumberUnique}, function(err, ingredientLot){
-                 if (err) return next(err);
-                 else if (!ingredientLot) {
-                    Ingredient.findOne({nameUnique: order.ingredientName.toLowerCase()}, function(err, ingredient){
+                 Ingredient.findOne({nameUnique: order.ingredientName.toLowerCase()}, function(err, ingredient){
+                     if (err) return next(err);
+                     else if (!ingredientLot) {
                         if (err) return next(err);
                         else if (!ingredient) return res.status(400).send('Ingredient '+order.ingredientName+' does not exist. 001');
                         else {
@@ -80,17 +81,17 @@ var addIngredientLots = function(req, res, next, items, i, callback){
                                 });
                             });
                         }
-                    });
-                 }
-                 else {
-                    var oldNumUnit = ingredientLot.numUnit;
-                    var newNumUnit = numPackage * ingredient.numUnitPerPackage + oldNumUnit;
-                    newIngredientLot.update({numUnit: newNumUnit}, function(err, obj){
-                        freshness.updateAverageAdd(res, next, order.ingredientName, new Date(), numPackage * ingredient.numUnitPerPackage, function(){
-                            addIngredientLots(req, res, next, items, i+1, callback);
+                     }
+                     else {
+                        var oldNumUnit = ingredientLot.numUnit;
+                        var newNumUnit = numPackage * ingredient.numUnitPerPackage + oldNumUnit;
+                        ingredientLot.update({numUnit: newNumUnit}, function(err, obj){
+                            freshness.updateAverageAdd(res, next, order.ingredientName, new Date(), numPackage * ingredient.numUnitPerPackage, function(){
+                                addIngredientLots(req, res, next, items, i+1, callback);
+                            });
                         });
-                    });
-                 }
+                     }
+                 });
             });
         }
     }

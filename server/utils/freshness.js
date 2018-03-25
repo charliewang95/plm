@@ -5,7 +5,7 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 exports.updateAverageAdd = function(res, next, ingredientName, date, numUnit, callback) {
-    Ingredient.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, ingredient){
+    Ingredient.findOne({nameUnique: ingredientName.toLowerCase()}, function(err, ingredient){
         if (err) return next(err);
         else if (!ingredient) return res.status(400).send('Ingredient '+ingredientName+' does not exist. 007');
         else {
@@ -22,10 +22,12 @@ exports.updateAverageAdd = function(res, next, ingredientName, date, numUnit, ca
                 else {
                     var newFresh = new IngredientFreshness();
                     newFresh.ingredientName = ingredientName;
-                    newFresh.ingredientNameUnique = ingredientNameUnique;
+                    newFresh.ingredientNameUnique = ingredientName.toLowerCase();
                     newFresh.averageMilli = date.getTime();
                     newFresh.oldestMilli = date.getTime();
-                    callback();
+                    newFresh.save(function(err, obj){
+                        callback();
+                    });
                 }
             });
         }
@@ -83,16 +85,17 @@ exports.getLatestInfo = function(res, next, ingredientName, callback) {
         else if (!fresh)
             return res.status(400).send('Ingredient '+ingredientName+' does not exist. 004');
         else {
+            console.log('updating freshness data');
             var nowDate = new Date();
             var nowTime = nowDate.getTime();
-            var oldestDiff = (nowTime - fresh.oldestMilli)/1000/60;
-            var oldestMinute = oldestDiff % 60;
-            var oldestHour = (oldestDiff/60) % 24;
-            var oldestDay = (oldestDiff/60/24);
-            var averageDiff = (nowTime - fresh.averageMilli)/1000/60;
-            var averageMinute = averageDiff % 60;
-            var averageHour = (averageDiff/60) % 24;
-            var averageDay = (averageDiff/60/24);
+            var oldestDiff = Math.floor((nowTime - fresh.oldestMilli)/1000/60);
+            var oldestMinute = Math.floor(oldestDiff % 60);
+            var oldestHour = Math.floor((oldestDiff/60) % 24);
+            var oldestDay = Math.floor(oldestDiff/60/24);
+            var averageDiff = Math.floor((nowTime - fresh.averageMilli)/1000/60);
+            var averageMinute = Math.floor(averageDiff % 60);
+            var averageHour = Math.floor((averageDiff/60) % 24);
+            var averageDay = Math.floor(averageDiff/60/24);
 
             fresh.update({oldestDay: oldestDay,
                           oldestHour: oldestHour,
@@ -100,6 +103,8 @@ exports.getLatestInfo = function(res, next, ingredientName, callback) {
                           averageDay: averageDay,
                           averageHour: averageHour,
                           averageMinute: averageMinute}, function(err, obj){
+                            console.log('updated freshness data');
+                            //console.log(fresh);
                             callback();
                           });
         }
