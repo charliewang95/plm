@@ -58,13 +58,17 @@ const EditCell = (props) => {
   const vendorOptions = props.row.vendorOptions;
   const value = props.row.selectedVendorId;
   const quantity = props.row.packageNum;
+  const array = props.row.lotNumberArray.ingredientLots;
+  console.log("this is the edit cell");
+  console.log(array);
+  console.log(quantity);
   if(props.column.name == 'packageNum'){
     return <TableEditRow.Cell {...props}
-            required style={{backgroundColor:'aliceblue'}}
+      required style={{backgroundColor:'aliceblue'}}
           />;
   }else if(props.column.name == 'vendors'){
     return <VendorCell handleChange = {props.onValueChange}
-              vendorOptions = {vendorOptions} value = {value}/>;
+      vendorOptions = {vendorOptions} value = {value}/>;
   }else{
     return <Cell {...props} style={{backgroundColor:'aliceblue'}}  />;
   }
@@ -108,17 +112,18 @@ const LotNumberFormatter = (props) =>{
 };
 
 const lotNumberEditor = (props) => {
-  var quantity = props.row.lotNumberArray.packageNum;
-  var initialArray = props.row.lotNumberArray.ingredientLots;
-  var totalAssigned = props.row.totalAssigned;
+  const quantity = props.row.lotNumberArray.packageNum;
+  const shallowCopy = props.row.lotNumberArray.ingrdientLots;
+  // const deepCopy = new Array();
+  // var obj = new Object;
+  // obj.package = 4;
+  // obj.lotNumber = '3333';
+  // deepCopy.push(obj);
+  let deepCopy = JSON.parse(JSON.stringify(props.row.lotNumberArray.ingredientLots));
+  const totalAssigned = props.row.totalAssigned;
   console.log("lotnumbereditor");
-  console.log(totalAssigned);
   console.log(props);
-  return<LotNumberButton
-    totalAssigned = {totalAssigned}
-    initialArray={initialArray}
-    quantity = {quantity}
-    handleChange = {props.onValueChange}></LotNumberButton>
+  return<LotNumberButton totalAssigned = {totalAssigned} initialArray={deepCopy} quantity = {quantity} handlePropsChange={props.onValueChange}></LotNumberButton>
 };
 
 const LotNumberProvider = props => (
@@ -165,6 +170,9 @@ class ShoppingCart extends React.Component {
       currentPage: 0,
       pageSize: 10,
       pageSizes: [5, 10, 0],
+
+      canCheckout: true,
+
       deleteColumns:[
         { name: 'ingredientName', title: 'Ingredient Name' },
         { name: 'vendorName', title: 'Vendor / Price ($)' },
@@ -175,6 +183,7 @@ class ShoppingCart extends React.Component {
       expandedRowIds: [],
       snackBarOpen:false,
       snackBarMessage:'',
+
 
     };
     this.changeCurrentPage = currentPage => {
@@ -189,6 +198,7 @@ class ShoppingCart extends React.Component {
 
     this.commitChanges =  ({ changed, deleted }) => {
       var temp = this;
+      var tempCheckout = true;
       let { rows } = temp.state;
 
       if(changed){
@@ -209,31 +219,23 @@ class ShoppingCart extends React.Component {
                   // TODO: Update back end
                   rows[i].packageNum = changed[rows[i].id].packageNum;
                   orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
-                        vendor, enteredQuantity ,price,ingredientLots,sessionId,function(res){
+                    vendor, enteredQuantity ,price,ingredientLots,sessionId,function(res){
                           // TODO: Display error on exceeding storage capacity
                           // if(res.status==)
                           // TODO: Add SnackBar
                           // update the table
-                          console.log('called');
                           if (res.status != 400 && res.status != 500 ){
 //                            rows[i].packageNum = enteredQuantity;
                               //window.location.reload();
                           }
-
-                        });
-                    }
+                  });
                 }
-
-               if (changed[rows[i].id].vendors){
+              }
+              if (changed[rows[i].id].vendors){
                  // TODO: Update Back End -- No error status so no callback??
-                 console.log("changed vendors");
-                 console.log(rows[i]);
                  rows[i].vendors = changed[rows[i].id].vendors.label;
                  rows[i].vendorName = changed[rows[i].id].vendors.vendorName;
                  rows[i].selectedVendorId =changed[rows[i].id].vendors.vendorId;
-                 console.log("selected vendor: ");
-                 console.log(changed[rows[i].id].vendors.vendorName);
-                 console.log(changed[rows[i].id].vendors.price);
                  orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
                        changed[rows[i].id].vendors.vendorName,rows[i].packageNum,
                        changed[rows[i].id].vendors.price, rows[i].ingredientLots, sessionId, function(res){
@@ -250,7 +252,7 @@ class ShoppingCart extends React.Component {
                   // TODO: Add SnackBar
               }
 
-               if (changed[rows[i].id].lotNumberArray){
+              if (changed[rows[i].id].lotNumberArray){
                 var vendor = rows[i].selectedVendorName ? rows[i].selectedVendorName : rows[i].vendorOptions[0].vendorName;
                 var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].price;
                 var ingredientLots = changed[rows[i].id].lotNumberArray.ingredientLots;
@@ -258,24 +260,20 @@ class ShoppingCart extends React.Component {
                 rows[i].lotNumberArray.packageNum = packageNum;
                 rows[i].lotNumberArray.ingredientLots = ingredientLots;
                 console.log(ingredientLots);
-        if(ingredientLots.length>0){
+                  if(ingredientLots.length>0){
 
-                 var sum = 0;
-          console.log("this is the ingredientLots 222");
-          for(var j=0; j<ingredientLots.length;j++){
-            sum+=parseInt(ingredientLots[j].package);
-          }
-           console.log(sum);
-            rows[i].totalAssigned = sum;
+                           var sum = 0;
+                    console.log("this is the ingredientLots 222");
+                    for(var j=0; j<ingredientLots.length;j++){
+                      sum+=parseInt(ingredientLots[j].package);
+                    }
+                    console.log(sum);
+                    rows[i].totalAssigned = sum;
                     rows[i].lotAssigned = (packageNum-sum)==0;
-        }
-                console.log("changed lotNumberArray");
-                console.log(changed[rows[i].id].lotNumberArray);
-                console.log("ingredientLots");
-                console.log(ingredientLots);
-                console.log("quantity");
-                console.log(packageNum);
-                 orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
+                  }else{
+                     rows[i].lotAssigned = false;
+                  } 
+                orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
                         vendor, packageNum ,price,ingredientLots,sessionId,function(res){
                         console.log(res);
                          if (res.status != 400 && res.status != 500 ){
@@ -285,11 +283,20 @@ class ShoppingCart extends React.Component {
                        });
                }
             }
+            if(!rows[i].lotAssigned){
+              tempCheckout = false;
+              this.setState({canCheckout:false});
+            }
+          }//forloop bracket
+          if(tempCheckout){
+            this.setState({canCheckout: true});
           }
-          //TODO: Add SnackBar
-            this.setState({snackBarMessage : "Order successfully edited."});
-            this.setState({snackBarOpen:true});
-        }
+          this.setState({snackBarMessage : "Order successfully edited."});
+          this.setState({snackBarOpen:true});
+        }//changed bracket
+        // Delete
+        // TODO: Add SnackBar
+        //TODO: Add SnackBar
 
         // Delete
         if(deleted){
@@ -310,7 +317,7 @@ class ShoppingCart extends React.Component {
                 if(i!= (array.length -1)){
                   string+=' , ';
                 }
-              }
+          }
           obj.lotNumberString = (array.length > 0)? string:"Not Assigned";
           obj.lotNumberArray = array;
           obj.rowId = deleted;
@@ -332,6 +339,7 @@ class ShoppingCart extends React.Component {
     this.deleteRows =  async() => {
       var temp = this;
       console.log("deleting cart rows")
+
       const rows = temp.state.rows.slice();
       console.log(temp.state.deletingRows);
 
@@ -464,6 +472,9 @@ class ShoppingCart extends React.Component {
         }
         singleData.totalAssigned = sum;
         singleData.lotAssigned = (rawData[i].packageNum-sum)==0;
+        if(!singleData.lotAssigned){
+          this.setState({canCheckout:false});
+        }
         console.log("this is the single data");
         console.log(singleData);
         processedData.push(singleData);
@@ -577,7 +588,8 @@ class ShoppingCart extends React.Component {
                   style={{marginLeft: 500, marginBottom: 30, float: 'center'}}
                   type="submit"
                   onClick = {this.handleCheckOut}
-                  primary="true"> Checkout </Button>}
+                  primary="true"
+                  disabled = {!this.state.canCheckout}> Checkout </Button>}
       </div>
       </Paper>
     </div>
