@@ -35,7 +35,6 @@ import { withStyles } from 'material-ui/styles';
 
 import Styles from  'react-select/dist/react-select.css';
 import ReactSelect from 'react-select';
-import testData from './testIngredients';
 import SelectVendors from './SelectVendors';
 import * as ingredientInterface from '../../interface/ingredientInterface';
 import * as vendorInterface from '../../interface/vendorInterface';
@@ -45,8 +44,14 @@ import * as inventoryInterface from '../../interface/inventoryInterface';
 import * as testConfig from '../../../resources/testConfig.js';
 import MyPdfViewer from './PdfViewer';
 import {Link} from 'react-router-dom';
-import Snackbar from 'material-ui/Snackbar';
 import Chip from 'material-ui/Chip';
+import testData from './testIngredients';
+
+// import Snackbar from 'material-ui/Snackbar';
+
+// import Tabs, {Tab} from 'material-ui/Tabs';
+// import AppBar from 'material-ui/AppBar';
+// import Intermediates from './intermediates';
 
 // TODO: get session Id from the user
 
@@ -233,7 +238,7 @@ const Cell = (props) => {
   console.log(props);
   if(props.column.name=='name'){
     return <Table.Cell {...props}>
-    <Link to={{pathname: '/ingredient-details', state:{details: props.row} }}>{props.row.name}</Link>
+    <Link to={{pathname: '/ingredient-details', state:{details: props.row , isIntermediate:false} }}>{props.row.name}</Link>
     {(props.row.numUnit>0)&&<Chip style={{marginLeft: 10}} label="In Stock"/>}
     </Table.Cell>
   }
@@ -303,12 +308,13 @@ class AdminIngredients extends React.PureComponent {
       editingRowIds: [],
       addedRows: [],
       rowChanges: {},
-      currentPage: 5,
+      currentPage: 0,
       deletingRows: [],
       pageSize: 10,
       pageSizes: [5, 10, 0],
       columnOrder: ['name', 'temperatureZone', 'packageNameString', 'numUnitString', 'space', 'vendors'],
       options:[],
+      // currentTab: 0,
     };
 
     // console.log(" NAME : " + testData.tablePage.items[0].name);
@@ -316,12 +322,6 @@ class AdminIngredients extends React.PureComponent {
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeAddedRows = addedRows => this.setState({
       addedRows: addedRows.map(row => (Object.keys(row).length ? row : {
-
-        /* TODO: Change this after getting the data from back End */
-        // name: testData.tablePage.ingredient_options[0],
-        // vendors: testData.tablePage.vendor_options[0],
-        //temperatureZone: testData.tablePage.temperatureZone_options[0],
-        //packageName:testData.tablePage.package_options[0],
         temperatureZone: "",
         packageName: "",
         vendorsArray: [],
@@ -334,7 +334,6 @@ class AdminIngredients extends React.PureComponent {
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
-
     this.commitChanges = async ({ added, changed, deleted }) => {
       console.log("Commit Changes");
       let { rows } = this.state;
@@ -487,13 +486,7 @@ class AdminIngredients extends React.PureComponent {
                     window.location.reload();
                 }
           });
-
-
-          //Alert the user
-
-
         }
-
       });
 
       this.setState({ rows, deletingRows: [] });
@@ -524,7 +517,7 @@ class AdminIngredients extends React.PureComponent {
   }
 
   async loadCodeNameArray(){
-   // var startingIndex = 0;
+   var startingIndex = 0;
     var rawData = [];
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     rawData = await vendorInterface.getAllVendorNamesCodesAsync(sessionId);
@@ -562,19 +555,15 @@ class AdminIngredients extends React.PureComponent {
   }
 
   async loadAllIngredients(){
-    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     var rawData = await ingredientInterface.getAllIngredientsAsync(sessionId);
+    // var rawData = testData.tablePage.lots_test;
+
     if(rawData.length==0){
       return
     }
     console.log("rawData asdfasdfasdf");
     console.log(rawData[0].vendors);
     var processedData=[];
-    //   var processedData = [...rawData.map((row, index)=> ({
-    //     id: startingIndex + index,...row,
-    //   })),
-    // ];
-
     // //loop through ingredient
     for (var i = 0; i < rawData.length; i++) {
       var vendorArrayString = "";
@@ -681,11 +670,19 @@ class AdminIngredients extends React.PureComponent {
       deletingRows,
       pageSize,
       pageSizes,
-      columnOrder
+      columnOrder,
+      currentTab
     } = this.state;
 
     return (
       <div>
+      {/* <AppBar position="static" color="default">
+      <Tabs value={currentTab} onChange={this.handleTabChange.bind(this)}>
+      <Tab label = "Ingredients" />
+      <Tab label = "Intermediates" />
+      </Tabs>
+      </AppBar> */}
+      {/* {currentTab === 0 && */}
       <Paper>
         <Grid
           allowColumnResizing = {true}
@@ -798,7 +795,9 @@ class AdminIngredients extends React.PureComponent {
       style = {{marginLeft: 380, marginBottom: 30}}
       > ORDER INGREDIENTS</Button>}
 
+      {/* {currentTab===1 && <Paper> <Intermediates/> </Paper>} */}
     </div>
+
     );
   }
 }

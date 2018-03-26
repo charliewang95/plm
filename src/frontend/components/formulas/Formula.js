@@ -44,6 +44,7 @@ import * as testConfig from '../../../resources/testConfig.js';
 import MyPdfViewer from '../admin/PdfViewer';
 import * as uploadInterface from '../../interface/uploadInterface';
 import formulaData from './dummyData';
+import SnackBarDisplay from '../snackBar/snackBarDisplay';
 
 //TODO: Set the user ID
 var sessionId = "";
@@ -137,8 +138,6 @@ AddToProdButton.propTypes = {
 const Cell = (props) => {
 //  console.log(" CELL props value: ");
 //  console.log(props);
-var isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
-var isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
   if(props.column.name=='name'){
     return <Table.Cell {...props}>
     <Link to={{pathname: '/formula-details', state:{details: props.row} }}>{props.row.name}</Link>
@@ -193,12 +192,15 @@ class Formula extends React.PureComponent {
       columnOrder: ['name', 'description', 'unitsProvided', 'ingredients', 'productType','sendToProd' ],
       options:[],
       productionFormula:{},
+      snackBarOpen:false,
+      snackBarMessage:'',
     };
 
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
+    this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
 
     this.commitChanges = ({ deleted }) => {
       let { rows } = this.state;
@@ -232,6 +234,8 @@ class Formula extends React.PureComponent {
           rows.splice(index, 1);
           // TODO: Add snackbar
           // alert(" Ingredient successfully deleted ! ");
+          this.setState({snackBarMessage : "Formula successfully deleted."});
+          this.setState({snackBarOpen:true});
         }
       });
       this.setState({ rows, deletingRows: [] });
@@ -241,8 +245,13 @@ class Formula extends React.PureComponent {
 
   componentWillMount(){
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
     this.loadAllFormulas();
+  }
 
+  handleSnackBarClose(){
+    this.setState({snackBarOpen:false});
+    this.setState({snackBarMessage: ''});
   }
 
   componentDidMount(){
@@ -385,6 +394,11 @@ class Formula extends React.PureComponent {
             onCommitChanges={this.commitChanges}
           />}
           <DragDropProvider />
+          {this.state.snackBarOpen && <SnackBarDisplay
+                open = {this.state.snackBarOpen}
+                message = {this.state.snackBarMessage}
+                handleSnackBarClose = {this.handleSnackBarClose}
+              /> }
           <Table
             // columnExtensions={tableColumnExtensions}
             cellComponent={Cell}

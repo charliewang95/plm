@@ -14,7 +14,10 @@ import { withStyles } from 'material-ui/styles';
 import dummyData from '../orders/dummyData';
 import * as ingredientActions from '../../interface/ingredientInterface';
 
+import * as ingredientActions from '../../interface/ingredientInterface';
+
 import * as testConfig from '../../../resources/testConfig.js';
+import freshnessReportData from './testData';
 
 // const sessionId = testConfig.sessionId;
 var sessionId = "";
@@ -61,8 +64,8 @@ export default class FreshnessReport extends React.PureComponent {
      var processedData = [...rawData.data.map((row, index)=> ({
          id: index,
          ...row,
-         averageWaitTime: row.averageDay + "d " + row.averageHour + "h " + row.averageMinute + "m ",
-         worstWaitTime: row.oldestDay + "d " + row.oldestHour + "h " + row.oldestMinute + "m ",
+         averageWaitTime: row.averageDay + "d  " + row.averageHour + "h " + row.averageMinute + "m",
+         worstWaitTime: row.oldestDay + "d  " + row.oldestHour + "h " + row.averageMinute + "m",
        })),
      ];
      this.setState({rows:processedData});

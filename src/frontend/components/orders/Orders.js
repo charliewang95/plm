@@ -107,7 +107,7 @@ class Orders extends React.PureComponent{
 
 
   async handleIngredientChange(option) {
-    var packageNameHelpText = option.numUnitPerPackage + ' ' + option.nativeUnit + ' / ' + 
+    var packageNameHelpText = option.numUnitPerPackage + ' ' + option.nativeUnit + ' / ' +
     this.packageWeight(option.packageName) + ' sqft';
     this.setState({helpText:packageNameHelpText});
     console.log(" Ingredient Selected " + option.label);
@@ -174,7 +174,7 @@ class Orders extends React.PureComponent{
    try{
      if(this.isValid()){
        await orderActions.addOrder(userId,this.state.ingredientId,this.state.ingredientName,
-       this.state.vendorName,parseInt(this.state.packageNum,10),this.state.price,sessionId,function(res){
+       this.state.vendorName,parseInt(this.state.packageNum,10),this.state.price,[], sessionId,function(res){
            if (res.status == 400) {
                alert(res.data);
            }else if (res.status == 500) {

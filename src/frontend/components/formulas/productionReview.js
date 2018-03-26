@@ -21,6 +21,7 @@ import Tooltip from 'material-ui/Tooltip';
 import RaisedButton from 'material-ui/Button';
 import * as orderActions from '../../interface/orderInterface';
 import * as productActions from '../../interface/productInterface';
+import SnackBarDisplay from '../snackBar/snackBarDisplay';
 
 import {reviewData} from './dummyData';
 
@@ -64,6 +65,8 @@ class ProductionReview extends React.Component {
         addedQuantity:(props.location.state) ? (props.location.state.selectedFormula.unitsProvided) : '',
         // needToOrderIngredients:false,
         ingredientsToOrder:[],
+        snackBarMessage:'',
+        snackBarOpen:false,
     };
     // this.cancelProduction = this.cancelProduction.bind(this);
     this.cancelProduction =() =>
@@ -74,14 +77,13 @@ class ProductionReview extends React.Component {
     console.log(this.state.formulaRows);
 
     this.productionReview = async() =>{
-      //TODO: add to cart
+
+      //TODO: Remove this
       sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
       console.log(" get production review");
-      // console.log(this.state.formulaRows[0]._id + " , " +
-      //             parseInt(this.state.addedQuantity,10) + ", " + sessionId);
 
-      // TODO: get
       var temp = this;
+
       //TODO: Check this
       console.log(this.state.formulaRows[0]._id+' '+Number(this.state.addedQuantity));
       await formulaActions.checkoutFormula("review",this.state.formulaRows[0]._id,
@@ -97,8 +99,10 @@ class ProductionReview extends React.Component {
               else {
                  review = res.data;
                  console.log(review);
+
                  var review = [...review.map((row, index)=> ({
                      id:index,...row,
+                     delta:Math.round(row.delta*100)/100,
                      })),
                    ];
                    // console.log(" Formula " + JSON.stringify(review));
@@ -110,20 +114,26 @@ class ProductionReview extends React.Component {
                      if(review[i].delta> 0 ){
                        // Add to the Array
                        data.push(review[i]);
-                       // this.setState({needToOrderIngredients:true})
                      }
                    }
-
                     console.log(data);
                    temp.setState({ingredientsToOrder:data});
                    temp.setState({open:false});
+
+                   temp.setState({snackBarMessage : "Formula successfully sent to production. "});
+                   temp.setState({snackBarOpen:true});
               }
       });
+
+      console.log(" OPEN PROD " + this.state.snackBarOpen);
+      console.log(" MSG " + this.state.snackBarMessage);
     }
 
     console.log('preview constructed');
     this.addToShoppingCart = this.addToShoppingCart.bind(this);
     this.checkOutFormula = this.checkOutFormula.bind(this);
+    this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
+    this.handleOnClose = this.handleOnClose.bind(this);
     console.log('everything binded');
   }
 
@@ -133,7 +143,7 @@ class ProductionReview extends React.Component {
     userId = JSON.parse(sessionStorage.getItem('user'))._id;
     console.log("add To cart" + JSON.stringify(this.state.ingredientsToOrder));
     // ADD the ingredients with needed amount to
-    var success = false;
+    // var success = false;
     console.log(this.state.ingredientsToOrder);
     for(var i = 0; i < this.state.ingredientsToOrder.length;i++){
       var row = this.state.ingredientsToOrder[i];
@@ -146,22 +156,22 @@ class ProductionReview extends React.Component {
       price = vendors[0].price;
 
       console.log(" ADD ORDER ");
-      // TODO: Add order based on numUnitPerPackage
+      // TODO: CHANGE THIS
       await orderActions.addOrder(userId,row.ingredientId,
         row.ingredientName,vendorName,_package,price,sessionId,function(res){
         //TODO: Please update this
+        console.log(res.status);
         if(res.status == 400){
           alert(res.data);
         }else{
-          success = true;
-          alert(" Ingredients Successfully added to cart. ");
+          // success = true;
+          this.setState({snackBarMessage : "Ingredients Successfully added to cart. "});
+          this.setState({snackBarOpen:true});
         }
       });
     }
     //TODO: Snackbar
-   if(success){
-     alert("Ingredients successfully added to cart. Please check out your cart first to send this formula to production.")
-   }
+
     event.stopPropagation();
   }
 
@@ -178,6 +188,7 @@ class ProductionReview extends React.Component {
       });
     event.stopPropagation();
   };
+
   handleFormulaQuantity(event){
   const re = /^\d*\.?\d*$/;
       if (event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
@@ -192,15 +203,19 @@ class ProductionReview extends React.Component {
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
   }
 
-    cancel(){
-      this.setState({open:false});
-    }
+
   handleOnClose(){
     this.setState({open:false});
   }
 
+  handleSnackBarClose(){
+    this.setState({snackBarOpen:false});
+    this.setState({snackBarMessage: ''});
+  }
+
   render() {
     // const {classes} = this.props;
+    // const { classes } = this.props;
     const {formulaRows,rows,columns,formulaColumns, } = this.state;
     return (
       <div>
@@ -215,11 +230,18 @@ class ProductionReview extends React.Component {
           <Table />
           <TableHeaderRow  />
         </Grid>
+
       <Divider/>
+
+      {this.state.snackBarOpen && <SnackBarDisplay
+            open = {this.state.snackBarOpen}
+            message = {this.state.snackBarMessage}
+            handleSnackBarClose = {this.handleSnackBarClose}
+          /> }
+
           <Dialog
             open={this.state.open}
             onClose={this.handleOnClose}
-            // classes={{ paper: classes.dialog }}
           >
             <DialogTitle>Check out to production</DialogTitle>
             <DialogContent>
@@ -298,6 +320,5 @@ class ProductionReview extends React.Component {
     );
   }
 }
-
 
 export default ProductionReview;
