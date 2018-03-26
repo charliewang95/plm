@@ -12,9 +12,11 @@ class LotNumberSelector extends Component {
 
   constructor(props) {
     super(props)
+    const initialArray = this.props.initialArray;
     this.state = {
       //totalAssigned: this.props.totalAssigned, //total number assigned
-      lotNumberArray: (this.props.initialArray)?this.props.initialArray:[],
+      lotNumberArray: (initialArray)?initialArray:[],
+      // lotNumberArray: [],
       currentLotNumber: '',
       currentQuantity: '',
     };
@@ -24,6 +26,7 @@ class LotNumberSelector extends Component {
     this.updateQuantity = this.updateQuantity.bind(this);
     this.updateCurrentLotNumber = this.updateCurrentLotNumber.bind(this);
     this.updateCurrentQuantity = this.updateCurrentQuantity.bind(this);
+    this.checkLotNumberUnique = this.checkLotNumberUnique.bind(this);
   }
 
   componentDidUpdate(){
@@ -40,17 +43,32 @@ class LotNumberSelector extends Component {
       this.setState({currentQuantity:''});
     }
   }
+
   addLotNumberItem(){
-    var newLotNumberItem = new Object();
-    newLotNumberItem.package = this.state.currentQuantity;
-    newLotNumberItem.lotNumber = this.state.currentLotNumber;
-    this.state.lotNumberArray.push(newLotNumberItem);
-    this.setState({lotNumberArray:this.state.lotNumberArray});
-    this.setState({currentQuantity: ''});
-    this.setState({currentLotNumber: ''});
-    console.log("array");
-    console.log(this.state.lotNumberArray);
-    this.props.updateArray(this.state.lotNumberArray);
+    // check that the lot number does not exist
+    if(this.checkLotNumberUnique(this.state.currentLotNumber)){
+      var newLotNumberItem = new Object();
+      newLotNumberItem.package = this.state.currentQuantity;
+      newLotNumberItem.lotNumber = this.state.currentLotNumber;
+      this.state.lotNumberArray.push(newLotNumberItem);
+      this.setState({lotNumberArray:this.state.lotNumberArray});
+      this.setState({currentQuantity: ''});
+      this.setState({currentLotNumber: ''});
+      console.log("array");
+      console.log(this.state.lotNumberArray);
+      this.props.updateArray(this.state.lotNumberArray);
+    }else{
+      alert("Lot Numbers should be unique!");
+    }
+  }
+
+  checkLotNumberUnique(lotNumber){
+    for(var i = 0; i < this.state.lotNumberArray.length;i++){
+      if(lotNumber.toLowerCase()==this.state.lotNumberArray[i].lotNumber.toLowerCase()){
+        return false;
+      }
+    }
+    return true;
   }
 
   deleteLotNumberItem(index){
@@ -64,27 +82,42 @@ class LotNumberSelector extends Component {
   }
 
   updateLotNumber (event, index) {
+    console.log("updateLotNumber");
     var lotNumber = event.target.value;
-    if(index!=-1){
-      this.state.lotNumberArray[index].lotNumber = lotNumber;
-      this.setState({lotNumberArray: this.state.lotNumberArray});
-      this.props.updateArray(this.state.lotNumberArray);
+    if(index!=-1 ){
+      if(!this.checkLotNumberUnique(lotNumber)){
+        alert("Lot number must be unique!");
+      }else {
+      //Add check for data type
+        this.state.lotNumberArray[index].lotNumber = lotNumber;
+        this.setState({lotNumberArray: this.state.lotNumberArray});
+        this.props.updateArray(this.state.lotNumberArray);
+      }
     }
   }
 
   updateQuantity(event, index) {
     var quantity = event.target.value;
     if(index>=0){
-      this.state.lotNumberArray[index].package = quantity;
-      this.setState({lotNumberArray: this.state.lotNumberArray});
-      this.props.updateArray(this.state.lotNumberArray);
+      const re = /^\d*\.?\d*$/;
+      if(!re.test(quantity)){
+        alert("Quantity must be a positive integer");
+      }else{
+        console.log("updateQuantity");
+        this.state.lotNumberArray[index].package = quantity;
+        this.setState({lotNumberArray: this.state.lotNumberArray});
+        this.props.updateArray(this.state.lotNumberArray);
+      }
     }
   }
 
   updateCurrentLotNumber (event){
+    console.log("updatecurrentlotnumber");
     var lotNumber = event.target.value;
-    const re = /^[a-z0-9]+$/i;
-      if(lotNumber==''|| (re.test(lotNumber))) {
+    // const re = /^[a-z0-9]+$/i;
+    const re = /^[a-zA-Z0-9_.-]*$/
+    // const re = /^\w+$/;
+      if(lotNumber!='' && (re.test(lotNumber))) {
         this.setState({currentLotNumber: lotNumber});
       }else{
         alert("Lot Number must be alphanumeric.");
@@ -93,11 +126,14 @@ class LotNumberSelector extends Component {
 
   updateCurrentQuantity(event){
     var quantity = event.target.value;
-    if(this.props.quantity==0 || this.props.quantity==''){
-      alert("Please enter a quantity first");
-    }
-    else if(quantity>(this.props.quantity-this.props.totalAssigned) || (quantity==0 && quantity!='')){
-      alert("Please enter a number less than or equal to " + (this.props.quantity-this.props.totalAssigned));
+    // if(this.props.quantity==0 || this.props.quantity==''){
+    //   alert("Please enter a quantity first");
+    // }
+    const re = /^\d*\.?\d*$/;
+    if(!re.test(quantity)){
+      alert("Quantity must be a positive integer");
+    }else if(quantity>(this.props.quantity-this.props.totalAssigned) || (quantity==0 && quantity!='')){
+      alert("Please enter a positive integer less than or equal to " + (this.props.quantity-this.props.totalAssigned));
     }else{
       this.setState({currentQuantity:quantity});
     }
@@ -137,7 +173,11 @@ class LotNumberSelector extends Component {
             (this.props.quantity==''||this.props.totalAssigned=='') ? <div></div> :
             <p><font color="green">All Packages have been assigned!</font></p>
           }
-      {(this.state.lotNumberArray.length>0) && <LotNumberArray lotNumberArray={this.state.lotNumberArray} deleteLotNumberItem={this.deleteLotNumberItem} updateQuantity={this.updateQuantity} updateLotNumber={this.updateLotNumber}/>}
+      {(this.state.lotNumberArray.length>0) && <LotNumberArray
+        lotNumberArray={this.state.lotNumberArray}
+        deleteLotNumberItem={this.deleteLotNumberItem}
+        updateQuantity={this.updateQuantity}
+        updateLotNumber={this.updateLotNumber}/>}
       </div>
     );
   }

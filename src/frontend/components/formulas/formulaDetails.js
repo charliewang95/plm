@@ -100,6 +100,11 @@ class FormulaDetails extends React.Component{
       this.computeIngredientsString();
   }
 
+  handleSnackBarClose(){
+    this.setState({snackBarOpen:false});
+    this.setState({snackBarMessage: ''});
+  }
+  
 async loadFormula(){
     var details = [];
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;

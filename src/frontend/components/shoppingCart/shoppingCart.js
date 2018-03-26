@@ -111,8 +111,12 @@ const lotNumberEditor = (props) => {
   var totalAssigned = props.row.totalAssigned;
   console.log("lotnumbereditor");
   console.log(totalAssigned);
-  console.log(initialArray);
-  return<LotNumberButton totalAssigned = {totalAssigned} initialArray={initialArray} quantity = {quantity} handleChange = {props.onValueChange}></LotNumberButton>
+  console.log(props);
+  return<LotNumberButton
+    totalAssigned = {totalAssigned}
+    initialArray={initialArray}
+    quantity = {quantity}
+    handleChange = {props.onValueChange}></LotNumberButton>
 };
 
 const LotNumberProvider = props => (
@@ -243,6 +247,7 @@ class ShoppingCart extends React.Component {
             }
           }
         }
+
         // Delete
         this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
         // TODO: Add SnackBar
@@ -357,7 +362,7 @@ class ShoppingCart extends React.Component {
         singleData.lotNumberArray = new Object();
         singleData.lotNumberArray.ingredientLots = rawData[i].ingredientLots;
         singleData.lotNumberArray.packageNum = rawData[i].packageNum;
-      
+
 
         var sum = 0;
         if(rawData[i].ingredientLots.length>0){

@@ -15,7 +15,7 @@ import Select from 'material-ui/Select';
 import Chip from 'material-ui/Chip';
 import * as ingredientInterface from '../../interface/ingredientInterface';
 import SelectVendors from './SelectVendors';
-import LotNumberSelector from './StockEditorInLot/LotNumberSelector.js';
+import LotNumberSelector from './StockEditorInLot/StockLotNumberSelector.js';
 import SnackBarDisplay from '../snackBar/snackBarDisplay.js';
 
 import testData from './testIngredients.js';
@@ -59,21 +59,6 @@ var sessionId = "";
 var userId="";
 var isAdmin = "";
 var lotIdMap = new Object();
-
-// const InStockFilterCellBase = ({ filter, onFilter, classes }) => (
-//   <TableCell  >
-//     <Select
-//       input={<Input />}
-//       value={filter ?  (filter.value!='' ? filter.value : 'No Filter') : 'No Filter'}
-//       onChange={e => onFilter(e.target.value ? { value: e.target.value} : null)onValueChange(event.target.value.toLowerCase())}
-//       style={{ width: '100%', marginTop: '4px' }}
-//     >
-//       <MenuItem value={''}>No Filter</MenuItem>
-//       <MenuItem value={'true'}>In Stock</MenuItem>
-//       <MenuItem value={'false'}>Not In Stock</MenuItem>
-//     </Select>
-//   </TableCell>
-// );
 
 class AddIngredientForm extends React.Component{
 
