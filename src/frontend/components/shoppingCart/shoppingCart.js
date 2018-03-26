@@ -371,12 +371,12 @@ class ShoppingCart extends React.Component {
   }
     // console.log("Vendor Options " + JSON.stringify(parsedVendorOptions));
 
-    var processedData = [...processedData.map((row, index)=> ({
+    var finalData = [...processedData.map((row, index)=> ({
         id: index,...row,
       })),
     ];
-      console.log("processedData " + JSON.stringify(processedData));
-      this.setState({rows:processedData});
+      console.log("finalData " + JSON.stringify(finalData));
+      this.setState({rows:finalData});
   }
 
   render() {

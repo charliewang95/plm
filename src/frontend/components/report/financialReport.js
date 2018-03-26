@@ -67,13 +67,18 @@ export default class FinancialReport extends React.PureComponent {
        // alert(e);
      // }
      // adds integer values as row id
-     var processedData = [...rawData.map((row, index)=> ({
-         id: index,
-         ...row,
-         moneySpent: Math.round(row.moneySpent*100)/100,
-         moneyProd: Math.round(row.moneyProd*100)/100,
-       })),
-     ];
+
+     var processedData = [];
+      if(!rawData){
+        processedData = [...rawData.map((row, index)=> ({
+            id: index,
+            ...row,
+            moneySpent: Math.round(row.moneySpent*100)/100,
+            moneyProd: Math.round(row.moneyProd*100)/100,
+          })),
+        ];
+      }
+
      this.setState({rows:processedData});
    }
 
