@@ -157,8 +157,9 @@ class ProductionReview extends React.Component {
 
       console.log(" ADD ORDER ");
       // TODO: CHANGE THIS
+      var ingredientLots = [];
       await orderActions.addOrder(userId,row.ingredientId,
-        row.ingredientName,vendorName,_package,price,sessionId,function(res){
+        row.ingredientName,vendorName,_package,price,[],ingredientLots,sessionId,function(res){
         //TODO: Please update this
         console.log(res.status);
         if(res.status == 400){

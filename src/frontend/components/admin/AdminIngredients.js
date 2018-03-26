@@ -547,18 +547,18 @@ class AdminIngredients extends React.PureComponent {
     });
     this.setState({idToNameMap:map});
   }
-
-  async loadInventoryData(ingredientId, sessionId){
-    console.log("enterasdf");
-    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    var inventoryData = await inventoryInterface.getInventoryAsync(ingredientId, sessionId);
-    console.log("loading inventory");
-    console.log(inventoryData);
-    return inventoryData;
-  }
+  //
+  // async loadInventoryData(ingredientId, sessionId){
+  //   console.log("enterasdf");
+  //   sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+  //   var inventoryData = await inventoryInterface.getInventoryAsync(ingredientId, sessionId);
+  //   console.log("loading inventory");
+  //   console.log(inventoryData);
+  //   return inventoryData;
+  // }
 
   async loadAllIngredients(){
-    var rawData = await ingredientInterface.getAllIngredientsAsync(sessionId);
+    var rawData = await ingredientInterface.getAllIngredientsOnlyAsync(sessionId);
     // var rawData = testData.tablePage.lots_test;
 
     if(rawData.length==0){
