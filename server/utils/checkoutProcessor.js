@@ -31,6 +31,7 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
         }
         else {
             validateOrders(items, res, next, function(wSpace, rSpace, fSpace){
+
                 console.log("Orders validated.");
                 addIngredientLots(req, res, next, items, 0, function(){
                     deleteProcessor.process(model, items, '', res, next);
@@ -45,56 +46,66 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
 
 var addIngredientLots = function(req, res, next, items, i, callback){
     if (i == items.length) {
+        console.log('called');
         callback();
     } else {
         var order = items[i];
         var assignments = order.ingredientLots;
-        for (var j = 0; j<assignments.length; j++) {
-            var assignment = assignments[i];
-            var lotNumber = assignment.lotNumber;
-            var lotNumberUnique = assignment.lotNumber.toLowerCase();
-            var numPackage = assignment.package();
-            IngredientLot.findOne({ingredientNameUnique: order.ingredientName.toLowerCase(),
-                                   vendorNameUnique: order.vendorName.toLowerCase(),
-                                   lotNumberUnique: lotNumberUnique}, function(err, ingredientLot){
+        addIngredientLotsHelper(req, res, next, 0, order, assignments, function(){
+            addIngredientLots(req, res, next, items, i+1, callback);
+        });
+    }
+};
+
+var addIngredientLotsHelper = function(req, res, next, j, order, assignments, callback) {
+    if (j == assignments.length) callback();
+    else {
+        var assignment = assignments[j];
+        var lotNumber = assignment.lotNumber;
+        var lotNumberUnique = assignment.lotNumber.toLowerCase();
+        var numPackage = assignment.package;
+        IngredientLot.findOne({ingredientNameUnique: order.ingredientName.toLowerCase(),
+                               vendorNameUnique: order.vendorName.toLowerCase(),
+                               lotNumberUnique: lotNumberUnique}, function(err, ingredientLot){
+             Ingredient.findOne({nameUnique: order.ingredientName.toLowerCase()}, function(err, ingredient){
                  if (err) return next(err);
                  else if (!ingredientLot) {
-                    Ingredient.findOne({nameUnique: order.ingredientName.toLowerCase()}, function(err, ingredient){
-                        if (err) return next(err);
-                        else if (!ingredient) return res.status(400).send('Ingredient '+order.ingredientName+' does not exist. 001');
-                        else {
-                            var newIngredientLot = new IngredientLot();
-                            newIngredientLot.ingredientName = order.ingredientName;
-                            newIngredientLot.ingredientNameUnique = order.ingredientName.toLowerCase();
-                            newIngredientLot.ingredientId = order.ingredientId;
-                            newIngredientLot.nativeUnit = ingredient.nativeUnit;
-                            newIngredientLot.numUnit = numPackage * ingredient.numUnitPerPackage;
-                            newIngredientLot.date = new Date();
-                            newIngredientLot.lotNumber = lotNumber;
-                            newIngredientLot.lotNumberUnique = lotNumberUnique;
-                            newIngredientLot.vendorName = order.vendorName;
-                            newIngredientLot.vendorNameUnique = order.vendorName.toLowerCase();
-                            newIngredientLot.save(function(err){
-                                freshness.updateAverageAdd(res, next, order.ingredientName, new Date(), numPackage * ingredient.numUnitPerPackage, function(){
-                                    addIngredientLots(req, res, next, items, i+1, callback);
-                                });
+                    if (err) return next(err);
+                    else if (!ingredient) return res.status(400).send('Ingredient '+order.ingredientName+' does not exist. 001');
+                    else {
+                        var newIngredientLot = new IngredientLot();
+                        newIngredientLot.ingredientName = order.ingredientName;
+                        newIngredientLot.ingredientNameUnique = order.ingredientName.toLowerCase();
+                        newIngredientLot.ingredientId = order.ingredientId;
+                        newIngredientLot.nativeUnit = ingredient.nativeUnit;
+                        newIngredientLot.numUnit = numPackage * ingredient.numUnitPerPackage;
+                        newIngredientLot.date = new Date();
+                        newIngredientLot.lotNumber = lotNumber;
+                        newIngredientLot.lotNumberUnique = lotNumberUnique;
+                        newIngredientLot.vendorName = order.vendorName;
+                        newIngredientLot.vendorNameUnique = order.vendorName.toLowerCase();
+                        newIngredientLot.save(function(err){
+                            freshness.updateAverageAdd(res, next, order.ingredientName, new Date(), numPackage * ingredient.numUnitPerPackage, function(){
+                                console.log('called here 1');
+                                addIngredientLotsHelper(req, res, next, j+1, order, assignments, callback);
                             });
-                        }
-                    });
+                        });
+                    }
                  }
                  else {
                     var oldNumUnit = ingredientLot.numUnit;
                     var newNumUnit = numPackage * ingredient.numUnitPerPackage + oldNumUnit;
-                    newIngredientLot.update({numUnit: newNumUnit}, function(err, obj){
+                    ingredientLot.update({numUnit: newNumUnit}, function(err, obj){
                         freshness.updateAverageAdd(res, next, order.ingredientName, new Date(), numPackage * ingredient.numUnitPerPackage, function(){
-                            addIngredientLots(req, res, next, items, i+1, callback);
+                            console.log('called here 2');
+                            addIngredientLotsHelper(req, res, next, j+1, order, assignments, callback);
                         });
                     });
                  }
-            });
-        }
+             });
+        });
     }
-};
+}
 
 var updateStorage = function(wSpace, rSpace, fSpace) {
     Storage.findOne({temperatureZone: 'warehouse'}, function(err, storage){
@@ -496,6 +507,7 @@ var updateIngredientProduct = function(req, res, next, ingredientName, formula, 
         newIngredientProduct.ingredientNameUnique = ingredientName.toLowerCase();
         newIngredientProduct.vendorNameUnique = lot.vendorNameUnique;
         newIngredientProduct.lotNumberUnique = lot.lotNumberUnique;
+        newIngredientProduct.lotId = lot._id;
         newIngredientProduct.productName = formula.name;
         newIngredientProduct.date = date;
         newIngredientProduct.lotNumber = (formula.isIntermediate) ? 'IP'+date.getTime() : 'PR'+date.getTime();

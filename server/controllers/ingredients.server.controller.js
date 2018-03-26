@@ -59,12 +59,8 @@ exports.listLotNumbers = function(req, res, next) {
     });
 };
 
-exports.editLot = function(req, res, next) {
-    //var lotId = req.params.
-};
-
 exports.getRecall = function(req, res, next) {
-    IngredientProduct.find({ingredientNameUnique: req.params.ingredientName.toLowerCase(), lotNumberUnique: req.params.lotNumber.toLowerCase()}, function(err, ingredients){
+    IngredientProduct.findById(req.params.lotId, function(err, ingredients){
         if (err) return next(err);
         else res.json(ingredients);
     });
@@ -96,12 +92,29 @@ exports.listNames = function(req, res, next) {
 }
 
 exports.getFresh = function(req, res, next) {
-    freshness.getLatestInfo(res, next, req.params.ingredientName, function(){
-        IngredientFreshness.find(function(err, fresh){
-            if (err) return next(err);
-            else return res.json(fresh);
-        })
+    console.log("get fresh called");
+    Ingredient.find({}, function(err, ingredients){
+        getFreshHelper(req, res, next, 0, ingredients, function(){
+            console.log('got it?');
+            IngredientFreshness.find({}, function(err, fresh){
+                console.log(fresh);
+                res.json(fresh);
+            });
+        });
     });
+}
+
+var getFreshHelper = function(req, res, next, i, ingredients, callback){
+    console.log(i+' '+ingredients.length)
+    if (i == ingredients.length){
+        callback();
+    } else {
+        var ingredient = ingredients[i];
+        var ingredientName = ingredient.name;
+        freshness.getLatestInfo(res, next, ingredientName, function(){
+            getFreshHelper(req, res, next, i+1, ingredients, callback);
+        });
+    }
 }
 
 exports.bulkImportIngredients = function(req, res, next, contents, callback) {
@@ -111,7 +124,6 @@ exports.bulkImportIngredients = function(req, res, next, contents, callback) {
     });
 };
 
-//
 exports.editLot = function(req, res, next) {
     User.findById(req.params.userId, function(err, user){
         if (err) return next(err);
