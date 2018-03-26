@@ -188,8 +188,8 @@ class ShoppingCart extends React.Component {
     this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
 
     this.commitChanges =  ({ changed, deleted }) => {
-      let { rows } = this.state;
       var temp = this;
+      let { rows } = temp.state;
 
       if(changed){
         console.log("asdfsadf changed");
@@ -317,8 +317,8 @@ class ShoppingCart extends React.Component {
 
           displayDeletingRows.push(obj);
 
-          this.setState({rows:rows});
-          this.setState({deletingRows:displayDeletingRows});
+          temp.setState({rows:rows});
+          temp.setState({deletingRows:displayDeletingRows});
           console.log("delete order");
 
           // this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
@@ -329,27 +329,33 @@ class ShoppingCart extends React.Component {
 
     this.cancelDelete = () => this.setState({ deletingRows: [] });
 
-    this.deleteRows =  () => {
+    this.deleteRows =  async() => {
+      var temp = this;
       console.log("deleting cart rows")
-      const rows = this.state.rows.slice();
-      console.log(this.state.deletingRows);
+      const rows = temp.state.rows.slice();
+      console.log(temp.state.deletingRows);
 
-      this.state.deletingRows.forEach((row) => {
+      // temp.state.deletingRows.forEach((row) => {
         // const index = rows.findIndex(row => row.id === rowId);
+        var row = this.state.deletingRows[0];
         const index = row.rowId;
         console.log(index);
 
         if (index > -1) {
           var orderId = rows[index]._id;
           // TODO: update back End
-          orderActions.deleteOrder(orderId, sessionId);
-          rows.splice(index, 1);
-          // TODO: Add SnackBar
-          this.setState({snackBarMessage : "Order successfully deleted."});
-          this.setState({snackBarOpen:true});
+          await orderActions.deleteOrder(orderId, sessionId, function (res) {
+            // if(res.status){
+
+            // }else{
+              rows.splice(index, 1);
+              // TODO: Add SnackBar
+              temp.setState({snackBarMessage : "Order successfully deleted."});
+              temp.setState({snackBarOpen:true});
+            });
         }
-      });
-      this.setState({ rows, deletingRows: [] });
+      console.log("deleted twice");
+      temp.setState({ rows, deletingRows: [] });
     };
 
     // handle check out orders
@@ -366,14 +372,13 @@ class ShoppingCart extends React.Component {
                 //temp.setState({rows:rows});
             }
         } else {
-          this.setState({snackBarMessage : "Checkout successful!"});
-          this.setState({snackBarOpen:true});
+          temp.setState({snackBarMessage : "Checkout successful!"});
+          temp.setState({snackBarOpen:true});
             // alert('Checkout successful!');
             temp.setState({rows:[]});
         }
       });
     };
-
   }
 
   handleSnackBarClose(){

@@ -78,8 +78,8 @@ async function updateOrder(orderId, userId, ingredientId,ingredientName, vendorN
  * sessionId: string, id of the current session
  */
 async function deleteOrder(orderId, sessionId, callback) {
-	return await orderActions.deleteOrder(orderId, sessionId, function(res){
-	    callback(res);
+	return await orderActions.deleteOrder(orderId,sessionId,function(res){
+		callback(res);
 	});
 };
 
