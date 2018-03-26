@@ -44,19 +44,6 @@ var userId = "";
 var sessionId = "";
 
 const Cell = (props)=>{
-  console.log("CELL");
-  console.log("hi i am cell");
-  // console.log(JSON.stringify(props))
-  const value = props.row.selectedVendorId;
-  const quantity = props.row.packageNum;
-  // if(props.column.name == 'lotNumberArray'){
-//    return (props.row.totalAssigned!=props.row.packageNum) ? <TableCell><p><font color="red">Actions Needed</font></p></TableCell> :
-//    <TableCell><p><font color="green">Completed</font></p></TableCell>;
-      // return <Table.Cell{...props}>"HI"</Table.Cell>
-  // }else
-  // if(props.column.name == 'lotNumberArray'){
-   // return <LotNumberButton quantity = {quantity} handleChange = {props.onValueChange}></LotNumberButton>
- // }else
    return <Table.Cell {...props}/>
 };
 
@@ -69,7 +56,6 @@ const EditCell = (props) => {
   const vendorOptions = props.row.vendorOptions;
   const value = props.row.selectedVendorId;
   const quantity = props.row.packageNum;
-
   if(props.column.name == 'packageNum'){
     return <TableEditRow.Cell {...props}
             required style={{backgroundColor:'aliceblue'}}
@@ -77,8 +63,6 @@ const EditCell = (props) => {
   }else if(props.column.name == 'vendors'){
     return <VendorCell handleChange = {props.onValueChange}
               vendorOptions = {vendorOptions} value = {value}/>;
-  // }else if(props.column.name == 'lotNumberArray'){
-   // return <LotNumberButton quantity = {quantity} handleChange = {props.onValueChange}></LotNumberButton>
   }else{
     return <Cell {...props} style={{backgroundColor:'aliceblue'}}  />;
   }
@@ -112,16 +96,23 @@ Command.propTypes = {
 const LotNumberFormatter = (props) =>{
   console.log("Formatter");
   console.log(props.row.lotAssigned);
+  const quantity = props.row.lotNumberArray.packageNum;
+
   if(!props.row.lotAssigned){
-    return <p><font color="red">Actions Needed</font></p>
+    return <p>{quantity} / <font color="red">Actions Needed</font></p>
   }else{
-    return <p><font color="green">Completed</font></p>
+    return <p>{quantity} / <font color="green">Completed</font></p>
   }
 };
 
 const lotNumberEditor = (props) => {
-  const quantity = props.row.packageNum;
-  return <LotNumberButton quantity = {quantity} handleChange = {props.onValueChange}></LotNumberButton>
+  var quantity = props.row.lotNumberArray.packageNum;
+  var initialArray = props.row.lotNumberArray.ingredientLots;
+  var totalAssigned = props.row.totalAssigned;
+  console.log("lotnumbereditor");
+  console.log(totalAssigned);
+  console.log(initialArray);
+  return<LotNumberButton totalAssigned = {totalAssigned} initialArray={initialArray} quantity = {quantity} handleChange = {props.onValueChange}></LotNumberButton>
 };
 
 const LotNumberProvider = props => (
@@ -141,11 +132,10 @@ class ShoppingCart extends React.Component {
     this.state = {
       columns: [
         { name: 'ingredientName', title: 'Ingredient Name' },
-        { name: 'packageNum', title: 'No. Of Packages' },
+       // { name: 'packageNum', title: 'null },
         { name: 'vendors', title: 'Vendor / Price ($)' },
         // { key: 'lotNumberArray', title: 'Lot Numbers'}
-        { name: 'lotNumberArray',
-        title: 'Lot Numbers'}
+        { name: 'lotNumberArray',title: 'No. of Packages / Lot Numbers Status'}
         // getCellValue: row => (props.row.totalAssigned!=props.row.packageNum) ? <TableCell><p><font color="red">Actions Needed</font></p></TableCell> :
         //    <TableCell><p><font color="green">Completed</font></p></TableCell>
 
@@ -165,7 +155,7 @@ class ShoppingCart extends React.Component {
     };
     this.changePageSize = pageSize => this.setState({ pageSize });
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
-    this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
+    this.changeRowChanges = (rowChanges) => {console.log("row changes"); console.log(rowChanges); this.setState({ rowChanges })};
 
     this.commitChanges =  ({ changed, deleted }) => {
       let { rows } = this.state;
@@ -233,9 +223,16 @@ class ShoppingCart extends React.Component {
                if (changed[rows[i].id].lotNumberArray){
                 var vendor = rows[i].selectedVendorName ? rows[i].selectedVendorName : rows[i].vendorOptions[0].vendorName;
                 var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].price;
-                var ingredientLots = changed[rows[i].id].lotNumberArray;
+                var ingredientLots = changed[rows[i].id].lotNumberArray.ingredientLots;
+                var packageNum = changed[rows[i].id].lotNumberArray.packageNum;
+                console.log("changed lotNumberArray");
+                console.log(changed[rows[i].id].lotNumberArray);
+                console.log("ingredientLots");
+                console.log(ingredientLots);
+                console.log("quantity");
+                console.log(packageNum);
                  orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
-                        vendor, rows[i].packageNum ,price,ingredientLots,sessionId,function(res){
+                        vendor, packageNum ,price,ingredientLots,sessionId,function(res){
                         console.log(res);
                          if (res.status != 400 && res.status != 500 ){
 //                            rows[i].packageNum = enteredQuantity;
@@ -357,16 +354,22 @@ class ShoppingCart extends React.Component {
         singleData.selectedVendorPrice= parsedVendorOptions[0].price;
         // Id is the value
         singleData.selectedVendorId = parsedVendorOptions[0].value;
-        singleData.lotNumberArray = rawData[i].ingredientLots;
-        singleData.lotAssigned = false;
+        singleData.lotNumberArray = new Object();
+        singleData.lotNumberArray.ingredientLots = rawData[i].ingredientLots;
+        singleData.lotNumberArray.packageNum = rawData[i].packageNum;
+      
 
         var sum = 0;
         if(rawData[i].ingredientLots.length>0){
-          for(var i=0; i<rawData[i].ingredientLots.length;i++){
-            sum+=parseInt(rawData[i].ingredientLots.package);
+          console.log("this is the ingredientLots");
+          for(var j=0; j<rawData[i].ingredientLots.length;j++){
+            sum+=parseInt(rawData[i].ingredientLots[j].package);
           }
         }
         singleData.totalAssigned = sum;
+        singleData.lotAssigned = (rawData[i].packageNum-sum)==0;
+        console.log("this is the single data");
+        console.log(singleData);
         processedData.push(singleData);
   }
     // console.log("Vendor Options " + JSON.stringify(parsedVendorOptions));
