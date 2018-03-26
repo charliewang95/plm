@@ -12,6 +12,8 @@ var prevFormula = '';
 var allFormulas = [];
 
 exports.bulkImportIntermediates = function(req, res, next, contents, callback) {
+    prevFormula = '';
+    allFormulas = [];
     //console.log(contents);
     var jsonArray = [];
     const csv=require('csvtojson')
@@ -50,10 +52,12 @@ var validateBulkImport = function(req, res, next, array, i, callback){
 
         var packageName = formula.PACKAGE.toLowerCase();
         var nativeUnit = formula["NATIVE UNIT"];
-        var unitsPerPackage = formula["UNITS PER PACKAGE"];
+        var numUnitPerPackage = formula["UNITS PER PACKAGE"];
         var temperatureZone = formula.TEMPERATURE;
 
         if (formulaName.toLowerCase() != prevFormula && allFormulas.includes(formulaName.toLowerCase())){
+            console.log(formulaName);
+            console.log(allFormulas);
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Duplicate formula names exist (the same formula should be in consecutive rows).');
             return;
         }
@@ -84,7 +88,7 @@ var validateBulkImport = function(req, res, next, array, i, callback){
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Native unit cannot be empty');
             return;
         }
-        if (formulaName.toLowerCase() != prevFormula.toLowerCase() && (unitsPerPackage == null || unitsPerPackage == '' || unitsPerPackage <= 0)) {
+        if (formulaName.toLowerCase() != prevFormula.toLowerCase() && (numUnitPerPackage == null || numUnitPerPackage == '' || numUnitPerPackage <= 0)) {
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Units per package must be non-empty and non-zero');
             return;
         }
@@ -160,7 +164,7 @@ var doBulkImport = function(username, req, res, next, array, i, callback){
 
         var packageName = formula.PACKAGE.toLowerCase();
         var nativeUnit = formula["NATIVE UNIT"];
-        var unitsPerPackage = formula["UNITS PER PACKAGE"];
+        var numUnitPerPackage = formula["UNITS PER PACKAGE"];
         var temperatureZone = formula.TEMPERATURE.toLowerCase();
 
         if (temperatureZone == 'room temperature') temperatureZone = 'warehouse';
@@ -181,7 +185,6 @@ var doBulkImport = function(username, req, res, next, array, i, callback){
                     obj.update({ingredients: ingredients}, function(err, obj3){
                         if (err) return next(err);
                         else {
-                            logger.log(username, 'create', obj, Formula);
                             doBulkImport(username, req, res, next, array, i+1, callback);
                         }
                     });
@@ -197,7 +200,7 @@ var doBulkImport = function(username, req, res, next, array, i, callback){
                     newFormula.packageName = packageName;
                     newFormula.nativeUnit = nativeUnit;
                     newFormula.ingredients = ingredients;
-                    newFormula.unitsPerPackage = unitsPerPackage;
+                    newFormula.numUnitPerPackage = numUnitPerPackage;
                     newFormula.temperatureZone = temperatureZone;
                     newFormula.isIntermediate = true;
 

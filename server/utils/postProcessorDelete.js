@@ -32,19 +32,13 @@ var processIngredient = function(item, itemId, res, next) {
         var occupied = storage.currentOccupiedSpace - space;
         var empty = capacity - occupied;
         storage.update({currentOccupiedSpace: occupied, currentEmptySpace:empty}, function(err, obj){
-            IngredientFreshness.findOne({ingredientNameUnique: item.nameUnique}, function(err, ingredientFreshness){
-                if (err) return next(err);
-                else if (!ingredientFreshness) return;
-                else {
-                    ingredientFreshness.remove(function(err){
-                        IngredientProduct.remove({ingredientNameUnique: item.nameUnique}, function(err, obj){
-                            IngredientLot.remove({ingredientNameUnique: item.nameUnique}, function(err, obj){
+            IngredientProduct.remove({ingredientNameUnique: item.nameUnique}, function(err){
+                IngredientProduct.remove({ingredientNameUnique: item.nameUnique}, function(err){
+                    IngredientLot.remove({ingredientNameUnique: item.nameUnique}, function(err){
 
-                            });
-                        });
                     });
-                }
-            })
+                });
+            });
         });
     })
 };
@@ -122,10 +116,10 @@ var processOrderHelper = function(i, items, res, next) {
             var moneySpent = ingredient.moneySpent + order.totalPrice;
             ingredient.update({numUnit: numUnit, space: newSpace, moneySpent: moneySpent}, function(err, obj){
                 if (err) return next(err);
-//                order.remove(function(err){
-//                    if (err) return next(err);
+                order.remove(function(err){
+                    if (err) return next(err);
                     else processOrderHelper(i+1, items, res, next);
-//                });
+                });
             });
         })
     }
