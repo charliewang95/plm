@@ -62,6 +62,7 @@ class LotNumberButton extends Component {
     console.log(this.props.initialArray);
     this.setState({lotNumberArray:(this.props.initialArray)?this.props.initialArray:[]});
     this.setState({totalAssigned:this.props.totalAssigned});
+    window.location.reload();
   }
 
   handleSave(e){
@@ -91,7 +92,7 @@ class LotNumberButton extends Component {
 
   render() {
     return (
-      <TableCell>
+      <div>
         <TextField
           label="Quantity"
           value={this.state.currentQuantity}
@@ -109,7 +110,7 @@ class LotNumberButton extends Component {
               <Button onClick={(e)=>this.handleSave(e)} color="secondary">Save</Button>
             </DialogActions>
           </Dialog>
-      </TableCell>
+        </div>
     );
   }
 }
