@@ -7,6 +7,7 @@ var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
 var Formula = mongoose.model('Formula');
+var Order = mongoose.model('Order');
 
 exports.validate = function(model, item, res, next, callback) {
     if (model == Ingredient) {
@@ -33,7 +34,7 @@ var validateIngredient = function(item, res, next, callback) {
     var formulaString = '';
     var orderString = false;
     Formula.find({}, function(err, formulas){
-        Orders.find({}, function(err, orders){
+        Order.find({}, function(err, orders){
             for (var i = 0; i < formulas.length; i++){
                 for (var j = 0; j < formulas[i].ingredients.length; j++){
                     if (ingredientName.toLowerCase() == formulas[i].ingredients[j].ingredientName.toLowerCase()){

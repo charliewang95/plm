@@ -54,8 +54,10 @@ async function updateOrder(orderId, sessionId, order, callback) {
  * orderId: string, the id of the order
  * sessionId: string, id of the current session
  */
-async function deleteOrder(orderId, sessionId) {
-	return await genericActions.deleteById(baseUrl, property, orderId, sessionId);
+async function deleteOrder(orderId, sessionId, callback) {
+	return await genericActions.deleteById(baseUrl, property, orderId, sessionId, function(res){
+	    callback(res);
+	});
 };
 
 async function checkoutOrder(sessionId, callback) {

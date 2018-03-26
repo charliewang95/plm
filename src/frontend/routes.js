@@ -29,7 +29,7 @@ import MainIngredientView from './components/admin/mainIngredientView';
 const Routes = () => (
       <div>
 	      <Switch>
-            <Route exact path="/" component={DashBoard} />
+            <Route exact path="/" component={MainIngredientView} />
             <Route path="/dashboard" component={DashBoard} />
             <Route path="/admin-ingredients" component={MainIngredientView} />
             {/* <Route path="/user-ingredients" component={UserIngredients} /> */}
