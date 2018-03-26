@@ -162,7 +162,7 @@ class ShoppingCart extends React.Component {
       var temp = this;
 
       if(changed){
-        console.log("changed");
+        console.log("asdfsadf changed");
         console.log(changed);
           for(var i = 0; i < rows.length;i++){
             if(changed[rows[i].id]){
@@ -225,6 +225,8 @@ class ShoppingCart extends React.Component {
                 var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].price;
                 var ingredientLots = changed[rows[i].id].lotNumberArray.ingredientLots;
                 var packageNum = changed[rows[i].id].lotNumberArray.packageNum;
+                rows[i].lotNumberArray.packageNum = packageNum;
+                rows[i].lotNumberArray.ingredientLots = ingredientLots;
                 console.log("changed lotNumberArray");
                 console.log(changed[rows[i].id].lotNumberArray);
                 console.log("ingredientLots");
@@ -314,7 +316,6 @@ class ShoppingCart extends React.Component {
     if(READ_FROM_DATABASE){
       rawData = await orderActions.getAllOrdersAsync(sessionId);
       console.log("rawData " + JSON.stringify(rawData));
-
     } else {
       rawData = cartData;
     }

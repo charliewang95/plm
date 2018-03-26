@@ -27,7 +27,7 @@ class LotNumberButton extends Component {
     this.handleSave = this.handleSave.bind(this);
     this.handleClickOpen = this.handleClickOpen.bind(this);
     console.log("constructor was called");
-    console.log(this.props.initialArray); 
+    //console.log(this.props.initialArray); 
   }
 
   updateArray(inputArray){
@@ -43,16 +43,16 @@ class LotNumberButton extends Component {
     this.setState({lotNumberArray:inputArray});
     this.setState({totalAssigned:sum});
     // this.props.handleChange(inputArray);
-    console.log(this.props.initialArray);
+    //console.log(this.props.initialArray);
   }
 
   handleChangeFunction = name => event => {
-    console.log(" changed lot number");
+    console.log("change quantity");
     console.log(event.target.value);
       this.setState({
         [name]: event.target.value,
       });
-    this.saveToProps();
+    this.saveToProps(event.target.value);
   }
 
   handleCancel(e){
@@ -61,20 +61,21 @@ class LotNumberButton extends Component {
     console.log("hit Cancel");
     console.log(this.props.initialArray);
     this.setState({lotNumberArray:(this.props.initialArray)?this.props.initialArray:[]});
+    this.setState({totalAssigned:this.props.totalAssigned});
   }
 
   handleSave(e){
     console.log("save lots");
     e.preventDefault();
     //send it to backend? or not yet
-    this.saveToProps();
+    this.saveToProps(this.state.currentQuantity);
     this.setState({open:false});
   }
 
-  saveToProps(){
+  saveToProps(quantity){
     var object = new Object();
     object.ingredientLots = this.state.lotNumberArray;
-    object.packageNum = this.state.currentQuantity;
+    object.packageNum = quantity;
     console.log("save to props");
     console.log(object);
     this.props.handleChange(object);

@@ -11,6 +11,7 @@ import Typography from 'material-ui/Typography';
 class LotNumberSelector extends Component {
 
   constructor(props) {
+    console.log("selector constructor was called");
     super(props)
     this.state = {
       //totalAssigned: this.props.totalAssigned, //total number assigned
