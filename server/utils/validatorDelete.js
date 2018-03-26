@@ -31,19 +31,30 @@ exports.validate = function(model, item, res, next, callback) {
 var validateIngredient = function(item, res, next, callback) {
     var ingredientName = item.name;
     var formulaString = '';
+    var orderString = false;
     Formula.find({}, function(err, formulas){
-        for (var i = 0; i < formulas.length; i++){
-            for (var j = 0; j < formulas[i].ingredients.length; j++){
-                if (ingredientName.toLowerCase() == formulas[i].ingredients[j].ingredientName.toLowerCase()){
-                    formulaString+=formulas[i].name+', ';
+        Orders.find({}, function(err, orders){
+            for (var i = 0; i < formulas.length; i++){
+                for (var j = 0; j < formulas[i].ingredients.length; j++){
+                    if (ingredientName.toLowerCase() == formulas[i].ingredients[j].ingredientName.toLowerCase()){
+                        formulaString+=formulas[i].name+', ';
+                    }
                 }
             }
-        }
-        if (formulaString!='')
-            return res.status(400).send('Action denied. This ingredient is used in formula(s): '+formulaString.slice(0,-2));
-        else
+            if (formulaString!='')
+                return res.status(400).send('Action denied. This ingredient is used in formula(s): '+formulaString.slice(0,-2));
+
+            for (var i = 0; i < orders.length; i++){
+                if (orders[i].ingredientName.toLowerCase() == ingredientName.toLowerCase()){
+                    orderString = true;
+                }
+            }
+            if (orderString)
+                return res.status(400).send('Action denied. This ingredient is used in orders.');
+
             callback();
-    })
+        });
+    });
 };
 
 var validateVendor = function(item, res, next, callback) {

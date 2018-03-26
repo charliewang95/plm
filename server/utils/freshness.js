@@ -14,10 +14,14 @@ exports.updateAverageAdd = function(res, next, ingredientName, date, numUnit, ca
 
                 if (err) return next(err);
                 else if (fresh) {
+                    console.log('freshness already exists');
                     var averageMilli = fresh.averageMilli;
-                    var newAverageMilli = (averageMilli * oldNumUnit + date.getTime() * numUnit) / (oldNumUnit + numUnit);
-                    fresh.update({averageMilli: newAverageMilli});
-                    callback();
+                    console.log('average '+averageMilli);
+                    var newAverageMilli = Math.floor((averageMilli * oldNumUnit + date.getTime() * numUnit) / (oldNumUnit + numUnit));
+                    console.log('new average '+newAverageMilli);
+                    fresh.update({averageMilli: newAverageMilli}, function(err, obj){
+                        callback();
+                    });
                 }
                 else {
                     var newFresh = new IngredientFreshness();
@@ -44,9 +48,10 @@ exports.updateAverageDelete = function(res, next, ingredientName, numUnit, callb
                 if (err) return next(err);
                 else if (fresh) {
                     var averageMilli = fresh.averageMilli;
-                    var newAverageMilli = (averageMilli * oldNumUnit - date.getTime() * numUnit) / (oldNumUnit - numUnit);
-                    fresh.update({averageMilli: newAverageMilli});
-                    callback();
+                    var newAverageMilli = Math.floor((averageMilli * oldNumUnit - date.getTime() * numUnit) / (oldNumUnit - numUnit));
+                    fresh.update({averageMilli: newAverageMilli}, function(err, obj){
+                        callback();
+                    });
                 }
                 else {
                     return res.status(400).send('Ingredient '+ingredientName+' does not exist.');
