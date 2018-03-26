@@ -338,7 +338,6 @@ class ShoppingCart extends React.Component {
       console.log("deleting cart rows")
       const rows = this.state.rows.slice();
       console.log(this.state.deletingRows);
-
       this.state.deletingRows.forEach((row) => {
         // const index = rows.findIndex(row => row.id === rowId);
         const index = row.rowId;
