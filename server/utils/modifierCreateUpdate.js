@@ -75,8 +75,12 @@ var modifyOrder = function(item, res, next, callback) { //add number of pounds t
                 else if (!ingredient){
                     return res.status(400).send('Ingredient does not exist');
                 } else {
-                    var str = JSON.stringify(item).slice(0,-1)+',"space":'+space+',"numUnit":'+numUnit+',"totalPrice":'+item.price*item.packageNum+',"ingredientId":"'+ingredient._id+'"}';
-                    callback(err, JSON.parse(str));
+                    //var str = JSON.stringify(item).slice(0,-1)+',"space":'+space+',"numUnit":'+numUnit+',"totalPrice":'+item.price*item.packageNum+',"ingredientId":"'+ingredient._id+'"}';
+                    item.space = space;
+                    item.numUnit = numUnit;
+                    item.totalPrice = item.price*item.packageNum;
+                    item.ingredientId = ingredient._id;
+                    callback(err, item);
                 }
             });
         }
