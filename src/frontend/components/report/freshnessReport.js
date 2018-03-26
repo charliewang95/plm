@@ -12,8 +12,8 @@ import {
 import Styles from  'react-select/dist/react-select.css';
 import { withStyles } from 'material-ui/styles';
 import dummyData from '../orders/dummyData';
-
 import * as ingredientActions from '../../interface/ingredientInterface';
+
 
 import * as testConfig from '../../../resources/testConfig.js';
 import freshnessReportData from './testData';
@@ -56,20 +56,18 @@ export default class FreshnessReport extends React.PureComponent {
   async loadAllIngredients(){
     var rawData = [];
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-
-    rawData = await ingredientActions.getFreshAsync(sessionId);
+     console.log('getting fresh data '+sessionId);
+     rawData = await ingredientActions.getFreshAsync(sessionId);
+     console.log(rawData);
+    
     var processedData = [];
-    console.log("rawData: ");
-    console.log(rawData);
-    if(rawData.data) rawData = rawData.data; // to handle response
-    console.log("rawData: ");
-    console.log(rawData);
+    if (rawData.data) rawData = rawData.data; // to handle response
     if (rawData){
       processedData = [...rawData.map((row, index)=> ({
          id: index,
          ...row,
          averageWaitTime: row.averageDay + "d  " + row.averageHour + "h " + row.averageMinute + "m",
-         worstWaitTime: row.oldestDay + "d  " + row.oldestHour + "h " + row.averageMinute + "m",
+         worstWaitTime: row.oldestDay + "d  " + row.oldestHour + "h " + row.oldestMinute + "m",
        })),
      ];  
     }   
