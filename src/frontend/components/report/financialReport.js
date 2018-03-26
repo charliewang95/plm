@@ -69,7 +69,7 @@ export default class FinancialReport extends React.PureComponent {
      // adds integer values as row id
 
      var processedData = [];
-      if(!rawData){
+      if(rawData){
         processedData = [...rawData.map((row, index)=> ({
             id: index,
             ...row,

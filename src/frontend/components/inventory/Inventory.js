@@ -240,7 +240,7 @@ class Inventory extends React.PureComponent {
      }
 
     var startingIndex = 0;
-    if (!rawData){
+    if (rawData){
       processedData = [...rawData.map((row, index)=> ({
         id: index,...row,
       })),

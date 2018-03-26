@@ -71,7 +71,7 @@ class ProductDetails extends React.Component {
     var rawData = this.state.productRows[0].ingredients;
 
     var processedData = [];
-      if(!rawData){
+      if(rawData){
         processedData = [...rawData.map((row, index)=> ({
             id:index,...row,
           })),
