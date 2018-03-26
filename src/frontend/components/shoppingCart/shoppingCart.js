@@ -279,7 +279,7 @@ class ShoppingCart extends React.Component {
                 console.log("quantity");
                 console.log(packageNum);
                  orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
-                        vendor, packageNum ,price,ingredientLots,sessionId,function(res){
+                        vendor, Number(packageNum) ,price,ingredientLots,sessionId,function(res){
                         console.log(res);
                          if (res.status != 400 && res.status != 500 ){
 //                            rows[i].packageNum = enteredQuantity;
