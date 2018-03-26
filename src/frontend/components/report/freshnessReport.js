@@ -58,14 +58,16 @@ export default class FreshnessReport extends React.PureComponent {
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
 
     rawData = await ingredientActions.getFreshAsync(sessionId);
-
-     var processedData = [...rawData.map((row, index)=> ({
+    var processedData = [];
+    if (!rawData){
+      processedData = [...rawData.map((row, index)=> ({
          id: index,
          ...row,
          averageWaitTime: row.averageDay + "d  " + row.averageHour + "h " + row.averageMinute + "m",
          worstWaitTime: row.oldestDay + "d  " + row.oldestHour + "h " + row.averageMinute + "m",
        })),
-     ];
+     ];  
+    }   
      this.setState({rows:processedData});
    }
 
