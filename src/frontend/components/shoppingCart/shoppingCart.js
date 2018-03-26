@@ -58,11 +58,11 @@ const EditCell = (props) => {
   const quantity = props.row.packageNum;
   if(props.column.name == 'packageNum'){
     return <TableEditRow.Cell {...props}
-            required style={{backgroundColor:'aliceblue'}}
+      required style={{backgroundColor:'aliceblue'}}
           />;
   }else if(props.column.name == 'vendors'){
     return <VendorCell handleChange = {props.onValueChange}
-              vendorOptions = {vendorOptions} value = {value}/>;
+      vendorOptions = {vendorOptions} value = {value}/>;
   }else{
     return <Cell {...props} style={{backgroundColor:'aliceblue'}}  />;
   }
@@ -106,13 +106,12 @@ const LotNumberFormatter = (props) =>{
 };
 
 const lotNumberEditor = (props) => {
-  var quantity = props.row.lotNumberArray.packageNum;
-  var initialArray = props.row.lotNumberArray.ingredientLots;
-  var totalAssigned = props.row.totalAssigned;
+  const quantity = props.row.lotNumberArray.packageNum;
+  const initialArray = props.row.lotNumberArray.ingredientLots;
+  const totalAssigned = props.row.totalAssigned;
   console.log("lotnumbereditor");
-  console.log(totalAssigned);
-  console.log(initialArray);
-  return<LotNumberButton totalAssigned = {totalAssigned} initialArray={initialArray} quantity = {quantity} handleChange = {props.onValueChange}></LotNumberButton>
+  console.log(props);
+  return<LotNumberButton totalAssigned = {totalAssigned} initialArray={initialArray} quantity = {quantity} handlePropsChange={props.onValueChange}></LotNumberButton>
 };
 
 const LotNumberProvider = props => (
@@ -148,6 +147,7 @@ class ShoppingCart extends React.Component {
       currentPage: 0,
       pageSize: 10,
       pageSizes: [5, 10, 0],
+      canCheckout: true,
 
     };
     this.changeCurrentPage = currentPage => {
@@ -160,7 +160,7 @@ class ShoppingCart extends React.Component {
     this.commitChanges =  ({ changed, deleted }) => {
       let { rows } = this.state;
       var temp = this;
-
+      var tempCheckout = true;
       if(changed){
         console.log("asdfsadf changed");
         console.log(changed);
@@ -238,7 +238,12 @@ class ShoppingCart extends React.Component {
            console.log(sum);
             rows[i].totalAssigned = sum;
                     rows[i].lotAssigned = (packageNum-sum)==0;
+        }else{
+           rows[i].lotAssigned = false;
         } 
+        if((packageNum-sum)!=0){
+          tempCheckout = false;
+        }
 
       
 
@@ -260,6 +265,9 @@ class ShoppingCart extends React.Component {
                }
             }
           }
+        }
+        if(!tempCheckout){
+          this.setState({canCheckout:false});
         }
         // Delete
         this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
@@ -386,6 +394,9 @@ class ShoppingCart extends React.Component {
         }
         singleData.totalAssigned = sum;
         singleData.lotAssigned = (rawData[i].packageNum-sum)==0;
+        if(!singleData.lotAssigned){
+          this.setState({canCheckout:false});
+        }
         console.log("this is the single data");
         console.log(singleData);
         processedData.push(singleData);
@@ -485,7 +496,8 @@ class ShoppingCart extends React.Component {
                   style={{marginLeft: 500, marginBottom: 30, float: 'center'}}
                   type="submit"
                   onClick = {this.handleCheckOut}
-                  primary="true"> Checkout </Button>}
+                  primary="true"
+                  disabled = {!this.state.canCheckout}> Checkout </Button>}
       </div>
       </Paper>
 

@@ -33,9 +33,9 @@ class LotNumberButton extends Component {
   }
 
 
-  componentDidUpdate(){
-    console.log("lot number button updated");
-    console.log(this.state.initialArray);
+  componentDidMount(){
+    console.log("lotnumberbutton mounted");
+    console.log(this.props.initialArray);
   }
 
   updateArray(inputArray){
@@ -50,11 +50,12 @@ class LotNumberButton extends Component {
     console.log("current sum " + sum);
     this.setState({lotNumberArray:inputArray});
     this.setState({totalAssigned:sum});
-    // this.props.handleChange(inputArray);
+    // this.props.handlePropsChange(inputArray);
     //console.log(this.props.initialArray);
   }
 
   handleQuantityChange(event){
+    event.preventDefault();
     console.log("change quantity");
     console.log(event.target.value);
       this.setState({
@@ -70,7 +71,9 @@ class LotNumberButton extends Component {
     console.log("hit Cancel");
     this.setState({lotNumberArray:this.props.initialArray});
     this.setState({totalAssigned:this.props.totalAssigned});
-    //window.location.reload();
+    alert("You have unsaved changes, are you sure?");
+    window.location.reload();
+    //current workaround...
     //e.stopPropagation();
   }
 
@@ -88,7 +91,7 @@ class LotNumberButton extends Component {
     object.packageNum = quantity;
     console.log("save to props");
     console.log(object);
-    this.props.handleChange(object);
+    this.props.handlePropsChange(object);
   }
 
   handleClickOpen(e){
@@ -96,7 +99,7 @@ class LotNumberButton extends Component {
     this.setState({
       open: true,
     });
-    e.stopPropagation();
+    // e.stopPropagation();
   }
 
   render() {
