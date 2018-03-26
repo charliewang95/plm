@@ -59,6 +59,11 @@ export default class FreshnessReport extends React.PureComponent {
 
     rawData = await ingredientActions.getFreshAsync(sessionId);
     var processedData = [];
+    console.log("rawData: ");
+    console.log(rawData);
+    if(rawData.data) rawData = rawData.data; // to handle response
+    console.log("rawData: ");
+    console.log(rawData);
     if (rawData){
       processedData = [...rawData.map((row, index)=> ({
          id: index,
