@@ -78,6 +78,7 @@ exports.updateOldestDelete = function(res, next, ingredientName, numUnit, callba
 };
 
 exports.getLatestInfo = function(res, next, ingredientName, callback) {
+    if (!ingredientName) return res.end();
     IngredientFreshness.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, fresh){
         if (err) return next(err);
         else if (!fresh)
