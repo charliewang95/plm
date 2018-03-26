@@ -3,6 +3,8 @@ var User = mongoose.model('User');
 var Order = mongoose.model('Order');
 var Ingredient = mongoose.model('Ingredient');
 var IngredientFreshness = mongoose.model('IngredientFreshness');
+var IngredientProduct = mongoose.model('IngredientProduct');
+var IngredientLot = mongoose.model('IngredientLot');
 var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
@@ -120,10 +122,10 @@ var processOrderHelper = function(i, items, res, next) {
             var moneySpent = ingredient.moneySpent + order.totalPrice;
             ingredient.update({numUnit: numUnit, space: newSpace, moneySpent: moneySpent}, function(err, obj){
                 if (err) return next(err);
-                order.remove(function(err){
-                    if (err) return next(err);
+//                order.remove(function(err){
+//                    if (err) return next(err);
                     else processOrderHelper(i+1, items, res, next);
-                });
+//                });
             });
         })
     }
