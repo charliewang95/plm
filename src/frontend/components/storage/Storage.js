@@ -165,7 +165,7 @@ class Storage extends React.PureComponent {
      rawData = dummyData;
     }
     var processedData = [];
-    if(!rawData){
+    if(rawData){
       processedData = [...rawData.map((row, index)=> ({
           id:index,...row,
         })),

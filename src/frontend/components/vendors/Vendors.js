@@ -228,7 +228,7 @@ class Vendors extends React.PureComponent
     console.log("rawData " + JSON.stringify(rawData));
     
     var processedData = [];
-    if(!rawData){
+    if(rawData){
       processedData = [...rawData.map((row, index)=> ({
           id: startingIndex + index,...row,
         })),

@@ -187,7 +187,7 @@ class Log extends React.PureComponent {
       var rawData = [];
       sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
       rawData = await logActions.getAllLogsAsync(sessionId);
-      if(!rawData){
+      if(rawData){
         rawData = rawData.reverse();
       }
       
@@ -206,7 +206,7 @@ class Log extends React.PureComponent {
            rawData[i].date = date.replace('T',' ').replace('Z',' ');
        }
        var processedData = [];
-       if(!rawData){
+       if(rawData){
         processedData = [...rawData.map((row, index)=> ({
            id:index,...row,
          })),

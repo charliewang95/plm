@@ -283,7 +283,7 @@ class Formula extends React.PureComponent {
         rawData[i].formulaId = rawData[i]._id;
       }
       var processedData = [];
-      if(!rawData){
+      if(rawData){
         processedData = [...rawData.map((row, index)=> ({
           id:index,
           // select based on whether it is Intermediate or Final
