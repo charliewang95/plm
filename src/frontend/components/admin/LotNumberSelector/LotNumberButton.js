@@ -38,6 +38,11 @@ class LotNumberButton extends Component {
     console.log(this.props.initialArray);
   }
 
+  componentDidUpdate(){
+    console.log("lotnumberbutton updated");
+    console.log(this.state.lotNumberArray);
+  }
+
   updateArray(inputArray){
     var sum = 0;
     for(var i=0; i<inputArray.length;i++){
@@ -118,7 +123,7 @@ class LotNumberButton extends Component {
              <DialogContentText>
                 i.e. If you want to assign lot number A123 to 4 packages, enter 4 for number of packages and A123 for lot number.
               </DialogContentText>
-              <LotNumberSelector initialArray={this.props.initialArray} quantity={this.state.currentQuantity} updateArray={this.updateArray} totalAssigned={this.state.totalAssigned}/>
+              <LotNumberSelector initialArray={this.state.lotNumberArray} quantity={this.state.currentQuantity} updateArray={this.updateArray} totalAssigned={this.state.totalAssigned}/>
             </DialogContent>
             <DialogActions>
               {/*<Button onClick={(e)=>this.handleCancel(e)} color="primary">Cancel</Button>*/}
