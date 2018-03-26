@@ -1,7 +1,13 @@
 // recallReport.js
 import React from 'react';
-import Paper from 'material-ui/Paper'
+import Paper from 'material-ui/Paper';
 
+//local import
+import IngredientSelection from '../../utils/gadgets/ingredientSelection.js'
+//
+var sessionId = "";
+
+//
 export default class RecallReport extends React.PureComponent{
 	constructor(props){
 		super(props); //required
@@ -9,11 +15,19 @@ export default class RecallReport extends React.PureComponent{
 
 		}
 	}
+	fetchSessionId(){
+		sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+		console.log("sessionId: " + sessionId);
+	}
+
+	componentDidMount(){
+		this.fetchSessionId();
+	}	
 
 	render() {
 		return (
 			<Paper>
-			test Paper
+			<IngredientSelection />
 			</Paper>
 		)
 	}
