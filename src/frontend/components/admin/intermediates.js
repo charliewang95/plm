@@ -219,14 +219,14 @@ class Intermediates extends React.PureComponent {
 
   async loadAllIngredients(){
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    var rawData = await ingredientInterface.getAllIngredientsAsync(sessionId);
+    var rawData = await ingredientInterface.getAllIntermediatesOnlyAsync(sessionId);
     if(rawData.length==0){
       return
     }
     var processedData=[];
     var finalData =[];
     for (var i = 0; i < rawData.length; i++) {
-      if(rawData[i].isIntermediate){
+      // if(rawData[i].isIntermediate){
           var singleData = new Object ();
           console.log("singleData");
           console.log(singleData);
@@ -243,7 +243,7 @@ class Intermediates extends React.PureComponent {
           singleData.space = rawData[i].space;
           singleData.ingredientId = rawData[i]._id;
           processedData.push(singleData);
-        }
+        // }
     }
 
     if(processedData.length ){

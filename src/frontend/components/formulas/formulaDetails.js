@@ -104,7 +104,7 @@ class FormulaDetails extends React.Component{
     this.setState({snackBarOpen:false});
     this.setState({snackBarMessage: ''});
   }
-  
+
 async loadFormula(){
     var details = [];
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
@@ -221,50 +221,53 @@ async loadFormula(){
 
 
   async onFormSubmit(e) {
+    var temp = this;
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
 
     e.preventDefault();
     console.log("submit formula ");
-    if(this.isValid() && this.state.isCreateNew){
+    if(temp.isValid() && temp.state.isCreateNew){
 
-
-      console.log(" Array " + JSON.stringify(this.state.ingredientsArray));
+      console.log(" Array " + JSON.stringify(temp.state.ingredientsArray));
       //TODO: Check for adding order
 
-      await formulaActions.addFormula(this.state.name, this.state.description,
-            this.state.unitsProvided, this.state.ingredientsArray, this.state.isIntermediate,
-            this.state.packageName,this.state.temperatureZone,this.state.nativeUnit,this.state.numUnitPerPackage,
+
+      await formulaActions.addFormula(temp.state.name, temp.state.description,
+            temp.state.unitsProvided, temp.state.ingredientsArray, temp.state.isIntermediate,
+            temp.state.packageName,temp.state.temperatureZone,temp.state.nativeUnit,temp.state.numUnitPerPackage,
             sessionId, function(res){
               //TODO: Please update the error accordingly
               if(res.status==400){
                 alert(res.data);
               }else{
                 // TODO: Snackbar
-                this.setState({snackBarMessage : "Formula successfully added"});
-                this.setState({snackBarOpen:true});
+                temp.setState({snackBarMessage : "Formula successfully added"});
+                temp.setState({snackBarOpen:true});
                 // alert(" Formula successfully added! ");
               }
             });
-    }else if (this.isValid()){
+    }else if (temp.isValid() && !temp.state.isCreateNew){
       console.log("update formula ");
-      console.log(this.state);
+      console.log(temp.state);
 
-      await formulaActions.updateFormula(this.state.formulaId, this.state.name,
-        this.state.description,this.state.unitsProvided, this.state.ingredientsArray,
-        this.state.isIntermediate,this.state.packageName,this.state.temperatureZone,
-        this.state.nativeUnit,this.state.numUnitPerPackage,sessionId, function(res){
+      await formulaActions.updateFormula(temp.state.formulaId, temp.state.name,
+        temp.state.description,temp.state.unitsProvided, temp.state.ingredientsArray,
+        temp.state.isIntermediate,temp.state.packageName,temp.state.temperatureZone,
+        temp.state.nativeUnit,temp.state.numUnitPerPackage,sessionId, function(res){
           //TODO: Update error status
           if(res.status == 400){
             alert(res.data);
           }else{
             //TODO: SnackBar
-            this.setState({snackBarMessage : "Formula successfully updated."});
-            this.setState({snackBarOpen:true});
+            temp.setState({snackBarMessage : "Formula successfully updated."});
+            temp.setState({snackBarOpen:true});
             // alert(" Formula successfully updated. ");
           }
         });
-    this.setState({isDisabled:true});
+    temp.setState({isDisabled:true});
     }
+    // updating this
+    // temp.setState({isCreateNew:false})
   }
 
     handleNewOptionClick(option){
