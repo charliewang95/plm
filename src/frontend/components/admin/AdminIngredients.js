@@ -458,7 +458,9 @@ class AdminIngredients extends React.PureComponent {
         };
         //TODO: send data to the back end
       }
-
+    console.log("delete ingredient");
+    console.log(deleted);
+    console.log(this.state.deletingRows);
     this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
     };
 
@@ -488,7 +490,8 @@ class AdminIngredients extends React.PureComponent {
           });
         }
       });
-
+      console.log("delete");
+      console.log(this.state.deletingRows);
       this.setState({ rows, deletingRows: [] });
     };
 

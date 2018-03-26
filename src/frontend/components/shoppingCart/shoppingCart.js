@@ -6,9 +6,10 @@ import {
   Grid,
   Table,
   TableHeaderRow,TableEditColumn,PagingPanel,TableEditRow,
+  TableRowDetail,
 } from '@devexpress/dx-react-grid-material-ui';
 import {
-  EditingState,PagingState,IntegratedPaging,DataTypeProvider
+  EditingState,PagingState,IntegratedPaging,DataTypeProvider,RowDetailState
 } from '@devexpress/dx-react-grid';
 
 import * as testConfig from '../../../resources/testConfig.js';
@@ -36,6 +37,7 @@ import * as ingredientActions from '../../interface/ingredientInterface.js';
 
 import {cartData, ingredientData} from './dummyData';
 import LotNumberButton from '../admin/LotNumberSelector/LotNumberButton.js';
+import SnackBarDisplay from '../snackBar/snackBarDisplay';
 
 // TODO: Get the user ID
 const READ_FROM_DATABASE = true;
@@ -44,19 +46,6 @@ var userId = "";
 var sessionId = "";
 
 const Cell = (props)=>{
-  console.log("CELL");
-  console.log("hi i am cell");
-  // console.log(JSON.stringify(props))
-  const value = props.row.selectedVendorId;
-  const quantity = props.row.packageNum;
-  // if(props.column.name == 'lotNumberArray'){
-//    return (props.row.totalAssigned!=props.row.packageNum) ? <TableCell><p><font color="red">Actions Needed</font></p></TableCell> :
-//    <TableCell><p><font color="green">Completed</font></p></TableCell>;
-      // return <Table.Cell{...props}>"HI"</Table.Cell>
-  // }else
-  // if(props.column.name == 'lotNumberArray'){
-   // return <LotNumberButton quantity = {quantity} handleChange = {props.onValueChange}></LotNumberButton>
- // }else
    return <Table.Cell {...props}/>
 };
 
@@ -69,7 +58,6 @@ const EditCell = (props) => {
   const vendorOptions = props.row.vendorOptions;
   const value = props.row.selectedVendorId;
   const quantity = props.row.packageNum;
-
   if(props.column.name == 'packageNum'){
     return <TableEditRow.Cell {...props}
             required style={{backgroundColor:'aliceblue'}}
@@ -77,8 +65,6 @@ const EditCell = (props) => {
   }else if(props.column.name == 'vendors'){
     return <VendorCell handleChange = {props.onValueChange}
               vendorOptions = {vendorOptions} value = {value}/>;
-  // }else if(props.column.name == 'lotNumberArray'){
-   // return <LotNumberButton quantity = {quantity} handleChange = {props.onValueChange}></LotNumberButton>
   }else{
     return <Cell {...props} style={{backgroundColor:'aliceblue'}}  />;
   }
@@ -112,16 +98,27 @@ Command.propTypes = {
 const LotNumberFormatter = (props) =>{
   console.log("Formatter");
   console.log(props.row.lotAssigned);
+  const quantity = props.row.lotNumberArray.packageNum;
+
   if(!props.row.lotAssigned){
-    return <p><font color="red">Actions Needed</font></p>
+    return <p>{quantity} / <font color="red">Actions Needed</font></p>
   }else{
-    return <p><font color="green">Completed</font></p>
+    return <p>{quantity} / <font color="green">Completed</font></p>
   }
 };
 
 const lotNumberEditor = (props) => {
-  const quantity = props.row.packageNum;
-  return <LotNumberButton quantity = {quantity} handleChange = {props.onValueChange}></LotNumberButton>
+  var quantity = props.row.lotNumberArray.packageNum;
+  var initialArray = props.row.lotNumberArray.ingredientLots;
+  var totalAssigned = props.row.totalAssigned;
+  console.log("lotnumbereditor");
+  console.log(totalAssigned);
+  console.log(props);
+  return<LotNumberButton
+    totalAssigned = {totalAssigned}
+    initialArray={initialArray}
+    quantity = {quantity}
+    handleChange = {props.onValueChange}></LotNumberButton>
 };
 
 const LotNumberProvider = props => (
@@ -132,6 +129,17 @@ const LotNumberProvider = props => (
   />
 );
 
+const RowDetail = ({ row }) => {
+  var string = "";
+  row.lotNumberArray.forEach((r) =>(
+    string +="lot: " + r.lotNumber + " package: " + r.package + " , "
+  ));
+  return (
+  <div>{string}</div>
+)};
+
+
+
 const getRowId = row => row.id;
 
 class ShoppingCart extends React.Component {
@@ -141,11 +149,10 @@ class ShoppingCart extends React.Component {
     this.state = {
       columns: [
         { name: 'ingredientName', title: 'Ingredient Name' },
-        { name: 'packageNum', title: 'No. Of Packages' },
+       // { name: 'packageNum', title: 'null },
         { name: 'vendors', title: 'Vendor / Price ($)' },
         // { key: 'lotNumberArray', title: 'Lot Numbers'}
-        { name: 'lotNumberArray',
-        title: 'Lot Numbers'}
+        { name: 'lotNumberArray',title: 'No. of Packages / Lot Numbers Status'}
         // getCellValue: row => (props.row.totalAssigned!=props.row.packageNum) ? <TableCell><p><font color="red">Actions Needed</font></p></TableCell> :
         //    <TableCell><p><font color="green">Completed</font></p></TableCell>
 
@@ -158,6 +165,16 @@ class ShoppingCart extends React.Component {
       currentPage: 0,
       pageSize: 10,
       pageSizes: [5, 10, 0],
+      deleteColumns:[
+        { name: 'ingredientName', title: 'Ingredient Name' },
+        { name: 'vendorName', title: 'Vendor / Price ($)' },
+        { name: 'quantity',title: 'No. of Packages'},
+        { name: 'lotNumberString',title: 'No. of Packages / Lot Number'}
+      ],
+      deleteRows:[],
+      expandedRowIds: [],
+      snackBarOpen:false,
+      snackBarMessage:'',
 
     };
     this.changeCurrentPage = currentPage => {
@@ -165,14 +182,17 @@ class ShoppingCart extends React.Component {
     };
     this.changePageSize = pageSize => this.setState({ pageSize });
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
-    this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
+    this.changeRowChanges = (rowChanges) => {console.log("row changes"); console.log(rowChanges); this.setState({ rowChanges })};
+    this.changeExpandedDetails = expandedRowIds => this.setState({ expandedRowIds });
+
+    this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
 
     this.commitChanges =  ({ changed, deleted }) => {
       let { rows } = this.state;
       var temp = this;
 
       if(changed){
-        console.log("changed");
+        console.log("asdfsadf changed");
         console.log(changed);
           for(var i = 0; i < rows.length;i++){
             if(changed[rows[i].id]){
@@ -233,9 +253,30 @@ class ShoppingCart extends React.Component {
                if (changed[rows[i].id].lotNumberArray){
                 var vendor = rows[i].selectedVendorName ? rows[i].selectedVendorName : rows[i].vendorOptions[0].vendorName;
                 var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].price;
-                var ingredientLots = changed[rows[i].id].lotNumberArray;
+                var ingredientLots = changed[rows[i].id].lotNumberArray.ingredientLots;
+                var packageNum = changed[rows[i].id].lotNumberArray.packageNum;
+                rows[i].lotNumberArray.packageNum = packageNum;
+                rows[i].lotNumberArray.ingredientLots = ingredientLots;
+                console.log(ingredientLots);
+        if(ingredientLots.length>0){
+
+                 var sum = 0;
+          console.log("this is the ingredientLots 222");
+          for(var j=0; j<ingredientLots.length;j++){
+            sum+=parseInt(ingredientLots[j].package);
+          }
+           console.log(sum);
+            rows[i].totalAssigned = sum;
+                    rows[i].lotAssigned = (packageNum-sum)==0;
+        }
+                console.log("changed lotNumberArray");
+                console.log(changed[rows[i].id].lotNumberArray);
+                console.log("ingredientLots");
+                console.log(ingredientLots);
+                console.log("quantity");
+                console.log(packageNum);
                  orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
-                        vendor, rows[i].packageNum ,price,ingredientLots,sessionId,function(res){
+                        vendor, packageNum ,price,ingredientLots,sessionId,function(res){
                         console.log(res);
                          if (res.status != 400 && res.status != 500 ){
 //                            rows[i].packageNum = enteredQuantity;
@@ -245,25 +286,67 @@ class ShoppingCart extends React.Component {
                }
             }
           }
+          //TODO: Add SnackBar
+            this.setState({snackBarMessage : "Order successfully edited."});
+            this.setState({snackBarOpen:true});
         }
+
         // Delete
-        this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
-        // TODO: Add SnackBar
+        if(deleted){
+          var displayDeletingRows = new Array();
+          var obj = new Object();
+          obj.ingredientName = rows[deleted].ingredientName;
+          obj.vendorName = rows[deleted].vendors;
+          obj.quantity=rows[deleted].packageNum;
+
+          var string = "";
+          var array = rows[deleted].lotNumberArray.ingredientLots;
+          console.log("lot number string");
+          console.log(this.state);
+          for(var i =0; i < array.length; i++){
+                var lotObject = array[i];
+                //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
+                string +=  lotObject.package + "/ " + lotObject.lotNumber;
+                if(i!= (array.length -1)){
+                  string+=' , ';
+                }
+              }
+          obj.lotNumberString = (array.length > 0)? string:"Not Assigned";
+          obj.lotNumberArray = array;
+          obj.rowId = deleted;
+
+          displayDeletingRows.push(obj);
+
+          this.setState({rows:rows});
+          this.setState({deletingRows:displayDeletingRows});
+          console.log("delete order");
+
+          // this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
+          console.log("HERE");
+        }
     }
+
 
     this.cancelDelete = () => this.setState({ deletingRows: [] });
 
-    this.deleteRows = () => {
+    this.deleteRows =  () => {
+      console.log("deleting cart rows")
       const rows = this.state.rows.slice();
-      this.state.deletingRows.forEach((rowId) => {
-        const index = rows.findIndex(row => row.id === rowId);
+      console.log(this.state.deletingRows);
+
+      this.state.deletingRows.forEach((row) => {
+        // const index = rows.findIndex(row => row.id === rowId);
+        const index = row.rowId;
+        console.log(index);
+
         if (index > -1) {
           var orderId = rows[index]._id;
           // TODO: update back End
           orderActions.deleteOrder(orderId, sessionId);
           rows.splice(index, 1);
           // TODO: Add SnackBar
-          // alert(" Ingredient successfully deleted ! ");
+          this.setState({snackBarMessage : "Order successfully deleted."});
+          this.setState({snackBarOpen:true});
         }
       });
       this.setState({ rows, deletingRows: [] });
@@ -283,16 +366,19 @@ class ShoppingCart extends React.Component {
                 //temp.setState({rows:rows});
             }
         } else {
-            alert('Checkout successful!');
+          this.setState({snackBarMessage : "Checkout successful!"});
+          this.setState({snackBarOpen:true});
+            // alert('Checkout successful!');
             temp.setState({rows:[]});
         }
       });
-
-      // TODO: ADD snackbar
-      // alert(" Ingredients successfully ordered  ! ");
-      // window.location.reload();
     };
 
+  }
+
+  handleSnackBarClose(){
+    this.setState({snackBarOpen:false});
+    this.setState({snackBarMessage: ''});
   }
 
   componentDidMount(){
@@ -335,6 +421,8 @@ class ShoppingCart extends React.Component {
       if(READ_FROM_DATABASE){
         //TODO: get ingredientDetails from back End
         singleIngredientData = await ingredientActions.getIngredientAsync(rawData[i].ingredientId, sessionId);
+        console.log(rawData[i].ingredientId);
+        console.log(singleIngredientData);
       }else{
         singleIngredientData = ingredientData[i];
       }
@@ -357,16 +445,22 @@ class ShoppingCart extends React.Component {
         singleData.selectedVendorPrice= parsedVendorOptions[0].price;
         // Id is the value
         singleData.selectedVendorId = parsedVendorOptions[0].value;
-        singleData.lotNumberArray = rawData[i].ingredientLots;
-        singleData.lotAssigned = false;
+        singleData.lotNumberArray = new Object();
+        singleData.lotNumberArray.ingredientLots = rawData[i].ingredientLots;
+        singleData.lotNumberArray.packageNum = rawData[i].packageNum;
+
 
         var sum = 0;
         if(rawData[i].ingredientLots.length>0){
-          for(var i=0; i<rawData[i].ingredientLots.length;i++){
-            sum+=parseInt(rawData[i].ingredientLots.package);
+          console.log("this is the ingredientLots");
+          for(var j=0; j<rawData[i].ingredientLots.length;j++){
+            sum+=parseInt(rawData[i].ingredientLots[j].package);
           }
         }
         singleData.totalAssigned = sum;
+        singleData.lotAssigned = (rawData[i].packageNum-sum)==0;
+        console.log("this is the single data");
+        console.log(singleData);
         processedData.push(singleData);
   }
     // console.log("Vendor Options " + JSON.stringify(parsedVendorOptions));
@@ -382,9 +476,10 @@ class ShoppingCart extends React.Component {
   render() {
     // const {classes} = this.props;
     const { rows, columns,rowChanges,deletingRows,currentPage,
-      pageSize,pageSizes,editingRowIds,lotNumColumns } = this.state;
+      pageSize,pageSizes,editingRowIds,lotNumColumns ,deleteColumns,deleteRows,
+      expandedRowIds} = this.state;
     return (
-
+      <div>
       <Paper>
       <Divider/>
         <Grid
@@ -416,7 +511,6 @@ class ShoppingCart extends React.Component {
             cellComponent={EditCell}/>
         }
 
-
           <TableEditColumn
             width={120}
             showEditCommand
@@ -428,6 +522,12 @@ class ShoppingCart extends React.Component {
           <PagingPanel
             pageSizes={pageSizes}
           />
+
+          {this.state.snackBarOpen && <SnackBarDisplay
+                open = {this.state.snackBarOpen}
+                message = {this.state.snackBarMessage}
+                handleSnackBarClose = {this.handleSnackBarClose}
+              /> }
 
         </Grid>
           <Dialog
@@ -442,11 +542,19 @@ class ShoppingCart extends React.Component {
               </DialogContentText>
               <Paper>
                 <Grid
-                  rows={rows.filter(row => deletingRows.indexOf(row.id) > -1)}
-                  columns={columns}
+                  // rows={rows.filter(row => deletingRows.indexOf(row.id) > -1)}
+                  rows = {this.state.deletingRows}
+                  columns={this.state.deleteColumns}
                 >
-                  <Table/>
-                  <TableHeaderRow />
+                <RowDetailState
+                  expandedRowIds={expandedRowIds}
+                  onExpandedRowIdsChange={this.changeExpandedDetails}
+                />
+                <Table />
+                <TableHeaderRow />
+                <TableRowDetail
+                  contentComponent={RowDetail}
+                />
                 </Grid>
               </Paper>
             </DialogContent>
@@ -467,6 +575,7 @@ class ShoppingCart extends React.Component {
                   primary="true"> Checkout </Button>}
       </div>
       </Paper>
+    </div>
 
     );
   }

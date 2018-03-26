@@ -5,7 +5,7 @@ import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
 import { FormControl, FormGroup, FormHelperText } from 'material-ui/Form';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
-import LotNumberArray from './LotNumberArray';
+import LotNumberArray from './StockLotNumberArray';
 
 
 class LotNumberSelector extends Component {
@@ -27,8 +27,10 @@ class LotNumberSelector extends Component {
     this.updateCurrentLotNumber = this.updateCurrentLotNumber.bind(this);
     this.updateCurrentQuantity = this.updateCurrentQuantity.bind(this);
     this.loadLotNumbersArray = this.loadLotNumbersArray.bind(this);
+    this.checkLotNumberUnique = this.checkLotNumberUnique.bind(this);
 
   }
+
 
   componentWillMount(){
     this.loadLotNumbersArray();
@@ -50,6 +52,7 @@ class LotNumberSelector extends Component {
       console.log("lot numbers initialized");
     })
   }
+
   componentDidUpdate(){
     console.log(this.state.currentQuantity);
     console.log(this.props.quantity);
@@ -65,20 +68,33 @@ class LotNumberSelector extends Component {
     }
   }
 
+  checkLotNumberUnique(lotNumber){
+    for(var i = 0; i < this.state.lotNumberArray.length;i++){
+      if(lotNumber.toLowerCase()==this.state.lotNumberArray[i].lotNumber.toLowerCase()){
+        return false;
+      }
+    }
+    return true;
+  }
+
   addLotNumberItem(){
     console.log("add lot item");
-    var newLotNumberItem = new Object();
-    newLotNumberItem.numUnit = Number(this.state.currentQuantity);
-    newLotNumberItem.lotNumber = this.state.currentLotNumber;
-    this.state.lotNumberArray.push(newLotNumberItem);
+    if(this.checkLotNumberUnique(this.state.currentLotNumber)){
+      var newLotNumberItem = new Object();
+      newLotNumberItem.numUnit = Number(this.state.currentQuantity);
+      newLotNumberItem.lotNumber = this.state.currentLotNumber;
+      this.state.lotNumberArray.push(newLotNumberItem);
 
-    //update Total assigned
-    // this.setState({totalAssigned:this.state.totalAssigned+this.state.currentQuantity});
+      //update Total assigned
+      // this.setState({totalAssigned:this.state.totalAssigned+this.state.currentQuantity});
 
-    this.setState({lotNumberArray:this.state.lotNumberArray});
-    this.setState({currentQuantity: ''});
-    this.setState({currentLotNumber: ''});
-    this.props.updateArray(this.state.lotNumberArray);
+      this.setState({lotNumberArray:this.state.lotNumberArray});
+      this.setState({currentQuantity: ''});
+      this.setState({currentLotNumber: ''});
+      this.props.updateArray(this.state.lotNumberArray);
+    }else{
+      alert("Lot Numbers should be unique!");
+    }
     console.log("array");
     console.log(this.state.lotNumberArray);
     console.log(this.props.totalAssigned);
@@ -107,10 +123,15 @@ class LotNumberSelector extends Component {
 
   updateLotNumber (event, index) {
     var lotNumber = event.target.value;
-    if(index!=-1){
-      this.state.lotNumberArray[index].lotNumber = lotNumber;
-      this.setState({lotNumberArray: this.state.lotNumberArray});
-      this.props.updateArray(this.state.lotNumberArray);
+    if(index!=-1 ){
+      if(!this.checkLotNumberUnique(lotNumber)){
+        alert("Lot number must be unique!");
+      }else{
+      //Add check for data type
+        this.state.lotNumberArray[index].lotNumber = lotNumber;
+        this.setState({lotNumberArray: this.state.lotNumberArray});
+        this.props.updateArray(this.state.lotNumberArray);
+      }
     }
   }
 
@@ -128,7 +149,6 @@ class LotNumberSelector extends Component {
         this.props.updateArray(this.state.lotNumberArray);
       }
     }
-    console.log("here");
     console.log(this.props.totalAssigned);
     console.log(this.props.quantity);
   }
@@ -136,7 +156,7 @@ class LotNumberSelector extends Component {
   updateCurrentLotNumber (event){
     var lotNumber = event.target.value;
     const re = /^[a-z0-9]+$/i;
-      if(lotNumber==''|| (re.test(lotNumber))) {
+      if(lotNumber==''&& (re.test(lotNumber))) {
         this.setState({currentLotNumber: lotNumber});
       }else{
         alert("Lot Number must be alphanumeric.");
