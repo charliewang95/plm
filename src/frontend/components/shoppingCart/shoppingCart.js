@@ -166,7 +166,7 @@ class ShoppingCart extends React.Component {
       var temp = this;
 
       if(changed){
-        console.log("changed");
+        console.log("asdfsadf changed");
         console.log(changed);
           for(var i = 0; i < rows.length;i++){
             if(changed[rows[i].id]){
@@ -229,6 +229,24 @@ class ShoppingCart extends React.Component {
                 var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].price;
                 var ingredientLots = changed[rows[i].id].lotNumberArray.ingredientLots;
                 var packageNum = changed[rows[i].id].lotNumberArray.packageNum;
+                rows[i].lotNumberArray.packageNum = packageNum;
+                rows[i].lotNumberArray.ingredientLots = ingredientLots;
+                console.log(ingredientLots);
+        if(ingredientLots.length>0){
+
+                 var sum = 0;
+          console.log("this is the ingredientLots 222");
+          for(var j=0; j<ingredientLots.length;j++){
+            sum+=parseInt(ingredientLots[j].package);
+          }
+           console.log(sum);
+            rows[i].totalAssigned = sum;
+                    rows[i].lotAssigned = (packageNum-sum)==0;
+        } 
+
+      
+
+
                 console.log("changed lotNumberArray");
                 console.log(changed[rows[i].id].lotNumberArray);
                 console.log("ingredientLots");

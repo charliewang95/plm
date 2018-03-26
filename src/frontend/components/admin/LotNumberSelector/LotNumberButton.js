@@ -33,8 +33,9 @@ class LotNumberButton extends Component {
     this.handleChangeFunction = this.handleChangeFunction.bind(this);
     this.verifyLotNumberArray = this.verifyLotNumberArray.bind(this);
     console.log("constructor was called");
-    console.log(this.props.initialArray);
+    console.log("constructor");
   }
+
 
   updateArray(inputArray){
     var sum = 0;
@@ -49,7 +50,7 @@ class LotNumberButton extends Component {
     this.setState({lotNumberArray:inputArray});
     this.setState({totalAssigned:sum});
     // this.props.handleChange(inputArray);
-    console.log(this.props.initialArray);
+    //console.log(this.props.initialArray);
   }
 
   handleChangeFunction = name => event => {
@@ -59,18 +60,20 @@ class LotNumberButton extends Component {
       this.setState({
         [name]: event.target.value,
       });
-    this.saveToProps();
+    this.saveToProps(event.target.value);
   }
 
   handleCancel(e){
     console.log("hit Cancel");
     console.log(this.props);
     e.preventDefault();
-    // this.setState({cancel:true});
     this.setState({lotNumberArray:this.state.initialArray});
-    // this.updateArray([]);
-    // this.setState({lotNumberArray:(this.props.initialArray)?this.props.initialArray:[]});
+    console.log("hit Cancel");
+    console.log(this.props.initialArray);
+    this.setState({lotNumberArray:(this.props.initialArray)?this.props.initialArray:[]});
+    this.setState({totalAssigned:this.props.totalAssigned});
     this.setState({open:false});
+    window.location.reload();
   }
 
   handleSave(e){
@@ -102,11 +105,11 @@ class LotNumberButton extends Component {
   }
 
 
-  saveToProps(){
-    console.log("save to Props");
+  saveToProps(quantity){
+    console.log("saveToProps");
     var object = new Object();
     object.ingredientLots = this.state.lotNumberArray;
-    object.packageNum = this.state.currentQuantity;
+    object.packageNum = quantity;
     console.log("save to props");
     console.log(object);
     this.props.handleChange(object);
@@ -122,7 +125,7 @@ class LotNumberButton extends Component {
 
   render() {
     return (
-      <TableCell>
+      <div>
         <TextField
           label="Quantity"
           value={this.state.currentQuantity}
@@ -151,7 +154,7 @@ class LotNumberButton extends Component {
                 color="secondary">Save</Button>
             </DialogActions>
           </Dialog>
-      </TableCell>
+        </div>
     );
   }
 }
