@@ -70,10 +70,14 @@ class ProductDetails extends React.Component {
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
     var rawData = this.state.productRows[0].ingredients;
 
-    var processedData = [...rawData.map((row, index)=> ({
-        id:index,...row,
-      })),
-    ];
+    var processedData = [];
+      if(rawData){
+        processedData = [...rawData.map((row, index)=> ({
+            id:index,...row,
+          })),
+        ];
+      }
+
     this.setState({rows: processedData});
     this.setState({productName:this.state.productRows[0].name});
     this.setState({time:this.state.productRows[0].date});

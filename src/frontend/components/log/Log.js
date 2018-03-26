@@ -187,7 +187,10 @@ class Log extends React.PureComponent {
       var rawData = [];
       sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
       rawData = await logActions.getAllLogsAsync(sessionId);
-      rawData = rawData.reverse();
+      if(rawData){
+        rawData = rawData.reverse();
+      }
+      
       var tempDates = [];
        for (var i = 0; i<rawData.length; i++) {
            var date = rawData[i].date;
@@ -202,11 +205,13 @@ class Log extends React.PureComponent {
            tempDates[i] = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
            rawData[i].date = date.replace('T',' ').replace('Z',' ');
        }
-
-       var processedData = [...rawData.map((row, index)=> ({
+       var processedData = [];
+       if(rawData){
+        processedData = [...rawData.map((row, index)=> ({
            id:index,...row,
          })),
-       ];
+        ];
+       }
 
        this.setState({dates:tempDates});
        this.setState({rows:processedData});

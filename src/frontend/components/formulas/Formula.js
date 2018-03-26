@@ -282,14 +282,16 @@ class Formula extends React.PureComponent {
         rawData[i].ingredients = ingredientsString;
         rawData[i].formulaId = rawData[i]._id;
       }
-
-        var processedData = [...rawData.map((row, index)=> ({
+      var processedData = [];
+      if(rawData){
+        processedData = [...rawData.map((row, index)=> ({
           id:index,
           // select based on whether it is Intermediate or Final
           productType: (row.isIntermediate) ? "Intermediate" :"Final",...row,
           })),
         ];
-
+      }
+      
       console.log(" PROCESSED DATA ")
        console.log(processedData);
       this.setState({rows: processedData});
