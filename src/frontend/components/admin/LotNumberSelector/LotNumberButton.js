@@ -21,13 +21,21 @@ class LotNumberButton extends Component {
       totalAssigned: (this.props.totalAssigned)?this.props.totalAssigned: 0,
       open: false,
       currentQuantity: this.props.quantity,
+      initialArray: (this.props.initialArray)?this.props.initialArray:[],
     };
     this.updateArray = this.updateArray.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.handleClickOpen = this.handleClickOpen.bind(this);
+    this.handleQuantityChange = this.handleQuantityChange.bind(this);
     console.log("constructor was called");
-    //console.log(this.props.initialArray); 
+    console.log(this.props.initialArray); 
+  }
+
+
+  componentDidUpdate(){
+    console.log("lot number button updated");
+    console.log(this.state.initialArray);
   }
 
   updateArray(inputArray){
@@ -46,11 +54,11 @@ class LotNumberButton extends Component {
     //console.log(this.props.initialArray);
   }
 
-  handleChangeFunction = name => event => {
+  handleQuantityChange(event){
     console.log("change quantity");
     console.log(event.target.value);
       this.setState({
-        [name]: event.target.value,
+        currentQuantity: event.target.value,
       });
     this.saveToProps(event.target.value);
   }
@@ -58,11 +66,12 @@ class LotNumberButton extends Component {
   handleCancel(e){
     e.preventDefault();
     this.setState({open:false});
+    console.log(this.state.initialArray);
     console.log("hit Cancel");
-    console.log(this.props.initialArray);
-    this.setState({lotNumberArray:(this.props.initialArray)?this.props.initialArray:[]});
+    this.setState({lotNumberArray:this.props.initialArray});
     this.setState({totalAssigned:this.props.totalAssigned});
-    window.location.reload();
+    //window.location.reload();
+    //e.stopPropagation();
   }
 
   handleSave(e){
@@ -96,14 +105,14 @@ class LotNumberButton extends Component {
         <TextField
           label="Quantity"
           value={this.state.currentQuantity}
-          onChange={this.handleChangeFunction('currentQuantity')}
+          onChange={this.handleQuantityChange}
           style={{width:90}}
         />
         <Button style={{marginLeft: 10}} raised onClick={(e)=>this.handleClickOpen(e)}>Edit Lot Numbers</Button>
-        <Dialog open={this.state.open} >
+        <Dialog open={this.state.open} onClose={()=>{console.log("closed");}} >
             <DialogTitle>Edit Lot Number</DialogTitle>
             <DialogContent>
-              <LotNumberSelector initialArray={this.state.lotNumberArray} quantity={this.state.currentQuantity} updateArray={this.updateArray} totalAssigned={this.state.totalAssigned}/>
+              <LotNumberSelector initialArray={this.props.initialArray} quantity={this.state.currentQuantity} updateArray={this.updateArray} totalAssigned={this.state.totalAssigned}/>
             </DialogContent>
             <DialogActions>
               <Button onClick={(e)=>this.handleCancel(e)} color="primary">Cancel</Button>
