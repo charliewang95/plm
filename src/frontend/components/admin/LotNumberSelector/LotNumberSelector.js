@@ -111,7 +111,7 @@ class LotNumberSelector extends Component {
           {(!(this.props.totalAssigned>this.props.quantity)&&((this.props.quantity-this.props.totalAssigned)!=0))&&
           <div>
           <FormControl style={{width:130}}>
-            <InputLabel htmlFor="currentQuantity"># to assign</InputLabel>
+            <InputLabel htmlFor="currentQuantity"># of packages</InputLabel>
             <Input
               type="number"
               value={this.state.currentQuantity}
@@ -133,7 +133,7 @@ class LotNumberSelector extends Component {
          }
        {(this.props.totalAssigned>this.props.quantity) ?
           <Typography color="error">Delete Extra Packages: {this.props.totalAssigned-this.props.quantity}</Typography> :
-         ((this.props.quantity-this.props.totalAssigned-this.state.currentQuantity)!=0) ?
+         ((this.props.quantity-this.props.totalAssigned)!=0) ?
             <Typography color="error">Packages left to assign: {this.props.quantity-this.props.totalAssigned-this.state.currentQuantity}</Typography> :
             (this.props.quantity==''||this.props.totalAssigned=='') ? <div></div> :
             <p><font color="green">All Packages have been assigned!</font></p>

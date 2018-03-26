@@ -115,11 +115,14 @@ class LotNumberButton extends Component {
         <Dialog open={this.state.open} onClose={()=>{console.log("closed");}} >
             <DialogTitle>Edit Lot Number</DialogTitle>
             <DialogContent>
+             <DialogContentText>
+                i.e. If you want to assign lot number A123 to 4 packages, enter 4 for number of packages and A123 for lot number.
+              </DialogContentText>
               <LotNumberSelector initialArray={this.props.initialArray} quantity={this.state.currentQuantity} updateArray={this.updateArray} totalAssigned={this.state.totalAssigned}/>
             </DialogContent>
             <DialogActions>
-              <Button onClick={(e)=>this.handleCancel(e)} color="primary">Cancel</Button>
-              <Button onClick={(e)=>this.handleSave(e)} color="secondary">Save</Button>
+              {/*<Button onClick={(e)=>this.handleCancel(e)} color="primary">Cancel</Button>*/}
+              <Button disabled={this.state.currentQuantity!=this.state.totalAssigned} onClick={(e)=>this.handleSave(e)} color="secondary">Close</Button>
             </DialogActions>
           </Dialog>
         </div>

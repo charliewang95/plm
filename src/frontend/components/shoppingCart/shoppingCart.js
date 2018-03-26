@@ -56,6 +56,10 @@ const EditCell = (props) => {
   const vendorOptions = props.row.vendorOptions;
   const value = props.row.selectedVendorId;
   const quantity = props.row.packageNum;
+  const array = props.row.lotNumberArray.ingredientLots;
+  console.log("this is the edit cell");
+  console.log(array);
+  console.log(quantity);
   if(props.column.name == 'packageNum'){
     return <TableEditRow.Cell {...props}
       required style={{backgroundColor:'aliceblue'}}
@@ -107,11 +111,17 @@ const LotNumberFormatter = (props) =>{
 
 const lotNumberEditor = (props) => {
   const quantity = props.row.lotNumberArray.packageNum;
-  const initialArray = props.row.lotNumberArray.ingredientLots;
+  const shallowCopy = props.row.lotNumberArray.ingrdientLots;
+  // const deepCopy = new Array();
+  // var obj = new Object;
+  // obj.package = 4;
+  // obj.lotNumber = '3333';
+  // deepCopy.push(obj);
+  let deepCopy = JSON.parse(JSON.stringify(props.row.lotNumberArray.ingredientLots));
   const totalAssigned = props.row.totalAssigned;
   console.log("lotnumbereditor");
   console.log(props);
-  return<LotNumberButton totalAssigned = {totalAssigned} initialArray={initialArray} quantity = {quantity} handlePropsChange={props.onValueChange}></LotNumberButton>
+  return<LotNumberButton totalAssigned = {totalAssigned} initialArray={deepCopy} quantity = {quantity} handlePropsChange={props.onValueChange}></LotNumberButton>
 };
 
 const LotNumberProvider = props => (
@@ -220,7 +230,7 @@ class ShoppingCart extends React.Component {
                   // TODO: Add SnackBar
               }
 
-               if (changed[rows[i].id].lotNumberArray){
+              if (changed[rows[i].id].lotNumberArray){
                 var vendor = rows[i].selectedVendorName ? rows[i].selectedVendorName : rows[i].vendorOptions[0].vendorName;
                 var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].price;
                 var ingredientLots = changed[rows[i].id].lotNumberArray.ingredientLots;
@@ -228,26 +238,19 @@ class ShoppingCart extends React.Component {
                 rows[i].lotNumberArray.packageNum = packageNum;
                 rows[i].lotNumberArray.ingredientLots = ingredientLots;
                 console.log(ingredientLots);
-        if(ingredientLots.length>0){
+                  if(ingredientLots.length>0){
 
-                 var sum = 0;
-          console.log("this is the ingredientLots 222");
-          for(var j=0; j<ingredientLots.length;j++){
-            sum+=parseInt(ingredientLots[j].package);
-          }
-           console.log(sum);
-            rows[i].totalAssigned = sum;
+                           var sum = 0;
+                    console.log("this is the ingredientLots 222");
+                    for(var j=0; j<ingredientLots.length;j++){
+                      sum+=parseInt(ingredientLots[j].package);
+                    }
+                    console.log(sum);
+                    rows[i].totalAssigned = sum;
                     rows[i].lotAssigned = (packageNum-sum)==0;
-        }else{
-           rows[i].lotAssigned = false;
-        } 
-        if((packageNum-sum)!=0){
-          tempCheckout = false;
-        }
-
-      
-
-
+                  }else{
+                     rows[i].lotAssigned = false;
+                  } 
                 console.log("changed lotNumberArray");
                 console.log(changed[rows[i].id].lotNumberArray);
                 console.log("ingredientLots");
@@ -264,15 +267,19 @@ class ShoppingCart extends React.Component {
                        });
                }
             }
+            if(!rows[i].lotAssigned){
+              tempCheckout = false;
+              this.setState({canCheckout:false});
+            }
+          }//forloop bracket
+          if(tempCheckout){
+            this.setState({canCheckout: true});
           }
-        }
-        if(!tempCheckout){
-          this.setState({canCheckout:false});
-        }
+        }//changed bracket
         // Delete
         this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
         // TODO: Add SnackBar
-    }
+    }//final bracket
 
     this.cancelDelete = () => this.setState({ deletingRows: [] });
 
