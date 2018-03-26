@@ -198,12 +198,9 @@ class ShoppingCart extends React.Component {
 
     this.commitChanges =  ({ changed, deleted }) => {
       var temp = this;
-<<<<<<< HEAD
       var tempCheckout = true;
-=======
       let { rows } = temp.state;
 
->>>>>>> dbf3f573d72e23606ac21bd47d8bb43f50722eb9
       if(changed){
         console.log("asdfsadf changed");
         console.log(changed);
@@ -294,12 +291,13 @@ class ShoppingCart extends React.Component {
           if(tempCheckout){
             this.setState({canCheckout: true});
           }
+          this.setState({snackBarMessage : "Order successfully edited."});
+          this.setState({snackBarOpen:true});
         }//changed bracket
         // Delete
         // TODO: Add SnackBar
         //TODO: Add SnackBar
-        this.setState({snackBarMessage : "Order successfully edited."});
-        this.setState({snackBarOpen:true});
+
         // Delete
         if(deleted){
           var displayDeletingRows = new Array();
@@ -341,16 +339,11 @@ class ShoppingCart extends React.Component {
     this.deleteRows =  async() => {
       var temp = this;
       console.log("deleting cart rows")
-<<<<<<< HEAD
-      const rows = this.state.rows.slice();
-      console.log(this.state.deletingRows);
-      this.state.deletingRows.forEach((row) => {
-=======
+
       const rows = temp.state.rows.slice();
       console.log(temp.state.deletingRows);
 
       // temp.state.deletingRows.forEach((row) => {
->>>>>>> dbf3f573d72e23606ac21bd47d8bb43f50722eb9
         // const index = rows.findIndex(row => row.id === rowId);
         var row = this.state.deletingRows[0];
         const index = row.rowId;
