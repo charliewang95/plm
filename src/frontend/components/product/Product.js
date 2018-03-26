@@ -161,11 +161,14 @@ class Product extends React.PureComponent {
           tempDates[i] = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
           rawData[i].date = date.replace('T',' ').replace('Z',' ');
       }
-
-      var processedData = [...rawData.map((row, index)=> ({
-          id:index,...row,
-        })),
-      ];
+      var processedData = [];
+      if(rawData){
+        processedData = [...rawData.map((row, index)=> ({
+            id:index,...row,
+          })),
+        ];
+      }
+      
 
       this.setState({dates:tempDates});
       this.setState({rows:processedData});

@@ -232,15 +232,17 @@ class Vendors extends React.PureComponent
       rawData = dummyData;
     }
     console.log("rawData " + JSON.stringify(rawData));
+    
+    var processedData = [];
+    if(rawData){
+      processedData = [...rawData.map((row, index)=> ({
+          id: startingIndex + index,...row,
+        })),
+      ];
+    }
 
-    var processedData = [...rawData.map((row, index)=> ({
-        id: startingIndex + index,...row,
-      })),
-    ];
-
-
-      console.log("processedData " + JSON.stringify(processedData));
-      this.setState({rows:processedData});
+    console.log("processedData " + JSON.stringify(processedData));
+    this.setState({rows:processedData});
   }
 
   render() {

@@ -7,6 +7,7 @@ import Typography from 'material-ui/Typography';
 import FinancialReport from './financialReport';
 import ProductionReport from './productionReport';
 import FreshnessReport from './freshnessReport';
+import RecallReport from './recallReport';
 
 function TabContainer(props) {
   return (
@@ -56,11 +57,13 @@ class ScrollableTabsButtonAuto extends React.Component {
             <Tab label="Financial Report" />
             <Tab label="Production Report" />
             <Tab label="Freshness Report" />
+            <Tab label="Recall Report" />
           </Tabs>
         </AppBar>
         {value === 0 && <FinancialReport/>}
         {value === 1 && <ProductionReport/>}
         {value === 2 && <FreshnessReport/>}
+        {value === 3 && <RecallReport/>}
       </div>
     );
   }
