@@ -14,7 +14,7 @@ class LotNumberSelector extends Component {
     super(props)
     this.state = {
       //totalAssigned: this.props.totalAssigned, //total number assigned
-      lotNumberArray: [],
+      lotNumberArray: (this.props.initialArray)?this.props.initialArray:[],
       currentLotNumber: '',
       currentQuantity: '',
     };
@@ -27,7 +27,8 @@ class LotNumberSelector extends Component {
   }
 
   componentDidUpdate(){
-    console.log(this.state.currentQuantity);
+    console.log("selector did update");
+    console.log(this.props.totalAssigned);
     console.log(this.props.quantity);
     var num;
     if(!this.state.currentQuantity){
@@ -105,12 +106,11 @@ class LotNumberSelector extends Component {
   render() {
     return (
       <div>
-          <p>Lot Number</p>
           {(this.props.quantity=='') && <p>Please fill in quantity</p>}
           {(!(this.props.totalAssigned>this.props.quantity)&&((this.props.quantity-this.props.totalAssigned)!=0))&&
           <div>
           <FormControl style={{width:130}}>
-            <InputLabel htmlFor="currentQuantity">Package Quantity</InputLabel>
+            <InputLabel htmlFor="currentQuantity"># to assign</InputLabel>
             <Input
               type="number"
               value={this.state.currentQuantity}
@@ -130,7 +130,6 @@ class LotNumberSelector extends Component {
          <Button raised style={{marginLeft:10}} onClick={()=>{this.addLotNumberItem();}}>RECORD</Button>}
          </div>
          }
-      <br/>
        {(this.props.totalAssigned>this.props.quantity) ?
           <Typography color="error">Delete Extra Packages: {this.props.totalAssigned-this.props.quantity}</Typography> :
          ((this.props.quantity-this.props.totalAssigned-this.state.currentQuantity)!=0) ?
