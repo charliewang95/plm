@@ -6,9 +6,10 @@ import {
   Grid,
   Table,
   TableHeaderRow,TableEditColumn,PagingPanel,TableEditRow,
+  TableRowDetail,
 } from '@devexpress/dx-react-grid-material-ui';
 import {
-  EditingState,PagingState,IntegratedPaging,DataTypeProvider
+  EditingState,PagingState,IntegratedPaging,DataTypeProvider,RowDetailState
 } from '@devexpress/dx-react-grid';
 
 import * as testConfig from '../../../resources/testConfig.js';
@@ -36,6 +37,7 @@ import * as ingredientActions from '../../interface/ingredientInterface.js';
 
 import {cartData, ingredientData} from './dummyData';
 import LotNumberButton from '../admin/LotNumberSelector/LotNumberButton.js';
+import SnackBarDisplay from '../snackBar/snackBarDisplay';
 
 // TODO: Get the user ID
 const READ_FROM_DATABASE = true;
@@ -132,6 +134,17 @@ const LotNumberProvider = props => (
   />
 );
 
+const RowDetail = ({ row }) => {
+  var string = "";
+  row.lotNumberArray.forEach((r) =>(
+    string +="lot: " + r.lotNumber + " package: " + r.package + " , "
+  ));
+  return (
+  <div>{string}</div>
+)};
+
+
+
 const getRowId = row => row.id;
 
 class ShoppingCart extends React.Component {
@@ -157,7 +170,20 @@ class ShoppingCart extends React.Component {
       currentPage: 0,
       pageSize: 10,
       pageSizes: [5, 10, 0],
+
       canCheckout: true,
+
+      deleteColumns:[
+        { name: 'ingredientName', title: 'Ingredient Name' },
+        { name: 'vendorName', title: 'Vendor / Price ($)' },
+        { name: 'quantity',title: 'No. of Packages'},
+        { name: 'lotNumberString',title: 'No. of Packages / Lot Number'}
+      ],
+      deleteRows:[],
+      expandedRowIds: [],
+      snackBarOpen:false,
+      snackBarMessage:'',
+
 
     };
     this.changeCurrentPage = currentPage => {
@@ -166,6 +192,9 @@ class ShoppingCart extends React.Component {
     this.changePageSize = pageSize => this.setState({ pageSize });
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeRowChanges = (rowChanges) => {console.log("row changes"); console.log(rowChanges); this.setState({ rowChanges })};
+    this.changeExpandedDetails = expandedRowIds => this.setState({ expandedRowIds });
+
+    this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
 
     this.commitChanges =  ({ changed, deleted }) => {
       let { rows } = this.state;
@@ -189,31 +218,23 @@ class ShoppingCart extends React.Component {
                   // TODO: Update back end
                   rows[i].packageNum = changed[rows[i].id].packageNum;
                   orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
-                        vendor, enteredQuantity ,price,ingredientLots,sessionId,function(res){
+                    vendor, enteredQuantity ,price,ingredientLots,sessionId,function(res){
                           // TODO: Display error on exceeding storage capacity
                           // if(res.status==)
                           // TODO: Add SnackBar
                           // update the table
-                          console.log('called');
                           if (res.status != 400 && res.status != 500 ){
 //                            rows[i].packageNum = enteredQuantity;
                               //window.location.reload();
                           }
-
-                        });
-                    }
+                  });
                 }
-
-               if (changed[rows[i].id].vendors){
+              }
+              if (changed[rows[i].id].vendors){
                  // TODO: Update Back End -- No error status so no callback??
-                 console.log("changed vendors");
-                 console.log(rows[i]);
                  rows[i].vendors = changed[rows[i].id].vendors.label;
                  rows[i].vendorName = changed[rows[i].id].vendors.vendorName;
                  rows[i].selectedVendorId =changed[rows[i].id].vendors.vendorId;
-                 console.log("selected vendor: ");
-                 console.log(changed[rows[i].id].vendors.vendorName);
-                 console.log(changed[rows[i].id].vendors.price);
                  orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
                        changed[rows[i].id].vendors.vendorName,rows[i].packageNum,
                        changed[rows[i].id].vendors.price, rows[i].ingredientLots, sessionId, function(res){
@@ -251,13 +272,7 @@ class ShoppingCart extends React.Component {
                   }else{
                      rows[i].lotAssigned = false;
                   } 
-                console.log("changed lotNumberArray");
-                console.log(changed[rows[i].id].lotNumberArray);
-                console.log("ingredientLots");
-                console.log(ingredientLots);
-                console.log("quantity");
-                console.log(packageNum);
-                 orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
+                orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
                         vendor, packageNum ,price,ingredientLots,sessionId,function(res){
                         console.log(res);
                          if (res.status != 400 && res.status != 500 ){
@@ -277,23 +292,66 @@ class ShoppingCart extends React.Component {
           }
         }//changed bracket
         // Delete
-        this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
         // TODO: Add SnackBar
-    }//final bracket
+        //TODO: Add SnackBar
+        this.setState({snackBarMessage : "Order successfully edited."});
+        this.setState({snackBarOpen:true});
+        // Delete
+        if(deleted){
+          var displayDeletingRows = new Array();
+          var obj = new Object();
+          obj.ingredientName = rows[deleted].ingredientName;
+          obj.vendorName = rows[deleted].vendors;
+          obj.quantity=rows[deleted].packageNum;
+
+          var string = "";
+          var array = rows[deleted].lotNumberArray.ingredientLots;
+          console.log("lot number string");
+          console.log(this.state);
+          for(var i =0; i < array.length; i++){
+                var lotObject = array[i];
+                //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
+                string +=  lotObject.package + "/ " + lotObject.lotNumber;
+                if(i!= (array.length -1)){
+                  string+=' , ';
+                }
+          }
+          obj.lotNumberString = (array.length > 0)? string:"Not Assigned";
+          obj.lotNumberArray = array;
+          obj.rowId = deleted;
+
+          displayDeletingRows.push(obj);
+
+          this.setState({rows:rows});
+          this.setState({deletingRows:displayDeletingRows});
+          console.log("delete order");
+
+          // this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
+          console.log("HERE");
+        }
+    }
+
 
     this.cancelDelete = () => this.setState({ deletingRows: [] });
 
-    this.deleteRows = () => {
+    this.deleteRows =  () => {
+      console.log("deleting cart rows")
       const rows = this.state.rows.slice();
-      this.state.deletingRows.forEach((rowId) => {
-        const index = rows.findIndex(row => row.id === rowId);
+      console.log(this.state.deletingRows);
+
+      this.state.deletingRows.forEach((row) => {
+        // const index = rows.findIndex(row => row.id === rowId);
+        const index = row.rowId;
+        console.log(index);
+
         if (index > -1) {
           var orderId = rows[index]._id;
           // TODO: update back End
           orderActions.deleteOrder(orderId, sessionId);
           rows.splice(index, 1);
           // TODO: Add SnackBar
-          // alert(" Ingredient successfully deleted ! ");
+          this.setState({snackBarMessage : "Order successfully deleted."});
+          this.setState({snackBarOpen:true});
         }
       });
       this.setState({ rows, deletingRows: [] });
@@ -313,16 +371,19 @@ class ShoppingCart extends React.Component {
                 //temp.setState({rows:rows});
             }
         } else {
-            alert('Checkout successful!');
+          this.setState({snackBarMessage : "Checkout successful!"});
+          this.setState({snackBarOpen:true});
+            // alert('Checkout successful!');
             temp.setState({rows:[]});
         }
       });
-
-      // TODO: ADD snackbar
-      // alert(" Ingredients successfully ordered  ! ");
-      // window.location.reload();
     };
 
+  }
+
+  handleSnackBarClose(){
+    this.setState({snackBarOpen:false});
+    this.setState({snackBarMessage: ''});
   }
 
   componentDidMount(){
@@ -365,6 +426,8 @@ class ShoppingCart extends React.Component {
       if(READ_FROM_DATABASE){
         //TODO: get ingredientDetails from back End
         singleIngredientData = await ingredientActions.getIngredientAsync(rawData[i].ingredientId, sessionId);
+        console.log(rawData[i].ingredientId);
+        console.log(singleIngredientData);
       }else{
         singleIngredientData = ingredientData[i];
       }
@@ -390,7 +453,7 @@ class ShoppingCart extends React.Component {
         singleData.lotNumberArray = new Object();
         singleData.lotNumberArray.ingredientLots = rawData[i].ingredientLots;
         singleData.lotNumberArray.packageNum = rawData[i].packageNum;
-      
+
 
         var sum = 0;
         if(rawData[i].ingredientLots.length>0){
@@ -410,20 +473,21 @@ class ShoppingCart extends React.Component {
   }
     // console.log("Vendor Options " + JSON.stringify(parsedVendorOptions));
 
-    var processedData = [...processedData.map((row, index)=> ({
+    var finalData = [...processedData.map((row, index)=> ({
         id: index,...row,
       })),
     ];
-      console.log("processedData " + JSON.stringify(processedData));
-      this.setState({rows:processedData});
+      console.log("finalData " + JSON.stringify(finalData));
+      this.setState({rows:finalData});
   }
 
   render() {
     // const {classes} = this.props;
     const { rows, columns,rowChanges,deletingRows,currentPage,
-      pageSize,pageSizes,editingRowIds,lotNumColumns } = this.state;
+      pageSize,pageSizes,editingRowIds,lotNumColumns ,deleteColumns,deleteRows,
+      expandedRowIds} = this.state;
     return (
-
+      <div>
       <Paper>
       <Divider/>
         <Grid
@@ -455,7 +519,6 @@ class ShoppingCart extends React.Component {
             cellComponent={EditCell}/>
         }
 
-
           <TableEditColumn
             width={120}
             showEditCommand
@@ -467,6 +530,12 @@ class ShoppingCart extends React.Component {
           <PagingPanel
             pageSizes={pageSizes}
           />
+
+          {this.state.snackBarOpen && <SnackBarDisplay
+                open = {this.state.snackBarOpen}
+                message = {this.state.snackBarMessage}
+                handleSnackBarClose = {this.handleSnackBarClose}
+              /> }
 
         </Grid>
           <Dialog
@@ -481,11 +550,19 @@ class ShoppingCart extends React.Component {
               </DialogContentText>
               <Paper>
                 <Grid
-                  rows={rows.filter(row => deletingRows.indexOf(row.id) > -1)}
-                  columns={columns}
+                  // rows={rows.filter(row => deletingRows.indexOf(row.id) > -1)}
+                  rows = {this.state.deletingRows}
+                  columns={this.state.deleteColumns}
                 >
-                  <Table/>
-                  <TableHeaderRow />
+                <RowDetailState
+                  expandedRowIds={expandedRowIds}
+                  onExpandedRowIdsChange={this.changeExpandedDetails}
+                />
+                <Table />
+                <TableHeaderRow />
+                <TableRowDetail
+                  contentComponent={RowDetail}
+                />
                 </Grid>
               </Paper>
             </DialogContent>
@@ -507,6 +584,7 @@ class ShoppingCart extends React.Component {
                   disabled = {!this.state.canCheckout}> Checkout </Button>}
       </div>
       </Paper>
+    </div>
 
     );
   }

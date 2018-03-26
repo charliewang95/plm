@@ -11,7 +11,7 @@ var Converter = require("csvtojson").Converter;
 var prevFormula = '';
 var allFormulas = [];
 
-exports.bulkImportFormulas = function(req, res, next, contents, callback) {
+exports.bulkImportIntermediates = function(req, res, next, contents, callback) {
     //console.log(contents);
     var jsonArray = [];
     const csv=require('csvtojson')
@@ -48,6 +48,11 @@ var validateBulkImport = function(req, res, next, array, i, callback){
         var ingredientName = formula.INGREDIENT;
         var ingredientUnits = formula["INGREDIENT UNITS"];
 
+        var packageName = formula.PACKAGE.toLowerCase();
+        var nativeUnit = formula["NATIVE UNIT"];
+        var unitsPerPackage = formula["UNITS PER PACKAGE"];
+        var temperatureZone = formula.TEMPERATURE;
+
         if (formulaName.toLowerCase() != prevFormula && allFormulas.includes(formulaName.toLowerCase())){
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Duplicate formula names exist (the same formula should be in consecutive rows).');
             return;
@@ -59,6 +64,36 @@ var validateBulkImport = function(req, res, next, array, i, callback){
         }
         if (formulaName.toLowerCase() != prevFormula.toLowerCase() && (unitsProvided == null || unitsProvided <= 0)) {
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Units provided cannot be empty or zero');
+            return;
+        }
+        if (formulaName.toLowerCase() != prevFormula.toLowerCase() && (packageName == null || packageName == '')) {
+            res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Package name cannot be empty');
+            return;
+        }
+        if (formulaName.toLowerCase() != prevFormula.toLowerCase() && (
+            packageName != 'sack' &&
+            packageName != 'pail' &&
+            packageName != 'drum' &&
+            packageName != 'supersack' &&
+            packageName != 'railcar' &&
+            packageName != 'truckload' )) {
+            res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Package name is invalid');
+            return;
+        }
+        if (formulaName.toLowerCase() != prevFormula.toLowerCase() && (nativeUnit == null || nativeUnit == '')) {
+            res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Native unit cannot be empty');
+            return;
+        }
+        if (formulaName.toLowerCase() != prevFormula.toLowerCase() && (unitsPerPackage == null || unitsPerPackage == '' || unitsPerPackage <= 0)) {
+            res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Units per package must be non-empty and non-zero');
+            return;
+        }
+        if (formulaName.toLowerCase() != prevFormula.toLowerCase() && (temperatureZone == null || temperatureZone == '')) {
+            res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Temperature cannot be empty');
+            return;
+        }
+        if (formulaName.toLowerCase() != prevFormula.toLowerCase() && (temperatureZone.toLowerCase() != 'refrigerated' && temperatureZone.toLowerCase() != 'frozen' && temperatureZone.toLowerCase() != 'room temperature')) {
+            res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Temperature is invalid');
             return;
         }
         if (ingredientName == null || ingredientName == '') {
@@ -83,19 +118,28 @@ var validateBulkImport = function(req, res, next, array, i, callback){
                 return;
             }
             else {
-                Ingredient.findOne({nameUnique: ingredientNameUnique}, function(err, obj) {
-                    if (err) return next(err);
-                    else if (!obj) {
-                        res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Ingredient '+formula.INGREDIENT+' does not exist.');
-                        return;
-                    }
-                    else {
-                        if (formulaName.toLowerCase() != prevFormula) {
-                            prevFormula = formulaName.toLowerCase();
-                            allFormulas.push(formulaName.toLowerCase());
-                        }
-                        validateBulkImport(req, res, next, array, i+1, callback);
-                    }
+                Ingredient.findOne({nameUnique: formulaName.toLowerCase()}, function(err, obj){
+                      if (err) return next(err);
+                      else if (obj) {
+                          res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Intermediate product already exists in stock');
+                          return;
+                      }
+                      else {
+                           Ingredient.findOne({nameUnique: ingredientNameUnique}, function(err, obj) {
+                               if (err) return next(err);
+                               else if (!obj) {
+                                   res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Ingredient '+formula.INGREDIENT+' does not exist.');
+                                   return;
+                               }
+                               else {
+                                   if (formulaName.toLowerCase() != prevFormula) {
+                                       prevFormula = formulaName.toLowerCase();
+                                       allFormulas.push(formulaName.toLowerCase());
+                                   }
+                                   validateBulkImport(req, res, next, array, i+1, callback);
+                               }
+                           });
+                      }
                 });
             }
         });
@@ -113,6 +157,16 @@ var doBulkImport = function(username, req, res, next, array, i, callback){
         var description = formula.DESCRIPTION;
         var ingredientName = formula.INGREDIENT;
         var ingredientUnits = formula["INGREDIENT UNITS"];
+
+        var packageName = formula.PACKAGE.toLowerCase();
+        var nativeUnit = formula["NATIVE UNIT"];
+        var unitsPerPackage = formula["UNITS PER PACKAGE"];
+        var temperatureZone = formula.TEMPERATURE.toLowerCase();
+
+        if (temperatureZone == 'room temperature') temperatureZone = 'warehouse';
+        else if (temperatureZone == 'frozen') temperatureZone = 'freezer';
+        else if (temperatureZone == 'refrigerated') temperatureZone = 'refrigerator';
+
         var ingredient = new Object();
         ingredient.ingredientName = ingredientName;
         ingredient.quantity = ingredientUnits;
@@ -140,8 +194,12 @@ var doBulkImport = function(username, req, res, next, array, i, callback){
                     newFormula.nameUnique = formulaName.toLowerCase();
                     newFormula.description = description;
                     newFormula.unitsProvided = unitsProvided;
+                    newFormula.packageName = packageName;
+                    newFormula.nativeUnit = nativeUnit;
                     newFormula.ingredients = ingredients;
-                    newFormula.isIntermediate = false;
+                    newFormula.unitsPerPackage = unitsPerPackage;
+                    newFormula.temperatureZone = temperatureZone;
+                    newFormula.isIntermediate = true;
 
                     newFormula.save(function(err){
                         if (err) return next(err);

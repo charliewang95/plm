@@ -21,21 +21,20 @@ class LotNumberArray extends Component {
   render() {
     return (
       <div>
-      <p>Packages Assigned</p>
+      {/* <p>{"Quantity (" + this.state.nativeUnit + ") Assigned"}</p> */}
     	<div style={{marginLeft:20}}>
       {this.props.lotNumberArray && this.props.lotNumberArray.map((item,index)=>(
         <div key={index}>
           <FormControl style={{width:50}}>
             <Input
-              required={true}
               type="number"
-              value={item.package}
+              value={item.numUnit}
               onChange={(event)=>{this.props.updateQuantity(event, index);}}
             />
          </FormControl>
-         <FormControl style={{marginLeft:10}}>
+         <FormControl style={{marginLeft:10, width:50}}>
           <Input
-            required={true}
+            disabled
             value={item.lotNumber}
             onChange={(event)=>{this.props.updateLotNumber(event, index);}}
           />

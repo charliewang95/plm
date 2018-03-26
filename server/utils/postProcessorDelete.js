@@ -2,7 +2,9 @@ var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var Order = mongoose.model('Order');
 var Ingredient = mongoose.model('Ingredient');
-var IngredientPrice = mongoose.model('IngredientPrice');
+var IngredientFreshness = mongoose.model('IngredientFreshness');
+var IngredientProduct = mongoose.model('IngredientProduct');
+var IngredientLot = mongoose.model('IngredientLot');
 var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
@@ -29,7 +31,21 @@ var processIngredient = function(item, itemId, res, next) {
         var capacity = storage.capacity;
         var occupied = storage.currentOccupiedSpace - space;
         var empty = capacity - occupied;
-        storage.update({currentOccupiedSpace: occupied, currentEmptySpace:empty}, function(err, obj){});
+        storage.update({currentOccupiedSpace: occupied, currentEmptySpace:empty}, function(err, obj){
+            IngredientFreshness.findOne({ingredientNameUnique: item.nameUnique}, function(err, ingredientFreshness){
+                if (err) return next(err);
+                else if (!ingredientFreshness) return;
+                else {
+                    ingredientFreshness.remove(function(err){
+                        IngredientProduct.remove({ingredientNameUnique: item.nameUnique}, function(err, obj){
+                            IngredientLot.remove({ingredientNameUnique: item.nameUnique}, function(err, obj){
+
+                            });
+                        });
+                    });
+                }
+            })
+        });
     })
 };
 
@@ -106,11 +122,11 @@ var processOrderHelper = function(i, items, res, next) {
             var moneySpent = ingredient.moneySpent + order.totalPrice;
             ingredient.update({numUnit: numUnit, space: newSpace, moneySpent: moneySpent}, function(err, obj){
                 if (err) return next(err);
-                order.remove(function(err){
-                    if (err) return next(err);
+//                order.remove(function(err){
+//                    if (err) return next(err);
                     else processOrderHelper(i+1, items, res, next);
-                });
-            })
+//                });
+            });
         })
     }
 };

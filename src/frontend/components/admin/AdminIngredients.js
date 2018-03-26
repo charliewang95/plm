@@ -308,7 +308,7 @@ class AdminIngredients extends React.PureComponent {
       editingRowIds: [],
       addedRows: [],
       rowChanges: {},
-      currentPage: 5,
+      currentPage: 0,
       deletingRows: [],
       pageSize: 10,
       pageSizes: [5, 10, 0],
@@ -322,12 +322,6 @@ class AdminIngredients extends React.PureComponent {
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeAddedRows = addedRows => this.setState({
       addedRows: addedRows.map(row => (Object.keys(row).length ? row : {
-
-        /* TODO: Change this after getting the data from back End */
-        // name: testData.tablePage.ingredient_options[0],
-        // vendors: testData.tablePage.vendor_options[0],
-        //temperatureZone: testData.tablePage.temperatureZone_options[0],
-        //packageName:testData.tablePage.package_options[0],
         temperatureZone: "",
         packageName: "",
         vendorsArray: [],
@@ -464,7 +458,9 @@ class AdminIngredients extends React.PureComponent {
         };
         //TODO: send data to the back end
       }
-
+    console.log("delete ingredient");
+    console.log(deleted);
+    console.log(this.state.deletingRows);
     this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
     };
 
@@ -494,7 +490,8 @@ class AdminIngredients extends React.PureComponent {
           });
         }
       });
-
+      console.log("delete");
+      console.log(this.state.deletingRows);
       this.setState({ rows, deletingRows: [] });
     };
 
@@ -522,12 +519,8 @@ class AdminIngredients extends React.PureComponent {
     //this.createMap();
   }
 
-  // handleTabChange = (event, value) => {
-  //   this.setState({ currentTab: value });
-  // };
-
   async loadCodeNameArray(){
-   // var startingIndex = 0;
+   var startingIndex = 0;
     var rawData = [];
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     rawData = await vendorInterface.getAllVendorNamesCodesAsync(sessionId);
@@ -565,19 +558,15 @@ class AdminIngredients extends React.PureComponent {
   }
 
   async loadAllIngredients(){
-    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     var rawData = await ingredientInterface.getAllIngredientsAsync(sessionId);
+    // var rawData = testData.tablePage.lots_test;
+
     if(rawData.length==0){
       return
     }
     console.log("rawData asdfasdfasdf");
     console.log(rawData[0].vendors);
     var processedData=[];
-    //   var processedData = [...rawData.map((row, index)=> ({
-    //     id: startingIndex + index,...row,
-    //   })),
-    // ];
-
     // //loop through ingredient
     for (var i = 0; i < rawData.length; i++) {
       var vendorArrayString = "";

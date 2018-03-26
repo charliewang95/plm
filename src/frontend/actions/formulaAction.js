@@ -73,8 +73,10 @@ async function updateFormula(formulaId, sessionId, formula, callback) {
  * formulaId: string, the id of the formula
  * sessionId: string, id of the current session
  */
-async function deleteFormula(formulaId, sessionId) {
-	return await genericActions.deleteById(baseUrl, property, formulaId, sessionId);
+async function deleteFormula(formulaId, sessionId, callback) {
+	return await genericActions.deleteById(baseUrl, property, formulaId, sessionId, function(res){
+	    callback(res);
+	});
 };
 
 async function checkoutFormula(action, formulaId, quantity, sessionId, callback) {
