@@ -345,15 +345,14 @@ class ShoppingCart extends React.Component {
           var orderId = rows[index]._id;
           // TODO: update back End
           await orderActions.deleteOrder(orderId, sessionId, function (res) {
-            if(res.status){
-              alert(res.data);
-            }else{
+            // if(res.status){
+
+            // }else{
               rows.splice(index, 1);
               // TODO: Add SnackBar
               temp.setState({snackBarMessage : "Order successfully deleted."});
               temp.setState({snackBarOpen:true});
-            }
-          });
+            });
         }
       console.log("deleted twice");
       temp.setState({ rows, deletingRows: [] });
