@@ -94,8 +94,6 @@ async function checkoutFormula(action, formulaId, quantity, sessionId, callback)
        //TODO: different error message for different types of error
        if (e.response && e.response.status == 400 || e.response.status == 500)
          callback(e.response);
-       else
-         throw e;
      }
 };
 

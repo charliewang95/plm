@@ -385,7 +385,7 @@ class AdminIngredients extends React.PureComponent {
           }else{
             // rows = [...rows,added[0]];
             // temp.setState({rows:rows});
-            window.reload();
+            window.location.reload();
             alert(" New Ingredient Successfully added! ");
           }
         });
@@ -608,7 +608,7 @@ class AdminIngredients extends React.PureComponent {
       singleData.nativeUnit = rawData[i].nativeUnit;
       singleData.numUnitPerPackage = rawData[i].numUnitPerPackage;
       singleData.numUnit = rawData[i].numUnit;
-      singleData.numUnitString = rawData[i].numUnit + " " + rawData[i].nativeUnit;
+      singleData.numUnitString = Math.round(rawData[i].numUnit * 100) / 100  + " " + rawData[i].nativeUnit;
       singleData.space = rawData[i].space;
       //singleData.vendorsArray = "";
       singleData.vendors = vendorArrayString;

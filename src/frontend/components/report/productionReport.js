@@ -27,14 +27,14 @@ export default class ProductionReport extends React.PureComponent {
     this.state = {
       columns: [
         { name: 'name', title: 'Formula Name' },
-        { name: 'totalProvided', title: 'Total Units Provided' },
-        { name: 'totalCost', title: 'Total Cost of Ingredients /$' },
+        { name: 'totalProvided', title: 'Total Units Produced' },
+        { name: 'totalCost', title: 'Total Cost of Ingredients ($)' },
       ],
       rows: [],
       sorting:[],
       currentPage: 0,
       pageSize: 10,
-      pageSizes: [5, 10, 0],
+      pageSizes: [10, 50, 100, 500],
       columnOrder: ['name', 'totalProvided', 'totalCost'],
     };
     this.changeSorting = sorting => this.setState({ sorting });

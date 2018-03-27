@@ -54,7 +54,7 @@ class ScrollableTabsButtonAuto extends React.Component {
             scrollable
             scrollButtons="auto"
           >
-            <Tab label="Financial Report" />
+            <Tab label="Spending Report" />
             <Tab label="Production Report" />
             <Tab label="Freshness Report" />
             <Tab label="Recall Report" />
