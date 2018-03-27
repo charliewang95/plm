@@ -42,6 +42,7 @@ import { withStyles } from 'material-ui/styles';
 
 // var sessionId = '';
 
+
 // var id = 0;
 
 const styles = theme => ({
@@ -54,6 +55,7 @@ const styles = theme => ({
     width: '100%',
   },
 });
+
 
 const getRowId = row => row.productName;
 
