@@ -299,7 +299,7 @@ class ShoppingCart extends React.Component {
         //TODO: Add SnackBar
 
         // Delete
-        if(deleted){
+        if(deleted && rows[deleted]){
           var displayDeletingRows = new Array();
           var obj = new Object();
           obj.ingredientName = rows[deleted].ingredientName;

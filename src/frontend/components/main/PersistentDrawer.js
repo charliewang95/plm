@@ -187,8 +187,8 @@ class PersistentDrawer extends React.Component {
     console.log("user is admin: " + isAdmin);
     const { classes, theme } = this.props;
     const { anchor, open } = this.state;
-    const drawer = (
-      <Drawer
+    const drawer = user && (
+       <Drawer
         type="persistent"
         classes={{
           paper: classes.drawerPaper,

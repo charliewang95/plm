@@ -58,7 +58,8 @@ export default class FinancialReport extends React.PureComponent {
     // try{
        if(READ_FROM_DATABASE){
          sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-         rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
+         rawData = await ingredientActions.getAllIngredientsOnlyAsync(sessionId);
+         rawData = rawData.data;
        }else{
          rawData = dummyData;
        }

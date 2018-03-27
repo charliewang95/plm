@@ -109,7 +109,7 @@ class FormulaDetails extends React.Component{
     this.setState({snackBarOpen:false});
     this.setState({snackBarMessage: ''});
   }
-  
+
 async loadFormula(){
     var details = [];
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
@@ -226,14 +226,14 @@ async loadFormula(){
 
 
   async onFormSubmit(e) {
+    var temp = this;
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     var temp = this;
     e.preventDefault();
     console.log("submit formula ");
-    if(this.isValid() && this.state.isCreateNew){
+    if(temp.isValid() && temp.state.isCreateNew){
 
-
-      console.log(" Array " + JSON.stringify(this.state.ingredientsArray));
+      console.log(" Array " + JSON.stringify(temp.state.ingredientsArray));
       //TODO: Check for adding order
 
       await formulaActions.addFormula(temp.state.name, temp.state.description,
@@ -251,9 +251,9 @@ async loadFormula(){
                 // alert(" Formula successfully added! ");
               }
             });
-    }else if (this.isValid()){
+    }else if (temp.isValid() && !temp.state.isCreateNew){
       console.log("update formula ");
-      console.log(this.state);
+      console.log(temp.state);
 
       await formulaActions.updateFormula(temp.state.formulaId, temp.state.name,
         temp.state.description,temp.state.unitsProvided, temp.state.ingredientsArray,
@@ -271,8 +271,10 @@ async loadFormula(){
             // alert(" Formula successfully updated. ");
           }
         });
-    this.setState({isDisabled:true});
+    temp.setState({isDisabled:true});
     }
+    // updating this
+    // temp.setState({isCreateNew:false})
   }
 
     handleNewOptionClick(option){
