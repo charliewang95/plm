@@ -19,6 +19,7 @@ import Dialog, {
 import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 import Styles from  'react-select/dist/react-select.css';
+import PubSub from 'pubsub-js';
 
 
 import dummyData from './dummyData.js';
@@ -168,6 +169,8 @@ class Vendors extends React.PureComponent
                   window.location.reload();
                   temp.setState({rows:oldRows});
                 }
+            }else{
+              PubSub.publish('showMessage', 'Vendor successfully edited!' );
             }
           });
         }
@@ -191,6 +194,8 @@ class Vendors extends React.PureComponent
                   if(!alert(res.data)){
                     window.location.reload();
                   }
+              }else{
+                PubSub.publish('showMessage', 'Vendor successfully deleted!' );
               }
           });
           // removes data from the table
@@ -232,7 +237,7 @@ class Vendors extends React.PureComponent
       rawData = dummyData;
     }
     console.log("rawData " + JSON.stringify(rawData));
-    
+
     var processedData = [];
     if(rawData){
       processedData = [...rawData.map((row, index)=> ({

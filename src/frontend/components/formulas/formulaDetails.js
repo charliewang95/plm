@@ -257,9 +257,10 @@ async loadFormula(){
                 alert(res.data);
               }else{
                 // TODO: Snackbar
-                temp.setState({snackBarMessage : "Formula successfully added"});
-                temp.setState({snackBarOpen:true});
+                // temp.setState({snackBarMessage : "Formula successfully added"});
+                // temp.setState({snackBarOpen:true});
                 temp.setState({fireRedirect: true});
+                PubSub.publish('showMessage', 'Formula successfully added.' );
                 // alert(" Formula successfully added! ");
               }
             });
@@ -276,8 +277,8 @@ async loadFormula(){
             alert(res.data);
           }else{
             //TODO: SnackBar
-            temp.setState({snackBarMessage : "Formula successfully updated."});
-            temp.setState({snackBarOpen:true});
+            // temp.setState({snackBarMessage : "Formula successfully updated."});
+            // temp.setState({snackBarOpen:true});
             temp.setState({fireRedirect: true});
             PubSub.publish('showMessage', 'Formula successfully updated.' );
             // alert(" Formula successfully updated. ");

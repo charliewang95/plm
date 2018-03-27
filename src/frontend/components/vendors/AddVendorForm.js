@@ -9,6 +9,7 @@ import * as vendorActions from '../../interface/vendorInterface.js';
 
 import { Redirect } from 'react-router'
 import * as testConfig from '../../../resources/testConfig.js'
+import PubSub from 'pubsub-js';
 
 // TODO: get session Id from the user
 var sessionId = "";
@@ -45,7 +46,8 @@ class AddVendorForm extends React.Component{
   }
 
   vendorSuccessfullyAdded() {
-    alert('Vendor ' + this.state.name + ' is added successfully');
+    // alert('Vendor ' + this.state.name + ' is added successfully');
+    PubSub.publish('showMessage', 'Vendor Successfully added!' );
     this.clearFields();
   }
 
