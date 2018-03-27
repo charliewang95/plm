@@ -46,6 +46,7 @@ import MyPdfViewer from './PdfViewer';
 import {Link} from 'react-router-dom';
 import Chip from 'material-ui/Chip';
 import testData from './testIngredients';
+import PubSub from 'pubsub-js';
 
 // import Snackbar from 'material-ui/Snackbar';
 
@@ -386,7 +387,8 @@ class AdminIngredients extends React.PureComponent {
             // rows = [...rows,added[0]];
             // temp.setState({rows:rows});
             window.reload();
-            alert(" New Ingredient Successfully added! ");
+            PubSub.publish('showMessage', 'New Ingredient Successfully added!' );
+            // alert(" New Ingredient Successfully added! ");
           }
         });
 
@@ -450,7 +452,8 @@ class AdminIngredients extends React.PureComponent {
                 } else {
                     // SnackBarPop("Row was successfully added!");
                     console.log("sdfadfsdf");
-                    alert(" Ingredient Successfully edited! ");
+                    // alert(" Ingredient Successfully edited! ");
+                    PubSub.publish('showMessage', ' Ingredient Successfully edited!' );
                 }
             });
 
@@ -483,8 +486,9 @@ class AdminIngredients extends React.PureComponent {
                 if (res.status == 400) {
                     alert(res.data);
                 } else {
-                    alert(" Ingredient successfully deleted ! ");
+                    // alert(" Ingredient successfully deleted ! ");
                     rows.splice(index, 1);
+                    PubSub.publish('showMessage', ' Ingredient successfully deleted !' );
                     window.location.reload();
                 }
           });
@@ -645,17 +649,13 @@ class AdminIngredients extends React.PureComponent {
                         window.location.reload();
                 } else if (res.status == 200) {
                     console.log(res);
-                    if(!alert(res.data))
+                    if(!alert(res.data)){
                         window.location.reload();
+                        PubSub.publish('showMessage', 'File successfully uploaded!');
+                      }
                 }
            });
 
-//          console.log(res);
-//          if(res == "SUCCESS") {
-//            alert("File successfully uploaded!");
-//          } else {
-//            alert("File upload failed!");
-//          }
         }
     }
 

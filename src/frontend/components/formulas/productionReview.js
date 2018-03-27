@@ -22,6 +22,7 @@ import RaisedButton from 'material-ui/Button';
 import * as orderActions from '../../interface/orderInterface';
 import * as productActions from '../../interface/productInterface';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
+import PubSub from 'pubsub-js';
 
 import {reviewData} from './dummyData';
 
@@ -138,8 +139,9 @@ class ProductionReview extends React.Component {
                    temp.setState({ingredientsToOrder:data});
                    temp.setState({open:false});
 
-                   temp.setState({snackBarMessage : "Formula successfully sent for production review. "});
-                   temp.setState({snackBarOpen:true});
+                   // temp.setState({snackBarMessage : "Formula successfully sent for production review. "});
+                   // temp.setState({snackBarOpen:true});
+                   PubSub.publish('showMessage', 'Formula successfully sent for production review.' );
               }
       });
 
@@ -186,8 +188,9 @@ class ProductionReview extends React.Component {
           alert(res.data);
         }else{
           // success = true;
-          temp.setState({snackBarMessage : "Ingredients Successfully added to cart. "});
-          temp.setState({snackBarOpen:true});
+          // temp.setState({snackBarMessage : "Ingredients Successfully added to cart. "});
+          // temp.setState({snackBarOpen:true});
+          PubSub.publish('showMessage', ' Ingredients successfully added to cart !' );
         }
       });
     }
@@ -205,6 +208,7 @@ class ProductionReview extends React.Component {
          if (res.status == 400) {
             alert(res.data);
          } else {
+
             // alert('Successfully added to production .');
          }
       });
@@ -258,11 +262,11 @@ class ProductionReview extends React.Component {
 
       <Divider/>
 
-      {this.state.snackBarOpen && <SnackBarDisplay
+      {/* {this.state.snackBarOpen && <SnackBarDisplay
             open = {this.state.snackBarOpen}
             message = {this.state.snackBarMessage}
             handleSnackBarClose = {this.handleSnackBarClose}
-          /> }
+          /> } */}
 
           <Dialog
             open={this.state.open}
