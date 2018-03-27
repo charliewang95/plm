@@ -67,6 +67,7 @@ class ProductionReview extends React.Component {
         ingredientsToOrder:[],
         snackBarMessage:'',
         snackBarOpen:false,
+        afterLink:'',
     };
     // this.cancelProduction = this.cancelProduction.bind(this);
     this.cancelProduction =() =>
@@ -83,6 +84,8 @@ class ProductionReview extends React.Component {
       console.log(" get production review");
 
       var temp = this;
+      var afterLink = this.state.formulaRows[0].isIntermediate? '/admin-ingredients' : '/product';
+      this.setState({afterLink: afterLink});
 
       //TODO: Check this
       console.log(this.state.formulaRows[0]._id+' '+Number(this.state.addedQuantity));
@@ -313,7 +316,7 @@ class ProductionReview extends React.Component {
                     // className=classes.button
                     style={styles.orderIngredientsButton}
                     onClick = {(event) => this.checkOutFormula(event)}
-                    component = {Link} to = "/product"
+                    component = {Link} to = {this.state.afterLink}
                     primary="true">Send to production</RaisedButton>
             </Tooltip>}
         <RaisedButton color="default"
