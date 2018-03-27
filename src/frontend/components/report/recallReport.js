@@ -308,13 +308,18 @@ export default class RecallReport extends React.PureComponent{
 			var currentLot = frontier.pop();
 			console.log("currentLot:");
 			console.log(currentLot);
-			var currentLotId = currentLot._id;
+			var currentLotId = currentLot.productName;//use productName to identify
+			console.log("currentLotId:");
+			console.log(currentLotId);
+			console.log("idOfLotsAlreadyConsidered");
+			console.log(idOfLotsAlreadyConsidered);
 			if(idOfLotsAlreadyConsidered.includes(currentLotId)) {
 				console.log("skipping the lot");
 				continue; //do not consider repeated elements
 			}
 			lotsNeedToBeRecalled = lotsNeedToBeRecalled.concat(currentLot);
-			idOfLotsAlreadyConsidered = idOfLotsAlreadyConsidered.concat(currentLotId);
+
+			idOfLotsAlreadyConsidered.push(currentLotId);
 			const lotNumber = currentLot.lotNumber;
 			const ingredientName = currentLot.productName;
 			const vendorName = "null";

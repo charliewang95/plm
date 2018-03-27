@@ -519,12 +519,13 @@ var updateIngredientProduct = function(req, res, next, ingredientName, formula, 
         console.log('FFFFFFFFF='+formula);
         var newIngredientProduct = new IngredientProduct();
         newIngredientProduct.ingredientNameUnique = ingredientName.toLowerCase();
-        newIngredientProduct.vendorNameUnique = (lot.vendorNameUnique) ? lot.vendorNameUnique: '';
+        newIngredientProduct.vendorNameUnique = (lot.vendorNameUnique == null) ? lot.vendorNameUnique: '';
         newIngredientProduct.lotNumberUnique = lot.lotNumberUnique;
         newIngredientProduct.lotId = lot._id;
         newIngredientProduct.productName = formula.name;
         newIngredientProduct.date = date;
         newIngredientProduct.lotNumber = (formula.isIntermediate) ? 'IP'+date.getTime() : 'PR'+date.getTime();
+        console.log(newIngredientProduct);
         newIngredientProduct.save(function(err){
             callback();
 //            updateIngredientProduct(req, res, next, ingredients, formula, date, i+1);

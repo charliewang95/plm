@@ -122,7 +122,7 @@ class Log extends React.PureComponent {
       endDate: new Date(2018, 11, 31, 23, 59, 59, 0),
       currentPage: 0,
       pageSize: 10,
-      pageSizes: [10, 25, 50],
+      pageSizes: [10, 50, 100, 500],
       //filters: [{ columnName: 'date', value: this.startDate }],
       //editingRowIds: [],
       //rowChanges: {},

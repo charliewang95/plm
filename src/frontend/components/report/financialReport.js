@@ -29,14 +29,14 @@ export default class FinancialReport extends React.PureComponent {
     this.state = {
       columns: [
         { name: 'name', title: 'Ingredient Name' },
-        { name: 'moneySpent', title: 'Orders Expenditure ($) ' },
+        { name: 'moneySpent', title: 'Total Expenditure ($) ' },
         { name: 'moneyProd', title: 'Production Expenditure ($)' },
       ],
       rows: [],
       sorting:[],
       currentPage: 0,
       pageSize: 10,
-      pageSizes: [5, 10, 0],
+      pageSizes: [10, 50, 100, 500],
       columnOrder: ['name', 'moneySpent', 'moneyProd'],
     };
     this.changeSorting = sorting => this.setState({ sorting });
