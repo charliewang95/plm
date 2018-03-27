@@ -42,7 +42,8 @@ import { withStyles } from 'material-ui/styles';
 
 // var sessionId = '';
 
-var id = 0;
+
+// var id = 0;
 
 const styles = theme => ({
   cell: {
@@ -55,7 +56,8 @@ const styles = theme => ({
   },
 });
 
-const getRowId = row => row.id ? row.id : id++;
+
+const getRowId = row => row.productName;
 
 export default class SampleTable extends React.PureComponent {
 	constructor(props) {
