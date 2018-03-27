@@ -135,22 +135,25 @@ exports.editLot = function(req, res, next) {
                 if (err) return next(err);
                 else if (!lot) return res.status(400).send('Lot not found');
                 else {
-                    var oldNumUnit = lot.numUnit;
-                    var newNumUnit = quantity;
-                    var numUnitDiff = newNumUnit - oldNumUnit;
-                    Ingredient.findOne({nameUnique: lot.ingredientNameUnique}, function(err, ingredient){
-                        if (numUnitDiff > 0) {
-                            checkSpace(req, res, next, numUnitDiff, ingredient, lot, function(totalIncreasedSpace){
-                                console.log('editLot: increased space '+totalIncreasedSpace);
-                                updateSpaceIncrease(req, res, next, lot, newNumUnit, oldNumUnit, totalIncreasedSpace, ingredient);
-                            });
-                        } else {
-                            checkSpace(req, res, next, -numUnitDiff, ingredient, lot, function(totalDecreasedSpace){
-                                console.log('editLot: decreased space '+totalDecreasedSpace);
-                                updateSpaceDecrease(req, res, next, lot, newNumUnit, oldNumUnit, totalDecreasedSpace, ingredient);
-                            });
-                        }
-                    });
+                    lot.update({numUnit: quantity}, function(err, obj){
+                      res.json(lot);
+                    })
+                    // var oldNumUnit = lot.numUnit;
+                    // var newNumUnit = quantity;
+                    // var numUnitDiff = newNumUnit - oldNumUnit;
+                    // Ingredient.findOne({nameUnique: lot.ingredientNameUnique}, function(err, ingredient){
+                    //     if (numUnitDiff > 0) {
+                    //         checkSpace(req, res, next, numUnitDiff, ingredient, lot, function(totalIncreasedSpace){
+                    //             console.log('editLot: increased space '+totalIncreasedSpace);
+                    //             updateSpaceIncrease(req, res, next, lot, newNumUnit, oldNumUnit, totalIncreasedSpace, ingredient);
+                    //         });
+                    //     } else {
+                    //         checkSpace(req, res, next, -numUnitDiff, ingredient, lot, function(totalDecreasedSpace){
+                    //             console.log('editLot: decreased space '+totalDecreasedSpace);
+                    //             updateSpaceDecrease(req, res, next, lot, newNumUnit, oldNumUnit, totalDecreasedSpace, ingredient);
+                    //         });
+                    //     }
+                    // });
                 }
             });
         }

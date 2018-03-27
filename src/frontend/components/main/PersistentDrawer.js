@@ -189,7 +189,7 @@ class PersistentDrawer extends React.Component {
     const { anchor, open } = this.state;
     const drawer = user && (
        <Drawer
-        type="permanent"
+        type="persistent"
         classes={{
           paper: classes.drawerPaper,
         }}
@@ -198,7 +198,9 @@ class PersistentDrawer extends React.Component {
       >
         <div className={classes.drawerInner}>
           <div className={classes.drawerHeader}>
-
+            <IconButton onClick={this.handleDrawerClose}>
+              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            </IconButton>
           </div>
           <Divider />
           {isAdmin && <List className={classes.list}>{UserListItems}</List> }
