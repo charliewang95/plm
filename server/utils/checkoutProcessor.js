@@ -31,7 +31,6 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
         }
         else {
             validateOrders(items, res, next, function(wSpace, rSpace, fSpace){
-
                 console.log("Orders validated.");
                 addIngredientLots(req, res, next, items, 0, function(){
                     deleteProcessor.process(model, items, '', res, next);
@@ -517,7 +516,7 @@ var updateIngredientProduct = function(req, res, next, ingredientName, formula, 
         console.log('FFFFFFFFF='+formula);
         var newIngredientProduct = new IngredientProduct();
         newIngredientProduct.ingredientNameUnique = ingredientName.toLowerCase();
-        newIngredientProduct.vendorNameUnique = lot.vendorNameUnique;
+        newIngredientProduct.vendorNameUnique = (lot.vendorNameUnique) ? lot.vendorNameUnique: '';
         newIngredientProduct.lotNumberUnique = lot.lotNumberUnique;
         newIngredientProduct.lotId = lot._id;
         newIngredientProduct.productName = formula.name;

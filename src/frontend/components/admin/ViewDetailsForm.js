@@ -163,7 +163,7 @@ class AddIngredientForm extends React.Component{
     for(var i =0; i < array.length; i++){
           var lotObject = array[i];
           //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
-          string +=  lotObject.lotNumber+ ": " + lotObject.numUnit + " (number of Units)";
+          string +=  lotObject.lotNumber+ ": " + lotObject.numUnit ;
           sum+=Number(lotObject.numUnit);
           if(i!= (array.length -1)){
             string+='\n';
@@ -288,9 +288,9 @@ class AddIngredientForm extends React.Component{
       return false;
       // Add validation for lotNumberArray and quantity
     }
-//    else if (!this.checkQuantityMatchLotArray()){
-//      alert("the total quantity must equal to the sum of quantities in lots.")
-//    }
+   else if (!this.checkQuantityMatchLotArray()){
+     alert("the total quantity must equal to the sum of quantities in lots.")
+   }
     else if(this.state.temperatureZone==null || this.state.temperatureZone==''){
       alert("Please fill out temperature.");
       return false;
@@ -577,7 +577,7 @@ class AddIngredientForm extends React.Component{
                   style={{lineHeight: 1.5}}
                 />}
 
-                {(!this.state.isIntermediate)&&(!this.state.isDisabled)&&
+                {(!this.state.isDisabled && this.state.numUnit!=0)&&
                   <LotNumberSelector
                     nativeUnit = {this.state.nativeUnit}
                     initialArray = {this.state.lotNumberArray}
