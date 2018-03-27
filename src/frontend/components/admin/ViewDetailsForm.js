@@ -182,18 +182,17 @@ class AddIngredientForm extends React.Component{
     this.computeVendorString();
     if((!this.state.isCreateNew)&&(this.props.location.state.details.numUnit)){
       this.loadLotNumbers();
-      // this.computeLotNumberString();
+      this.computeLotNumberString();
     }
   }
 
   async loadLotNumbers(){
+    console.log("loadLotNumbers");
+    console.log(this.state);
     var lotArray = await ingredientInterface.getAllLotNumbersAsync(this.state.ingredientId,sessionId);
      // var lotArray =  testData.tablePage.lots_test[0].ingredientLots;
      console.log("load ingredient lots");
      console.log(lotArray);
-     // this.setState({value: event.target.value}, function () {
-    // console.log(this.state.value);
-    // });
 
     // create map
     var array = [];
@@ -204,14 +203,9 @@ class AddIngredientForm extends React.Component{
       array.push(obj);
       lotIdMap[lotArray[i].lotNumber]= lotArray[i]._id;
     }
-
-     this.setState({lotNumberArray:lotArray},function computeLotNumberString(){
-       console.log("State is set");
-       console.log(this.state);
-       this.computeLotNumberString();
-     });
-
+     this.setState({lotNumberArray:array});
   }
+
   updateArray(inputArray){
     console.log("update array");
     var sum = 0;
