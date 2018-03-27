@@ -93,7 +93,7 @@ function ListItemComposition(props) {
           <ListItemIcon className={classes.icon}>
             <ReportIcon />
           </ListItemIcon>
-          <ListItemText classes={{ primary: classes.primary }} inset primary="Report" />
+          <ListItemText classes={{ primary: classes.primary }} inset primary="Reports" />
         </MenuItem>
 
         {/* <MenuItem className={classes.menuItem} component={Link} to="/prod-report" button>

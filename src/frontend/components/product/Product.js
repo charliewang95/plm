@@ -104,7 +104,11 @@ class Product extends React.PureComponent {
             if (Number(this.state.unchangedRows[i].date.slice(0,4))>date.getFullYear() ||
                 Number(this.state.unchangedRows[i].date.slice(0,4))==date.getFullYear() && (Number(this.state.unchangedRows[i].date.slice(5,7))>date.getMonth()+1 ||
                 Number(this.state.unchangedRows[i].date.slice(5,7))==date.getMonth()+1 && Number(this.state.unchangedRows[i].date.slice(8,10))>=date.getDate())) {
-                newRows.push(this.state.unchangedRows[i]);
+                if (Number(this.state.unchangedRows[i].date.slice(0,4))<this.state.endDate.getFullYear() ||
+                    Number(this.state.unchangedRows[i].date.slice(0,4))==this.state.endDate.getFullYear() && (Number(this.state.unchangedRows[i].date.slice(5,7))<this.state.endDate.getMonth()+1 ||
+                    Number(this.state.unchangedRows[i].date.slice(5,7))==this.state.endDate.getMonth()+1 && Number(this.state.unchangedRows[i].date.slice(8,10))<=this.state.endDate.getDate())) {
+                    newRows.push(this.state.unchangedRows[i]);
+                }
             }
         }
         this.setState({
@@ -124,7 +128,11 @@ class Product extends React.PureComponent {
                 if (Number(this.state.unchangedRows[i].date.slice(0,4))<date.getFullYear() ||
                     Number(this.state.unchangedRows[i].date.slice(0,4))==date.getFullYear() && (Number(this.state.unchangedRows[i].date.slice(5,7))<date.getMonth()+1 ||
                     Number(this.state.unchangedRows[i].date.slice(5,7))==date.getMonth()+1 && Number(this.state.unchangedRows[i].date.slice(8,10))<=date.getDate())) {
-                    newRows.push(this.state.unchangedRows[i]);
+                    if (Number(this.state.unchangedRows[i].date.slice(0,4))>this.state.startDate.getFullYear() ||
+                        Number(this.state.unchangedRows[i].date.slice(0,4))==this.state.startDate.getFullYear() && (Number(this.state.unchangedRows[i].date.slice(5,7))>this.state.startDate.getMonth()+1 ||
+                        Number(this.state.unchangedRows[i].date.slice(5,7))==this.state.startDate.getMonth()+1 && Number(this.state.unchangedRows[i].date.slice(8,10))>=this.state.startDate.getDate())) {
+                        newRows.push(this.state.unchangedRows[i]);
+                    }
                 }
             }
             this.setState({
