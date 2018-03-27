@@ -531,3 +531,5 @@ var updateIngredientProduct = function(req, res, next, ingredientName, formula, 
         });
 //    }
 };
+
+// var updateIngredientProductAfterIP = function

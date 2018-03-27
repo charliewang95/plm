@@ -74,7 +74,7 @@ class AddIngredientForm extends React.Component{
       vendorString: "",
       vendorsArray: (details.vendorsArray)?(details.vendorsArray):[],
   		value:undefined,
-      ingredientId: (details.ingredientId)?(details.ingredientId):'',
+      ingredientId: (details.ingredientId)?(details.ingredientId):(props.location.state.ingredientId),
       name:(details.name)?(details.name):'',
       packageName:(details.packageName)?(details.packageName):'',
       temperatureZone:(details.temperatureZone)?(details.temperatureZone):'',
@@ -82,10 +82,10 @@ class AddIngredientForm extends React.Component{
       nativeUnit: (details.nativeUnit)?(details.nativeUnit):'',
       numUnitPerPackage: (details.numUnitPerPackage)?(details.numUnitPerPackage):'',
       isDisabled: (isCreateNew) ? false: true,
-      numUnit: (details.numUnit)?(details.numUnit):0,
+      numUnit: (details.numUnit)? (Math.round(details.numUnit*100)/100):0,
       space: (details.space)?(details.space):0,
-      moneySpent: (details.moneySpent)?(details.moneySpent) : 0,
-      moneyProd: (details.moneyProd) ? (details.moneyProd): 0,
+      moneySpent: (details.moneySpent)?(Math.round(details.moneySpent*100)/100) : 0,
+      moneyProd: (details.moneyProd) ? (Math.round(details.moneyProd*100)/100): 0,
       price: 0,
       isCreateNew: (isCreateNew),
       isIntermediate:(isIntermediate),
@@ -94,6 +94,7 @@ class AddIngredientForm extends React.Component{
       lotNumberString:'',
       snackBarMessage:'',
       snackBarOpen:false,
+      initialNumUnit:(details.numUnit)? (Math.round(details.numUnit*100)/100):0
       }
     this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -182,8 +183,13 @@ class AddIngredientForm extends React.Component{
     userId = JSON.parse(sessionStorage.getItem('user'))._id;
     console.log("logs");
     if(this.props.location.state.fromLogs){
-      this.loadIngredient();
+      temp.loadIngredient();
+      temp.loadLotNumbers(function(){
+        temp.computeLotNumberString();
+      });
     }
+    console.log("props");
+    console.log(this.props);
     this.computeVendorString();
     if((!this.props.location.state.fromLogs)&&(!this.state.isCreateNew)&&(this.props.location.state.details.numUnit)){
       console.log("inStock");
@@ -195,7 +201,8 @@ class AddIngredientForm extends React.Component{
 
   async loadLotNumbers(callback){
     console.log("loadLotNumbers");
-    console.log(this.state);
+    // console.log(this.state);
+    console.log(this.state.ingredientId);
     var lotArray = await ingredientInterface.getAllLotNumbersAsync(this.state.ingredientId,sessionId);
      // var lotArray =  testData.tablePage.lots_test[0].ingredientLots;
      console.log("load ingredient lots");
@@ -269,9 +276,11 @@ class AddIngredientForm extends React.Component{
       numUnit: details.numUnit,
       space: details.space,
       isIntermediate: details.isIntermediate,
+      initialNumUnit:details.numUnit,
     });
 
     this.computeVendorString();
+    this.computeLotNumberString();
   }
 
   isValid(){
@@ -289,7 +298,7 @@ class AddIngredientForm extends React.Component{
       // Add validation for lotNumberArray and quantity
     }
    else if (!this.checkQuantityMatchLotArray()){
-     alert("the total quantity must equal to the sum of quantities in lots.")
+     alert("current stock quantity must equal to the sum of quantities in lots.")
    }
     else if(this.state.temperatureZone==null || this.state.temperatureZone==''){
       alert("Please fill out temperature.");
@@ -384,7 +393,6 @@ class AddIngredientForm extends React.Component{
                           }
                         }
               });
-
     }
   }
 
@@ -403,6 +411,7 @@ class AddIngredientForm extends React.Component{
       lotNumberArray:[],
       totalAssigned:0,
       fireRedirect: false,
+      initialNumUnit:0,
       })
     }
 
@@ -558,15 +567,16 @@ class AddIngredientForm extends React.Component{
               <div>
               <p><font size="6">Inventory Information</font></p>
               <FormGroup>
-                 <TextField
+               <TextField
                   required
-                  disabled = {(this.state.isDisabled) || (this.props.location.state.details.numUnit==0)}
+                  disabled = {(this.state.isDisabled) || (this.state.initialNumUnit==0)}
                   id="numUnit"
                   label={"Current Quantity " + "(" + this.state.nativeUnit +")"}
                   value={this.state.numUnit}
                   onChange={this.handleNumUnitChange}
                   margin="normal"
                 />
+
                 {(this.state.isDisabled) && (this.state.numUnit!=0)&& <TextField
                   id="lotNumbers"
                   label={"Lot Number : Quantity (" + this.state.nativeUnit + ")"}
@@ -577,7 +587,7 @@ class AddIngredientForm extends React.Component{
                   style={{lineHeight: 1.5}}
                 />}
 
-                {(!this.state.isDisabled && this.props.location.state.details.numUnit!=0)&&
+                {(!this.state.isDisabled && this.state.initialNumUnit!=0)&&
                   <LotNumberSelector
                     nativeUnit = {this.state.nativeUnit}
                     initialArray = {this.state.lotNumberArray}

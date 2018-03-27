@@ -1,4 +1,5 @@
 import React from 'react';
+import Paper from 'material-ui/Paper';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
@@ -44,7 +45,7 @@ class ScrollableTabsButtonAuto extends React.Component {
     const { value } = this.state;
 
     return (
-      <div className={classes.root}>
+      <Paper>
         <AppBar position="static" color="default">
           <Tabs
             value={value}
@@ -64,7 +65,7 @@ class ScrollableTabsButtonAuto extends React.Component {
         {value === 1 && <ProductionReport/>}
         {value === 2 && <FreshnessReport/>}
         {value === 3 && <RecallReport/>}
-      </div>
+      </Paper>
     );
   }
 }

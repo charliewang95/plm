@@ -78,7 +78,8 @@ class ProductionReview extends React.Component {
       });
     console.log(this.state.formulaRows);
 
-    this.productionReview = async() =>{
+    this.productionReview = async(event) =>{
+      event.preventDefault();
       console.log(" get production review");
       var temp = this;
       var afterLink = this.state.formulaRows[0].isIntermediate? '/admin-ingredients' : '/product';
@@ -103,6 +104,7 @@ class ProductionReview extends React.Component {
 
                  var review = [...review.map((row, index)=> ({
                      id:index,...row,
+                     currentUnit:Math.round(row.currentUnit*100)/100,
                      delta:Math.round(row.delta*100)/100,
                      })),
                    ];
@@ -136,7 +138,7 @@ class ProductionReview extends React.Component {
                    temp.setState({ingredientsToOrder:data});
                    temp.setState({open:false});
 
-                   temp.setState({snackBarMessage : "Formula successfully sent to production. "});
+                   temp.setState({snackBarMessage : "Formula successfully sent for production review. "});
                    temp.setState({snackBarOpen:true});
               }
       });
@@ -147,7 +149,7 @@ class ProductionReview extends React.Component {
 
     console.log('preview constructed');
     this.addToShoppingCart = this.addToShoppingCart.bind(this);
-    this.checkOutFormula = this.checkOutFormula.bind(this);
+    this.checkOutFormulaFinal = this.checkOutFormulaFinal.bind(this);
     this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
     this.handleOnClose = this.handleOnClose.bind(this);
     console.log('everything binded');
@@ -155,6 +157,7 @@ class ProductionReview extends React.Component {
 
 
   async addToShoppingCart(event){
+    // event.preventDefault();
     //TODO: send to back end
     var temp = this;
     console.log("add To cart" + JSON.stringify(this.state.ingredientsToOrder));
@@ -193,8 +196,7 @@ class ProductionReview extends React.Component {
     event.stopPropagation();
   }
 
-  async checkOutFormula(event){
-
+  async checkOutFormulaFinal(event){
     var temp = this;
     console.log(temp.state.formulaRows[0]);
     await formulaActions.checkoutFormula("checkout",temp.state.formulaRows[0]._id,
@@ -203,9 +205,10 @@ class ProductionReview extends React.Component {
          if (res.status == 400) {
             alert(res.data);
          } else {
-            alert('Successfully added to production.');
+            // alert('Successfully added to production .');
          }
       });
+      window.location.reload();
     // event.stopPropagation();
   };
 
@@ -305,7 +308,7 @@ class ProductionReview extends React.Component {
                 >Cancel</Button>
               <Button
                 component = {Link} to = "/production-review"
-                onClick={this.productionReview} color="secondary">Add To Production</Button>
+                onClick={(event) => this.productionReview(event)} color="secondary">Add To Production</Button>
             </DialogActions>
           </Dialog>
       </Paper>
@@ -332,7 +335,7 @@ class ProductionReview extends React.Component {
                     color="primary"
                     // className=classes.button
                     style={styles.orderIngredientsButton}
-                    onClick = {(event) => this.checkOutFormula(event)}
+                    onClick = {(event) => this.checkOutFormulaFinal(event)}
                     component = {Link} to = {this.state.afterLink}
                     primary="true">Send to production</RaisedButton>
             </Tooltip>}
