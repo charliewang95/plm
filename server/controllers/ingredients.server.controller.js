@@ -54,12 +54,13 @@ exports.listLotNumbers = function(req, res, next) {
 //                numberUniqueArray.push(lotNumberUnique);
 //            }
 //        }
-//        res.send(numberArray);
+//        res.send(numberArray); 
         res.json(items);
     });
 };
 
 exports.getRecall = function(req, res, next) {
+
     IngredientProduct.find({lotId: req.params.lotId}, function(err, ingredients){
         if (err) return next(err);
         else res.json(ingredients);
@@ -67,8 +68,11 @@ exports.getRecall = function(req, res, next) {
 };
 
 exports.getRecallAlternate = function(req, res, next) {
+    var vendorNameUnique = req.params.vendorName!="null" ? req.params.vendorName.toLowerCase() : "";
     IngredientProduct.find({ingredientNameUnique: req.params.ingredientName.toLowerCase(), lotNumberUnique: req.params.lotNumber.toLowerCase(),
-                            vendorName: req.params.vendorName}, function(err, ingredients){
+                            vendorNameUnique: vendorNameUnique}, function(err, ingredients){
+        console.log(req.params.ingredientName.toLowerCase()+' '+req.params.lotNumber.toLowerCase()+' '+req.params.vendorName.toLowerCase());
+        console.log(ingredients);
         if (err) return next(err);
         else res.json(ingredients);
     });

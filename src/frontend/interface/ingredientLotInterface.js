@@ -75,8 +75,8 @@ async function getIngredientLotAsync(ingredientLotId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-async function updateIngredientLot(ingredientName, ingredientId, numUnit, date, lotNumber, vendorName, sessionId, callback) {
-	var updatedIngredientLot = packIntoJson(ingredientName, ingredientId, numUnit, date, lotNumber, vendorName);
+async function updateIngredientLot(ingredientName, ingredientLotId, numUnit, date, lotNumber, vendorName, sessionId, callback) {
+	var updatedIngredientLot = packIntoJson(ingredientName, ingredientLotId, numUnit, date, lotNumber, vendorName);
 	//return await ingredientLotActions.updateIngredientLot(ingredientLotId, sessionId, updatedIngredientLot);
 	ingredientLotActions.updateIngredientLot(ingredientLotId, sessionId, updatedIngredientLot, function(res){
         callback(res);

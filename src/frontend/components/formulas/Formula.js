@@ -188,7 +188,7 @@ class Formula extends React.PureComponent {
       currentPage: 5,
       deletingRows: [],
       pageSize: 10,
-      pageSizes: [5, 10, 0],
+      pageSizes: [10, 50, 100, 500],
       columnOrder: ['name', 'description', 'unitsProvided', 'ingredients', 'productType','sendToProd' ],
       options:[],
       productionFormula:{},

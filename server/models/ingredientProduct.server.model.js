@@ -28,10 +28,6 @@ var IngredientProductSchema = new Schema({
     lotNumber: {
         type: String,
         required: true
-    },
-    productLotId: {
-        type: String,
-        required: true
     }
 });
 

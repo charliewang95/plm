@@ -20,7 +20,7 @@ import freshnessReportData from './testData';
 
 // const sessionId = testConfig.sessionId;
 var sessionId = "";
-var userId = "";
+// var userId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 
@@ -38,7 +38,7 @@ export default class FreshnessReport extends React.PureComponent {
       sorting:[],
       currentPage: 0,
       pageSize: 10,
-      pageSizes: [10, 50, 500],
+      pageSizes: [10, 50, 100, 500],
       columnOrder: ['name', 'averageWaitTime', 'worstWaitTime'],
     };
     this.changeSorting = sorting => this.setState({ sorting });
