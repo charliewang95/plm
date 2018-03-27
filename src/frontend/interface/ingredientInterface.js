@@ -165,5 +165,5 @@ async function deleteIngredient(ingredientId, sessionId, callback) {
 //export functions above for use by other modules
 
 export { addIngredient, getAllIngredientsAsync, getIngredientAsync, updateIngredient, deleteIngredient, getAllIngredientNamesAsync,
-getAllIngredientsOnlyAsync, getAllIntermediatesOnlyAsync, getAllLotNumbersAsync, getRecallAsync, getFreshAsync, editLotAsync};
+getAllIngredientsOnlyAsync, getAllIntermediatesOnlyAsync, getAllLotNumbersAsync, getRecallAsync, getFreshAsync, editLotAsync,getRecallAlternateAsync};
 
