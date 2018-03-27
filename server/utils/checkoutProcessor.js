@@ -313,6 +313,7 @@ var checkIngredientHelper = function(req, res, next, multiplier, i, ingredients,
     } else {
         var ingredientQuantity = ingredients[i];
         var totalAmountNeeded = multiplier*ingredientQuantity.quantity;
+
         Ingredient.findOne({nameUnique: ingredientQuantity.ingredientName.toLowerCase()}, function(err, ingredient){
             if (err) return next(err);
             else if (!ingredient) return res.status(400).send('Ingredient '+ingredientQuantity.ingredientName+' does not exist. 000');
@@ -331,6 +332,7 @@ var checkIngredientHelper = function(req, res, next, multiplier, i, ingredients,
                 ingredientDelta.delta = (totalAmountNeeded - ingredient.numUnit) > 0 ? totalAmountNeeded - ingredient.numUnit : 0;
                 missingIngredientArray.push(ingredientDelta);
                 console.log(totalAmountNeeded+' '+ingredient.numUnit);
+                console.log(missingIngredientArray);
                 checkIngredientHelper(req, res, next, multiplier, i+1, ingredients, missingIngredientArray, viable, callback);
             }
         });

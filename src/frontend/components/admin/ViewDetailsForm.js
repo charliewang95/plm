@@ -169,6 +169,7 @@ class AddIngredientForm extends React.Component{
             string+='\n';
           }
         }
+    console.log(string);
     this.setState({lotNumberString: string });
     this.setState({totalAssigned: sum });
   }
@@ -185,6 +186,7 @@ class AddIngredientForm extends React.Component{
     }
     this.computeVendorString();
     if((!this.state.isCreateNew)&&(this.props.location.state.details.numUnit)){
+      console.log("inStock");
       temp.loadLotNumbers(function(){
         temp.computeLotNumberString();
       });
@@ -565,7 +567,7 @@ class AddIngredientForm extends React.Component{
                   onChange={this.handleNumUnitChange}
                   margin="normal"
                 />
-                {(!this.state.isIntermediate)&&(this.state.isDisabled) && (this.state.numUnit!=0)&& <TextField
+                {(this.state.isDisabled) && (this.state.numUnit!=0)&& <TextField
                   id="lotNumbers"
                   label={"quantity (" + this.state.nativeUnit + ") per lot"}
                   multiline
