@@ -49,7 +49,7 @@ exports.updateAverageDelete = function(res, next, date, ingredientName, numUnit,
                 else if (fresh) {
                     var averageMilli = fresh.averageMilli;
                     IngredientLot.getOldestLot(res, ingredientName.toLowerCase(), function(lot){
-                        if (lot) {
+                        if (lot && oldNumUnit != numUnit) {
                             var newAverageMilli = Math.floor((averageMilli * oldNumUnit - lot.date.getTime() * numUnit) / (oldNumUnit - numUnit));
                             console.log("OLD AVERAGE "+averageMilli+"NEW AVERAGE "+newAverageMilli);
                             fresh.update({averageMilli: newAverageMilli}, function(err, obj){
