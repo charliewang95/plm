@@ -125,6 +125,9 @@ var create = function(req, res, next, model, username) {
                         else {
                             console.log("creating, saved");
                             logger.log(username, 'create', modifiedItem, model);
+                            if (model == Formula) {
+                                  postProcessor.process(model, modifiedItem, '', res, next);
+                            }
                             res.json(modifiedItem);
                         }
                     });
