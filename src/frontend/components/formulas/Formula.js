@@ -476,7 +476,7 @@ class Formula extends React.PureComponent {
       {isAdmin &&
       <div>
         <br></br>
-        Click <a href="./BulkImportEV2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
+        Click <a href="./BulkImportEV3Proposalv2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
       </div>
     }
   </div>

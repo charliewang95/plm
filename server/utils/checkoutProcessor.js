@@ -456,7 +456,7 @@ var addIntermediateProductIngredientLot = function(req, res, next, formula, numU
                         ingredientLot.ingredientNameUnique = newIngredient.nameUnique;
                         ingredientLot.ingredientId = obj._id;
                         ingredientLot.numUnit = numUnit;
-                        ingredientLot.nativeUnit = ingredient.nativeUnit;
+                        ingredientLot.nativeUnit = newIngredient.nativeUnit;
                         ingredientLot.date = date;
                         ingredientLot.lotNumber = 'IP'+date.getTime();
                         ingredientLot.lotNumberUnique = ingredientLot.lotNumber.toLowerCase();
@@ -471,8 +471,8 @@ var addIntermediateProductIngredientLot = function(req, res, next, formula, numU
                 }
             });
         } else {
-            var newNumUnit = ingredient.numUnit + numUnit;
-            var newSpace = ingredient.space + totalSpace;
+            var newNumUnit = Number(ingredient.numUnit) + Number(numUnit);
+            var newSpace = Number(ingredient.space) + Number(totalSpace);
 //            products = ingredient.products;
 //            var productInIngredient = new Object();
 //            productInIngredient.productName = formula.name;
