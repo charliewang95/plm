@@ -289,7 +289,7 @@ class AddIngredientForm extends React.Component{
       // Add validation for lotNumberArray and quantity
     }
    else if (!this.checkQuantityMatchLotArray()){
-     alert("the total quantity must equal to the sum of quantities in lots.")
+     alert("current stock quantity must equal to the sum of quantities in lots.")
    }
     else if(this.state.temperatureZone==null || this.state.temperatureZone==''){
       alert("Please fill out temperature.");
