@@ -25,9 +25,10 @@ class PageNotFound extends React.PureComponent {
   render() {
 
     return (
-      <Paper>
-        <div>404</div>
-      </Paper>
+      <div>
+        <h1>404 Not Found</h1>
+        <font size="3" color="red">The requested data no longer exists.</font>
+      </div>
     );
   }
 }

@@ -569,7 +569,7 @@ class AddIngredientForm extends React.Component{
                 />
                 {(this.state.isDisabled) && (this.state.numUnit!=0)&& <TextField
                   id="lotNumbers"
-                  label={"quantity (" + this.state.nativeUnit + ") per lot"}
+                  label={"Lot Number : Quantity (" + this.state.nativeUnit + ")"}
                   multiline
                   value={this.state.lotNumberString}
                   margin="normal"

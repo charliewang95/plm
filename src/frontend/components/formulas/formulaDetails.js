@@ -78,6 +78,7 @@ class FormulaDetails extends React.Component{
       snackBarOpen:false,
       snackBarMessage:'',
       fireRedirect: false,
+      pageNotFound: false,
       }
 
     this.handleOnChange = this.handleOnChange.bind(this);
@@ -119,6 +120,9 @@ async loadFormula(){
     details = await formulaActions.getFormulaAsync(this.props.location.state.formulaId, sessionId);
 
     var formatIngredientsArray = new Array();
+    if(!details){
+      this.setState({pageNotFound: true});
+    }else{
       for (var j=0; j<details.ingredients.length; j++){
         //var vendorName = this.state.idToNameMap.get(rawData[i].vendors[j].codeUnique);
         var ingredientName = details.ingredients[j].ingredientName;
@@ -146,6 +150,7 @@ async loadFormula(){
 
     });
     this.computeIngredientsString();
+    }
   }
 
   handleOnChange (option) {
@@ -304,7 +309,7 @@ async loadFormula(){
 
   render (){
     const { formulaId,name, description, unitsProvided, ingredients, isCreateNew,
-      isDisabled,isIntermediate,packageName,nativeUnit,temperatureZone, fireRedirect} = this.state;
+      isDisabled,isIntermediate,packageName,nativeUnit,temperatureZone, fireRedirect, pageNotFound} = this.state;
     return (
       // <PageBase title = 'Add Ingredients' navigation = '/Application Form'>
       <div>
@@ -467,6 +472,7 @@ async loadFormula(){
                       {fireRedirect && (
              <Redirect to={'/formula'}/>
            )}
+                      {pageNotFound && (<Redirect to={'/pagenotfound'}/>)}
                       </div>
     )
 	}
