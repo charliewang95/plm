@@ -111,7 +111,7 @@ class LotNumberSelector extends Component {
         <LotNumberArray
                 nativeUnit={this.state.nativeUnit}
                 lotNumberArray={this.state.lotNumberArray}
-                deleteLotNumberItem={this.deleteLotNumberItem}
+                // deleteLotNumberItem={this.deleteLotNumberItem}
                 updateQuantity={this.updateQuantity}
                 updateLotNumber={this.updateLotNumber}/>
       </div>
