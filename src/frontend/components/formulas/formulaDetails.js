@@ -89,7 +89,7 @@ class FormulaDetails extends React.Component{
     this.handleNumUnitPerPackage = this.handleNumUnitPerPackage.bind(this);
     this.isValid = this.isValid.bind(this);
     this.loadFormula = this.loadFormula.bind(this);
-    this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
+    // this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
 
     }
 

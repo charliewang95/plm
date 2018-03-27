@@ -20,7 +20,7 @@ import freshnessReportData from './testData';
 
 // const sessionId = testConfig.sessionId;
 var sessionId = "";
-var userId = "";
+// var userId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 
