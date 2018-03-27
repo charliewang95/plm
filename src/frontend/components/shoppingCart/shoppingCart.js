@@ -38,7 +38,7 @@ import * as ingredientActions from '../../interface/ingredientInterface.js';
 import {cartData, ingredientData} from './dummyData';
 import LotNumberButton from '../admin/LotNumberSelector/LotNumberButton.js';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
-
+import ViewLotButton from '../admin/LotNumberSelector/ViewLotButton.js';
 // TODO: Get the user ID
 const READ_FROM_DATABASE = true;
 var isAdmin= "";
@@ -104,11 +104,13 @@ const LotNumberFormatter = (props) =>{
   console.log("Formatter");
   console.log(props.row.lotAssigned);
   const quantity = props.row.lotNumberArray.packageNum;
+  const totalAssigned = props.row.totalAssigned;
+  const deepCopy = props.row.lotNumberArray.ingredientLots;
 
   if(!props.row.lotAssigned){
     return <p>{quantity} / <font color="red">Actions Needed</font></p>
   }else{
-    return <p>{quantity} / <font color="green">Completed</font></p>
+    return <p>{quantity} / <font color="green">Completed</font> <ViewLotButton totalAssigned = {totalAssigned} initialArray={deepCopy} quantity = {quantity}></ViewLotButton></p>
   }
 };
 
