@@ -38,10 +38,10 @@ exports.updateAverageAdd = function(res, next, ingredientName, date, numUnit, ca
     });
 };
 
-exports.updateAverageDelete = function(res, next, ingredientName, numUnit, callback) {
-    Ingredient.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, ingredient){
+exports.updateAverageDelete = function(res, next, date, ingredientName, numUnit, callback) {
+    Ingredient.findOne({nameUnique: ingredientName.toLowerCase()}, function(err, ingredient){
         if (err) return next(err);
-        //else if (!ingredient) return res.status(400).send('Ingredient '+ingredientName+' does not exist. 006');
+        else if (!ingredient) return res.status(400).send('Ingredient '+ingredientName+' does not exist. 006');
         else {
             var oldNumUnit = ingredient.numUnit;
             IngredientFreshness.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, fresh){
@@ -61,19 +61,25 @@ exports.updateAverageDelete = function(res, next, ingredientName, numUnit, callb
     });
 };
 
-exports.updateOldestDelete = function(res, next, ingredientName, numUnit, callback) {
-    Ingredient.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, ingredient){
+exports.updateOldestDelete = function(res, next, date, ingredientName, numUnit, callback) {
+    Ingredient.findOne({nameUnique: ingredientName.toLowerCase()}, function(err, ingredient){
         if (err) return next(err);
-        //else if (!ingredient) return res.status(400).send('Ingredient '+ingredientName+' does not exist. 005');
+        else if (!ingredient) return res.status(400).send('Ingredient '+ingredientName+' does not exist. 005');
         else {
             var oldNumUnit = ingredient.numUnit;
             IngredientFreshness.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, fresh){
                 if (err) return next(err);
                 else if (fresh) {
                     IngredientLot.getOldestLot(res, ingredientName.toLowerCase(), function(lot){
-                        fresh.update({oldestMilli: lot.date.getTime()}, function(err, obj){
-                            callback();
-                        });
+                        if (lot) {
+                            fresh.update({oldestMilli: lot.date.getTime()}, function(err, obj){
+                                callback();
+                            });
+                        } else {
+                            fresh.remove(function(err){
+                                callback();
+                            });
+                        }
                     });
                 }
                 else {
@@ -88,9 +94,10 @@ exports.getLatestInfo = function(res, next, ingredientName, callback) {
     if (!ingredientName) return res.json([]);
     IngredientFreshness.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, fresh){
         if (err) return next(err);
-        else if (!fresh)
+        else if (!fresh) {
             callback();
-            //return res.status(400).send('Ingredient '+ingredientName+' does not exist. 004');
+            return res.status(400).send('Ingredient '+ingredientName+' does not exist. 004');
+        }
         else {
             console.log('updating freshness data');
             var nowDate = new Date();

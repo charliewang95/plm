@@ -24,7 +24,7 @@ import ExitToApp from 'material-ui-icons/ExitToApp';
 import {MenuList} from 'material-ui/Menu';
 import MainList from './MainList'
 
-const drawerWidth = 240;
+const drawerWidth = 220;
 
 const styles = theme => ({
   root: {

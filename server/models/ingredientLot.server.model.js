@@ -50,7 +50,7 @@ IngredientLotSchema.index({ ingredientNameUnique: 1, lotNumberUnique: 1, date: 1
 
 IngredientLotSchema.statics.getOldestLot = function(res, ingredientNameUnique, callback) {
     this.find({ingredientNameUnique: ingredientNameUnique}, {}, {sort: {date: 1}}, function(err, lot){
-        if (lot.length == 0) res.status(400).send('Something\'s wrong with ingredient data.');
+        if (lot.length == 0) callback(null);
         else callback(lot[0]);
     });
 };
