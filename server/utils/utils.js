@@ -146,7 +146,6 @@ var read = function(req, res, next, model, itemId, username) {
         if (err) {
             return next(err);
         }
-        else if (!item) res.status(400).send('Item does not exist');
         else {
             res.json(item);
         }

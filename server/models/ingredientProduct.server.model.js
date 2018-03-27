@@ -7,8 +7,7 @@ var IngredientProductSchema = new Schema({
         required: true
     },
     vendorNameUnique: {
-        type: String,
-        required: true
+        type: String
     },
     lotNumberUnique: {
         type: String,
