@@ -475,6 +475,7 @@ var addIntermediateProductIngredientLot = function(req, res, next, formula, numU
                             if (err) return next(err);
                             else {
                                 freshness.updateAverageAdd(res, next, newIngredient.name, date, numUnit, function(){});
+                                callback();
                             }
                         });
                     });
@@ -503,6 +504,7 @@ var addIntermediateProductIngredientLot = function(req, res, next, formula, numU
                 ingredientLot.save(function(err){
                     if (err) return next(err);
                     else freshness.updateAverageAdd(res, next, ingredient.name, date, numUnit, function(){});
+                    callback();
                 });
             });
         }

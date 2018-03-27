@@ -10,6 +10,8 @@ module.exports = function(app) {
     app.route('/ingredients/allLotNumbers/ingredient/:ingredientId/user/:userId').get(ingredients.listLotNumbers);
     app.route('/ingredients/oldestLot/ingredient/:ingredientId/user/:userId').get(ingredients.getOldestLot);
     app.route('/ingredients/recall/lot/:lotId/user/:userId').get(ingredients.getRecall);
+    app.route('/ingredients/recall/lot/:lotNumber/ingredient/:ingredientName/vendor/:vendorName/user/:userId').get(ingredients.getRecallAlternate);
     app.route('/ingredients/fresh/user/:userId').get(ingredients.getFresh);
     app.route('/ingredients/lot/:lotId/quantity/:quantity/user/:userId').put(ingredients.editLot);
+
 };

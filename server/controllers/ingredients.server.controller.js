@@ -60,9 +60,16 @@ exports.listLotNumbers = function(req, res, next) {
 };
 
 exports.getRecall = function(req, res, next) {
-    console.log('lotId '+req.params.lotId.toString());
-    IngredientProduct.find({lotId: req.params.lotId.toString()}, function(err, ingredients){
-        console.log(ingredients);
+
+    IngredientProduct.find({lotId: req.params.lotId}, function(err, ingredients){
+        if (err) return next(err);
+        else res.json(ingredients);
+    });
+};
+
+exports.getRecallAlternate = function(req, res, next) {
+    IngredientProduct.find({ingredientNameUnique: req.params.ingredientName.toLowerCase(), lotNumberUnique: req.params.lotNumber.toLowerCase(),
+                            vendorName: req.params.vendorName}, function(err, ingredients){
         if (err) return next(err);
         else res.json(ingredients);
     });
