@@ -60,7 +60,9 @@ exports.listLotNumbers = function(req, res, next) {
 };
 
 exports.getRecall = function(req, res, next) {
-    IngredientProduct.find({lotId: req.params.lotId}, function(err, ingredients){
+    console.log('lotId '+req.params.lotId.toString());
+    IngredientProduct.find({lotId: req.params.lotId.toString()}, function(err, ingredients){
+        console.log(ingredients);
         if (err) return next(err);
         else res.json(ingredients);
     });

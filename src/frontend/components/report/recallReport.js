@@ -31,6 +31,8 @@ export default class RecallReport extends React.PureComponent{
 			lotNumber: null,
 			//for bfs purposes
 			recalledLots:[],
+			//for displaying the recall table
+			recallDataReady:false,
 		}
 		//bind functions
 		this.fetchAvailableIngredients = this.fetchAvailableIngredients.bind(this);
@@ -95,7 +97,9 @@ export default class RecallReport extends React.PureComponent{
 				vendorLabelValuePairs: [],
 				lotLabelValuePairs:[],
 				availableLotObjects:[],
-				lotNumber: null
+				lotNumber: null,
+				recallDataReady:false,
+
 			});
 			return;
 		}
@@ -119,7 +123,8 @@ export default class RecallReport extends React.PureComponent{
 			vendorLabelValuePairs: vendorLabelValuePairs,
 			lotLabelValuePairs:[],
 			availableLotObjects:[],
-			lotNumber: null
+			lotNumber: null,
+			recallDataReady:false,
 		});
 		if(selectedIngredientObject.isIntermediate){
 			this.skipVendor(selectedIngredientObject);
@@ -183,7 +188,8 @@ export default class RecallReport extends React.PureComponent{
 			selectedVendor: vendorName,
 			lotLabelValuePairs:labelValuePairs,
 			availableLotObjects:filteredLots,
-			lotNumber: null
+			lotNumber: null,
+			recallDataReady:false,
 		})
 	}
 
@@ -201,7 +207,8 @@ export default class RecallReport extends React.PureComponent{
 		this.setState({
 			lotLabelValuePairs:labelValuePairs,
 			availableLotObjects:arrayOfLots,
-			lotNumber: null
+			lotNumber: null,
+			recallDataReady:false,
 		})
 	}
 
@@ -256,6 +263,7 @@ export default class RecallReport extends React.PureComponent{
 		if(lotNumber === this.state.lotNumber) return; //do nothing if it has not been changed
 		this.setState({
 			lotNumber: lotNumber,
+			recallDataReady:false,
 		});
 		const lotId = this.findIdOfLot(lotNumber);
 		console.log("id of this lot is " + lotId);
@@ -312,20 +320,25 @@ export default class RecallReport extends React.PureComponent{
 		}
 		this.setState({
 			recalledLots: lotsNeedToBeRecalled,
+			recallDataReady:true,
 		});
+		console.log("lotsNeedToBeRecalled:");
+		console.log(lotsNeedToBeRecalled);
 
 	}
 
 	render() {
 		const {selectedIngredientName, selectedIngredientObject, selectedVendor, lotNumber,
 			vendorLabelValuePairs, lotLabelValuePairs, ingredientLabelValuePairs, 
-			ingredientIsIntermediate} = this.state;
+			ingredientIsIntermediate, recallDataReady} = this.state;
 		return (
 			<Paper>
+			{/*
 			<p> ingredient name is {selectedIngredientName}</p>
 			{selectedIngredientObject && <p> ingredient id is {selectedIngredientObject._id} </p>}
 			{selectedIngredientName && <p> selectedVendor is {selectedVendor} </p>}
 			{selectedIngredientName && (selectedVendor || ingredientIsIntermediate) && <p> lot number is {lotNumber} </p>}
+			*/}
 			<IngredientSelection 
 				setIngredient={this.selectIngredient}
 				ingredientLabelValuePairs={ingredientLabelValuePairs}
@@ -346,6 +359,11 @@ export default class RecallReport extends React.PureComponent{
 					setLot={this.setLot}
 				/>
 				
+			}
+			{
+				recallDataReady &&
+				<p> Recall Data Ready! </p>
+
 			}
 			</Paper>
 		)
