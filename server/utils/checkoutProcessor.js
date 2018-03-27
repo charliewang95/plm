@@ -322,6 +322,7 @@ var checkIngredientHelper = function(req, res, next, multiplier, i, ingredients,
                 }
                 var ingredientDelta = new Object();
                 ingredientDelta.ingredientId = ingredient._id;
+                ingredientDelta.isIntermediate = ingredient.isIntermediate;
                 ingredientDelta.ingredientName = ingredientQuantity.ingredientName;
                 ingredientDelta.totalAmountNeeded = totalAmountNeeded;
                 ingredientDelta.currentUnit = ingredient.numUnit;
