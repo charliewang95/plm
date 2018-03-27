@@ -173,7 +173,8 @@ class AddIngredientForm extends React.Component{
   }
 
 
-  componentDidMount(){
+  componentWillMount(){
+    var temp = this;
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     userId = JSON.parse(sessionStorage.getItem('user'))._id;
@@ -183,12 +184,13 @@ class AddIngredientForm extends React.Component{
     }
     this.computeVendorString();
     if((!this.state.isCreateNew)&&(this.props.location.state.details.numUnit)){
-      this.loadLotNumbers();
-      this.computeLotNumberString();
+      temp.loadLotNumbers(function(){
+        temp.computeLotNumberString();
+      });
     }
   }
 
-  async loadLotNumbers(){
+  async loadLotNumbers(callback){
     console.log("loadLotNumbers");
     console.log(this.state);
     var lotArray = await ingredientInterface.getAllLotNumbersAsync(this.state.ingredientId,sessionId);
@@ -207,6 +209,8 @@ class AddIngredientForm extends React.Component{
       lotIdMap[lotArray[i].lotNumber]= lotArray[i]._id;
     }
      this.setState({lotNumberArray:array});
+     callback();
+
   }
 
   updateArray(inputArray){
