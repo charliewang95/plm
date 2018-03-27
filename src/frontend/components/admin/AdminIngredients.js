@@ -372,7 +372,7 @@ class AdminIngredients extends React.PureComponent {
         var temp = this;
 
         await ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone,
-          added[0].vendorsArray, 0, 0, added[0].nativeUnit, added[0].numUnitPerPackage, sessionId, function(res){
+          added[0].vendorsArray, 0, 0, added[0].nativeUnit, added[0].numUnitPerPackage, false, sessionId, function(res){
             if (res.status == 400) {
                 if (!alert(res.data))
                     //window.location.reload();

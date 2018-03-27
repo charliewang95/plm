@@ -216,6 +216,9 @@ exports.checkoutFormula = function(req, res, next, model, username) { //main che
             checkProductAmount(req, res, next, formula, quantity, function(){
                 checkNewStorageHelper(req, res, next, formula, quantity, function(totalSpace){
                     var multiplier = quantity/formula.unitsProvided;
+                    console.log('multiplier is '+multiplier);
+                    console.log('quantity is '+quantity);
+                    console.log('unitsProvided is '+formula.unitsProvided);
                     var ingredients = formula.ingredients;
                     checkIngredientHelper(req, res, next, multiplier, 0, ingredients, [], true, function(array, viable){
                           if (req.params.action == 'review') {
@@ -338,13 +341,15 @@ var updateIngredientHelper = function(req, res, next, multiplier, ingredients, f
         callback(newSpentMoney, arrayInProduct);
     } else {
         var ingredientQuantity = ingredients[i];
+        console.log('multiplier is '+multiplier);
+        console.log('formula is '+formula.name);
         lotPickerHelper(req, res, next, ingredientQuantity.ingredientName, ingredientQuantity.quantity*multiplier, arrayInProduct, date, formula, function(arrayInProductOut){
             console.log('lot picker complete');
             Ingredient.findOne({nameUnique: ingredientQuantity.ingredientName.toLowerCase()}, function(err, ingredient){
                 var numUnit = ingredient.numUnit;
                 var newNumUnit = numUnit - ingredientQuantity.quantity*multiplier;
                 var remainingPackages = Math.ceil(1.0*newNumUnit/ingredient.numUnitPerPackage);
-
+                console.log("AMOUNT++++ "+ingredientQuantity.quantity*multiplier);
                 var moneyProd = ingredient.moneyProd;
                 var moneySpent = ingredient.moneySpent;
                 var newMoneyProd = moneyProd+1.0*ingredientQuantity.quantity*multiplier*(moneySpent-moneyProd)/numUnit;
@@ -378,6 +383,9 @@ var updateIngredientHelper = function(req, res, next, multiplier, ingredients, f
 };
 
 var lotPickerHelper = function(req, res, next, ingredientName, quantity, arrayInProduct, date, formula, callback) {
+    console.log('!!!!!!!!'+ingredientName);
+    console.log('!!!!!!!!'+quantity);
+    console.log('!!!!!!!!'+formula);
     IngredientLot.getOldestLot(res, ingredientName.toLowerCase(), function(lot){
         console.log('Before update ingredient-product');
         updateIngredientProduct(req, res, next, ingredientName, formula, date, lot, function(){
@@ -390,25 +398,25 @@ var lotPickerHelper = function(req, res, next, ingredientName, quantity, arrayIn
             if (quantity < lot.numUnit) {
                 var newNumUnit = lot.numUnit - quantity;
                 lot.update({numUnit: newNumUnit}, function(err, obj){
-                    //freshness.updateAverageDelete(res, next, ingredientName, quantity, function(){
+                    freshness.updateAverageDelete(res, next, date, ingredientName, quantity, function(){
                         callback(arrayInProduct);
-                    //});
+                    });
                 });
             } else if (quantity == lot.numUnit) {
                 lot.remove(function(err){
-                    //freshness.updateAverageDelete(res, next, ingredientName, quantity, function(){
-                      //  freshness.updateOldestDelete(res, next, ingredientName, quantity, function(){
+                    freshness.updateAverageDelete(res, next, date, ingredientName, quantity, function(){
+                        freshness.updateOldestDelete(res, next, date, ingredientName, quantity, function(){
                             callback(arrayInProduct);
-                        //});
-                    //});
+                        });
+                    });
                 });
             } else {
                 lot.remove(function(err){
-                    //freshness.updateAverageDelete(res, next, ingredientName, quantity, function(){
-                       // freshness.updateOldestDelete(res, next, ingredientName, quantity, function(){
-                            lotPickerHelper(req, res, next, ingredientName, quantity - lot.numUnit, arrayInProduct, callback);
-                        //});
-                    //});
+                    freshness.updateAverageDelete(res, next, date, ingredientName, quantity, function(){
+                        freshness.updateOldestDelete(res, next, date, ingredientName, quantity, function(){
+                            lotPickerHelper(req, res, next, ingredientName, quantity - lot.numUnit, arrayInProduct, date, formula, callback);
+                        });
+                    });
                 });
             }
         });
@@ -503,6 +511,7 @@ var updateIngredientProduct = function(req, res, next, ingredientName, formula, 
 //        callback();
 //    }
 //    else {
+        console.log('FFFFFFFFF='+formula);
         var newIngredientProduct = new IngredientProduct();
         newIngredientProduct.ingredientNameUnique = ingredientName.toLowerCase();
         newIngredientProduct.vendorNameUnique = lot.vendorNameUnique;

@@ -158,16 +158,17 @@ class ProductionReview extends React.Component {
       console.log(" ADD ORDER ");
       // TODO: CHANGE THIS
       var ingredientLots = [];
+      var temp = this;
       await orderActions.addOrder(userId,row.ingredientId,
-        row.ingredientName,vendorName,_package,price,[],ingredientLots,sessionId,function(res){
+        row.ingredientName,vendorName,_package,price,ingredientLots,sessionId,function(res){
         //TODO: Please update this
         console.log(res.status);
         if(res.status == 400){
           alert(res.data);
         }else{
           // success = true;
-          this.setState({snackBarMessage : "Ingredients Successfully added to cart. "});
-          this.setState({snackBarOpen:true});
+          temp.setState({snackBarMessage : "Ingredients Successfully added to cart. "});
+          temp.setState({snackBarOpen:true});
         }
       });
     }
@@ -177,9 +178,10 @@ class ProductionReview extends React.Component {
   }
 
   async checkOutFormula(event){
-    console.log(" checkout formula ");
-    await formulaActions.checkoutFormula("checkout",this.state.formulaRows[0]._id,
-                              Number(this.state.formulaRows[0].unitsProvided),
+    var temp = this;
+    console.log(temp.state.formulaRows[0]);
+    await formulaActions.checkoutFormula("checkout",temp.state.formulaRows[0]._id,
+                              Number(temp.state.addedQuantity),
                               sessionId, function(res){
          if (res.status == 400) {
             alert(res.data);

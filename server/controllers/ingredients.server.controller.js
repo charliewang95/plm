@@ -125,6 +125,7 @@ exports.bulkImportIngredients = function(req, res, next, contents, callback) {
 };
 
 exports.editLot = function(req, res, next) {
+    console.log('editLot called');
     User.findById(req.params.userId, function(err, user){
         if (err) return next(err);
         else if (!user || !user.isAdmin) return res.status(400).send('Access denied');

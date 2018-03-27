@@ -155,12 +155,12 @@ class LotNumberSelector extends Component {
 
   updateCurrentLotNumber (event){
     var lotNumber = event.target.value;
-    const re = /^[a-z0-9]+$/i;
-      if(lotNumber==''&& (re.test(lotNumber))) {
+//    const re = /^[a-z0-9]+$/i;
+//      if(lotNumber==''&& (re.test(lotNumber))) {
         this.setState({currentLotNumber: lotNumber});
-      }else{
-        alert("Lot Number must be alphanumeric.");
-      }
+//      }else{
+//        alert("Lot Number must be alphanumeric.");
+//      }
   }
 
   updateCurrentQuantity(event){
