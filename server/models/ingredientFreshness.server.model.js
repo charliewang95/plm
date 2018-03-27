@@ -51,7 +51,8 @@ var IngredientFreshnessSchema = new Schema({
         type: Number,
         required: true,
         default: 0
-    }
+    },
+    numUnit: Number
 });
 
 mongoose.model('IngredientFreshness', IngredientFreshnessSchema);

@@ -21,8 +21,10 @@ exports.updateAverageAdd = function(res, next, ingredientName, date, numUnit, ca
                     console.log('now date '+date.getTime());
                     console.log('old num '+oldNumUnit+'numUnit '+numUnit);
                     console.log('new average '+newAverageMilli);
-                    fresh.update({averageMilli: newAverageMilli}, function(err, obj){
-                        callback();
+                    addTotal(res, next, numUnit, date, function(){
+                        fresh.update({averageMilli: newAverageMilli}, function(err, obj){
+                            callback();
+                        });
                     });
                 }
                 else {
@@ -31,8 +33,10 @@ exports.updateAverageAdd = function(res, next, ingredientName, date, numUnit, ca
                     newFresh.ingredientNameUnique = ingredientName.toLowerCase();
                     newFresh.averageMilli = date.getTime();
                     newFresh.oldestMilli = date.getTime();
-                    newFresh.save(function(err, obj){
-                        callback();
+                    addTotal(res, next, numUnit, date, function(){
+                        newFresh.save(function(err, obj){
+                           callback();
+                        });
                     });
                 }
             });
@@ -55,12 +59,16 @@ exports.updateAverageDelete = function(res, next, date, ingredientName, numUnit,
                             var newAverageMilli = Math.floor((averageMilli * oldNumUnit - lot.date.getTime() * numUnit) / (oldNumUnit - numUnit));
                             console.log("OLD AVERAGE "+averageMilli+"NEW AVERAGE "+newAverageMilli);
                             fresh.update({averageMilli: newAverageMilli}, function(err, obj){
-                                callback();
+                                deleteTotal(res, next, numUnit, date, lot.date, function(){
+                                    callback();
+                                })
                             });
                         }
                         else {
                             fresh.remove(function(err){
-                                callback();
+                                deleteTotal(res, next, numUnit, date, lot.date, function(){
+                                    callback();
+                                })
                             });
                         }
                     });
@@ -143,13 +151,49 @@ exports.getLatestInfo = function(res, next, ingredientName, callback) {
     });
 }
 
-var addTotal = function(res, next, totalAverage, totalWorst, callback){
+var addTotal = function(res, next, numUnit, date, callback){
     IngredientFreshness.findOne({ingredientNameUnique: 'total'}, function(err, obj){
         if (obj) {
             var totalAverage = obj.averageMilli;
             var totalOldest = obj.oldestMilli;
+            var totalNumUnit = obj.numUnit;
+            var newTotalAverage = Math.floor((Number(totalAverage)*Number(totalNumUnit) + date.getTime()*Number(numUnit)) / (Number(totalNumUnit) + Number(numUnit)));
+            obj.update({averageMilli: newTotalAverage}, function(err, obj){
+                callback();
+            });
         } else {
-
+            var newFresh = new IngredientFreshness();
+            newFresh.ingredientName = 'total';
+            newFresh.ingredientNameUnique = 'total';
+            newFresh.averageMilli = date.getTime();
+            newFresh.oldestMilli = date.getTime();
+            newFresh.numUnit = numUnit;
+            newFresh.save(function(err, obj){
+                callback();
+            });
         }
+    });
+}
+
+var deleteTotal = function(res, next, numUnit, date, oldDate, callback) {
+    IngredientFreshness.findOne({ingredientNameUnique: '__total__'}, function(err, obj){
+    if (obj) {
+        var totalAverage = obj.averageMilli;
+        var totalOldest = obj.oldestMilli;
+        var totalNumUnit = obj.numUnit;
+        var newTotalAverage = Math.floor((Number(totalAverage)*Number(totalNumUnit) - oldDate.getTime()*Number(numUnit)) / (Number(totalNumUnit) + Number(numUnit)));
+        obj.update({averageMilli: newTotalAverage}, function(err, obj){
+            if (oldDate.getTime() == totalOldest) {
+                fresh.update({oldestMilli: oldDate.getTime()}, function(err, obj){
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        });
+    } else {
+
+    callback();
+    }
     });
 }
