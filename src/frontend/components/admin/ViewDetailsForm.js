@@ -184,7 +184,7 @@ class AddIngredientForm extends React.Component{
       this.loadIngredient();
     }
     this.computeVendorString();
-    if((!this.state.isCreateNew)&&(this.props.location.state.details.numUnit)){
+    if((!this.state.isCreateNew)&&(this.props.location.state.details)){
       temp.loadLotNumbers(function(){
         temp.computeLotNumberString();
       });
