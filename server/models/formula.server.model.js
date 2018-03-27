@@ -3,11 +3,6 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 var IngredientQuantitySchema = new Schema({
-//    ingredientId: {
-//        type: mongoose.Schema.Types.ObjectId,
-//        ref: 'Ingredient',
-//        required: true
-//    },
     ingredientName: {
         type: String,
         required: true
@@ -52,6 +47,27 @@ var FormulaSchema = new Schema({
         required: true,
         default: 0
     },
+    isIntermediate: {
+        type: Boolean,
+        required: true
+    },
+    packageName: {
+        type: String,
+        enum: ['sack', 'pail', 'drum', 'supersack', 'truckload', 'railcar', ''],
+        lowercase: true
+    },
+    temperatureZone: {
+        type: String,
+        enum: ['freezer', 'refrigerator', 'warehouse', '']
+    },
+    nativeUnit: {
+        type: String,
+        //
+    },
+    numUnitPerPackage: {
+        type: Number,
+        //
+    },
     ingredients : [IngredientQuantitySchema]
 });
 
@@ -70,6 +86,27 @@ var FormulaSchema = new Schema({
 //	    next();
 //	}
 //);
+
+var LIKE_NULL = '13d2aeca-54e8-4d37-9127-6459331ed76d';
+
+var conditionalRequire = {
+  validator: function (value) {
+    return this.type === 'other' && val === LIKE_NULL;
+  },
+  msg: 'Some message',
+};
+
+var Model = mongoose.Schema({
+  type: { type: String },
+  someField: { type: String, default: LIKE_NULL, validate: conditionalRequire },
+});
+
+// Under no condition should the "like null" value actually get persisted
+Model.pre("save", function (next) {
+  if (this.someField == LIKE_NULL) this.someField = null;
+
+  next()
+});
 
 
 mongoose.model('Formula', FormulaSchema);

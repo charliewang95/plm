@@ -17,6 +17,7 @@ import testVendorData from '../vendors/dummyData.js';
 import SimpleTable from './packageTable.js';
 import Typography from 'material-ui/Typography';
 import { FormControl, FormHelperText } from 'material-ui/Form';
+import SnackBarDisplay from '../snackBar/snackBarDisplay';
 //TODO: get session Id
 //const userId = "5a765f3d9de95bea24f905d9";
 // const sessionId = testConfig.sessionId;
@@ -62,6 +63,8 @@ class Orders extends React.PureComponent{
       nativeUnit:'',
       totalFloorSpace: '',
       helpText: '',
+      snackBarOpen:false,
+      snackBarMessage:'',
       }
 
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -69,6 +72,7 @@ class Orders extends React.PureComponent{
     this.calculate = this.calculate.bind(this);
     this.isValid = this.isValid.bind(this);
     this.packageWeight = this.packageWeight.bind(this);
+    this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
   }
 
   // load all the ingredients initially
@@ -89,7 +93,8 @@ class Orders extends React.PureComponent{
     var rawData = [];
     if(READ_FROM_DATABASE){
       sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-      rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
+      rawData = await ingredientActions.getAllIngredientsOnlyAsync(sessionId);
+      rawData = rawData.data;
       console.log("data from DB " + JSON.stringify(rawData));
     }else{
       rawData = dummyData;
@@ -106,8 +111,8 @@ class Orders extends React.PureComponent{
     }
 
 
-  async handleIngredientChange(option) {
-    var packageNameHelpText = option.numUnitPerPackage + ' ' + option.nativeUnit + ' / ' + 
+ async handleIngredientChange(option) {
+    var packageNameHelpText = option.numUnitPerPackage + ' ' + option.nativeUnit + ' / ' +
     this.packageWeight(option.packageName) + ' sqft';
     this.setState({helpText:packageNameHelpText});
     console.log(" Ingredient Selected " + option.label);
@@ -126,6 +131,7 @@ class Orders extends React.PureComponent{
     }
 
     console.log("Vendors " + JSON.stringify(ingredientDetails.vendors));
+    ingredientDetails.vendors.sort(function(a, b) {return a.price - b.price });
 
     var parsedVendorOptions = [...ingredientDetails.vendors.map((row,index)=> ({
         value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
@@ -135,6 +141,9 @@ class Orders extends React.PureComponent{
     ];
     console.log("Vendor options " + JSON.stringify(parsedVendorOptions));
     this.setState({vendor_options:parsedVendorOptions});
+    this.setState({vendorId:parsedVendorOptions[0].value});
+    this.setState({price: parsedVendorOptions[0].price});
+    this.setState({vendorName: parsedVendorOptions[0].vendorName});
   }
 
 // event handler when a vendor is selected from the drop down
@@ -159,6 +168,7 @@ class Orders extends React.PureComponent{
  }
 
  async onFormSubmit(e) {
+   var temp = this;
     console.log("SUBMIT");
     console.log("Vendor Name " + this.state.vendorName);
     console.log("package Name " + this.state.packageName);
@@ -168,22 +178,24 @@ class Orders extends React.PureComponent{
     e.preventDefault();
     //TODO: Send data to back end
    try{
-     if(this.isValid()){
-       await orderActions.addOrder(userId,this.state.ingredientId,this.state.ingredientName,
-       this.state.vendorName,parseInt(this.state.packageNum,10),this.state.price,sessionId,function(res){
+     if(temp.isValid()){
+
+       await orderActions.addOrder(userId,temp.state.ingredientId,temp.state.ingredientName,
+       temp.state.vendorName,parseInt(temp.state.packageNum,10),temp.state.price,[], sessionId,function(res){
            if (res.status == 400) {
                alert(res.data);
            }else if (res.status == 500) {
                alert('ingredient already in cart');
            }
            else{
-             alert(" Ingredient ordered successfully!");
-             // this.clearFields();
-           }
-       });
-       this.setState({ fireRedirect: true });
+             // alert("ORDERED");
+             temp.setState({snackBarMessage : "Ingredient ordered successfully!"});
+             temp.setState({snackBarOpen:true});
+             temp.setState({ fireRedirect: true });
+             }
+           });
+       };
      }
-   }
    catch (e){
      console.log('An error passed to the front end!')
      //TODO: error handling in the front end
@@ -207,22 +219,28 @@ class Orders extends React.PureComponent{
   }
 
   calculate(){
+    var temp = this;
     //var packageWeight = this.packageWeight();
-    var totalPrice = this.state.packageNum * this.state.price;
-    var totalNativeUnits = this.state.packageNum * this.state.numUnitPerPackage;
+    var totalPrice = temp.state.packageNum * temp.state.price;
+    var totalNativeUnits = temp.state.packageNum * temp.state.numUnitPerPackage;
   //  var packageWeight = parseFloat(packageWeight());
     var totalSqft;
 
-    if(this.packageWeight(this.state.packageName)=='N/A'){
+    if(temp.packageWeight(temp.state.packageName)=='N/A'){
       totalSqft = 'N/A';
     }else{
-      var computeFloor = this.state.packageNum * this.packageWeight(this.state.packageName);
+      var computeFloor = temp.state.packageNum * temp.packageWeight(temp.state.packageName);
       totalSqft = computeFloor.toString();
     }
-    this.setState({total: totalPrice});
-    this.setState({totalQuantity: totalNativeUnits});
-    this.setState({totalFloorSpace: totalSqft});
+    temp.setState({total: totalPrice});
+    temp.setState({totalQuantity: totalNativeUnits});
+    temp.setState({totalFloorSpace: totalSqft});
    // this.setState({totalFloorSpace: totalSqft});
+  }
+
+  handleSnackBarClose(){
+    this.setState({snackBarOpen:false});
+    this.setState({snackBarMessage: ''});
   }
 
   clearFields(){
@@ -239,9 +257,8 @@ class Orders extends React.PureComponent{
   isValid(){
     if(!this.state.ingredientName){
       alert(" Please select an ingredient");
-  }else if(!this.state.vendorName){
-      alert(" Please select a vendor.");
-    }else{
+      return false;
+  }else{
       return true;
     }
   }
@@ -252,7 +269,7 @@ class Orders extends React.PureComponent{
     return (
         <div>
          <p><font size="6">Place an Order</font></p>
-            <form onSubmit={this.onFormSubmit} >
+            <form style={{width:400}} onSubmit={this.onFormSubmit} >
               <div style = {styles.buttons}>
                  <p><font size="3">Ingredient Name:</font></p>
                 <Select
@@ -261,6 +278,7 @@ class Orders extends React.PureComponent{
         					options={ingredient_options}
         					onChange={(option) => this.handleIngredientChange(option)}
                   value = {ingredientId}
+                  placeholder="Type to select an ingredient..."
                 />
               </div>
             <div style = {styles.buttons}>
@@ -287,7 +305,7 @@ class Orders extends React.PureComponent{
                   onChange = {(event) => this.handleQuantityChange(event)}
                   margin="dense"
               />
-              <div style = {styles.buttons}>
+              {/* <div style = {styles.buttons}>
                 <p><font size="3">Vendor</font></p>
                 <Select
                   required
@@ -295,20 +313,22 @@ class Orders extends React.PureComponent{
                   options={vendor_options}
                   onChange={(option) => this.handleVendorChange(option)}
                   value = {vendorId}
+                  placeholder="Type to select a Vendor..."
                 />
-              </div>
+              </div> */}
               <br></br>
               <br></br>
               <Divider></Divider>
               <p><font size="6">Total Quantity: {this.state.totalQuantity} {this.state.nativeUnit}</font></p>
               <p><font size="6">Total Floor Space: {this.state.totalFloorSpace} sqft</font></p>
-              <p><font size="6">Current Total: $ {this.state.total}</font></p>
+              <p><font size="6">Current Total: $ {this.state.total.toFixed(2)}</font></p>
               <br></br>
               <div style={styles.buttons}>
                   <RaisedButton raised
                     color="primary"
                     // component = {Link} to = "/vendors" //commented out because it overrides onSubmit
                     type="Submit"
+                    disabled = {this.state.packageNum==0 || this.state.ingredientName==''}
                     primary="true"> ORDER </RaisedButton>
                     <RaisedButton raised color = "secondary"
                     style={styles.saveButton}
@@ -317,6 +337,12 @@ class Orders extends React.PureComponent{
                     BACK</RaisedButton>
              </div>
            </form>
+           {this.state.snackBarOpen && <SnackBarDisplay
+                 open = {this.state.snackBarOpen}
+                 message = {this.state.snackBarMessage}
+                 handleSnackBarClose = {this.handleSnackBarClose}
+               /> }
+
            {fireRedirect && (
              <Redirect to={'/cart'}/>
            )}

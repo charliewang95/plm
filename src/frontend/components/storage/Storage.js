@@ -33,11 +33,8 @@ var isAdmin =  "";
 
 
 const Cell = (props)=>{
-  return <Table.Cell {...props}
-    style={{
-            whiteSpace: "normal",
-            wordWrap: "break-word"
-          }}/>
+  return <Table.Cell {...props}/>
+    
 };
 
 Cell.propTypes = {
@@ -46,9 +43,10 @@ Cell.propTypes = {
 
 const EditCell = (props) => {
   if(props.column.name == 'capacity'){
-    return <TableEditRow.Cell {...props} />;
+    return <TableEditRow.Cell {...props} style={{backgroundColor:'aliceblue'}} />;
+  }else{
+    return <Cell {...props} style={{backgroundColor:'aliceblue'}} />
   };
-  return <Cell {...props} />;
 };
 
 EditCell.propTypes = {
@@ -166,11 +164,14 @@ class Storage extends React.PureComponent {
     } else {
      rawData = dummyData;
     }
+    var processedData = [];
+    if(rawData){
+      processedData = [...rawData.map((row, index)=> ({
+          id:index,...row,
+        })),
+      ];
+    }
 
-   var processedData = [...rawData.map((row, index)=> ({
-       id:index,...row,
-     })),
-   ];
    this.setState({rows:processedData});
   }
 

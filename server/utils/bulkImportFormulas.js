@@ -4,6 +4,7 @@ var Vendor = require('mongoose').model('Vendor');
 var User = require('mongoose').model('User');
 var Storage = require('mongoose').model('Storage');
 var utils = require('../utils/utils');
+var logger = require('../utils/logger');
 var fs = require('fs');
 var Converter = require("csvtojson").Converter;
 
@@ -21,13 +22,15 @@ exports.bulkImportFormulas = function(req, res, next, contents, callback) {
     })
     .on('done',()=>{
 //          console.log(jsonArray);
-        validateBulkImport(req, res, next, jsonArray, 0, function(){
-            //do bulk import
-            doBulkImport(req, res, next, jsonArray, 0, function(){
-                res.send("Bulk import Success!");
-                callback();
+        User.findById(req.params.userId, function(err, user){
+            validateBulkImport(req, res, next, jsonArray, 0, function(){
+                //do bulk import
+                doBulkImport(user.username, req, res, next, jsonArray, 0, function(){
+                    res.send("Bulk import Success!");
+                    callback();
+                });
             });
-        })
+        });
     })
 };
 
@@ -43,8 +46,12 @@ var validateBulkImport = function(req, res, next, array, i, callback){
         var unitsProvided = formula["PRODUCT UNITS"];
         var description = formula.DESCRIPTION;
         var ingredientName = formula.INGREDIENT;
-        var ingredientNameUnique = formula.INGREDIENT.toLowerCase();
         var ingredientUnits = formula["INGREDIENT UNITS"];
+
+        if (formulaName.toLowerCase() != prevFormula && allFormulas.includes(formulaName.toLowerCase())){
+            res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Duplicate formula names exist (the same formula should be in consecutive rows).');
+            return;
+        }
 
         if (formulaName == null || formulaName == '') {
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Formula name cannot be empty');
@@ -54,7 +61,7 @@ var validateBulkImport = function(req, res, next, array, i, callback){
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Units provided cannot be empty or zero');
             return;
         }
-        if (ingredientNameUnique == null || ingredientNameUnique == '') {
+        if (ingredientName == null || ingredientName == '') {
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Ingredient name cannot be empty');
             return;
         }
@@ -66,6 +73,8 @@ var validateBulkImport = function(req, res, next, array, i, callback){
             res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Units provided must be an integer.');
             return;
         }
+
+        var ingredientNameUnique = formula.INGREDIENT.toLowerCase();
 
         Formula.findOne({nameUnique: formulaName.toLowerCase()}, function(err, obj){
             if (err) return next(err);
@@ -81,10 +90,7 @@ var validateBulkImport = function(req, res, next, array, i, callback){
                         return;
                     }
                     else {
-                        if (formulaName.toLowerCase() != prevFormula && allFormulas.includes(formulaName.toLowerCase())){
-                            res.status(400).send('Action denied on item '+(i+1)+' ('+formulaName+'). Duplicate formula names exist (the same formula should be in consecutive rows).');
-                            return;
-                        } else if (formulaName.toLowerCase() != prevFormula) {
+                        if (formulaName.toLowerCase() != prevFormula) {
                             prevFormula = formulaName.toLowerCase();
                             allFormulas.push(formulaName.toLowerCase());
                         }
@@ -96,7 +102,7 @@ var validateBulkImport = function(req, res, next, array, i, callback){
     }
 };
 
-var doBulkImport = function(req, res, next, array, i, callback){
+var doBulkImport = function(username, req, res, next, array, i, callback){
     if (i == array.length)
         callback();
     else {
@@ -120,7 +126,10 @@ var doBulkImport = function(req, res, next, array, i, callback){
                     ingredients.push(ingredient);
                     obj.update({ingredients: ingredients}, function(err, obj3){
                         if (err) return next(err);
-                        else doBulkImport(req, res, next, array, i+1, callback);
+                        else {
+                            logger.log(username, 'create', obj, Formula);
+                            doBulkImport(username, req, res, next, array, i+1, callback);
+                        }
                     });
                 } else {
                     console.log('Formula '+formulaName+' does not exist yet');
@@ -132,10 +141,15 @@ var doBulkImport = function(req, res, next, array, i, callback){
                     newFormula.description = description;
                     newFormula.unitsProvided = unitsProvided;
                     newFormula.ingredients = ingredients;
+                    newFormula.isIntermediate = false;
 
                     newFormula.save(function(err){
                         if (err) return next(err);
-                        else doBulkImport(req, res, next, array, i+1, callback);
+
+                        else {
+                            logger.log(username, 'create', newFormula, Formula);
+                            doBulkImport(username, req, res, next, array, i+1, callback);
+                        }
                     });
                 }
             });

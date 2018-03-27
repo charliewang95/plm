@@ -31,6 +31,7 @@ class SelectIngredients extends Component {
       options: [],
       ingredientsArray: this.props.initialArray,
       idToNameMap: {}, //id = key, name=value
+      nativeUnit: '',
     };
 //     this.updateId = this.updateId.bind(this);
 //     this.deleteVendor = this.deleteVendor.bind(this);
@@ -47,6 +48,7 @@ class SelectIngredients extends Component {
     this.updateQuantity = this.updateQuantity.bind(this);
     this.loadIngredientsArray = this.loadIngredientsArray.bind(this);
     this.loadCodeNameArray = this.loadCodeNameArray.bind(this);
+    this.handleSelectedIngredient = this.handleSelectedIngredient.bind(this);
 //    this.createMap = this.createMap.bind(this);
     this.resetArray = this.resetArray.bind(this);
 
@@ -82,18 +84,20 @@ class SelectIngredients extends Component {
 
     var rawData = [];
     try{
-      rawData = await ingredientActions.getAllIngredientNamesAsync(sessionId);
+      rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
 
       console.log("CALLED FOR INGREDIENTS DATA ");
 
-      console.log(JSON.stringify(rawData));
-      var optionsArray = rawData.data.map(obj=>{
+      console.log(rawData);
+      var optionsArray = rawData.map(obj=>{
       var temp = new Object();
-      temp.ingredientName = obj.ingredientName;
-      temp.label = obj.ingredientName;
+      temp.ingredientName = obj.name;
+      temp.label = obj.name;
+      temp.nativeUnit = obj.nativeUnit;
       return temp;
       })
       var ans = optionsArray;
+      console.log(optionsArray);
       for(var i=0; i<this.props.initialArray.length; i++){
         console.log("initialArray");
         console.log(this.props.initialArray);
@@ -109,12 +113,13 @@ class SelectIngredients extends Component {
     }
   }
 
-  resetArray(name, action){
+  resetArray(name, nativeUnit, action){
     var ans = [];
      if(action=="delete"){
        var obj = new Object();
        obj.ingredientName = name;
        obj.label = name;
+       obj.nativeUnit = nativeUnit;
        this.state.options.push(obj);
        console.log("what's up");
        console.log(this.state.options);
@@ -132,7 +137,7 @@ class SelectIngredients extends Component {
     console.log(this.state.selectName);
     var tempId = this.state.selectName;
     var quantityFloat = parseFloat(this.state.inputQuantity);
-    newIngredient = {ingredientName: tempId, quantity: quantityFloat};
+    newIngredient = {ingredientName: tempId, quantity: quantityFloat, nativeUnit: this.state.nativeUnit};
     console.log("NEW INGREDIENT " + newIngredient);
     // var updateIngredient = new Array(this.state.ingredientsArray.slice(0));
     // updateIngredient.push(newIngredient);
@@ -140,7 +145,8 @@ class SelectIngredients extends Component {
     // console.log( updateIngredient);
     this.state.ingredientsArray.push(newIngredient);
     this.setState({ingredientsArray:this.state.ingredientsArray});
-    this.resetArray(tempId, "add");
+    this.resetArray(tempId, this.state.nativeUnit, "add");
+    this.setState({nativeUnit: ''});
     this.setState({inputQuantity : 0});
     this.setState({selectName: ""})
     console.log(this.state.ingredientsArray);
@@ -155,9 +161,12 @@ class SelectIngredients extends Component {
       // console.log("deletedArray");
       // console.log(updateIngredient);
       // this.setState({ingredientsArray: updateIngredient});
+      var searchedIngredient = this.state.ingredientsArray.find(function(element){
+        return element.ingredientName==name;
+      });
       this.state.ingredientsArray.splice(index, 1);
       this.setState({ingredientsArray:this.state.ingredientsArray});
-      this.resetArray(name, "delete");
+      this.resetArray(name, searchedIngredient.nativeUnit, "delete");
       this.props.handleChange(this.state.ingredientsArray);
     }
 
@@ -183,26 +192,39 @@ class SelectIngredients extends Component {
     console.log(typeof (quantity));
     // const re =/^[1-9]\d*$/;
 
-    const re = /^\d*\.?\d*$/;
+
+    // const re = /^\d*\.?\d*$/;
+    const re = /^\d{0,10}(\.\d{0,2})?$/;
       if ( index>=0 && re.test(quantity) && quantity!=null) {
         this.state.ingredientsArray[index].quantity = quantity;
         this.setState({ingredientsArray: this.state.ingredientsArray});
         this.props.handleChange(this.state.ingredientsArray);
       }else
         alert("Quantity must be a positive number.");
-
   }
 
 
 updateQuantityHere(event){
   console.log(" UPDATE HERE " + event.target.value);
-  // const re = /^\d*\.?\d*$/;
-  const re =/^[1-9]\d*$/;
+   const re = /^\d*\.?\d*$/;
+  // const re =/^[1-9]\d*$/;
       if ( event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
          this.setState({inputQuantity: event.target.value})
       }else{
         alert("Quantity must be a positive number.");
       }
+  }
+
+  handleSelectedIngredient(event){
+    var selectedName = event.target.value;
+    console.log(this.props.initialArray);
+    var searchedIngredient = this.state.options.find(function(element){
+      return element.ingredientName==selectedName;
+    });
+    console.log("found ingredient");
+    console.log(searchedIngredient);
+    this.setState({selectName:selectedName});
+    this.setState({nativeUnit:searchedIngredient.nativeUnit});
   }
 
    handleChange = name => event => {
@@ -222,14 +244,13 @@ updateQuantityHere(event){
             <Select
              disabled={this.state.options.length==0}
              value={this.state.selectName}
-             onChange={this.handleChange('selectName')}
+             onChange={this.handleSelectedIngredient}
              inputProps={{
               name: 'ingredientName',
               id: 'ingredientName',
              }}>
             {this.state.options.map((ingredient, index)=>(<MenuItem key={index} value={ingredient.ingredientName}>{ingredient.ingredientName}</MenuItem>))}
             </Select>
-            {this.state.selectName && (this.state.inputQuantity>0) && <FormHelperText>Press + to add an ingredient</FormHelperText>}
          </FormControl>
          <FormControl style={{marginLeft:10}}>
           <InputLabel htmlFor="amount">Quantity</InputLabel>

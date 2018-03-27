@@ -249,7 +249,7 @@ updatePriceHere(event){
              }}>
             {this.state.options.map((vendor, index)=>(<MenuItem key={index} value={vendor.vendorName}>{vendor.vendorName}</MenuItem>))}
             </Select>
-            {this.state.selectName && (this.state.inputPrice>0) && <FormHelperText>Press + to add vendor</FormHelperText>}
+            {/* {this.state.selectName && (this.state.inputPrice>0) && <FormHelperText>Press  to add vendor</FormHelperText>} */}
          </FormControl>
          <FormControl style={{marginLeft:10}}>
           <InputLabel htmlFor="amount">Price</InputLabel>
@@ -266,7 +266,7 @@ updatePriceHere(event){
  <br/>
 
       
-      <VendorItem idToNameMap = {this.state.idToNameMap} vendorsArray={this.state.vendorsArray} deleteVendor={this.deleteVendor} updateId={this.updateId} updatePrice={this.updatePrice} options={this.state.options} />
+      {(this.state.vendorsArray.length>0) && <VendorItem idToNameMap = {this.state.idToNameMap} vendorsArray={this.state.vendorsArray} deleteVendor={this.deleteVendor} updateId={this.updateId} updatePrice={this.updatePrice} options={this.state.options} />}
       </div>
     );
   }

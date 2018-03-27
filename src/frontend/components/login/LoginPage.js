@@ -114,7 +114,7 @@ class LoginPage extends React.Component{
       var temp = this;
       // add user to DukeUser Database if user does not exist previously
       var userAdded = false;
-      await userActions.addDukeUserAutomaticAsync(email, username, false, false, false, (res) =>{
+      await userActions.addDukeUserAutomaticAsync(email, username, false, false, true, (res) =>{
         // console.log(res);
         if (res.status == 400) {
             // message = res.data;
@@ -255,6 +255,8 @@ handleMouseDownPassword(event){
                    primary="true" type="Submit" >LOGIN</RaisedButton>
                   
                   <RaisedButton raised
+                  style={{marginLeft: 10}}
+                  color = "primary"
                                 href = "https://oauth.oit.duke.edu/oauth/authorize.php?
                                 response_type=token&
                                 redirect_uri=https%3A%2F%2Freal-producers-test.colab.duke.edu&

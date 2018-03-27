@@ -174,16 +174,26 @@ async function updateById(url, propertyName, objectId, sessionId, newObject, cal
  * objectId: string, the id of the object
  * sessionId: string
  */
-async function deleteById(url, propertyName, objectId, sessionId) {
+async function deleteById(url, propertyName, objectId, sessionId, callback) {
 	// const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName, objectId]);
 	// const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
-
-	const completeUrl = getCompleteUrlWithObjectId(url, propertyName, objectId, sessionId);
+    try {
+	    const completeUrl = getCompleteUrlWithObjectId(url, propertyName, objectId, sessionId);
 	
-	const res = await axios.delete(completeUrl);
-	const result = res.data;
-	console.log(result);
-	return result;
+	    const res = await axios.delete(completeUrl);
+	    const result = res.data;
+	    console.log(result);
+	    callback(res);
+	}
+	catch(e) {
+      console.log('there was an error');
+      console.log(e);
+      //TODO: different error message for different types of error
+      if (e.response.status == 400 || e.response.status == 500)
+        callback(e.response);
+      else
+        throw e;
+	}
 };
 
 /* 

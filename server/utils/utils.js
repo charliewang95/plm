@@ -3,11 +3,15 @@ var User = mongoose.model('User');
 var Log = mongoose.model('Log');
 var Storage = mongoose.model('Storage');
 var Formula = mongoose.model('Formula');
+var Vendor = mongoose.model('Vendor');
 var Ingredient = mongoose.model('Ingredient');
 var modifierCreateUpdate = require('./modifierCreateUpdate');
 //var modifierDelete = require('./modifierDelete');
 var validator = require('./validator');
-var postProcessor = require('./postProcessor');
+var postProcessor = require('./postProcessorCreateUpdate');
+var validatorDelete = require('./validatorDelete');
+var deleteProcessor = require('./postProcessorDelete');
+var checkoutProcessor = require('./checkoutProcessor');
 var logger = require('./logger');
 
 exports.doWithAccess = function(req, res, next, model, action, userId, itemId, AdminRequired, ManagerRequired) {
@@ -17,18 +21,18 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             res.status(401);
             res.send('User does not exist');
         }
-        else if (!user.loggedIn) {
-            res.status(403);
-            res.send('User is not logged in');
-        }
-        else if (AdminRequired && !user.isAdmin) {
-            res.status(403);
-            res.send('Admin access required');
-        }
-        else if (ManagerRequired && !user.isManager) {
-            res.status(403);
-            res.send('Manager access required');
-        }
+//        else if (!user.loggedIn) {
+//            res.status(403);
+//            res.send('User is not logged in');
+//        }
+//        else if (AdminRequired && !user.isAdmin) {
+//            res.status(403);
+//            res.send('Admin access required');
+//        }
+//        else if (ManagerRequired && !user.isManager) {
+//            res.status(403);
+//            res.send('Manager access required');
+//        }
         else {
             if (action == 'create') create(req, res, next, model, user.username);
             else if (action == 'list') list(req, res, next, model, user.username);
@@ -37,8 +41,8 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             else if (action == 'updateWithUserAccess') updateWithUserAccess(req, res, next, model, userId, itemId, user.username);
             else if (action == 'delete') deleteWithoutUserAccess(req, res, next, model, itemId, user.username);
             else if (action == 'deleteWithUserAccess') deleteWithUserAccess(req, res, next, model, userId, itemId, user.username);
-            else if (action == 'checkoutOrders') checkoutOrders(req, res, next, model, userId, user.username);
-            else if (action == 'checkoutFormula') checkoutFormula(req, res, next, model, user.username);
+            else if (action == 'checkoutOrders') checkoutProcessor.checkoutOrders(req, res, next, model, userId, user.username);
+            else if (action == 'checkoutFormula') checkoutProcessor.checkoutFormula(req, res, next, model, user.username);
             else if (action == 'read') read(req, res, next, model, itemId, user.username);
             else if (action == 'readWithUserAccess') readWithUserAccess(req, res, next, model, userId, itemId, user.username);
             else {
@@ -77,7 +81,6 @@ var list = function(req, res, next, model, username) {
 			return next(err);
 		}
 		else {
-		    console.log(items);
 			res.json(items);
 		}
 	});
@@ -86,7 +89,6 @@ var list = function(req, res, next, model, username) {
 var listPartial = function(req, res, next, model, itemId, username) {
 	model.find({userId: itemId}, function(err, items) {
 
-		console.log(itemId);
 		if (err) {
 			return next(err);
 		}
@@ -98,7 +100,6 @@ var listPartial = function(req, res, next, model, itemId, username) {
 
 var create = function(req, res, next, model, username) {
 	var item = new model(req.body);
-	console.log(req.body);
 	var modifiedItem;
 	console.log("creating, modifying");
     modifierCreateUpdate.modify('create', model, item, '', res, next, function(err, obj){
@@ -110,7 +111,7 @@ var create = function(req, res, next, model, username) {
             console.log("creating, validating");
             modifiedItem = new model(obj);
             console.log(modifiedItem);
-            validator.validate(model, modifiedItem, res, next, function(err, valid){
+            validator.validate(model, modifiedItem, '', res, next, function(err, valid){
                 if (err) {
                     return next(err);
                 }
@@ -124,6 +125,9 @@ var create = function(req, res, next, model, username) {
                         else {
                             console.log("creating, saved");
                             logger.log(username, 'create', modifiedItem, model);
+                            if (model == Formula) {
+                                  postProcessor.process(model, modifiedItem, '', res, next);
+                            }
                             res.json(modifiedItem);
                         }
                     });
@@ -168,29 +172,36 @@ var update = function(req, res, next, model, itemId, username) {
         else if (obj) {
             console.log("updating, modified");
             console.log("updating, validating");
-            validator.validate(model, obj, res, next, function(err, valid){
+            validator.validate(model, itemId, obj, res, next, function(err, valid){
                 if (err) {
                     return next(err);
                 }
                 else if (valid) {
                     console.log("updating, validated");
                     console.log("updating, updating");
-                   model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
-                       if (err) {
-                           return next(err);
-                       }
-                       else if (obj2){
-                           console.log("updating, updated");
-                           logger.log(username, 'update', obj2, model);
-                           if (model == Storage || model == Ingredient) {
-                               postProcessor.process(model, obj, itemId, res, next);
-                           }
-                           res.json(obj2);
-                       } else {
-                           res.status(400);
-                           res.send("Object doesn't exist");
-                       }
-                   });
+                        Ingredient.findById(itemId, function(err, ingredient){
+                        if (ingredient)
+                            var temp = ingredient;
+                        console.log(temp);
+                           model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
+                               if (err) {
+                                   return next(err);
+                               }
+                               else if (obj2){
+                                   console.log("updating, updated");
+                                   logger.log(username, 'update', obj2, model);
+                                   if (model == Storage || model == Vendor) {
+                                       postProcessor.process(model, obj, itemId, res, next);
+                                   } else if (model == Ingredient) {
+                                       postProcessor.process(model, temp, itemId, res, next);
+                                   }
+                                   res.json(obj2);
+                               } else {
+                                   res.status(400);
+                                   res.send("Object doesn't exist");
+                               }
+                           });
+                    });
                 }
             });
         }
@@ -217,7 +228,7 @@ var updateWithUserAccess = function(req, res, next, model, userId, itemId, usern
                 else if (obj) {
                     console.log("updating, modified");
                     console.log("updating, validating");
-                    validator.validate(model, obj, res, next, function(err, valid){
+                    validator.validate(model, itemId, obj, res, next, function(err, valid){
                         if (err) {
                             return next(err);
                         }
@@ -263,15 +274,18 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) 
             return next(err);
         }
         else {
-            item.remove(function(err) {
-                if (err) {
-                    return next(err);
-                }
-                else {
-                    postProcessor.process(model, item, itemId, res, next);
-                    logger.log(username, 'delete', item, model);
-                    res.json(item);
-                }
+            var temp = item;
+            validatorDelete.validate(model, item, res, next, function(){
+                item.remove(function(err) {
+                    if (err) {
+                        return next(err);
+                    }
+                    else {
+                        deleteProcessor.process(model, item, itemId, res, next);
+                        logger.log(username, 'delete', temp, model);
+                        res.json(temp);
+                    }
+                });
             });
         }
     });
@@ -305,7 +319,7 @@ var checkoutOrders = function(req, res, next, model, userId, username) {
             validateOrders(items, res, next, function(wSpace, rSpace, fSpace){
                 console.log("Orders validated.");
                 res.send(items);
-                postProcessor.process(model, items, '', res, next);
+                deleteProcessor.process(model, items, '', res, next);
                 logger.log(username, 'checkout', items[0], model);
                 updateStorage(wSpace, rSpace, fSpace);
             });
@@ -368,10 +382,7 @@ var validateOrdersHelper = function(i, items, res, next, wSpace, rSpace, fSpace,
                 if (temperatureZone == 'warehouse' && obj.packageName != 'railcar' && obj.packageName != 'truckload') wSpace += space;
                 else if (temperatureZone == 'refrigerator' && obj.packageName != 'railcar' && obj.packageName != 'truckload') rSpace += space;
                 else if (temperatureZone == 'freezer' && obj.packageName != 'railcar' && obj.packageName != 'truckload') fSpace += space;
-                else {
-                    res.status(400).send('Temperature zone '+temperatureZone+' does not exist.');
-                    return;
-                }
+                console.log('***********'+space);
                 validateOrdersHelper(i+1, items, res, next, wSpace, rSpace, fSpace, callback);
             }
         });
@@ -387,17 +398,17 @@ var checkSpaces = function(res, next, wSpace, rSpace, fSpace, callback) {
                 console.log(obj.temperatureZone);
                 if (obj.temperatureZone == 'warehouse' && wSpace > obj.currentEmptySpace) {
                     res.status(400).send('Capacity left: '+obj.currentEmptySpace+' sqft will be exceeded for '+ obj.temperatureZone +
-                    '. The total space that will be occupied by items in your cart for this temperature is '+ wSpace+'.');
+                    '. The total space that will be occupied by items in your cart for warehouse is '+ wSpace+'.');
                     return;
                 }
                 if (obj.temperatureZone == 'refrigerator' && rSpace > obj.currentEmptySpace) {
                     res.status(400).send('Capacity left: '+obj.currentEmptySpace+' sqft will be exceeded for '+ obj.temperatureZone +
-                    '. The total space that will be occupied by items in your cart for this temperature is '+ rSpace+'.');
+                    '. The total space that will be occupied by items in your cart for refrigerator is '+ rSpace+'.');
                     return;
                 }
                 if (obj.temperatureZone == 'freezer' && fSpace > obj.currentEmptySpace) {
                     res.status(400).send('Capacity left: '+obj.currentEmptySpace+' sqft will be exceeded for '+ obj.temperatureZone +
-                    '. The total space that will be occupied by items in your cart for this temperature is '+ fSpace+'.');
+                    '. The total space that will be occupied by items in your cart for freezer is '+ fSpace+'.');
                     return;
                 }
             }

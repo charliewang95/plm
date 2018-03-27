@@ -79,8 +79,10 @@ async function updateVendor(vendorId, sessionId, vendor, callback) {
  * vendorId: string, the id of the vendor
  * sessionId: string, id of the current session
  */
-async function deleteVendor(vendorId, sessionId) {
-	return await genericActions.deleteById(baseUrl, property, vendorId, sessionId);
+async function deleteVendor(vendorId, sessionId, callback) {
+	return await genericActions.deleteById(baseUrl, property, vendorId, sessionId, function(res){
+	    callback(res);
+	});
 };
 
 //export functions above for use by other modules

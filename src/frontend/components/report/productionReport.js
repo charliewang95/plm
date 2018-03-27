@@ -27,14 +27,14 @@ export default class ProductionReport extends React.PureComponent {
     this.state = {
       columns: [
         { name: 'name', title: 'Formula Name' },
-        { name: 'totalProvided', title: 'Total Units Provided' },
-        { name: 'totalCost', title: 'Total Cost of Ingredients /$' },
+        { name: 'totalProvided', title: 'Total Units Produced' },
+        { name: 'totalCost', title: 'Total Cost of Ingredients ($)' },
       ],
       rows: [],
       sorting:[],
       currentPage: 0,
       pageSize: 10,
-      pageSizes: [5, 10, 0],
+      pageSizes: [10, 50, 100, 500],
       columnOrder: ['name', 'totalProvided', 'totalCost'],
     };
     this.changeSorting = sorting => this.setState({ sorting });
@@ -65,10 +65,16 @@ export default class ProductionReport extends React.PureComponent {
        // alert(e);
      // }
      // adds integer values as row id
-     var processedData = [...rawData.map((row, index)=> ({
-         id: index,...row,
-       })),
-     ];
+     var processedData = [];
+      if(rawData){
+        processedData = [...rawData.map((row, index)=> ({
+            id: index,...row,
+            totalProvided: Math.round(row.totalProvided*1000)/1000,
+            totalCost: Math.round(row.totalCost*100)/100,
+          })),
+        ];
+      }
+      
      this.setState({rows:processedData});
    }
 

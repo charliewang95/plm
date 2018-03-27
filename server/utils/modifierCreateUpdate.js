@@ -6,9 +6,10 @@ var IngredientPrice = mongoose.model('IngredientPrice');
 var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
-var Inventory = mongoose.model('Inventory');
-var Cart = mongoose.model('Cart');
 var Formula = mongoose.model('Formula');
+var Product = mongoose.model('Product');
+var IngredientLot = mongoose.model('IngredientLot');
+
 
 exports.modify = function(action, model, item, itemId, res, next, callback) {
     if (model == Order) {
@@ -43,6 +44,22 @@ exports.modify = function(action, model, item, itemId, res, next, callback) {
             }
         });
     }
+    else if (model == Product) {
+        modifyProduct(action, item, itemId, res, next, function(err, obj){
+            if (err) next(err);
+            else {
+                callback(err, obj);
+            }
+        });
+    }
+    else if (model == IngredientLot) {
+        modifyIngredientLot(action, item, itemId, res, next, function(err, obj){
+            if (err) next(err);
+            else {
+                callback(err, obj);
+            }
+        });
+    }
     else callback(false, item);
 };
 
@@ -58,8 +75,12 @@ var modifyOrder = function(item, res, next, callback) { //add number of pounds t
                 else if (!ingredient){
                     return res.status(400).send('Ingredient does not exist');
                 } else {
-                    var str = JSON.stringify(item).slice(0,-1)+',"space":'+space+',"numUnit":'+numUnit+',"totalPrice":'+item.price*item.packageNum+',"ingredientId":"'+ingredient._id+'"}';
-                    callback(err, JSON.parse(str));
+                    //var str = JSON.stringify(item).slice(0,-1)+',"space":'+space+',"numUnit":'+numUnit+',"totalPrice":'+item.price*item.packageNum+',"ingredientId":"'+ingredient._id+'"}';
+                    item.space = space;
+                    item.numUnit = numUnit;
+                    item.totalPrice = item.price*item.packageNum;
+                    item.ingredientId = ingredient._id;
+                    callback(err, item);
                 }
             });
         }
@@ -70,86 +91,6 @@ var modifyVendor = function(action, item, itemId, res, next, callback) { //add u
     var code = item.code.toLowerCase();
     var str = JSON.stringify(item).slice(0,-1)+',"codeUnique":"'+code+'"}';
     item = JSON.parse(str);
-    var counter1 = 0;
-    // delete old ingredient vendor info
-//    if (action == 'delete' || action == 'update') {
-//        Vendor.findById(itemId, function(err, obj) {
-//            if (err) return next(err);
-//            else {
-//                var ingredients = obj.ingredients;
-//                for (var i = 0; i < ingredients.length; i++) {
-//                    var currentIngredient = ingredients[i];
-//                    var ingredientId = currentIngredient.ingredient;
-//                    counter1++;
-//                    Ingredient.findById(ingredientId, function(err, obj2){
-//                        if (err) return next(err);
-//                        else if (obj2){
-//                            var vendors = obj2.vendors;
-//                            var vendorExist = false;
-//                            for (var j=0; j<vendors.length; j++) {
-//                                var vendor = vendors[j];
-//                                if (vendor.vendor == item.name) {
-//                                    vendors.splice(j,1);
-//                                    break;
-//                                }
-//                            }
-//                            console.log('delete on'+obj2);
-//
-//                            obj2.update({vendors: vendors}, function(err2, obj3){
-//
-//                                if (err2) return next(err2);
-//                                else if (counter1 == ingredients.length) {
-//                                    console.log("got here");
-//                                    counter1 = -1;
-//                                    if (action == 'create' || action == 'update') {
-//                                        var ingredients2 = item.ingredients;
-//                                        var counter2 = 0;
-//                                        for (var k = 0; k < ingredients.length; k++) {
-//                                            var currentIngredient = ingredients2[k];
-//                                            var ingredientId = currentIngredient.ingredient;
-//                                            counter2++;
-//                                            Ingredient.findById(ingredientId, function(err, obj4){
-//                                                if (err) return next(err);
-//                                                else if (!obj4) {
-//                                                    res.status(400);
-//                                                    res.send("Ingredient doesn't exist in inventory");
-//                                                    return;
-//                                                }
-//                                                else {
-//                                                    var vendors = obj4.vendors;
-//                                                    var vendorExist = false;
-//                                                    for (var l=0; l<vendors.length; l++) {
-//                                                        var vendor = vendors[l];
-//                                                        if (vendor.vendor == item.name) {
-//                                                            vendor.price = currentIngredient.price;
-//                                                            vendorExist = true;
-//                                                            break;
-//                                                        }
-//                                                    }
-//                                                    if (!vendorExist) {
-//                                                        var newItem = new VendorPrice({vendor: item.name, price: currentIngredient.price});
-//                                                        vendors.push(newItem);
-//                                                    }
-//                                                    console.log('create on'+obj4);
-//                                                    obj4.update({vendors: vendors}, function(err2, obj5){
-//                                                        if (err2) return next(err2);
-//                                                        else if (counter2 == ingredients2.length) {
-//                                                            counter2 = -1;
-//                                                            return callback(0, item);
-//                                                        }
-//                                                    });
-//                                                }
-//                                            });
-//                                        }
-//                                    }
-//                                }
-//                            });
-//                        }
-//                    });
-//                }
-//            }
-//        });
-//    }
 
     return callback(0, item);
 
@@ -246,4 +187,20 @@ var helperFormula = function(ingredients, i, res, next, array, callback) {
             }
         });
     }
+};
+
+var modifyProduct = function(action, item, itemId, res, next, callback) { //add unique lowercase code to check code uniqueness
+    var str = JSON.stringify(item).slice(0,-1)+',"lotNumberUnique":"'+item.lotNumber.toLowerCase()+',"nameUnique":"'+item.name.toLowerCase()+'"}';
+    item = JSON.parse(str);
+    callback(0, item);
+};
+
+var modifyIngredientLot = function(action, item, itemId, res, next, callback) { //add unique lowercase code to check code uniqueness
+    //var str = JSON.stringify(item).slice(0,-1)+',"lotNumberUnique":"'+item.lotNumber.toLowerCase()+',"ingredientNameUnique":"'+item.ingredientName.toLowerCase()+',"vendorNameUnique":"'+item.vendorName.toLowerCase()+'"}';
+    //item = JSON.parse(str);
+    item.lotNumberUnique = item.lotNumber.toLowerCase();
+    item.ingredientNameUnique = item.ingredientName.toLowerCase();
+    item.vendorNameUnique = item.vendorName.toLowerCase();
+    if (item.date == null) item.date = new Date();
+    callback(0, item);
 };

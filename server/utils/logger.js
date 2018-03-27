@@ -6,9 +6,9 @@ var IngredientPrice = mongoose.model('IngredientPrice');
 var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
-var Inventory = mongoose.model('Inventory');
-var Cart = mongoose.model('Cart');
 var Log = mongoose.model('Log');
+var Product = mongoose.model('Product');
+var IngredientLot = mongoose.model('IngredientLot');
 
 exports.log = function(username, action, item, model){
     var log = new Log();
@@ -20,10 +20,6 @@ exports.log = function(username, action, item, model){
 
     if (model == User)
         log.item = item.username;
-    else if (model == Inventory)
-        log.item = item.ingredientName;
-    else if (model == Cart)
-        log.item = item.formulaName;
     else if (model == Storage)
         log.item = item.temperatureZone;
     else if (model == Order) {
@@ -35,6 +31,9 @@ exports.log = function(username, action, item, model){
                 return;
             });
         });
+    }
+    else if (model == IngredientLot) {
+        log.item = item.ingredientName;
     }
     else
         log.item = item.name;

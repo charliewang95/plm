@@ -72,6 +72,10 @@ var IngredientSchema = new Schema({
         required: true,
         default: 0
     },
+    isIntermediate: {
+        type: Boolean,
+        required: true
+    },
     vendors : [VendorPriceSchema]
 });
 
