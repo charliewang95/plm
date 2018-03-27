@@ -93,7 +93,8 @@ class Orders extends React.PureComponent{
     var rawData = [];
     if(READ_FROM_DATABASE){
       sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-      rawData = await ingredientActions.getAllIngredientsAsync(sessionId);
+      rawData = await ingredientActions.getAllIngredientsOnlyAsync(sessionId);
+      rawData = rawData.data;
       console.log("data from DB " + JSON.stringify(rawData));
     }else{
       rawData = dummyData;
