@@ -28,6 +28,7 @@ class LotNumberButton extends Component {
     this.handleSave = this.handleSave.bind(this);
     this.handleClickOpen = this.handleClickOpen.bind(this);
     this.handleQuantityChange = this.handleQuantityChange.bind(this);
+    this.checkForEmpty = this.checkForEmpty.bind(this);
     console.log("constructor was called");
     console.log(this.props.initialArray); 
   }
@@ -46,7 +47,11 @@ class LotNumberButton extends Component {
   updateArray(inputArray){
     var sum = 0;
     for(var i=0; i<inputArray.length;i++){
-      sum+=parseInt(inputArray[i].package);
+      if(inputArray[i].package==''){
+        sum+=0;
+      }else{
+        sum+=parseInt(inputArray[i].package);
+      }
       console.log(inputArray[i].package);
     }
     if(!sum){
@@ -107,6 +112,17 @@ class LotNumberButton extends Component {
     // e.stopPropagation();
   }
 
+  checkForEmpty(){
+    for(var i=0; i<this.state.lotNumberArray.length;i++){
+      console.log("checking for empty");
+      console.log(this.state.lotNumberArray[i].package);
+      if(this.state.lotNumberArray[i].package=='' || this.state.lotNumberArray[i].package==0){
+        return false;
+      }
+    }
+    return true;
+  }
+
   render() {
     return (
       <div>
@@ -127,7 +143,7 @@ class LotNumberButton extends Component {
             </DialogContent>
             <DialogActions>
               {/*<Button onClick={(e)=>this.handleCancel(e)} color="primary">Cancel</Button>*/}
-              <Button disabled={this.state.currentQuantity!=this.state.totalAssigned} onClick={(e)=>this.handleSave(e)} color="secondary">Close</Button>
+              <Button disabled={!this.checkForEmpty() || (this.state.currentQuantity!=this.state.totalAssigned)} onClick={(e)=>this.handleSave(e)} color="secondary">Close</Button>
             </DialogActions>
           </Dialog>
         </div>

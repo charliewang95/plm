@@ -107,7 +107,6 @@ class LotNumberSelector extends Component {
             <p><font color="green">All stock quantity has been assigned!</font></p>
           }
       {(this.state.lotNumberArray.length>0) &&  <p>{"Quantity (" + this.state.nativeUnit + ") Assigned per lot number"}</p> }
-
         <LotNumberArray
                 nativeUnit={this.state.nativeUnit}
                 lotNumberArray={this.state.lotNumberArray}
