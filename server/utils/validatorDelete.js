@@ -41,6 +41,9 @@ var validateIngredient = function(item, res, next, callback) {
                         formulaString+=formulas[i].name+', ';
                     }
                 }
+                if (ingredientName.toLowerCase() == formulas[i].name.toLowerCase()){
+                    formulaString+=formulas[i].name+', ';
+                }
             }
             if (formulaString!='')
                 return res.status(400).send('Action denied. This ingredient is used in formula(s): '+formulaString.slice(0,-2));
