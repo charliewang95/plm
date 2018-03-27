@@ -175,6 +175,8 @@ class AddIngredientForm extends React.Component{
 
   componentDidMount(){
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    userId = JSON.parse(sessionStorage.getItem('user'))._id;
     console.log("logs");
     if(this.props.location.state.fromLogs){
       this.loadIngredient();
@@ -195,6 +197,7 @@ class AddIngredientForm extends React.Component{
      console.log(lotArray);
 
     // create map
+    lotArray = lotArray.data;
     var array = [];
     for(var i =0; i < lotArray.length;i++){
       var obj = new Object();
@@ -226,8 +229,6 @@ class AddIngredientForm extends React.Component{
 
   async loadIngredient(){
     var details = [];
-    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    userId = JSON.parse(sessionStorage.getItem('user'))._id;
     // sessionId = '5a8b99a669b5a9637e9cc3bb';
     // userId = '5a8b99a669b5a9637e9cc3bb';
     console.log("ingredient id");

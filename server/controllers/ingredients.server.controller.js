@@ -69,14 +69,14 @@ exports.getRecall = function(req, res, next) {
 exports.listIngredients = function(req, res, next){
     Ingredient.find({isIntermediate: false}, function(err, items){
         if (err) return next(err);
-        else res.send(items);
+        else res.json(items);
     });
 };
 
 exports.listIntermediate = function(req, res, next){
     Ingredient.find({isIntermediate: true}, function(err, items){
         if (err) return next(err);
-        else res.send(items);
+        else res.json(items);
     });
 };
 

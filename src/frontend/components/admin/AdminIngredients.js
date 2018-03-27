@@ -566,7 +566,8 @@ class AdminIngredients extends React.PureComponent {
     if(rawData.length==0){
       return
     }
-
+    console.log(rawData);
+    console.log(rawData[0].vendors);
     var processedData=[];
     // //loop through ingredient
     for (var i = 0; i < rawData.length; i++) {
@@ -789,7 +790,7 @@ class AdminIngredients extends React.PureComponent {
       {isAdmin &&
       <div>
         <br></br>
-        Click <a href="./BulkImportEV2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
+        Click <a href="./BulkImportEV3Proposalv2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
       </div>
     }
         <br/>
