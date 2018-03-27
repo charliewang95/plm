@@ -85,9 +85,13 @@ class LotNumberSelector extends Component {
   updateLotNumber (event, index) {
     console.log("updateLotNumber");
     var lotNumber = event.target.value;
+    const re = /^[a-zA-Z0-9_.-]*$/;
     if(index!=-1 ){
       if(!this.checkLotNumberUnique(lotNumber)){
         alert("Lot number must be unique!");
+
+      }else if(!re.test(lotNumber)){
+        alert("Lot number must be alphanumeric!");
       }else {
       //Add check for data type
         this.state.lotNumberArray[index].lotNumber = lotNumber;
@@ -118,7 +122,7 @@ class LotNumberSelector extends Component {
     // const re = /^[a-z0-9]+$/i;
     const re = /^[a-zA-Z0-9_.-]*$/
     // const re = /^\w+$/;
-      if(lotNumber!='' && (re.test(lotNumber))) {
+      if((re.test(lotNumber))) {
         this.setState({currentLotNumber: lotNumber});
       }else{
         alert("Lot Number must be alphanumeric.");
