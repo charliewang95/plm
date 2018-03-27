@@ -97,7 +97,7 @@ exports.getFresh = function(req, res, next) {
         getFreshHelper(req, res, next, 0, ingredients, function(){
             console.log('got it?');
             IngredientFreshness.find({}, function(err, fresh){
-                console.log(fresh);
+                //console.log(fresh);
                 res.json(fresh);
             });
         });

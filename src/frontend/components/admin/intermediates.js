@@ -159,7 +159,7 @@ class Intermediates extends React.PureComponent {
       pageSizes: [5, 10, 0],
       columnOrder: ['name', 'temperatureZone', 'packageNameString', 'numUnitString', 'space'],
       options:[],
-      currentTab: 0,
+      lotNumberString:''
     };
 
     this.changeSorting = sorting => this.setState({ sorting });
@@ -189,7 +189,7 @@ class Intermediates extends React.PureComponent {
                 } else {
                     alert(" Ingredient successfully deleted ! ");
                     rows.splice(index, 1);
-                    // window.location.reload();
+                    window.location.reload();
                 }
           });
         }
@@ -213,14 +213,16 @@ class Intermediates extends React.PureComponent {
     //this.createMap();
   }
 
-  handleTabChange = (event, value) => {
-    this.setState({ currentTab: value });
-  };
+  // handleTabChange = (event, value) => {
+  //   this.setState({ currentTab: value });
+  // };
 
   async loadAllIngredients(){
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     var rawData = await ingredientInterface.getAllIntermediatesOnlyAsync(sessionId);
     rawData = rawData.data;
+    console.log("getallIntermediates");
+    console.log(rawData);
     if(rawData.length==0){
       return
     }
