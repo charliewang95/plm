@@ -78,7 +78,8 @@ class ProductionReview extends React.Component {
       });
     console.log(this.state.formulaRows);
 
-    this.productionReview = async() =>{
+    this.productionReview = async(event) =>{
+      event.preventDefault();
       console.log(" get production review");
       var temp = this;
       var afterLink = this.state.formulaRows[0].isIntermediate? '/admin-ingredients' : '/product';
@@ -103,6 +104,7 @@ class ProductionReview extends React.Component {
 
                  var review = [...review.map((row, index)=> ({
                      id:index,...row,
+                     currentUnit:Math.round(row.currentUnit*100)/100,
                      delta:Math.round(row.delta*100)/100,
                      })),
                    ];
@@ -155,6 +157,7 @@ class ProductionReview extends React.Component {
 
 
   async addToShoppingCart(event){
+    // event.preventDefault();
     //TODO: send to back end
     var temp = this;
     console.log("add To cart" + JSON.stringify(this.state.ingredientsToOrder));
@@ -194,6 +197,7 @@ class ProductionReview extends React.Component {
   }
 
   async checkOutFormula(event){
+    // event.preventDefault();
 
     var temp = this;
     console.log(temp.state.formulaRows[0]);
@@ -305,7 +309,7 @@ class ProductionReview extends React.Component {
                 >Cancel</Button>
               <Button
                 component = {Link} to = "/production-review"
-                onClick={this.productionReview} color="secondary">Add To Production</Button>
+                onClick={(event) => this.productionReview(event)} color="secondary">Add To Production</Button>
             </DialogActions>
           </Dialog>
       </Paper>
