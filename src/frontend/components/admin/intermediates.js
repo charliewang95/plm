@@ -159,7 +159,7 @@ class Intermediates extends React.PureComponent {
       pageSizes: [5, 10, 0],
       columnOrder: ['name', 'temperatureZone', 'packageNameString', 'numUnitString', 'space'],
       options:[],
-      currentTab: 0,
+      lotNumberString:''
     };
 
     this.changeSorting = sorting => this.setState({ sorting });
@@ -213,9 +213,9 @@ class Intermediates extends React.PureComponent {
     //this.createMap();
   }
 
-  handleTabChange = (event, value) => {
-    this.setState({ currentTab: value });
-  };
+  // handleTabChange = (event, value) => {
+  //   this.setState({ currentTab: value });
+  // };
 
   async loadAllIngredients(){
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;

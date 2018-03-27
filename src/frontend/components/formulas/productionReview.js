@@ -67,6 +67,7 @@ class ProductionReview extends React.Component {
         ingredientsToOrder:[],
         snackBarMessage:'',
         snackBarOpen:false,
+        intermediates:'',
         afterLink:'',
     };
     // this.cancelProduction = this.cancelProduction.bind(this);
@@ -78,17 +79,13 @@ class ProductionReview extends React.Component {
     console.log(this.state.formulaRows);
 
     this.productionReview = async() =>{
-
-      //TODO: Remove this
-
       console.log(" get production review");
-
       var temp = this;
       var afterLink = this.state.formulaRows[0].isIntermediate? '/admin-ingredients' : '/product';
       this.setState({afterLink: afterLink});
 
       //TODO: Check this
-      console.log(this.state.formulaRows[0]._id+' '+Number(this.state.addedQuantity));
+      console.log(temp.state.formulaRows[0]._id+' '+Number(temp.state.addedQuantity));
       await formulaActions.checkoutFormula("review",temp.state.formulaRows[0]._id,
                           Number(temp.state.addedQuantity),sessionId, function(res){
 
@@ -101,6 +98,7 @@ class ProductionReview extends React.Component {
               }
               else {
                  review = res.data;
+                 console.log("production review");
                  console.log(review);
 
                  var review = [...review.map((row, index)=> ({
@@ -112,14 +110,29 @@ class ProductionReview extends React.Component {
                    temp.setState({rows:review});
 
                    // Check if you need to order the ingredients
-                    var data = [];
+                   var data = [];
+                   var intermediateData = [];
+
                    for(var i =0; i < review.length;i++){
                      if(review[i].delta> 0 ){
                        // Add to the Array
                        data.push(review[i]);
+                       if(review[i].isIntermediate){
+                         intermediateData.push(review[i]);
+                       }
                      }
                    }
-                    console.log(data);
+                   var intermediateString = "";
+                   for(var j = 0; j < intermediateData.length;j++){
+                     intermediateString+=intermediateData[j].ingredientName;
+                     if(j!=intermediateData.length-1){
+                       intermediateString+=" , ";
+                     }
+                   }
+
+                   console.log(data);
+                   temp.setState({intermediates:intermediateString});
+
                    temp.setState({ingredientsToOrder:data});
                    temp.setState({open:false});
 
@@ -193,7 +206,7 @@ class ProductionReview extends React.Component {
             alert('Successfully added to production.');
          }
       });
-    event.stopPropagation();
+    // event.stopPropagation();
   };
 
   handleFormulaQuantity(event){
@@ -225,7 +238,7 @@ class ProductionReview extends React.Component {
   render() {
     // const {classes} = this.props;
     // const { classes } = this.props;
-    const {formulaRows,rows,columns,formulaColumns, } = this.state;
+    const {formulaRows,rows,columns,formulaColumns,intermediates} = this.state;
     return (
       <div>
       <p><font size="6">Production Review</font></p>
@@ -297,12 +310,16 @@ class ProductionReview extends React.Component {
           </Dialog>
       </Paper>
       <div style={styles.buttons}>
-        {(this.state.ingredientsToOrder.length!=0) && <p><font size="5">You do not have enough ingredients. Order the difference?</font></p>}
+        {(this.state.ingredientsToOrder.length!=0) && (this.state.intermediates.length==0)&& <p><font size="5">You do not have enough ingredients. Order the difference?</font></p>}
+        {(this.state.ingredientsToOrder.length!=0) && (this.state.intermediates.length!=0)&&
+          <p><font size="5">
+            {"Please go BACK to Formulas to produce the given intermediates: " + this.state.intermediates }</font></p>}
         {(this.state.ingredientsToOrder.length!=0) &&
           <Tooltip id="tooltip-bottom" title="Ingredients with additional amount > 0 added to cart " placement="bottom">
             <RaisedButton raised
                   color="primary"
                   // className=classes.button
+                  disabled ={this.state.intermediates.length!=0}
                   style={styles.orderIngredientsButton}
                   onClick = {(event) => this.addToShoppingCart(event)}
                   component = {Link} to = "/cart"
