@@ -48,14 +48,17 @@ exports.updateAverageDelete = function(res, next, date, ingredientName, numUnit,
                 if (err) return next(err);
                 else if (fresh) {
                     var averageMilli = fresh.averageMilli;
-                    var newAverageMilli = Math.floor((averageMilli * oldNumUnit - date.getTime() * numUnit) / (oldNumUnit - numUnit));
+                    var newAverageMilli = Math.floor((averageMilli * oldNumUnit) / (oldNumUnit - numUnit));
+                    console.log("OLD AVERAGE "+averageMilli+"NEW AVERAGE "+newAverageMilli);
                     fresh.update({averageMilli: newAverageMilli}, function(err, obj){
                         callback();
                     });
+                } else {
+                    callback();
                 }
-                else {
-                    return res.status(400).send('Ingredient '+ingredientName+' does not exist.');
-                }
+//                else {
+//                    return res.status(400).send('Ingredient '+ingredientName+' does not exist.');
+//                }
             });
         }
     });
@@ -83,8 +86,11 @@ exports.updateOldestDelete = function(res, next, date, ingredientName, numUnit, 
                     });
                 }
                 else {
-                    return res.status(400).send('Ingredient '+ingredientName+' does not exist.');
+                    callback();
                 }
+//                else {
+//                    return res.status(400).send('Ingredient '+ingredientName+' does not exist.');
+//                }
             });
         }
     });
