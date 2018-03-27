@@ -185,8 +185,8 @@ class AddIngredientForm extends React.Component{
       this.loadIngredient();
     }
     this.computeVendorString();
-
-    if((!this.state.isCreateNew)&&(this.props.location.state.details)){
+    if((!this.props.location.state.fromLogs)&&(!this.state.isCreateNew)&&(this.props.location.state.details.numUnit)){
+      console.log("inStock");
       temp.loadLotNumbers(function(){
         temp.computeLotNumberString();
       });
@@ -577,7 +577,7 @@ class AddIngredientForm extends React.Component{
                   style={{lineHeight: 1.5}}
                 />}
 
-                {(!this.state.isDisabled && this.state.numUnit!=0)&&
+                {(!this.state.isDisabled && this.props.location.state.details.numUnit!=0)&&
                   <LotNumberSelector
                     nativeUnit = {this.state.nativeUnit}
                     initialArray = {this.state.lotNumberArray}

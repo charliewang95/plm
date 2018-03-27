@@ -221,6 +221,8 @@ class Intermediates extends React.PureComponent {
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     var rawData = await ingredientInterface.getAllIntermediatesOnlyAsync(sessionId);
     rawData = rawData.data;
+    console.log("getallIntermediates");
+    console.log(rawData);
     if(rawData.length==0){
       return
     }
