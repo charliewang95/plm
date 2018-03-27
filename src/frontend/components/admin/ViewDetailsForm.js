@@ -108,6 +108,7 @@ class AddIngredientForm extends React.Component{
     this.loadLotNumbers = this.loadLotNumbers.bind(this);
     this.updateArray= this.updateArray.bind(this);
     this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
+    this.checkQuantityMatchLotArray = this.checkQuantityMatchLotArray.bind(this);
   }
 
   handleSnackBarClose(){
@@ -282,6 +283,9 @@ class AddIngredientForm extends React.Component{
     if (this.state.numUnitPerPackage <= 0 || this.state.numUnitPerPackage == '' || !re.test(this.state.numUnitPerPackage)) {
       alert(" Quantity must be a positive number");
       return false;
+      // Add validation for lotNumberArray and quantity
+    }else if (!this.checkQuantityMatchLotArray()){
+      alert("the total quantity must equal to the sum of quantities in lots.")
     }
     else if(this.state.temperatureZone==null || this.state.temperatureZone==''){
       alert("Please fill out temperature.");
@@ -299,6 +303,15 @@ class AddIngredientForm extends React.Component{
         alert('Native unit must be a string. ');
     }else
       return true;
+  }
+
+  checkQuantityMatchLotArray(){
+    var sum =0;
+    var array = this.state.lotNumberArray;
+    for(var i = 0; i < array.length;i++){
+      sum+=array[i].lotNumber;
+    }
+    return (Number(this.state.quantity)==Number(sum));
   }
 
   async onFormSubmit(e) {
