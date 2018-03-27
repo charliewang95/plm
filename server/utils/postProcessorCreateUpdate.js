@@ -6,6 +6,7 @@ var IngredientPrice = mongoose.model('IngredientPrice');
 var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
+var Formula = mongoose.model('Formula');
 
 exports.process = function(model, item, itemId, res, next) {
     if (model == Vendor) {
@@ -15,7 +16,7 @@ exports.process = function(model, item, itemId, res, next) {
         processIngredient(item, itemId, res, next);
     }
     else if (model == Formula) {
-        processCart(item, itemId, res, next);
+        processFormula(item, itemId, res, next);
     }
     else if (model == Storage) {
         processStorage(item, itemId, res, next);
@@ -176,6 +177,8 @@ var processFormula = function(item, itemId, res, next){
             newIngredient.nativeUnit = item.nativeUnit;
             newIngredient.numUnitPerPackage = item.numUnitPerPackage;
             newIngredient.isIntermediate = true;
+            console.log("&&&&&&&&&&&&&&&&");
+            console.log(newIngredient);
             newIngredient.save(function(err){
                 if (err) return next(err);
             })
