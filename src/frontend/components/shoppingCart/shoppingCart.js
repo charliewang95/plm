@@ -373,12 +373,9 @@ class ShoppingCart extends React.Component {
       console.log("checkout" );
       console.log(" ORDERED DATA " + this.state.rows);
        var temp = this;
-
       await orderActions.checkoutOrder(sessionId, function(res){
         if (res.status == 400) {
             if (!alert(res.data)) {
-                //window.location.reload();
-                //temp.setState({rows:rows});
             }
         } else {
           temp.setState({snackBarMessage : "Checkout successful!"});
