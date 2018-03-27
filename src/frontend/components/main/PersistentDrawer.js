@@ -24,7 +24,7 @@ import ExitToApp from 'material-ui-icons/ExitToApp';
 import {MenuList} from 'material-ui/Menu';
 import MainList from './MainList'
 
-const drawerWidth = 240;
+const drawerWidth = 230;
 
 const styles = theme => ({
   root: {
@@ -94,12 +94,7 @@ const styles = theme => ({
       marginTop: 64,
     },
   },
-  'content-left': {
-    marginLeft: -drawerWidth,
-  },
-  'content-right': {
-    marginRight: -drawerWidth,
-  },
+
   contentShift: {
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,
@@ -187,9 +182,9 @@ class PersistentDrawer extends React.Component {
     console.log("user is admin: " + isAdmin);
     const { classes, theme } = this.props;
     const { anchor, open } = this.state;
-    const drawer = (
-      <Drawer
-        type="persistent"
+    const drawer = user && (
+       <Drawer
+        type="permanent"
         classes={{
           paper: classes.drawerPaper,
         }}
@@ -198,9 +193,9 @@ class PersistentDrawer extends React.Component {
       >
         <div className={classes.drawerInner}>
           <div className={classes.drawerHeader}>
-            <IconButton onClick={this.handleDrawerClose}>
+            {/* <IconButton onClick={this.handleDrawerClose}>
               {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-            </IconButton>
+            </IconButton> */}
           </div>
           <Divider />
           {isAdmin && <List className={classes.list}>{UserListItems}</List> }
@@ -222,7 +217,7 @@ class PersistentDrawer extends React.Component {
     return (
       <div className={classes.root}>
         <div className={classes.appFrame}>
-          {this.state.loggedIn && <AppBar
+          {this.state.loggedIn && <AppBar style={{marginLeft: 180}}
             className={classNames(classes.appBar, {
               [classes.appBarShift]: open,
               [classes[`appBarShift-${anchor}`]]: open,
@@ -237,10 +232,10 @@ class PersistentDrawer extends React.Component {
               >
                 <MenuIcon />
               </IconButton>
-              <Typography type="title" className={classes.flex} color="inherit" noWrap>
-                Real Producers
+              <Typography type="title" className={classes.flex} color="inherit" style={{marginLeft: 180}} noWrap>
+
               </Typography>
-              <Button raised color="secondary" onClick={this.logout} component={Link} to="/"><ExitToApp className={classes.icon}/> Logout</Button>
+              <Button raised color="secondary" style={{marginRight: 30}} onClick={this.logout} component={Link} to="/"><ExitToApp className={classes.icon}/> Logout</Button>
             </Toolbar>
           </AppBar>}
           {before}

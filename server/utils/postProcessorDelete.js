@@ -2,12 +2,12 @@ var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var Order = mongoose.model('Order');
 var Ingredient = mongoose.model('Ingredient');
-var IngredientPrice = mongoose.model('IngredientPrice');
+var IngredientFreshness = mongoose.model('IngredientFreshness');
+var IngredientProduct = mongoose.model('IngredientProduct');
+var IngredientLot = mongoose.model('IngredientLot');
 var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
-var Inventory = mongoose.model('Inventory');
-var Cart = mongoose.model('Cart');
 
 exports.process = function(model, item, itemId, res, next) {
     if (model == Ingredient) {
@@ -31,7 +31,15 @@ var processIngredient = function(item, itemId, res, next) {
         var capacity = storage.capacity;
         var occupied = storage.currentOccupiedSpace - space;
         var empty = capacity - occupied;
-        storage.update({currentOccupiedSpace: occupied, currentEmptySpace:empty}, function(err, obj){});
+        storage.update({currentOccupiedSpace: occupied, currentEmptySpace:empty}, function(err, obj){
+            IngredientProduct.remove({ingredientNameUnique: item.nameUnique}, function(err){
+                IngredientProduct.remove({ingredientNameUnique: item.nameUnique}, function(err){
+                    IngredientLot.remove({ingredientNameUnique: item.nameUnique}, function(err){
+
+                    });
+                });
+            });
+        });
     })
 };
 
@@ -112,7 +120,7 @@ var processOrderHelper = function(i, items, res, next) {
                     if (err) return next(err);
                     else processOrderHelper(i+1, items, res, next);
                 });
-            })
+            });
         })
     }
 };

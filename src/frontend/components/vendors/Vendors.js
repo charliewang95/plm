@@ -186,7 +186,13 @@ class Vendors extends React.PureComponent
           // TODO: Update table in Back end
 
           console.log("Delete " + rows[index].name);
-          vendorActions.deleteVendor(rows[index]._id, sessionId);
+          vendorActions.deleteVendor(rows[index]._id, sessionId, function(res){
+                if (res.status == 400) {
+                  if(!alert(res.data)){
+                    window.location.reload();
+                  }
+              }
+          });
           // removes data from the table
           rows.splice(index, 1);
         }
@@ -226,15 +232,17 @@ class Vendors extends React.PureComponent
       rawData = dummyData;
     }
     console.log("rawData " + JSON.stringify(rawData));
+    
+    var processedData = [];
+    if(rawData){
+      processedData = [...rawData.map((row, index)=> ({
+          id: startingIndex + index,...row,
+        })),
+      ];
+    }
 
-    var processedData = [...rawData.map((row, index)=> ({
-        id: startingIndex + index,...row,
-      })),
-    ];
-
-
-      console.log("processedData " + JSON.stringify(processedData));
-      this.setState({rows:processedData});
+    console.log("processedData " + JSON.stringify(processedData));
+    this.setState({rows:processedData});
   }
 
   render() {

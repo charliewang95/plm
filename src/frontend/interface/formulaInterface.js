@@ -13,13 +13,18 @@ packageType: string 'Sack', 'Pail', 'Drum', 'Supersack', 'Truckload', 'Railcar',
 temperatureZone: string 'freezer', 'refrigerator', 'warehouse', 'Freezer', 'Refrigerator', 'Warehouse'
 vendors: array of objects following the VendorPriceSchema
 **/
-function packIntoJson(name, description, unitsProvided, ingredients){
+function packIntoJson(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage){
 	var formulaJson = new Object();
 	formulaJson.name = name;
 	formulaJson.description = description;
 	formulaJson.ingredients = ingredients;
 	formulaJson.unitsProvided = unitsProvided;
-	console.log(ingredients);
+	formulaJson.isIntermediate = isIntermediate;
+	formulaJson.numUnitPerPackage = numUnitPerPackage;
+	formulaJson.nativeUnit = nativeUnit;
+	formulaJson.packageName = packageName;
+	formulaJson.temperatureZone = temperatureZone;
+	//console.log(ingredients);
 	return formulaJson;
 }
 
@@ -27,9 +32,9 @@ function packIntoJson(name, description, unitsProvided, ingredients){
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-async function addFormula(name, description, unitsProvided, ingredients, sessionId, callback) {
+async function addFormula(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage, sessionId, callback) {
 	console.log("add formulas");
-	var newFormula = packIntoJson(name, description, unitsProvided, ingredients);
+	var newFormula = packIntoJson(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage);
 	//return await formulaActions.addFormula(newFormula, sessionId);
 	formulaActions.addFormula(newFormula, sessionId, function(res){
 	    callback(res);
@@ -79,8 +84,8 @@ async function getFormulaAsync(formulaId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-async function updateFormula(formulaId, name, description, unitsProvided, ingredients, sessionId, callback) {
-	var updatedFormula = packIntoJson(name, description, unitsProvided, ingredients);
+async function updateFormula(formulaId, name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage, sessionId, callback) {
+	var updatedFormula = packIntoJson(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage);
 	//return await formulaActions.updateFormula(formulaId, sessionId, updatedFormula);
 	formulaActions.updateFormula(formulaId, sessionId, updatedFormula, function(res){
 	    callback(res);
@@ -92,8 +97,10 @@ async function updateFormula(formulaId, name, description, unitsProvided, ingred
  * formulaId: string, the id of the formula
  * sessionId: string, id of the current session
  */
-async function deleteFormula(formulaId, sessionId) {
-	return await formulaActions.deleteFormula(formulaId, sessionId);
+async function deleteFormula(formulaId, sessionId, callback) {
+	return await formulaActions.deleteFormula(formulaId, sessionId, function(res){
+	    callback(res);
+	});
 };
 
 async function checkoutFormula(action, formulaId, quantity, sessionId, callback) {

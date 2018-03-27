@@ -9,11 +9,12 @@ module.exports = function() {
 	require('../server/models/ingredient.server.model');
 	require('../server/models/storage.server.model');
 	require('../server/models/order.server.model');
-	require('../server/models/inventory.server.model');
 	require('../server/models/formula.server.model');
-	require('../server/models/cart.server.model');
-	require('../server/models/dukeUser.server.model');
 	require('../server/models/log.server.model');
+	require('../server/models/product.server.model');
+    require('../server/models/ingredientLot.server.model');
+    require('../server/models/ingredientProduct.server.model');
+    require('../server/models/ingredientFreshness.server.model');
 
 	return db;
 };

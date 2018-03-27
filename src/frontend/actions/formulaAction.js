@@ -4,7 +4,7 @@ import * as genericActions from './genericCrudAction'
 //All the methods return the response on successful completion
 
 const baseUrl = '/formulas';
-const property = 'formula'; 
+const property = 'formula';
 
 /* add one formula
  * formula: JSON object
@@ -17,25 +17,25 @@ async function addFormula(formula, sessionId, callback) {
 	})
 };
 
-/* 
+/*
  * get all formulas
  * deprecated, use getAllFormulasAsync instead
  */
  /*
 function getAllFormulas() {
 	return genericActions.getAll(baseUrl);
-	
+
 };
 */
 
-/* 
+/*
  * get all formulas
  * sessionId: string, id of the current session
  */
 async function getAllFormulasAsync(sessionId){
 	return await genericActions.getAllAsync(baseUrl, sessionId);
 };
-/* 
+/*
  * get one formula
  * deprecated, use getFormulaAsync instead
  * formulaId: string, the id of the formula
@@ -46,7 +46,7 @@ function getFormula(formulaId) {
 };
 */
 
-/* 
+/*
  * get one formula
  * formulaId: string, the id of the formula
  * sessionId: string, id of the current session
@@ -55,7 +55,7 @@ async function getFormulaAsync(formulaId, sessionId){
 	return await genericActions.getByIdAsync(baseUrl, property, formulaId, sessionId);
 };
 
-/* 
+/*
  * update one formula
  * formulaId: string, the id of the formula
  * sessionId: string, id of the current session
@@ -68,13 +68,15 @@ async function updateFormula(formulaId, sessionId, formula, callback) {
 	});
 };
 
-/* 
+/*
  * delete one existing formula
  * formulaId: string, the id of the formula
  * sessionId: string, id of the current session
  */
-async function deleteFormula(formulaId, sessionId) {
-	return await genericActions.deleteById(baseUrl, property, formulaId, sessionId);
+async function deleteFormula(formulaId, sessionId, callback) {
+	return await genericActions.deleteById(baseUrl, property, formulaId, sessionId, function(res){
+	    callback(res);
+	});
 };
 
 async function checkoutFormula(action, formulaId, quantity, sessionId, callback) {
@@ -90,10 +92,8 @@ async function checkoutFormula(action, formulaId, quantity, sessionId, callback)
        console.log('there was an error');
        console.log(e);
        //TODO: different error message for different types of error
-       if (e.response.status == 400 || e.response.status == 500)
+       if (e.response && (e.response.status == 400 || e.response.status == 500))
          callback(e.response);
-       else
-         throw e;
      }
 };
 

@@ -6,9 +6,10 @@ var IngredientPrice = mongoose.model('IngredientPrice');
 var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
-var Inventory = mongoose.model('Inventory');
-var Cart = mongoose.model('Cart');
 var Formula = mongoose.model('Formula');
+var Product = mongoose.model('Product');
+var IngredientLot = mongoose.model('IngredientLot');
+
 
 exports.modify = function(action, model, item, itemId, res, next, callback) {
     if (model == Order) {
@@ -43,6 +44,22 @@ exports.modify = function(action, model, item, itemId, res, next, callback) {
             }
         });
     }
+    else if (model == Product) {
+        modifyProduct(action, item, itemId, res, next, function(err, obj){
+            if (err) next(err);
+            else {
+                callback(err, obj);
+            }
+        });
+    }
+    else if (model == IngredientLot) {
+        modifyIngredientLot(action, item, itemId, res, next, function(err, obj){
+            if (err) next(err);
+            else {
+                callback(err, obj);
+            }
+        });
+    }
     else callback(false, item);
 };
 
@@ -58,8 +75,12 @@ var modifyOrder = function(item, res, next, callback) { //add number of pounds t
                 else if (!ingredient){
                     return res.status(400).send('Ingredient does not exist');
                 } else {
-                    var str = JSON.stringify(item).slice(0,-1)+',"space":'+space+',"numUnit":'+numUnit+',"totalPrice":'+item.price*item.packageNum+',"ingredientId":"'+ingredient._id+'"}';
-                    callback(err, JSON.parse(str));
+                    //var str = JSON.stringify(item).slice(0,-1)+',"space":'+space+',"numUnit":'+numUnit+',"totalPrice":'+item.price*item.packageNum+',"ingredientId":"'+ingredient._id+'"}';
+                    item.space = space;
+                    item.numUnit = numUnit;
+                    item.totalPrice = item.price*item.packageNum;
+                    item.ingredientId = ingredient._id;
+                    callback(err, item);
                 }
             });
         }
@@ -166,4 +187,20 @@ var helperFormula = function(ingredients, i, res, next, array, callback) {
             }
         });
     }
+};
+
+var modifyProduct = function(action, item, itemId, res, next, callback) { //add unique lowercase code to check code uniqueness
+    var str = JSON.stringify(item).slice(0,-1)+',"lotNumberUnique":"'+item.lotNumber.toLowerCase()+',"nameUnique":"'+item.name.toLowerCase()+'"}';
+    item = JSON.parse(str);
+    callback(0, item);
+};
+
+var modifyIngredientLot = function(action, item, itemId, res, next, callback) { //add unique lowercase code to check code uniqueness
+    //var str = JSON.stringify(item).slice(0,-1)+',"lotNumberUnique":"'+item.lotNumber.toLowerCase()+',"ingredientNameUnique":"'+item.ingredientName.toLowerCase()+',"vendorNameUnique":"'+item.vendorName.toLowerCase()+'"}';
+    //item = JSON.parse(str);
+    item.lotNumberUnique = item.lotNumber.toLowerCase();
+    item.ingredientNameUnique = item.ingredientName.toLowerCase();
+    item.vendorNameUnique = item.vendorName.toLowerCase();
+    if (item.date == null) item.date = new Date();
+    callback(0, item);
 };

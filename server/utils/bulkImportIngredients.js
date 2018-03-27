@@ -31,68 +31,68 @@ exports.bulkImportIngredients = function(req, res, next, contents, callback) {
     })
 };
 
-var checkSpaces = function(res, next, wSpace, rSpace, fSpace, callback) {
-    Storage.find({}, function(err, objs){
-        if (err) next(err);
-        else {
-            for (var i = 0; i < objs.length; i++) {
-                var obj = objs[i];
-                console.log(obj.temperatureZone);
-                if (obj.temperatureZone == 'warehouse' && wSpace > obj.currentEmptySpace) {
-                    res.status(400).send('Capacity left: '+obj.currentEmptySpace+' sqft will be exceeded for '+ obj.temperatureZone +
-                    '. The total space that will be occupied by items in your cart for this temperature is '+ wSpace+'.');
-                    return;
-                }
-                if (obj.temperatureZone == 'refrigerator' && rSpace > obj.currentEmptySpace) {
-                    res.status(400).send('Capacity left: '+obj.currentEmptySpace+' sqft will be exceeded for '+ obj.temperatureZone +
-                    '. The total space that will be occupied by items in your cart for this temperature is '+ rSpace+'.');
-                    return;
-                }
-                if (obj.temperatureZone == 'freezer' && fSpace > obj.currentEmptySpace) {
-                    res.status(400).send('Capacity left: '+obj.currentEmptySpace+' sqft will be exceeded for '+ obj.temperatureZone +
-                    '. The total space that will be occupied by items in your cart for this temperature is '+ fSpace+'.');
-                    return;
-                }
-            }
-            console.log(wSpace+' '+rSpace+' '+fSpace);
-            callback();
-        }
-    });
-};
+//var checkSpaces = function(res, next, wSpace, rSpace, fSpace, callback) {
+//    Storage.find({}, function(err, objs){
+//        if (err) next(err);
+//        else {
+//            for (var i = 0; i < objs.length; i++) {
+//                var obj = objs[i];
+//                console.log(obj.temperatureZone);
+//                if (obj.temperatureZone == 'warehouse' && wSpace > obj.currentEmptySpace) {
+//                    res.status(400).send('Capacity left: '+obj.currentEmptySpace+' sqft will be exceeded for '+ obj.temperatureZone +
+//                    '. The total space that will be occupied by items in your cart for this temperature is '+ wSpace+'.');
+//                    return;
+//                }
+//                if (obj.temperatureZone == 'refrigerator' && rSpace > obj.currentEmptySpace) {
+//                    res.status(400).send('Capacity left: '+obj.currentEmptySpace+' sqft will be exceeded for '+ obj.temperatureZone +
+//                    '. The total space that will be occupied by items in your cart for this temperature is '+ rSpace+'.');
+//                    return;
+//                }
+//                if (obj.temperatureZone == 'freezer' && fSpace > obj.currentEmptySpace) {
+//                    res.status(400).send('Capacity left: '+obj.currentEmptySpace+' sqft will be exceeded for '+ obj.temperatureZone +
+//                    '. The total space that will be occupied by items in your cart for this temperature is '+ fSpace+'.');
+//                    return;
+//                }
+//            }
+//            console.log(wSpace+' '+rSpace+' '+fSpace);
+//            callback();
+//        }
+//    });
+//};
 
-var updateStorage = function(wSpace, rSpace, fSpace) {
-    Storage.findOne({temperatureZone: 'warehouse'}, function(err, storage){
-        var capacity = storage.capacity;
-        var newOccupied = storage.currentOccupiedSpace + wSpace;
-        var newEmpty = capacity - newOccupied;
-        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
-
-        });
-    });
-    Storage.findOne({temperatureZone: 'refrigerator'}, function(err, storage){
-        var capacity = storage.capacity;
-        var newOccupied = storage.currentOccupiedSpace + rSpace;
-        var newEmpty = capacity - newOccupied;
-        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
-
-        });
-    });
-    Storage.findOne({temperatureZone: 'freezer'}, function(err, storage){
-        var capacity = storage.capacity;
-        var newOccupied = storage.currentOccupiedSpace + fSpace;
-        var newEmpty = capacity - newOccupied;
-        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
-
-        });
-    });
-};
+//var updateStorage = function(wSpace, rSpace, fSpace) {
+//    Storage.findOne({temperatureZone: 'warehouse'}, function(err, storage){
+//        var capacity = storage.capacity;
+//        var newOccupied = storage.currentOccupiedSpace + wSpace;
+//        var newEmpty = capacity - newOccupied;
+//        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+//
+//        });
+//    });
+//    Storage.findOne({temperatureZone: 'refrigerator'}, function(err, storage){
+//        var capacity = storage.capacity;
+//        var newOccupied = storage.currentOccupiedSpace + rSpace;
+//        var newEmpty = capacity - newOccupied;
+//        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+//
+//        });
+//    });
+//    Storage.findOne({temperatureZone: 'freezer'}, function(err, storage){
+//        var capacity = storage.capacity;
+//        var newOccupied = storage.currentOccupiedSpace + fSpace;
+//        var newEmpty = capacity - newOccupied;
+//        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+//
+//        });
+//    });
+//};
 
 var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpace, callback){
     if (i == array.length) {
-        checkSpaces(res, next, wSpace, rSpace, fSpace, function(){
-            updateStorage(wSpace, rSpace, fSpace);
+//        checkSpaces(res, next, wSpace, rSpace, fSpace, function(){
+//            updateStorage(wSpace, rSpace, fSpace);
             callback();
-        });
+//        });
     }
     else {
         var ingredient = array[i];
@@ -103,7 +103,7 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
         var vendorPrice = ingredient["PRICE PER PACKAGE"];
         var nativeUnit = ingredient["NATIVE UNIT"];
         var numUnitPerPackage = ingredient["UNITS PER PACKAGE"];
-        var amount = ingredient["AMOUNT (NATIVE UNITS)"];
+//        var amount = ingredient["AMOUNT (NATIVE UNITS)"];
         var temperatureZone = ingredient.TEMPERATURE;
 
         if (ingredientName == null || ingredientName == '') {
@@ -126,7 +126,7 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
             res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Unit per package name cannot be empty');
             return;
         }
-        if (amount == null || amount < 0) amount = 0;
+//        if (amount == null || amount < 0) amount = 0;
         if (temperatureZone == null || temperatureZone == '') {
             res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Temperature zone cannot be empty');
             return;
@@ -170,33 +170,33 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
             }
 
             if (vendorCode == null || vendorCode == '') {
-                Storage.findOne({temperatureZone: temperatureZone}, function(err, obj3){
-                    if (err) return next(err);
-                    else {
-                        if (obj3.currentEmptySpace < amount && packageName!='railcar' && packageName!='truckload') {
-                            res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Storage limit '+obj3.currentEmptySpace+' left for '+temperatureZone+' would be exceeded.');
-                            return;
-                        }
-                        else {
+//                Storage.findOne({temperatureZone: temperatureZone}, function(err, obj3){
+//                    if (err) return next(err);
+//                    else {
+//                        if (obj3.currentEmptySpace < amount && packageName!='railcar' && packageName!='truckload') {
+//                            res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Storage limit '+obj3.currentEmptySpace+' left for '+temperatureZone+' would be exceeded.');
+//                            return;
+//                        }
+//                        else {
                             Ingredient.getPackageSpace(packageName, function(singleSpace){
                                 if (singleSpace == -1) {
                                     res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Ingredient '+ingredientName+' - package name does not exist.');
                                     return;
                                 } else {
-                                    var space = singleSpace*Math.ceil(1.0*amount/numUnitPerPackage);
-                                    if (temperatureZone == 'warehouse' && packageName != 'railcar' && packageName != 'truckload') wSpace += space;
-                                    else if (temperatureZone == 'refrigerator' && packageName != 'railcar' && packageName != 'truckload') rSpace += space;
-                                    else if (temperatureZone == 'freezer' && packageName != 'railcar' && packageName != 'truckload') fSpace += space;
-                                    else if (temperatureZone != 'warehouse' && temperatureZone != 'refrigerator' && temperatureZone != 'freezer') {
-                                        res.status(400).send('Temperature zone '+temperatureZone+' does not exist.');
-                                        return;
-                                    }
+//                                    var space = singleSpace*Math.ceil(1.0*amount/numUnitPerPackage);
+//                                    if (temperatureZone == 'warehouse' && packageName != 'railcar' && packageName != 'truckload') wSpace += space;
+//                                    else if (temperatureZone == 'refrigerator' && packageName != 'railcar' && packageName != 'truckload') rSpace += space;
+//                                    else if (temperatureZone == 'freezer' && packageName != 'railcar' && packageName != 'truckload') fSpace += space;
+//                                    else if (temperatureZone != 'warehouse' && temperatureZone != 'refrigerator' && temperatureZone != 'freezer') {
+//                                        res.status(400).send('Temperature zone '+temperatureZone+' does not exist.');
+//                                        return;
+//                                    }
                                     validateBulkImport(req, res, next, array, i+1, wSpace, rSpace, fSpace, callback)
                                 }
                             });
-                        }
-                    }
-                });
+//                        }
+//                    }
+//                });
             } else {
                 Vendor.findOne({codeUnique: vendorCode}, function(err, obj2){ //need to check if vendor already selling it
                     if (err) return next(err)
@@ -204,33 +204,33 @@ var validateBulkImport = function(req, res, next, array, i, wSpace, rSpace, fSpa
                         res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Vendor '+vendorCode+' does not exist.');
                         return;
                     } else {
-                        Storage.findOne({temperatureZone: temperatureZone}, function(err, obj3){
-                            if (err) return next(err);
-                            else {
-                                if (obj3.currentEmptySpace < amount && packageName!='railcar' && packageName!='truckload') {
-                                    res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Storage limit '+obj3.currentEmptySpace+' left for '+temperatureZone+' would be exceeded.');
-                                    return;
-                                }
-                                else {
+//                        Storage.findOne({temperatureZone: temperatureZone}, function(err, obj3){
+//                            if (err) return next(err);
+//                            else {
+//                                if (obj3.currentEmptySpace < amount && packageName!='railcar' && packageName!='truckload') {
+//                                    res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Storage limit '+obj3.currentEmptySpace+' left for '+temperatureZone+' would be exceeded.');
+//                                    return;
+//                                }
+//                                else {
                                     Ingredient.getPackageSpace(packageName, function(singleSpace){
                                         if (singleSpace == -1) {
                                             res.status(400).send('Action denied on item '+(i+1)+' ('+ingredientName+'). Ingredient '+ingredientName+' - package name does not exist.');
                                             return;
                                         } else {
-                                            var space = singleSpace*Math.ceil(1.0*amount/numUnitPerPackage);
-                                            if (temperatureZone == 'warehouse' && packageName != 'railcar' && packageName != 'truckload') wSpace += space;
-                                            else if (temperatureZone == 'refrigerator' && packageName != 'railcar' && packageName != 'truckload') rSpace += space;
-                                            else if (temperatureZone == 'freezer' && packageName != 'railcar' && packageName != 'truckload') fSpace += space;
-                                            else if (temperatureZone != 'warehouse' && temperatureZone != 'refrigerator' && temperatureZone != 'freezer'){
-                                                res.status(400).send('Temperature zone '+temperatureZone+' does not exist.');
-                                                return;
-                                            }
+//                                            var space = singleSpace*Math.ceil(1.0*amount/numUnitPerPackage);
+//                                            if (temperatureZone == 'warehouse' && packageName != 'railcar' && packageName != 'truckload') wSpace += space;
+//                                            else if (temperatureZone == 'refrigerator' && packageName != 'railcar' && packageName != 'truckload') rSpace += space;
+//                                            else if (temperatureZone == 'freezer' && packageName != 'railcar' && packageName != 'truckload') fSpace += space;
+//                                            else if (temperatureZone != 'warehouse' && temperatureZone != 'refrigerator' && temperatureZone != 'freezer'){
+//                                                res.status(400).send('Temperature zone '+temperatureZone+' does not exist.');
+//                                                return;
+//                                            }
                                             validateBulkImport(req, res, next, array, i+1, wSpace, rSpace, fSpace, callback);
                                         }
                                     });
-                                }
-                            }
-                        });
+//                                }
+//                            }
+//                        });
                     }
                 });
             }
@@ -250,10 +250,10 @@ var doBulkImport = function(username, req, res, next, array, i, callback){ // TO
         var vendorPrice = ingredient["PRICE PER PACKAGE"];
         var nativeUnit = ingredient["NATIVE UNIT"];
         var numUnitPerPackage = ingredient["UNITS PER PACKAGE"];
-        var amount = ingredient["AMOUNT (NATIVE UNITS)"];
+//        var amount = ingredient["AMOUNT (NATIVE UNITS)"];
         var temperatureZone = ingredient.TEMPERATURE.toLowerCase();
 
-        if (!amount || amount < 0) amount = 0;
+//        if (!amount || amount < 0) amount = 0;
         if (temperatureZone == 'room temperature') temperatureZone = 'warehouse';
         else if (temperatureZone == 'frozen') temperatureZone = 'freezer';
         else if (temperatureZone == 'refrigerated') temperatureZone = 'refrigerator';
@@ -263,8 +263,8 @@ var doBulkImport = function(username, req, res, next, array, i, callback){ // TO
         }
         //console.log("processing "+ingredientName);
         Ingredient.findOne({nameUnique: ingredientName.toLowerCase()}, function(err, obj){
-            Ingredient.getPackageSpace(packageName, function(singleSpace){
-                var space = singleSpace*Math.ceil(1.0*amount/numUnitPerPackage);
+//            Ingredient.getPackageSpace(packageName, function(singleSpace){
+//                var space = singleSpace*Math.ceil(1.0*amount/numUnitPerPackage);
 
                 console.log("processing "+ingredientName);
                 console.log(obj);
@@ -285,10 +285,11 @@ var doBulkImport = function(username, req, res, next, array, i, callback){ // TO
                             newVendor.price = Number(vendorPrice);
                             vendors.push(newVendor);
 
-                        console.log(obj.space+' '+space+' '+obj.numUnit+' '+amount);
-                            var newSpace = Number(obj.space) + Number(space);
-                            var newNumUnit = Number(obj.numUnit) + Number(amount);
-                            obj.update({vendors: vendors, space: newSpace, numUnit:newNumUnit}, function(err, obj3){
+//                        console.log(obj.space+' '+space+' '+obj.numUnit+' '+amount);
+//                            var newSpace = Number(obj.space) + Number(space);
+//                            var newNumUnit = Number(obj.numUnit) + Number(amount);
+//                            obj.update({vendors: vendors, space: newSpace, numUnit:newNumUnit}, function(err, obj3){
+                            obj.update({vendors: vendors}, function(err, obj3){
                                 if (err) return next(err);
                                 logger.log(username, 'update', obj, Ingredient);
                                 doBulkImport(username, req, res, next, array, i+1, callback);
@@ -316,8 +317,9 @@ var doBulkImport = function(username, req, res, next, array, i, callback){ // TO
                             newIngredient.packageName = packageName;
                             newIngredient.temperatureZone = temperatureZone;
                             newIngredient.vendors = vendors;
-                            newIngredient.space = space;
-                            newIngredient.numUnit = amount;
+                            newIngredient.isIntermediate = false;
+//                            newIngredient.space = space;
+//                            newIngredient.numUnit = amount;
 
                             newIngredient.save(function(err){
                                 if (err) return next(err);
@@ -334,8 +336,9 @@ var doBulkImport = function(username, req, res, next, array, i, callback){ // TO
                         newIngredient.packageName = packageName;
                         newIngredient.temperatureZone = temperatureZone;
                         newIngredient.vendors = [];
-                        newIngredient.space = space;
-                        newIngredient.numUnit = amount;
+                        newIngredient.isIntermediate = false;
+//                        newIngredient.space = space;
+//                        newIngredient.numUnit = amount;
 
                         newIngredient.save(function(err){
                             if (err) return next(err);
@@ -344,7 +347,7 @@ var doBulkImport = function(username, req, res, next, array, i, callback){ // TO
                         });
                     }
                 }
-            });
+//            });
         });
     }
 };

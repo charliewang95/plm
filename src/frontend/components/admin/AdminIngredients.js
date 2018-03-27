@@ -35,7 +35,6 @@ import { withStyles } from 'material-ui/styles';
 
 import Styles from  'react-select/dist/react-select.css';
 import ReactSelect from 'react-select';
-import testData from './testIngredients';
 import SelectVendors from './SelectVendors';
 import * as ingredientInterface from '../../interface/ingredientInterface';
 import * as vendorInterface from '../../interface/vendorInterface';
@@ -45,8 +44,14 @@ import * as inventoryInterface from '../../interface/inventoryInterface';
 import * as testConfig from '../../../resources/testConfig.js';
 import MyPdfViewer from './PdfViewer';
 import {Link} from 'react-router-dom';
-import Snackbar from 'material-ui/Snackbar';
 import Chip from 'material-ui/Chip';
+import testData from './testIngredients';
+
+// import Snackbar from 'material-ui/Snackbar';
+
+// import Tabs, {Tab} from 'material-ui/Tabs';
+// import AppBar from 'material-ui/AppBar';
+// import Intermediates from './intermediates';
 
 // TODO: get session Id from the user
 
@@ -233,7 +238,7 @@ const Cell = (props) => {
   console.log(props);
   if(props.column.name=='name'){
     return <Table.Cell {...props}>
-    <Link to={{pathname: '/ingredient-details', state:{details: props.row} }}>{props.row.name}</Link>
+    <Link to={{pathname: '/ingredient-details', state:{details: props.row , isIntermediate:false} }}>{props.row.name}</Link>
     {(props.row.numUnit>0)&&<Chip style={{marginLeft: 10}} label="In Stock"/>}
     </Table.Cell>
   }
@@ -303,12 +308,13 @@ class AdminIngredients extends React.PureComponent {
       editingRowIds: [],
       addedRows: [],
       rowChanges: {},
-      currentPage: 5,
+      currentPage: 0,
       deletingRows: [],
       pageSize: 10,
-      pageSizes: [5, 10, 0],
+      pageSizes: [10, 50, 100, 500],
       columnOrder: ['name', 'temperatureZone', 'packageNameString', 'numUnitString', 'space', 'vendors'],
       options:[],
+      // currentTab: 0,
     };
 
     // console.log(" NAME : " + testData.tablePage.items[0].name);
@@ -316,12 +322,6 @@ class AdminIngredients extends React.PureComponent {
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeAddedRows = addedRows => this.setState({
       addedRows: addedRows.map(row => (Object.keys(row).length ? row : {
-
-        /* TODO: Change this after getting the data from back End */
-        // name: testData.tablePage.ingredient_options[0],
-        // vendors: testData.tablePage.vendor_options[0],
-        //temperatureZone: testData.tablePage.temperatureZone_options[0],
-        //packageName:testData.tablePage.package_options[0],
         temperatureZone: "",
         packageName: "",
         vendorsArray: [],
@@ -334,7 +334,6 @@ class AdminIngredients extends React.PureComponent {
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
-
     this.commitChanges = async ({ added, changed, deleted }) => {
       console.log("Commit Changes");
       let { rows } = this.state;
@@ -373,7 +372,7 @@ class AdminIngredients extends React.PureComponent {
         var temp = this;
 
         await ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone,
-          added[0].vendorsArray, 0, 0, added[0].nativeUnit, added[0].numUnitPerPackage, sessionId, function(res){
+          added[0].vendorsArray, 0, 0, added[0].nativeUnit, added[0].numUnitPerPackage, false, sessionId, function(res){
             if (res.status == 400) {
                 if (!alert(res.data))
                     //window.location.reload();
@@ -386,7 +385,7 @@ class AdminIngredients extends React.PureComponent {
           }else{
             // rows = [...rows,added[0]];
             // temp.setState({rows:rows});
-            window.reload();
+            window.location.reload();
             alert(" New Ingredient Successfully added! ");
           }
         });
@@ -459,7 +458,9 @@ class AdminIngredients extends React.PureComponent {
         };
         //TODO: send data to the back end
       }
-
+    console.log("delete ingredient");
+    console.log(deleted);
+    console.log(this.state.deletingRows);
     this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
     };
 
@@ -487,15 +488,10 @@ class AdminIngredients extends React.PureComponent {
                     window.location.reload();
                 }
           });
-
-
-          //Alert the user
-
-
         }
-
       });
-
+      console.log("delete");
+      console.log(this.state.deletingRows);
       this.setState({ rows, deletingRows: [] });
     };
 
@@ -524,7 +520,7 @@ class AdminIngredients extends React.PureComponent {
   }
 
   async loadCodeNameArray(){
-   // var startingIndex = 0;
+   var startingIndex = 0;
     var rawData = [];
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     rawData = await vendorInterface.getAllVendorNamesCodesAsync(sessionId);
@@ -551,30 +547,28 @@ class AdminIngredients extends React.PureComponent {
     });
     this.setState({idToNameMap:map});
   }
-
-  async loadInventoryData(ingredientId, sessionId){
-    console.log("enterasdf");
-    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    var inventoryData = await inventoryInterface.getInventoryAsync(ingredientId, sessionId);
-    console.log("loading inventory");
-    console.log(inventoryData);
-    return inventoryData;
-  }
+  //
+  // async loadInventoryData(ingredientId, sessionId){
+  //   console.log("enterasdf");
+  //   sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+  //   var inventoryData = await inventoryInterface.getInventoryAsync(ingredientId, sessionId);
+  //   console.log("loading inventory");
+  //   console.log(inventoryData);
+  //   return inventoryData;
+  // }
 
   async loadAllIngredients(){
-    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    var rawData = await ingredientInterface.getAllIngredientsAsync(sessionId);
+    var rawData = await ingredientInterface.getAllIngredientsOnlyAsync(sessionId);
+    // var rawData = testData.tablePage.lots_test;
+    console.log("ingredients raw Data ");
+    console.log(rawData);
+    rawData = rawData.data;
     if(rawData.length==0){
       return
     }
-    console.log("rawData asdfasdfasdf");
+    console.log(rawData);
     console.log(rawData[0].vendors);
     var processedData=[];
-    //   var processedData = [...rawData.map((row, index)=> ({
-    //     id: startingIndex + index,...row,
-    //   })),
-    // ];
-
     // //loop through ingredient
     for (var i = 0; i < rawData.length; i++) {
       var vendorArrayString = "";
@@ -614,7 +608,7 @@ class AdminIngredients extends React.PureComponent {
       singleData.nativeUnit = rawData[i].nativeUnit;
       singleData.numUnitPerPackage = rawData[i].numUnitPerPackage;
       singleData.numUnit = rawData[i].numUnit;
-      singleData.numUnitString = rawData[i].numUnit + " " + rawData[i].nativeUnit;
+      singleData.numUnitString = Math.round(rawData[i].numUnit * 100) / 100  + " " + rawData[i].nativeUnit;
       singleData.space = rawData[i].space;
       //singleData.vendorsArray = "";
       singleData.vendors = vendorArrayString;
@@ -681,11 +675,19 @@ class AdminIngredients extends React.PureComponent {
       deletingRows,
       pageSize,
       pageSizes,
-      columnOrder
+      columnOrder,
+      currentTab
     } = this.state;
 
     return (
       <div>
+      {/* <AppBar position="static" color="default">
+      <Tabs value={currentTab} onChange={this.handleTabChange.bind(this)}>
+      <Tab label = "Ingredients" />
+      <Tab label = "Intermediates" />
+      </Tabs>
+      </AppBar> */}
+      {/* {currentTab === 0 && */}
       <Paper>
         <Grid
           allowColumnResizing = {true}
@@ -788,7 +790,7 @@ class AdminIngredients extends React.PureComponent {
       {isAdmin &&
       <div>
         <br></br>
-        Click <a href="./BulkImportEV2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
+        Click <a href="./BulkImportEV3Proposalv2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
       </div>
     }
         <br/>
@@ -798,7 +800,9 @@ class AdminIngredients extends React.PureComponent {
       style = {{marginLeft: 380, marginBottom: 30}}
       > ORDER INGREDIENTS</Button>}
 
+      {/* {currentTab===1 && <Paper> <Intermediates/> </Paper>} */}
     </div>
+
     );
   }
 }

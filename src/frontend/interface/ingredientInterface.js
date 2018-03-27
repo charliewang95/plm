@@ -16,11 +16,11 @@ import axios from 'axios'
  * vendors: array of objects following the VendorPriceSchema
  * moneySpent: number, the total amount of money spent on purchasing this ingredient
  * moneyOnProduction: number, the total amount of money spent on the portion that were used in production
- * nativeUnit: string, the native unit of this ingredient, such as pounds, gallon 
+ * nativeUnit: string, the native unit of this ingredient, such as pounds, gallon
  * amountInNativeUnitPerPackage: number, amount in native unit per package.
 **/
 function packIntoJson(name, packageType, temperatureZone, vendors, moneySpent,
-	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space){
+	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, isIntermediate){
 	var ingredientJson = new Object();
 	ingredientJson.name = name;
 	ingredientJson.packageName = packageType;
@@ -32,6 +32,7 @@ function packIntoJson(name, packageType, temperatureZone, vendors, moneySpent,
 	ingredientJson.numUnit = numUnit;
 	ingredientJson.space = space;
 	ingredientJson.numUnitPerPackage = amountInNativeUnitPerPackage;
+	ingredientJson.isIntermediate = isIntermediate;
 	console.log("An ingredient with the following details has been prepared to be \
 		sent to the back-end:");
 	console.log(ingredientJson);
@@ -46,10 +47,10 @@ function packIntoJson(name, packageType, temperatureZone, vendors, moneySpent,
  * callback: function, function to be executed after attempting to add the ingredient to the database
  */
 async function addIngredient(name, packageType, temperatureZone, vendors, moneySpent,
-	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, sessionId, callback) {
-	console.log("add ingredient");
+	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, isIntermediate, sessionId, callback) {
+	console.log("add ingredient interface");
 	var newIngredient = packIntoJson(name, packageType, temperatureZone, vendors, moneySpent,
-	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space);
+	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, isIntermediate);
 	//return await ingredientActions.addIngredient(newIngredient, sessionId);
 	ingredientActions.addIngredient(newIngredient, sessionId, function(res){
 	    callback(res);
@@ -97,6 +98,42 @@ async function getAllIngredientNamesAsync(sessionId) {
    const res = await axios.get('/ingredients/ingredientNames/user/'+sessionId);
    return res;
 }
+
+async function getAllIngredientsOnlyAsync(sessionId) {
+    const res = await axios.get('/ingredients/allIngredients/user/'+sessionId);
+    return res;
+}
+
+async function getAllIntermediatesOnlyAsync(sessionId) {
+    const res = await axios.get('/ingredients/allIntermediates/user/'+sessionId);
+    return res;
+}
+
+async function getAllLotNumbersAsync(ingredientId, sessionId) {
+    const res = await axios.get('/ingredients/allLotNumbers/ingredient/'+ingredientId+'/user/'+sessionId);
+    return res;
+}
+
+async function getRecallAsync(lotId, sessionId) {
+    const res = await axios.get('/ingredients/recall/lot/'+lotId+'/user/'+sessionId);
+    return res;
+}
+
+async function getRecallAlternateAsync(lotNumber, ingredientName, vendorName, sessionId) {
+    const res = await axios.get('/ingredients/recall/lot/'+lotNumber+'/ingredient/'+ingredientName+'/vendor/'+vendorName+'/user/'+sessionId);
+    return res;
+}
+
+async function getFreshAsync(sessionId) {
+    const res = await axios.get('/ingredients/fresh'+'/user/'+sessionId);
+    return res;
+}
+
+async function editLotAsync(lotId, quantity, sessionId) {
+    const res = await axios.put('/ingredients/lot/'+lotId+'/quantity/'+quantity+'/user/'+sessionId);
+    return res;
+}
+
 /*
  * update one ingredient
  * ingredientId: string, the id of the ingredient
@@ -105,9 +142,9 @@ async function getAllIngredientNamesAsync(sessionId) {
  * callback: function, the function that will be executed after attempting to update the ingredient
  */
 async function updateIngredient(ingredientId, name, packageType, temperatureZone, vendors, moneySpent,
-	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, sessionId, callback) {
+	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, isIntermediate, sessionId, callback) {
 	var updatedIngredient = packIntoJson(name, packageType, temperatureZone, vendors, moneySpent,
-	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space);
+	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, isIntermediate);
 	//return await ingredientActions.updateIngredient(ingredientId, sessionId, updatedIngredient);
 	ingredientActions.updateIngredient(ingredientId, sessionId, updatedIngredient, function(res){
 	    callback(res);
@@ -123,8 +160,10 @@ async function deleteIngredient(ingredientId, sessionId, callback) {
 	return await ingredientActions.deleteIngredient(ingredientId, sessionId, function(res){
 	    callback(res);
 	});
-
 };
 
 //export functions above for use by other modules
-export { addIngredient, getAllIngredientsAsync, getIngredientAsync, updateIngredient, deleteIngredient, getAllIngredientNamesAsync};
+
+export { addIngredient, getAllIngredientsAsync, getIngredientAsync, updateIngredient, deleteIngredient, getAllIngredientNamesAsync,
+getAllIngredientsOnlyAsync, getAllIntermediatesOnlyAsync, getAllLotNumbersAsync, getRecallAsync, getFreshAsync, editLotAsync,getRecallAlternateAsync};
+

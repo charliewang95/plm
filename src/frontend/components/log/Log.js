@@ -122,7 +122,7 @@ class Log extends React.PureComponent {
       endDate: new Date(2018, 11, 31, 23, 59, 59, 0),
       currentPage: 0,
       pageSize: 10,
-      pageSizes: [10, 25, 50],
+      pageSizes: [10, 50, 100, 500],
       //filters: [{ columnName: 'date', value: this.startDate }],
       //editingRowIds: [],
       //rowChanges: {},
@@ -145,7 +145,11 @@ class Log extends React.PureComponent {
             if (Number(this.state.unchangedRows[i].date.slice(0,4))>date.getFullYear() ||
                 Number(this.state.unchangedRows[i].date.slice(0,4))==date.getFullYear() && (Number(this.state.unchangedRows[i].date.slice(5,7))>date.getMonth()+1 ||
                 Number(this.state.unchangedRows[i].date.slice(5,7))==date.getMonth()+1 && Number(this.state.unchangedRows[i].date.slice(8,10))>=date.getDate())) {
-                newRows.push(this.state.unchangedRows[i]);
+                    if (Number(this.state.unchangedRows[i].date.slice(0,4))<this.state.endDate.getFullYear() ||
+                        Number(this.state.unchangedRows[i].date.slice(0,4))==this.state.endDate.getFullYear() && (Number(this.state.unchangedRows[i].date.slice(5,7))<this.state.endDate.getMonth()+1 ||
+                        Number(this.state.unchangedRows[i].date.slice(5,7))==this.state.endDate.getMonth()+1 && Number(this.state.unchangedRows[i].date.slice(8,10))<=this.state.endDate.getDate())) {
+                        newRows.push(this.state.unchangedRows[i]);
+                    }
             }
         }
         this.setState({
@@ -165,7 +169,11 @@ class Log extends React.PureComponent {
                 if (Number(this.state.unchangedRows[i].date.slice(0,4))<date.getFullYear() ||
                     Number(this.state.unchangedRows[i].date.slice(0,4))==date.getFullYear() && (Number(this.state.unchangedRows[i].date.slice(5,7))<date.getMonth()+1 ||
                     Number(this.state.unchangedRows[i].date.slice(5,7))==date.getMonth()+1 && Number(this.state.unchangedRows[i].date.slice(8,10))<=date.getDate())) {
-                    newRows.push(this.state.unchangedRows[i]);
+                    if (Number(this.state.unchangedRows[i].date.slice(0,4))>this.state.startDate.getFullYear() ||
+                        Number(this.state.unchangedRows[i].date.slice(0,4))==this.state.startDate.getFullYear() && (Number(this.state.unchangedRows[i].date.slice(5,7))>this.state.startDate.getMonth()+1 ||
+                        Number(this.state.unchangedRows[i].date.slice(5,7))==this.state.startDate.getMonth()+1 && Number(this.state.unchangedRows[i].date.slice(8,10))>=this.state.startDate.getDate())) {
+                        newRows.push(this.state.unchangedRows[i]);
+                    }
                 }
             }
             this.setState({
@@ -187,7 +195,10 @@ class Log extends React.PureComponent {
       var rawData = [];
       sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
       rawData = await logActions.getAllLogsAsync(sessionId);
-      rawData = rawData.reverse();
+      if(rawData){
+        rawData = rawData.reverse();
+      }
+      
       var tempDates = [];
        for (var i = 0; i<rawData.length; i++) {
            var date = rawData[i].date;
@@ -202,11 +213,13 @@ class Log extends React.PureComponent {
            tempDates[i] = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
            rawData[i].date = date.replace('T',' ').replace('Z',' ');
        }
-
-       var processedData = [...rawData.map((row, index)=> ({
+       var processedData = [];
+       if(rawData){
+        processedData = [...rawData.map((row, index)=> ({
            id:index,...row,
          })),
-       ];
+        ];
+       }
 
        this.setState({dates:tempDates});
        this.setState({rows:processedData});

@@ -15,6 +15,11 @@ import Select from 'material-ui/Select';
 import Chip from 'material-ui/Chip';
 import * as ingredientInterface from '../../interface/ingredientInterface';
 import SelectVendors from './SelectVendors';
+import LotNumberSelector from './StockEditorInLot/StockLotNumberSelector.js';
+import SnackBarDisplay from '../snackBar/snackBarDisplay.js';
+import { Redirect } from 'react-router';
+import testData from './testIngredients.js';
+
 /* Replace with the data from the back end */
 const ingredient_options = [
     { value: 'salt', label: 'Salt' },
@@ -53,21 +58,7 @@ const styles = {
 var sessionId = "";
 var userId="";
 var isAdmin = "";
-
-// const InStockFilterCellBase = ({ filter, onFilter, classes }) => (
-//   <TableCell  >
-//     <Select
-//       input={<Input />}
-//       value={filter ?  (filter.value!='' ? filter.value : 'No Filter') : 'No Filter'}
-//       onChange={e => onFilter(e.target.value ? { value: e.target.value} : null)onValueChange(event.target.value.toLowerCase())}
-//       style={{ width: '100%', marginTop: '4px' }}
-//     >
-//       <MenuItem value={''}>No Filter</MenuItem>
-//       <MenuItem value={'true'}>In Stock</MenuItem>
-//       <MenuItem value={'false'}>Not In Stock</MenuItem>
-//     </Select>
-//   </TableCell>
-// );
+var lotIdMap = new Object();
 
 class AddIngredientForm extends React.Component{
 
@@ -77,12 +68,13 @@ class AddIngredientForm extends React.Component{
     const details = (props.location.state.details)?(props.location.state.details):dummyObject;
     console.log(details);
     const isCreateNew = props.location.state.isCreateNew;
+    const isIntermediate = props.location.state.isIntermediate;
     this.state = {
   		vendors: [],
       vendorString: "",
       vendorsArray: (details.vendorsArray)?(details.vendorsArray):[],
   		value:undefined,
-      ingredientId: (details.ingredientId)?(details.ingredientId):'',
+      ingredientId: (details.ingredientId)?(details.ingredientId):(props.location.state.ingredientId),
       name:(details.name)?(details.name):'',
       packageName:(details.packageName)?(details.packageName):'',
       temperatureZone:(details.temperatureZone)?(details.temperatureZone):'',
@@ -90,12 +82,19 @@ class AddIngredientForm extends React.Component{
       nativeUnit: (details.nativeUnit)?(details.nativeUnit):'',
       numUnitPerPackage: (details.numUnitPerPackage)?(details.numUnitPerPackage):'',
       isDisabled: (isCreateNew) ? false: true,
-      numUnit: (details.numUnit)?(details.numUnit):0,
+      numUnit: (details.numUnit)? (Math.round(details.numUnit*100)/100):0,
       space: (details.space)?(details.space):0,
-      moneySpent: (details.moneySpent)?(details.moneySpent) : 0,
-      moneyProd: (details.moneyProd) ? (details.moneyProd): 0,
+      moneySpent: (details.moneySpent)?(Math.round(details.moneySpent*100)/100) : 0,
+      moneyProd: (details.moneyProd) ? (Math.round(details.moneyProd*100)/100): 0,
       price: 0,
-      isCreateNew: (isCreateNew)
+      isCreateNew: (isCreateNew),
+      isIntermediate:(isIntermediate),
+      lotNumberArray:[],
+      totalAssigned:0,
+      lotNumberString:'',
+      snackBarMessage:'',
+      snackBarOpen:false,
+      initialNumUnit:(details.numUnit)? (Math.round(details.numUnit*100)/100):0
       }
     this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -106,6 +105,16 @@ class AddIngredientForm extends React.Component{
     this.loadIngredient = this.loadIngredient.bind(this);
     this.handleNumUnitChange = this.handleNumUnitChange.bind(this);
     this.handlePackageChange = this.handlePackageChange.bind(this);
+    this.computeLotNumberString = this.computeLotNumberString.bind(this);
+    this.loadLotNumbers = this.loadLotNumbers.bind(this);
+    this.updateArray= this.updateArray.bind(this);
+    this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
+    this.checkQuantityMatchLotArray = this.checkQuantityMatchLotArray.bind(this);
+  }
+
+  handleSnackBarClose(){
+    this.setState({snackBarOpen:false});
+    this.setState({snackBarMessage: ''});
   }
 
   handleOnChange (option) {
@@ -146,19 +155,94 @@ class AddIngredientForm extends React.Component{
     this.setState({vendorString: vendors_string });
   }
 
-  componentDidMount(){
+  computeLotNumberString(){
+    var string = "";
+    var array = this.state.lotNumberArray;
+    var sum =0;
+    console.log("lot number string");
+    console.log(this.state);
+    for(var i =0; i < array.length; i++){
+          var lotObject = array[i];
+          //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
+          string +=  lotObject.lotNumber+ ": " + lotObject.numUnit ;
+          sum+=Number(lotObject.numUnit);
+          if(i!= (array.length -1)){
+            string+='\n';
+          }
+        }
+    console.log(string);
+    this.setState({lotNumberString: string });
+    this.setState({totalAssigned: sum });
+  }
+
+
+  componentWillMount(){
+    var temp = this;
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    userId = JSON.parse(sessionStorage.getItem('user'))._id;
     console.log("logs");
     if(this.props.location.state.fromLogs){
-      this.loadIngredient();
+      temp.loadIngredient();
+      temp.loadLotNumbers(function(){
+        temp.computeLotNumberString();
+      });
     }
+    console.log("props");
+    console.log(this.props);
     this.computeVendorString();
+    if((!this.props.location.state.fromLogs)&&(!this.state.isCreateNew)&&(this.props.location.state.details.numUnit)){
+      console.log("inStock");
+      temp.loadLotNumbers(function(){
+        temp.computeLotNumberString();
+      });
+    }
   }
+
+  async loadLotNumbers(callback){
+    console.log("loadLotNumbers");
+    // console.log(this.state);
+    console.log(this.state.ingredientId);
+    var lotArray = await ingredientInterface.getAllLotNumbersAsync(this.state.ingredientId,sessionId);
+     // var lotArray =  testData.tablePage.lots_test[0].ingredientLots;
+     console.log("load ingredient lots");
+     console.log(lotArray);
+
+    // create map
+    lotArray = lotArray.data;
+    var array = [];
+    for(var i =0; i < lotArray.length;i++){
+      var obj = new Object();
+      obj.numUnit = lotArray[i].numUnit;
+      obj.lotNumber = lotArray[i].lotNumber;
+      array.push(obj);
+      lotIdMap[lotArray[i].lotNumber]= lotArray[i]._id;
+    }
+     this.setState({lotNumberArray:array});
+     callback();
+
+  }
+
+  updateArray(inputArray){
+    console.log("update array");
+    var sum = 0;
+    for(var i=0; i<inputArray.length;i++){
+      sum+=parseInt(inputArray[i].numUnit);
+      console.log(inputArray[i].numUnit);
+    }
+    if(!sum){
+      sum=0;
+    }
+    console.log("current sum " + sum);
+    this.setState({lotNumberArray:inputArray},function cb(){
+      this.computeLotNumberString();
+    });
+    this.setState({totalAssigned:sum});
+  }
+
 
   async loadIngredient(){
     var details = [];
-    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    userId = JSON.parse(sessionStorage.getItem('user'))._id;
     // sessionId = '5a8b99a669b5a9637e9cc3bb';
     // userId = '5a8b99a669b5a9637e9cc3bb';
     console.log("ingredient id");
@@ -191,9 +275,12 @@ class AddIngredientForm extends React.Component{
       moneyProd: details.moneyProd,
       numUnit: details.numUnit,
       space: details.space,
+      isIntermediate: details.isIntermediate,
+      initialNumUnit:details.numUnit,
     });
 
     this.computeVendorString();
+    this.computeLotNumberString();
   }
 
   isValid(){
@@ -208,7 +295,11 @@ class AddIngredientForm extends React.Component{
     if (this.state.numUnitPerPackage <= 0 || this.state.numUnitPerPackage == '' || !re.test(this.state.numUnitPerPackage)) {
       alert(" Quantity must be a positive number");
       return false;
+      // Add validation for lotNumberArray and quantity
     }
+   else if (!this.checkQuantityMatchLotArray()){
+     alert("current stock quantity must equal to the sum of quantities in lots.")
+   }
     else if(this.state.temperatureZone==null || this.state.temperatureZone==''){
       alert("Please fill out temperature.");
       return false;
@@ -216,7 +307,8 @@ class AddIngredientForm extends React.Component{
       alert("Please fill out package.");
       return false;
     }
-    else if(this.state.vendorsArray.length==0 || this.state.vendorsArray == null){
+    else if((!this.state.isIntermediate)&&
+            (this.state.vendorsArray.length==0 || this.state.vendorsArray == null)){
       alert("Please add a vendor.");
       return false;
     }
@@ -226,49 +318,83 @@ class AddIngredientForm extends React.Component{
       return true;
   }
 
+  checkQuantityMatchLotArray(){
+    console.log("checkQuantityMatch");
+    var sum =0;
+    var array = this.state.lotNumberArray;
+    console.log(this.state.lotNumberArray);
 
-  onFormSubmit(e) {
+    for(var i = 0; i < array.length;i++){
+      sum+=Number(array[i].numUnit);
+    }
+    console.log(this.state.numUnit);
+    console.log(Number(this.state.numUnit));
+    console.log(sum);
+    console.log(Number(this.state.numUnit)==Number(sum));
+    return (this.state.numUnit==sum);
+  }
+
+  async onFormSubmit(e) {
     e.preventDefault();
+    var temp = this;
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    var isValid = this.isValid();
-    if(isValid && this.state.isCreateNew){
+    var isValid = temp.isValid();
+    if(isValid && temp.state.isCreateNew){
       console.log(" Add ingredient ");
-      ingredientInterface.addIngredient(this.state.name, this.state.packageName, this.state.temperatureZone,
-        this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd, this.state.nativeUnit,
-        this.state.numUnitPerPackage, this.state.numUnit, this.state.space, sessionId, function(res){
+      var numUnit = Number(temp.state.numUnit);
+      await ingredientInterface.addIngredient(temp.state.name, temp.state.packageName, temp.state.temperatureZone,
+        temp.state.vendorsArray, temp.state.moneySpent, temp.state.moneyProd, temp.state.nativeUnit,
+        temp.state.numUnitPerPackage, temp.state.numUnit, temp.state.space, false, sessionId, function(res){
                   if (res.status == 400) {
                       alert(res.data);
                   } else if (res.status == 500) {
                       alert('Ingredient name already exists');
                   } else{
                       // SnackBarPop("Row was successfully added!");
-                      alert(" Ingredient Successfully added! ");
+                      temp.setState({snackBarMessage : "Ingredient Successfully added! "});
+                      temp.setState({snackBarOpen:true});
+                      temp.setState({fireRedirect: true});
+                      // alert(" Ingredient Successfully added! ");
                   }
               });
-     // this.clearFields();
+      //this.clearFields();
     }else if(isValid){
-      if(this.state.numUnit==''){
-        this.setState({numUnit:0});
+      if(temp.state.numUnit==''){
+        temp.setState({numUnit:0});
       }
+
       console.log("saved edited");
-      console.log(this.state.numUnit);
-      ingredientInterface.updateIngredient(this.state.ingredientId, this.state.name, this.state.packageName,
-                this.state.temperatureZone, this.state.vendorsArray, this.state.moneySpent, this.state.moneyProd,
-                this.state.nativeUnit, this.state.numUnitPerPackage, this.state.numUnit, this.state.space, sessionId, function(res){
+      console.log(temp.state.numUnit);
+      console.log(Number(temp.state.numUnit));
+      var numUnit = Number(temp.state.numUnit);
+      await ingredientInterface.updateIngredient(temp.state.ingredientId, temp.state.name, temp.state.packageName,
+                temp.state.temperatureZone, temp.state.vendorsArray, temp.state.moneySpent, temp.state.moneyProd,
+                temp.state.nativeUnit, temp.state.numUnitPerPackage, numUnit, temp.state.space, temp.state.isIntermediate, sessionId, function(res){
                   if (res.status == 400) {
                       alert(res.data);
                   } else if (res.status == 500) {
                       alert('Ingredient name already exists');
                   } else {
-                      // SnackBarPop("Row was successfully added!");
-                      alert(" Ingredient Successfully edited! ");
-                  }
-              });
-      this.setState({isDisabled:true});
-    }
-      // Call function to send data to backend
 
+                    temp.setState({snackBarMessage : "Ingredient Successfully edited! "});
+                    temp.setState({snackBarOpen:true});
+                    // alert(" Ingredient Successfully edited! ");
+                  }
+
+                  temp.setState({isDisabled:true});
+
+                        //Update lots lotId,
+                        if(temp.state.lotNumberArray.length > 0){
+
+                          for(var i =0; i < temp.state.lotNumberArray.length;i++){
+                            console.log('edit');
+                            ingredientInterface.editLotAsync(lotIdMap[temp.state.lotNumberArray[i].lotNumber],
+                                      temp.state.lotNumberArray[i].numUnit,sessionId );
+                          }
+                        }
+              });
     }
+  }
 
     clearFields(){
     this.setState({
@@ -281,7 +407,11 @@ class AddIngredientForm extends React.Component{
       nativeUnit: '',
       numUnitPerPackage: 0,
       vendorString: "",
-      isCreateNew: true
+      isCreateNew: true,
+      lotNumberArray:[],
+      totalAssigned:0,
+      fireRedirect: false,
+      initialNumUnit:0,
       })
     }
 
@@ -303,6 +433,7 @@ class AddIngredientForm extends React.Component{
   }
 
   handleNumUnitChange(event){
+    console.log("handleNumUnitChange");
     const re = /^\d*\.?\d*$/;
       if ( event.target.value == '' || (event.target.value>=0 && re.test(event.target.value))) {
          var computeSpace = Math.ceil(event.target.value/this.state.numUnitPerPackage) * this.packageSpace(this.state.packageName);
@@ -337,12 +468,18 @@ class AddIngredientForm extends React.Component{
   }
 
   render (){
-    const { name, packageName, temperatureZone, vendors } = this.state;
+    const { name, packageName, temperatureZone, vendors, fireRedirect } = this.state;
     return (
       // <PageBase title = 'Add Ingredients' navigation = '/Application Form'>
+      <div>
       <form onSubmit={this.onFormSubmit} style={styles.formControl}>
         <p><font size="6">Basic Information</font></p>
         {(this.state.numUnit!=0)? <Chip label="In Stock"/> : ''}
+        {this.state.snackBarOpen && <SnackBarDisplay
+              open = {this.state.snackBarOpen}
+              message = {this.state.snackBarMessage}
+              handleSnackBarClose = {this.handleSnackBarClose}
+            /> }
           <FormGroup>
             <TextField
               disabled = {this.state.isDisabled}
@@ -414,7 +551,7 @@ class AddIngredientForm extends React.Component{
               </Select>
             </FormControl>
             <FormGroup>
-            {this.state.isDisabled && <TextField
+            {(!this.state.isIntermediate)&&(this.state.isDisabled) && <TextField
               id="selectVendors"
               label="Vendors"
               multiline
@@ -424,20 +561,39 @@ class AddIngredientForm extends React.Component{
               required
               style={{lineHeight: 1.5}}
             />}
-            {(!this.state.isDisabled) && <SelectVendors initialArray={this.state.vendorsArray} handleChange={this.updateVendors}/>}
+            {(!this.state.isIntermediate)&&(!this.state.isDisabled) && <SelectVendors initialArray={this.state.vendorsArray} handleChange={this.updateVendors}/>}
             </FormGroup>
             {!this.state.isCreateNew &&
               <div>
               <p><font size="6">Inventory Information</font></p>
               <FormGroup>
-                <TextField
-                  disabled = {this.state.isDisabled}
+               <TextField
+                  required
+                  disabled = {(this.state.isDisabled) || (this.state.initialNumUnit==0)}
                   id="numUnit"
                   label={"Current Quantity " + "(" + this.state.nativeUnit +")"}
                   value={this.state.numUnit}
                   onChange={this.handleNumUnitChange}
                   margin="normal"
                 />
+
+                {(this.state.isDisabled) && (this.state.numUnit!=0)&& <TextField
+                  id="lotNumbers"
+                  label={"Lot Number : Quantity (" + this.state.nativeUnit + ")"}
+                  multiline
+                  value={this.state.lotNumberString}
+                  margin="normal"
+                  disabled = {this.state.isDisabled}
+                  style={{lineHeight: 1.5}}
+                />}
+
+                {(!this.state.isDisabled && this.state.initialNumUnit!=0)&&
+                  <LotNumberSelector
+                    nativeUnit = {this.state.nativeUnit}
+                    initialArray = {this.state.lotNumberArray}
+                    quantity={this.state.numUnit}
+                    updateArray={this.updateArray}
+                    totalAssigned={this.state.totalAssigned}/>}
                 <TextField
                   disabled
                   id="space"
@@ -482,14 +638,13 @@ class AddIngredientForm extends React.Component{
                   > BACK </RaisedButton>
              </div>
            </form>
-         // </PageBase>
+           {fireRedirect && (
+             <Redirect to={'/admin-ingredients'}/>
+           )}
+        </div>
     )
 	}
 };
 
-// AddIngredientFormOld.propTypes = {
-//   hint: PropTypes.string.isRequired,
-//   label: PropTypes.string.isRequired
-// };
 
 export default AddIngredientForm;

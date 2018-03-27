@@ -58,6 +58,28 @@ async function uploadFormula(form, sessionId, callback){
   // }
 };
 
+async function uploadIntermediate(form, sessionId, callback){
+  const url = '/upload-intermediates/user/'.concat(sessionId);
+  await upload(form, url, callback);
+
+  // const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+  // try{
+  //   const res = await axios.post('/upload/user/'.concat(sessionId), form, config);
+  //   console.log(res.data);
+  //   callback(res);
+  // } catch(e) {
+  //       console.log('there was an error');
+  //       console.log(e);
+  //       //TODO: different error message for different types of error
+  //       if (e.response.status == 400 || e.response.status == 500)
+  //         callback(e.response);
+  //       else {
+  //         console.log(e.response);
+  //         throw e;
+  //       }
+  // }
+};
+
 /**
  * Common steps shared by uploading formula and ingredients
  * form: multipart/formdata such as created by `const form = new FormData();`
@@ -84,4 +106,4 @@ async function upload(form, url, callback){
 
 
 //export functions above for use by other modules
-export { uploadIngredient, uploadFormula };
+export { uploadIngredient, uploadFormula, uploadIntermediate };

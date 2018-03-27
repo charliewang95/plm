@@ -44,6 +44,7 @@ import * as testConfig from '../../../resources/testConfig.js';
 import MyPdfViewer from '../admin/PdfViewer';
 import * as uploadInterface from '../../interface/uploadInterface';
 import formulaData from './dummyData';
+import SnackBarDisplay from '../snackBar/snackBarDisplay';
 
 //TODO: Set the user ID
 var sessionId = "";
@@ -131,14 +132,12 @@ const AddToProdButton = ({selectedFormula, onExecute}) => (
     </Button>
 );
 AddToProdButton.propTypes = {
-  onExecute: PropTypes.func.isRequired,
+  onExecute: PropTypes.func,
 };
 
 const Cell = (props) => {
 //  console.log(" CELL props value: ");
 //  console.log(props);
-var isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
-var isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
   if(props.column.name=='name'){
     return <Table.Cell {...props}>
     <Link to={{pathname: '/formula-details', state:{details: props.row} }}>{props.row.name}</Link>
@@ -172,12 +171,14 @@ class Formula extends React.PureComponent {
         { name: 'description', title: 'Description' },
         { name: 'unitsProvided', title: 'Product Units ' },
         { name: 'ingredients', title: 'Ingredient / Quantity' },
+        { name: 'productType', title: 'Product Type ' },
         {key: 'sendToProd', title:''},
       ]:[
         { name: 'name', title: 'Name' },
         { name: 'description', title: 'Description' },
         { name: 'unitsProvided', title: 'Product Units ' },
         { name: 'ingredients', title: 'Ingredient / Quantity' },
+        { name: 'productType', title: 'Product Type ' }, // isIntermediate
       ],
       rows:[],
       // sorting: [],
@@ -187,20 +188,27 @@ class Formula extends React.PureComponent {
       currentPage: 5,
       deletingRows: [],
       pageSize: 10,
-      pageSizes: [5, 10, 0],
-      columnOrder: ['name', 'description', 'unitsProvided', 'ingredients','sendToProd'],
+      pageSizes: [10, 50, 100, 500],
+      columnOrder: ['name', 'description', 'unitsProvided', 'ingredients', 'productType','sendToProd' ],
       options:[],
       productionFormula:{},
+      snackBarOpen:false,
+      snackBarMessage:'',
     };
 
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
+    this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
 
     this.commitChanges = ({ deleted }) => {
       let { rows } = this.state;
+      console.log("delete formula");
+      console.log(deleted);
+      console.log(this.state.deletingRows);
       this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
+      console.log(this.state.deletingRows);
      // if (deleted) {
      //  const deletedSet = new Set(deleted);
      //  rows = rows.filter(row => !deletedSet.has(row.id));
@@ -212,6 +220,8 @@ class Formula extends React.PureComponent {
     this.cancelDelete = () => this.setState({ deletingRows: [] });
 
     this.deleteRows = () => {
+      console.log("delete formula rows");
+      console.log(this.state.deletingRows);
       const rows = this.state.rows.slice();
 
       this.state.deletingRows.forEach((rowId) => {
@@ -222,28 +232,34 @@ class Formula extends React.PureComponent {
 
           var formulaId = rows[index]._id;
 
-          formulaActions.deleteFormula(formulaId, sessionId);
-          
-          console.log("delete");
-          console.log(rows[index].name);
+          // TODO: Delete does not work
+         formulaActions.deleteFormula(formulaId, sessionId, function(res){
+
+         });
+          console.log("delete " );
+          console.log(rows[index]._id);
+          console.log(sessionId);
           rows.splice(index, 1);
           // TODO: Add snackbar
           // alert(" Ingredient successfully deleted ! ");
+          this.setState({snackBarMessage : "Formula successfully deleted."});
+          this.setState({snackBarOpen:true});
         }
-
       });
       this.setState({ rows, deletingRows: [] });
     };
-
     this.uploadFile = this.uploadFile.bind(this);
-
-
   }
 
   componentWillMount(){
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
     this.loadAllFormulas();
+  }
 
+  handleSnackBarClose(){
+    this.setState({snackBarOpen:false});
+    this.setState({snackBarMessage: ''});
   }
 
   componentDidMount(){
@@ -256,9 +272,6 @@ class Formula extends React.PureComponent {
 
     //TODO: Get from backend
     var rawData = await formulaActions.getAllFormulasAsync(sessionId);
-
-    console.log(" Formulas " + JSON.stringify(rawData));
-
 
     for(var i =0; i < rawData.length;i++){
         var ingredientsArray  = rawData[i].ingredients;
@@ -277,15 +290,19 @@ class Formula extends React.PureComponent {
         rawData[i].ingredients = ingredientsString;
         rawData[i].formulaId = rawData[i]._id;
       }
-
-        var processedData = [...rawData.map((row, index)=> ({
-          id:index,...row,
+      var processedData = [];
+      if(rawData){
+        processedData = [...rawData.map((row, index)=> ({
+          id:index,
+          // select based on whether it is Intermediate or Final
+          productType: (row.isIntermediate) ? "Intermediate" :"Final",...row,
           })),
         ];
+      }
 
-      console.log(" PROCESSED DATA " + JSON.stringify(processedData));
+      console.log(" PROCESSED DATA ")
+       console.log(processedData);
       this.setState({rows: processedData});
-
       }
 
 
@@ -300,6 +317,32 @@ class Formula extends React.PureComponent {
           form.append('file', file);
           console.log(form);
            await uploadInterface.uploadFormula(form, sessionId, function(res){
+                if (res.status == 400) {
+                    if (!alert(res.data))
+                        window.location.reload();
+                } else if (res.status == 500) {
+                    if (!alert('Duplicate Key on Formula (different package not allowed)'))
+                        window.location.reload();
+                } else if (res.status == 200) {
+                    console.log(res);
+                    if(!alert(res.data))
+                        window.location.reload();
+                }
+           });
+         }
+    }
+
+    async uploadFileInter(event) {
+      console.log(" UPLOAD FILE INTER");
+        let file = event.target.files[0];
+
+        console.log(file);
+
+        if (file) {
+          let form = new FormData();
+          form.append('file', file);
+          console.log(form);
+           await uploadInterface.uploadIntermediate(form, sessionId, function(res){
                 if (res.status == 400) {
                     if (!alert(res.data))
                         window.location.reload();
@@ -361,6 +404,11 @@ class Formula extends React.PureComponent {
             onCommitChanges={this.commitChanges}
           />}
           <DragDropProvider />
+          {this.state.snackBarOpen && <SnackBarDisplay
+                open = {this.state.snackBarOpen}
+                message = {this.state.snackBarMessage}
+                handleSnackBarClose = {this.handleSnackBarClose}
+              /> }
           <Table
             // columnExtensions={tableColumnExtensions}
             cellComponent={Cell}
@@ -417,14 +465,18 @@ class Formula extends React.PureComponent {
       }
     </Paper>
     {/* <Paper styles = {{color : "#42f4d9"}} > */}
-      {isAdmin && <p><font size="5">Formula Bulk Import</font></p>}
+      {isAdmin && <p><font size="5">Final Formula Bulk Import</font></p>}
       {isAdmin && <input type="file"
         name="myFile"
         onChange={this.uploadFile} /> }
+      {isAdmin && <p><font size="5">Intermediate Product Formula Bulk Import</font></p>}
+      {isAdmin && <input type="file"
+        name="myFile"
+        onChange={this.uploadFileInter} /> }
       {isAdmin &&
       <div>
         <br></br>
-        Click <a href="./BulkImportEV2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
+        Click <a href="./BulkImportEV3Proposalv2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
       </div>
     }
   </div>

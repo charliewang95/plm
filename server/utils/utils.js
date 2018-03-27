@@ -8,9 +8,10 @@ var Ingredient = mongoose.model('Ingredient');
 var modifierCreateUpdate = require('./modifierCreateUpdate');
 //var modifierDelete = require('./modifierDelete');
 var validator = require('./validator');
-var postProcessor = require('./postProcessor');
+var postProcessor = require('./postProcessorCreateUpdate');
 var validatorDelete = require('./validatorDelete');
-var deleteProcessor = require('./deleteProcessor');
+var deleteProcessor = require('./postProcessorDelete');
+var checkoutProcessor = require('./checkoutProcessor');
 var logger = require('./logger');
 
 exports.doWithAccess = function(req, res, next, model, action, userId, itemId, AdminRequired, ManagerRequired) {
@@ -20,18 +21,18 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             res.status(401);
             res.send('User does not exist');
         }
-        else if (!user.loggedIn) {
-            res.status(403);
-            res.send('User is not logged in');
-        }
-        else if (AdminRequired && !user.isAdmin) {
-            res.status(403);
-            res.send('Admin access required');
-        }
-        else if (ManagerRequired && !user.isManager) {
-            res.status(403);
-            res.send('Manager access required');
-        }
+//        else if (!user.loggedIn) {
+//            res.status(403);
+//            res.send('User is not logged in');
+//        }
+//        else if (AdminRequired && !user.isAdmin) {
+//            res.status(403);
+//            res.send('Admin access required');
+//        }
+//        else if (ManagerRequired && !user.isManager) {
+//            res.status(403);
+//            res.send('Manager access required');
+//        }
         else {
             if (action == 'create') create(req, res, next, model, user.username);
             else if (action == 'list') list(req, res, next, model, user.username);
@@ -40,8 +41,8 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             else if (action == 'updateWithUserAccess') updateWithUserAccess(req, res, next, model, userId, itemId, user.username);
             else if (action == 'delete') deleteWithoutUserAccess(req, res, next, model, itemId, user.username);
             else if (action == 'deleteWithUserAccess') deleteWithUserAccess(req, res, next, model, userId, itemId, user.username);
-            else if (action == 'checkoutOrders') checkoutOrders(req, res, next, model, userId, user.username);
-            else if (action == 'checkoutFormula') checkoutFormula(req, res, next, model, user.username);
+            else if (action == 'checkoutOrders') checkoutProcessor.checkoutOrders(req, res, next, model, userId, user.username);
+            else if (action == 'checkoutFormula') checkoutProcessor.checkoutFormula(req, res, next, model, user.username);
             else if (action == 'read') read(req, res, next, model, itemId, user.username);
             else if (action == 'readWithUserAccess') readWithUserAccess(req, res, next, model, userId, itemId, user.username);
             else {
@@ -110,7 +111,7 @@ var create = function(req, res, next, model, username) {
             console.log("creating, validating");
             modifiedItem = new model(obj);
             console.log(modifiedItem);
-            validator.validate(model, modifiedItem, res, next, function(err, valid){
+            validator.validate(model, modifiedItem, '', res, next, function(err, valid){
                 if (err) {
                     return next(err);
                 }
@@ -124,6 +125,9 @@ var create = function(req, res, next, model, username) {
                         else {
                             console.log("creating, saved");
                             logger.log(username, 'create', modifiedItem, model);
+                            if (model == Formula) {
+                                  postProcessor.process(model, modifiedItem, '', res, next);
+                            }
                             res.json(modifiedItem);
                         }
                     });
@@ -168,7 +172,7 @@ var update = function(req, res, next, model, itemId, username) {
         else if (obj) {
             console.log("updating, modified");
             console.log("updating, validating");
-            validator.validate(model, obj, res, next, function(err, valid){
+            validator.validate(model, itemId, obj, res, next, function(err, valid){
                 if (err) {
                     return next(err);
                 }
@@ -224,7 +228,7 @@ var updateWithUserAccess = function(req, res, next, model, userId, itemId, usern
                 else if (obj) {
                     console.log("updating, modified");
                     console.log("updating, validating");
-                    validator.validate(model, obj, res, next, function(err, valid){
+                    validator.validate(model, itemId, obj, res, next, function(err, valid){
                         if (err) {
                             return next(err);
                         }

@@ -141,6 +141,7 @@ var doBulkImport = function(username, req, res, next, array, i, callback){
                     newFormula.description = description;
                     newFormula.unitsProvided = unitsProvided;
                     newFormula.ingredients = ingredients;
+                    newFormula.isIntermediate = false;
 
                     newFormula.save(function(err){
                         if (err) return next(err);
