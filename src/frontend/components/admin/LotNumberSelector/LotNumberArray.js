@@ -29,7 +29,7 @@ class LotNumberArray extends Component {
             <Input
               required={true}
               type="number"
-              value={Math.round(item.package*100)/100}
+              value={item.package}
               onChange={(event)=>{this.props.updateQuantity(event, index);}}
             />
          </FormControl>
