@@ -465,7 +465,7 @@ class Formula extends React.PureComponent {
       }
     </Paper>
     {/* <Paper styles = {{color : "#42f4d9"}} > */}
-      {isAdmin && <p><font size="5">Formula Bulk Import</font></p>}
+      {isAdmin && <p><font size="5">Final Formula Bulk Import</font></p>}
       {isAdmin && <input type="file"
         name="myFile"
         onChange={this.uploadFile} /> }
