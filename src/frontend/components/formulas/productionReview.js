@@ -138,7 +138,7 @@ class ProductionReview extends React.Component {
                    temp.setState({ingredientsToOrder:data});
                    temp.setState({open:false});
 
-                   temp.setState({snackBarMessage : "Formula successfully sent to production. "});
+                   temp.setState({snackBarMessage : "Formula successfully sent for production review. "});
                    temp.setState({snackBarOpen:true});
               }
       });
@@ -149,7 +149,7 @@ class ProductionReview extends React.Component {
 
     console.log('preview constructed');
     this.addToShoppingCart = this.addToShoppingCart.bind(this);
-    this.checkOutFormula = this.checkOutFormula.bind(this);
+    this.checkOutFormulaFinal = this.checkOutFormulaFinal.bind(this);
     this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
     this.handleOnClose = this.handleOnClose.bind(this);
     console.log('everything binded');
@@ -196,9 +196,7 @@ class ProductionReview extends React.Component {
     event.stopPropagation();
   }
 
-  async checkOutFormula(event){
-    // event.preventDefault();
-
+  async checkOutFormulaFinal(event){
     var temp = this;
     console.log(temp.state.formulaRows[0]);
     await formulaActions.checkoutFormula("checkout",temp.state.formulaRows[0]._id,
@@ -207,9 +205,10 @@ class ProductionReview extends React.Component {
          if (res.status == 400) {
             alert(res.data);
          } else {
-            alert('Successfully added to production.');
+            // alert('Successfully added to production .');
          }
       });
+      window.location.reload();
     // event.stopPropagation();
   };
 
@@ -336,7 +335,7 @@ class ProductionReview extends React.Component {
                     color="primary"
                     // className=classes.button
                     style={styles.orderIngredientsButton}
-                    onClick = {(event) => this.checkOutFormula(event)}
+                    onClick = {(event) => this.checkOutFormulaFinal(event)}
                     component = {Link} to = {this.state.afterLink}
                     primary="true">Send to production</RaisedButton>
             </Tooltip>}
