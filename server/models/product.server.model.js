@@ -4,15 +4,12 @@ var mongoose = require('mongoose'),
 var IngredientLotUsedInProductSchema = new Schema({
     ingredientName: {
         type: String,
-        required: true
     },
     vendorName: {
         type: String,
-        required: true
     },
     lotNumber: {
         type: String,
-        required: true
     }
 });
 mongoose.model('IngredientLotUsedInProduct', IngredientLotUsedInProductSchema);
