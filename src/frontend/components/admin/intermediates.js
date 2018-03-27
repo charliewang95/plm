@@ -43,6 +43,7 @@ import * as uploadInterface from '../../interface/uploadInterface';
 import * as inventoryInterface from '../../interface/inventoryInterface';
   // TODO: get the sessionId
 import * as testConfig from '../../../resources/testConfig.js';
+import PubSub from 'pubsub-js';
 
 import {Link} from 'react-router-dom';
 
@@ -187,7 +188,8 @@ class Intermediates extends React.PureComponent {
                 if (res.status == 400) {
                     alert(res.data);
                 } else {
-                    alert(" Ingredient successfully deleted ! ");
+                    PubSub.publish('showMessage', ' Ingredient Successfully deleted!' );
+                    // alert(" Ingredient successfully deleted ! ");
                     rows.splice(index, 1);
                     window.location.reload();
                 }
@@ -220,7 +222,7 @@ class Intermediates extends React.PureComponent {
   async loadAllIngredients(){
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     var rawData = await ingredientInterface.getAllIntermediatesOnlyAsync(sessionId);
-    rawData = rawData.data;
+    rawData = (rawData)? rawData.data:[],
     console.log("getallIntermediates");
     console.log(rawData);
     if(rawData.length==0){

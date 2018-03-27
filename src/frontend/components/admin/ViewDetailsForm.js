@@ -19,6 +19,7 @@ import LotNumberSelector from './StockEditorInLot/StockLotNumberSelector.js';
 import SnackBarDisplay from '../snackBar/snackBarDisplay.js';
 import { Redirect } from 'react-router';
 import testData from './testIngredients.js';
+import PubSub from 'pubsub-js';
 
 /* Replace with the data from the back end */
 const ingredient_options = [
@@ -339,7 +340,7 @@ class AddIngredientForm extends React.Component{
     var temp = this;
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     var isValid = temp.isValid();
-    if(isValid && temp.state.isCreateNew){
+    if( temp.state.isCreateNew && isValid){
       console.log(" Add ingredient ");
       var numUnit = Number(temp.state.numUnit);
       await ingredientInterface.addIngredient(temp.state.name, temp.state.packageName, temp.state.temperatureZone,
@@ -351,8 +352,11 @@ class AddIngredientForm extends React.Component{
                       alert('Ingredient name already exists');
                   } else{
                       // SnackBarPop("Row was successfully added!");
-                      temp.setState({snackBarMessage : "Ingredient Successfully added! "});
-                      temp.setState({snackBarOpen:true});
+                      // temp.setState({snackBarMessage : "Ingredient Successfully added! "});
+                      // temp.setState({snackBarOpen:true});
+
+                      PubSub.publish('showMessage', ' Ingredient Successfully added!' );
+
                       temp.setState({fireRedirect: true});
                       // alert(" Ingredient Successfully added! ");
                   }
@@ -376,9 +380,10 @@ class AddIngredientForm extends React.Component{
                       alert('Ingredient name already exists');
                   } else {
 
-                    temp.setState({snackBarMessage : "Ingredient Successfully edited! "});
-                    temp.setState({snackBarOpen:true});
+                    // temp.setState({snackBarMessage : "Ingredient Successfully edited! "});
+                    // temp.setState({snackBarOpen:true});
                     // alert(" Ingredient Successfully edited! ");
+                    PubSub.publish('showMessage', 'Ingredient Successfully edited!' );
                   }
 
                   temp.setState({isDisabled:true});
@@ -475,11 +480,11 @@ class AddIngredientForm extends React.Component{
       <form onSubmit={this.onFormSubmit} style={styles.formControl}>
         <p><font size="6">Basic Information</font></p>
         {(this.state.numUnit!=0)? <Chip label="In Stock"/> : ''}
-        {this.state.snackBarOpen && <SnackBarDisplay
+        {/* {this.state.snackBarOpen && <SnackBarDisplay
               open = {this.state.snackBarOpen}
               message = {this.state.snackBarMessage}
               handleSnackBarClose = {this.handleSnackBarClose}
-            /> }
+            /> } */}
           <FormGroup>
             <TextField
               disabled = {this.state.isDisabled}

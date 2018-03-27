@@ -18,6 +18,8 @@ import SimpleTable from './packageTable.js';
 import Typography from 'material-ui/Typography';
 import { FormControl, FormHelperText } from 'material-ui/Form';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
+import PubSub from 'pubsub-js';
+
 //TODO: get session Id
 //const userId = "5a765f3d9de95bea24f905d9";
 // const sessionId = testConfig.sessionId;
@@ -190,8 +192,9 @@ class Orders extends React.PureComponent{
            }
            else{
              // alert("ORDERED");
-             temp.setState({snackBarMessage : "Ingredient ordered successfully!"});
-             temp.setState({snackBarOpen:true});
+             // temp.setState({snackBarMessage : "Ingredient ordered successfully!"});
+             // temp.setState({snackBarOpen:true});
+             PubSub.publish('showMessage', 'Ingredient added to cart!');
              temp.setState({ fireRedirect: true });
              }
            });
@@ -338,11 +341,11 @@ class Orders extends React.PureComponent{
                     BACK</RaisedButton>
              </div>
            </form>
-           {this.state.snackBarOpen && <SnackBarDisplay
+           {/* {this.state.snackBarOpen && <SnackBarDisplay
                  open = {this.state.snackBarOpen}
                  message = {this.state.snackBarMessage}
                  handleSnackBarClose = {this.handleSnackBarClose}
-               /> }
+               /> } */}
 
            {fireRedirect && (
              <Redirect to={'/cart'}/>
