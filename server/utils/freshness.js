@@ -94,18 +94,17 @@ exports.getLatestInfo = function(res, next, ingredientName, callback) {
     if (!ingredientName) return res.json([]);
     IngredientFreshness.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, fresh){
         if (err) return next(err);
-        else if (!fresh) {
-            return res.status(400).send('Ingredient '+ingredientName+' does not exist. 004');
-        }
-        else {
+        else if (fresh){
             console.log('updating freshness data');
             var nowDate = new Date();
             var nowTime = nowDate.getTime();
             var oldestDiff = Math.floor((nowTime - fresh.oldestMilli)/1000/60);
+            console.log('oldestDiff '+oldestDiff);
             var oldestMinute = Math.floor(oldestDiff % 60);
             var oldestHour = Math.floor((oldestDiff/60) % 24);
             var oldestDay = Math.floor(oldestDiff/60/24);
             var averageDiff = Math.floor((nowTime - fresh.averageMilli)/1000/60);
+            console.log('averageDiff '+averageDiff);
             var averageMinute = Math.floor(averageDiff % 60);
             var averageHour = Math.floor((averageDiff/60) % 24);
             var averageDay = Math.floor(averageDiff/60/24);
@@ -120,6 +119,9 @@ exports.getLatestInfo = function(res, next, ingredientName, callback) {
                             //console.log(fresh);
                             callback();
                           });
+        }
+        else {
+            callback();
         }
     });
 }
