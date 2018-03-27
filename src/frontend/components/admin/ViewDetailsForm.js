@@ -17,7 +17,7 @@ import * as ingredientInterface from '../../interface/ingredientInterface';
 import SelectVendors from './SelectVendors';
 import LotNumberSelector from './StockEditorInLot/StockLotNumberSelector.js';
 import SnackBarDisplay from '../snackBar/snackBarDisplay.js';
-
+import { Redirect } from 'react-router';
 import testData from './testIngredients.js';
 
 /* Replace with the data from the back end */
@@ -340,10 +340,11 @@ class AddIngredientForm extends React.Component{
                       // SnackBarPop("Row was successfully added!");
                       temp.setState({snackBarMessage : "Ingredient Successfully added! "});
                       temp.setState({snackBarOpen:true});
+                      temp.setState({fireRedirect: true});
                       // alert(" Ingredient Successfully added! ");
                   }
               });
-     // this.clearFields();
+      //this.clearFields();
     }else if(isValid){
       if(temp.state.numUnit==''){
         temp.setState({numUnit:0});
@@ -393,6 +394,7 @@ class AddIngredientForm extends React.Component{
       isCreateNew: true,
       lotNumberArray:[],
       totalAssigned:0,
+      fireRedirect: false,
       })
     }
 
@@ -449,9 +451,10 @@ class AddIngredientForm extends React.Component{
   }
 
   render (){
-    const { name, packageName, temperatureZone, vendors } = this.state;
+    const { name, packageName, temperatureZone, vendors, fireRedirect } = this.state;
     return (
       // <PageBase title = 'Add Ingredients' navigation = '/Application Form'>
+      <div>
       <form onSubmit={this.onFormSubmit} style={styles.formControl}>
         <p><font size="6">Basic Information</font></p>
         {(this.state.numUnit!=0)? <Chip label="In Stock"/> : ''}
@@ -617,6 +620,10 @@ class AddIngredientForm extends React.Component{
                   > BACK </RaisedButton>
              </div>
            </form>
+           {fireRedirect && (
+             <Redirect to={'/admin-ingredients'}/>
+           )}
+        </div>
     )
 	}
 };
