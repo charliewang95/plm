@@ -9,17 +9,17 @@ import Select from 'react-select';
 import * as IngredientInterface from '../../interface/ingredientInterface';
 
 // const CONTRIBUTORS = require('../data/contributors');
-const CONTRIBUTORS = [ //copied directly from the place
-	{ github: 'jedwatson', name: 'Jed Watson' },
-	{ github: 'bruderstein', name: 'Dave Brotherstone' },
-	{ github: 'jossmac', name: 'Joss Mackison' },
-	{ github: 'jniechcial', name: 'Jakub Niechciał' },
-	{ github: 'craigdallimore', name: 'Craig Dallimore' },
-	{ github: 'julen', name: 'Julen Ruiz Aizpuru' },
-	{ github: 'dcousens', name: 'Daniel Cousens' },
-	{ github: 'jgautsch', name: 'Jon Gautsch' },
-	{ github: 'dmitry-smirnov', name: 'Dmitry Smirnov' },
-];
+// const CONTRIBUTORS = [ //copied directly from the place
+// 	{ github: 'jedwatson', name: 'Jed Watson' },
+// 	{ github: 'bruderstein', name: 'Dave Brotherstone' },
+// 	{ github: 'jossmac', name: 'Joss Mackison' },
+// 	{ github: 'jniechcial', name: 'Jakub Niechciał' },
+// 	{ github: 'craigdallimore', name: 'Craig Dallimore' },
+// 	{ github: 'julen', name: 'Julen Ruiz Aizpuru' },
+// 	{ github: 'dcousens', name: 'Daniel Cousens' },
+// 	{ github: 'jgautsch', name: 'Jon Gautsch' },
+// 	{ github: 'dmitry-smirnov', name: 'Dmitry Smirnov' },
+// ];
 //globals
 var sessionId = "";
 
@@ -37,6 +37,7 @@ const Contributors = createClass({
 			multi: false,
 			value: null,
 			availableIngredients: [],
+			selectedIngredient: this.props.
 		};
 	},
 	onChange (value) {
@@ -161,6 +162,7 @@ const Contributors = createClass({
 					placeholder="Type to search for an ingredient"
 				/>
 
+				{/*
 				<Select.Async 
 					multi={this.state.multi} 
 					value={this.state.value} 
@@ -170,6 +172,7 @@ const Contributors = createClass({
 					labelKey="name" 
 					loadOptions={this.getContributors} 
 				/>
+				*/}
 				{/*
 				<div className="checkbox-list">
 					<label className="checkbox">
