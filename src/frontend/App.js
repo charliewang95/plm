@@ -3,7 +3,7 @@ import PersistentDrawer from './components/main/PersistentDrawer.js'
 import Routes from './routes.js';
 import {Route, Switch} from 'react-router-dom'
 import Login from './components/login/LoginPage';
-
+import Notification from './components/main/Notification.js'
 class App extends Component {
 
   // constructor(props) {
@@ -14,6 +14,7 @@ class App extends Component {
     return (
     <div>
       <PersistentDrawer/>
+      <Notification/>
     </div>
     )
   }

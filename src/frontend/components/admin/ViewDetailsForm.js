@@ -17,7 +17,7 @@ import * as ingredientInterface from '../../interface/ingredientInterface';
 import SelectVendors from './SelectVendors';
 import LotNumberSelector from './StockEditorInLot/StockLotNumberSelector.js';
 import SnackBarDisplay from '../snackBar/snackBarDisplay.js';
-
+import { Redirect } from 'react-router';
 import testData from './testIngredients.js';
 
 /* Replace with the data from the back end */
@@ -308,12 +308,19 @@ class AddIngredientForm extends React.Component{
   }
 
   checkQuantityMatchLotArray(){
+    console.log("checkQuantityMatch");
     var sum =0;
     var array = this.state.lotNumberArray;
+    console.log(this.state.lotNumberArray);
+
     for(var i = 0; i < array.length;i++){
-      sum+=array[i].lotNumber;
+      sum+=Number(array[i].numUnit);
     }
-    return (Number(this.state.quantity)==Number(sum));
+    console.log(this.state.numUnit);
+    console.log(Number(this.state.numUnit));
+    console.log(sum);
+    console.log(Number(this.state.numUnit)==Number(sum));
+    return (this.state.numUnit==sum);
   }
 
   async onFormSubmit(e) {
@@ -323,6 +330,7 @@ class AddIngredientForm extends React.Component{
     var isValid = temp.isValid();
     if(isValid && temp.state.isCreateNew){
       console.log(" Add ingredient ");
+      var numUnit = Number(temp.state.numUnit);
       await ingredientInterface.addIngredient(temp.state.name, temp.state.packageName, temp.state.temperatureZone,
         temp.state.vendorsArray, temp.state.moneySpent, temp.state.moneyProd, temp.state.nativeUnit,
         temp.state.numUnitPerPackage, temp.state.numUnit, temp.state.space, false, sessionId, function(res){
@@ -334,10 +342,11 @@ class AddIngredientForm extends React.Component{
                       // SnackBarPop("Row was successfully added!");
                       temp.setState({snackBarMessage : "Ingredient Successfully added! "});
                       temp.setState({snackBarOpen:true});
+                      temp.setState({fireRedirect: true});
                       // alert(" Ingredient Successfully added! ");
                   }
               });
-     // this.clearFields();
+      //this.clearFields();
     }else if(isValid){
       if(temp.state.numUnit==''){
         temp.setState({numUnit:0});
@@ -345,9 +354,11 @@ class AddIngredientForm extends React.Component{
 
       console.log("saved edited");
       console.log(temp.state.numUnit);
+      console.log(Number(temp.state.numUnit));
+      var numUnit = Number(temp.state.numUnit);
       await ingredientInterface.updateIngredient(temp.state.ingredientId, temp.state.name, temp.state.packageName,
                 temp.state.temperatureZone, temp.state.vendorsArray, temp.state.moneySpent, temp.state.moneyProd,
-                temp.state.nativeUnit, temp.state.numUnitPerPackage, temp.state.numUnit, temp.state.space, temp.state.isIntermediate, sessionId, function(res){
+                temp.state.nativeUnit, temp.state.numUnitPerPackage, numUnit, temp.state.space, temp.state.isIntermediate, sessionId, function(res){
                   if (res.status == 400) {
                       alert(res.data);
                   } else if (res.status == 500) {
@@ -389,6 +400,7 @@ class AddIngredientForm extends React.Component{
       isCreateNew: true,
       lotNumberArray:[],
       totalAssigned:0,
+      fireRedirect: false,
       })
     }
 
@@ -410,6 +422,7 @@ class AddIngredientForm extends React.Component{
   }
 
   handleNumUnitChange(event){
+    console.log("handleNumUnitChange");
     const re = /^\d*\.?\d*$/;
       if ( event.target.value == '' || (event.target.value>=0 && re.test(event.target.value))) {
          var computeSpace = Math.ceil(event.target.value/this.state.numUnitPerPackage) * this.packageSpace(this.state.packageName);
@@ -444,9 +457,10 @@ class AddIngredientForm extends React.Component{
   }
 
   render (){
-    const { name, packageName, temperatureZone, vendors } = this.state;
+    const { name, packageName, temperatureZone, vendors, fireRedirect } = this.state;
     return (
       // <PageBase title = 'Add Ingredients' navigation = '/Application Form'>
+      <div>
       <form onSubmit={this.onFormSubmit} style={styles.formControl}>
         <p><font size="6">Basic Information</font></p>
         {(this.state.numUnit!=0)? <Chip label="In Stock"/> : ''}
@@ -542,33 +556,32 @@ class AddIngredientForm extends React.Component{
               <div>
               <p><font size="6">Inventory Information</font></p>
               <FormGroup>
-                <TextField
-                  disabled = {this.state.isDisabled}
+                 <TextField
+                  required
+                  disabled = {(this.state.isDisabled) || (this.props.location.state.details.numUnit==0)}
                   id="numUnit"
                   label={"Current Quantity " + "(" + this.state.nativeUnit +")"}
                   value={this.state.numUnit}
                   onChange={this.handleNumUnitChange}
                   margin="normal"
                 />
-                {(!this.state.isIntermediate)&&(this.state.isDisabled) && (this.state.numUnit)&& <TextField
+                {(!this.state.isIntermediate)&&(this.state.isDisabled) && (this.state.numUnit!=0)&& <TextField
                   id="lotNumbers"
                   label={"quantity (" + this.state.nativeUnit + ") per lot"}
                   multiline
                   value={this.state.lotNumberString}
                   margin="normal"
                   disabled = {this.state.isDisabled}
-                  required
                   style={{lineHeight: 1.5}}
                 />}
 
-                {(!this.state.isIntermediate)&&(!this.state.isDisabled) &&(this.state.numUnit)&&
+                {(!this.state.isIntermediate)&&(!this.state.isDisabled)&&
                   <LotNumberSelector
                     nativeUnit = {this.state.nativeUnit}
                     initialArray = {this.state.lotNumberArray}
                     quantity={this.state.numUnit}
                     updateArray={this.updateArray}
                     totalAssigned={this.state.totalAssigned}/>}
-
                 <TextField
                   disabled
                   id="space"
@@ -613,14 +626,13 @@ class AddIngredientForm extends React.Component{
                   > BACK </RaisedButton>
              </div>
            </form>
-         // </PageBase>
+           {fireRedirect && (
+             <Redirect to={'/admin-ingredients'}/>
+           )}
+        </div>
     )
 	}
 };
 
-// AddIngredientFormOld.propTypes = {
-//   hint: PropTypes.string.isRequired,
-//   label: PropTypes.string.isRequired
-// };
 
 export default AddIngredientForm;

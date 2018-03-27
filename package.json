@@ -53,6 +53,7 @@
     "passport-local": "^1.0.0",
     "passport-twitter": "^1.0.4",
     "prop-types": "^15.6.0",
+    "pubsub-js": "^1.6.0",
     "query-string": "^5.1.0",
     "rc-datepicker": "^5.0.10",
     "react": "^16.2.0",

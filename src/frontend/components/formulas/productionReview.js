@@ -79,7 +79,7 @@ class ProductionReview extends React.Component {
     this.productionReview = async() =>{
 
       //TODO: Remove this
-      sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+
       console.log(" get production review");
 
       var temp = this;
@@ -140,13 +140,13 @@ class ProductionReview extends React.Component {
 
   async addToShoppingCart(event){
     //TODO: send to back end
-    userId = JSON.parse(sessionStorage.getItem('user'))._id;
+    var temp = this;
     console.log("add To cart" + JSON.stringify(this.state.ingredientsToOrder));
     // ADD the ingredients with needed amount to
     // var success = false;
-    console.log(this.state.ingredientsToOrder);
-    for(var i = 0; i < this.state.ingredientsToOrder.length;i++){
-      var row = this.state.ingredientsToOrder[i];
+    console.log(temp.state.ingredientsToOrder);
+    for(var i = 0; i < temp.state.ingredientsToOrder.length;i++){
+      var row = temp.state.ingredientsToOrder[i];
       var vendorName = "";
       var price = 0;
       var _package = Math.ceil(row.delta / row.numUnitPerPackage);
@@ -178,6 +178,7 @@ class ProductionReview extends React.Component {
   }
 
   async checkOutFormula(event){
+
     var temp = this;
     console.log(temp.state.formulaRows[0]);
     await formulaActions.checkoutFormula("checkout",temp.state.formulaRows[0]._id,
@@ -203,7 +204,9 @@ class ProductionReview extends React.Component {
 
   componentWillMount(){
     console.log(" Formula Rows " + JSON.stringify(this.state.formulaRows));
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    userId = JSON.parse(sessionStorage.getItem('user'))._id;
   }
 
 
