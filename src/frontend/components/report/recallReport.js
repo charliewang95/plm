@@ -6,6 +6,7 @@ import Paper from 'material-ui/Paper';
 import IngredientSelection from './recallReportComponents/ingredientSelection.js'
 import VendorSelection from './recallReportComponents/vendorSelection.js'
 import LotSelection from './recallReportComponents/lotSelection.js'
+import RecallTable from './recallReportComponents/recallTable.js'
 import * as IngredientInterface from '../../interface/ingredientInterface';
 // import * as IngredientLotInterface from '../../interface/ingredientLotInterface';
 // globals
@@ -289,6 +290,7 @@ export default class RecallReport extends React.PureComponent{
 		//reinitialize globals
 		lotsNeedToBeRecalled = [];
 		idOfLotsAlreadyConsidered = [];
+		console.log(lotId);
 		const response = await IngredientInterface.getRecallAsync(lotId, sessionId);
 		console.log("response for getRecallAsync");
 		console.log(response);
@@ -304,33 +306,44 @@ export default class RecallReport extends React.PureComponent{
 		// });
 		while(frontier.length > 0){
 			var currentLot = frontier.pop();
+			console.log("currentLot:");
+			console.log(currentLot);
 			var currentLotId = currentLot._id;
 			if(idOfLotsAlreadyConsidered.includes(currentLotId)) {
+				console.log("skipping the lot");
 				continue; //do not consider repeated elements
 			}
 			lotsNeedToBeRecalled = lotsNeedToBeRecalled.concat(currentLot);
 			idOfLotsAlreadyConsidered = idOfLotsAlreadyConsidered.concat(currentLotId);
-			const responseRecurse = await IngredientInterface.getRecallAsync(currentLotId, sessionId);
+			const lotNumber = currentLot.lotNumber;
+			const ingredientName = currentLot.productName;
+			const vendorName = "null";
+			const responseRecurse = await IngredientInterface.getRecallAlternateAsync(lotNumber, ingredientName, vendorName, sessionId);
 			console.log("responseRecurse");
 			console.log(responseRecurse);
-			const araryOfRecalledLotsRecurse = response.data;
+			const araryOfRecalledLotsRecurse = responseRecurse.data;
 			console.log("araryOfRecalledLotsRecurse");
 			console.log(araryOfRecalledLotsRecurse);
 			frontier = frontier.concat(araryOfRecalledLotsRecurse);
+			console.log("frontier:");
+			console.log(frontier);
 		}
+
+		console.log("lotsNeedToBeRecalled:");
+		console.log(lotsNeedToBeRecalled);
+
 		this.setState({
 			recalledLots: lotsNeedToBeRecalled,
 			recallDataReady:true,
 		});
-		console.log("lotsNeedToBeRecalled:");
-		console.log(lotsNeedToBeRecalled);
+		
 
 	}
 
 	render() {
 		const {selectedIngredientName, selectedIngredientObject, selectedVendor, lotNumber,
 			vendorLabelValuePairs, lotLabelValuePairs, ingredientLabelValuePairs, 
-			ingredientIsIntermediate, recallDataReady} = this.state;
+			ingredientIsIntermediate, recallDataReady, recalledLots} = this.state;
 		return (
 			<Paper>
 			{/*
@@ -362,7 +375,12 @@ export default class RecallReport extends React.PureComponent{
 			}
 			{
 				recallDataReady &&
-				<p> Recall Data Ready! </p>
+				<div>
+				{false && <p> Recall Data Ready! </p>}
+				<RecallTable 
+					recallData={recalledLots}
+				/>
+				</div>
 
 			}
 			</Paper>
