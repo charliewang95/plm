@@ -191,36 +191,43 @@ async loadFormula(){
 
 
   isValid(){
+    var temp = this;
     const re =/^[1-9]\d*$/;
-    if(!this.state.name){
+    if(!temp.state.name){
       alert(" Please enter the formula name. ");
       return false;
-    }else if (!this.state.description){
+    }else if (!temp.state.description){
       alert(" Please enter the description. ");
       return false;
-    }else if (!re.test(this.state.unitsProvided) || (this.state.isIntermediate && !re.test(this.state.numUnitPerPackage))) {
+    }else if (!re.test(temp.state.unitsProvided)) {
       alert(" Units of product of formula must be a positive integer. ");
       return false;
+    }else if (temp.state.ingredientsArray.length==0){
+      alert(" Please add ingredients needed for the formula.");
+      return false;
       // Add checks for intermediateProductFields
-    }else if ((this.state.isIntermediate)){
-       if((!(/^[A-z]+$/).test(this.state.nativeUnit))) {
+    }else if ((temp.state.isIntermediate)){
+      if (!temp.state.temperatureZone){
+        alert(" please select a temperature zone ");
+        return false;
+      }else if (!this.state.numUnitPerPackage){
+        alert("Please enter the number of units per package!");
+        return false;
+      }else if((!(/^[A-z]+$/).test(temp.state.nativeUnit))) {
           alert(" Native unit must be a string!");
           return false;
-        }else if (!this.state.temperatureZone){
-          alert(" please select a temperature zone ");
-          return false;
-        }else if(!this.state.packageName){
+        }else if(!temp.state.packageName){
           alert("Please select a package ");
           return false;
         }
-    }else if (this.state.ingredientsArray.length==0){
-      alert(" Please add ingredients needed for the formula.");
-      return false;
-    }else if (this.state.ingredientsArray.length){
+    // }else if (temp.state.ingredientsArray.length==0){
+    //   alert(" Please add ingredients needed for the formula.");
+    //   return false;
+    }else if (temp.state.ingredientsArray.length){
       // loop through and make sure all ingredients have quantities updated
       for(var i =0; i < this.state.ingredientsArray.length;i++){
-        if(!this.state.ingredientsArray[i].quantity){
-          alert(" Please add a positive integer quantity for ingredient " + this.state.ingredientsArray[i].ingredientName);
+        if(!temp.state.ingredientsArray[i].quantity){
+          alert(" Please add a positive integer quantity for ingredient " + temp.state.ingredientsArray[i].ingredientName);
           return false;
         }
       }
@@ -256,7 +263,7 @@ async loadFormula(){
                 // alert(" Formula successfully added! ");
               }
             });
-    }else if (temp.isValid() && !temp.state.isCreateNew){
+    }else if (!temp.state.isCreateNew && temp.isValid()){
       console.log("update formula ");
       console.log(temp.state);
 

@@ -32,7 +32,7 @@ class LotNumberArray extends Component {
               onChange={(event)=>{this.props.updateQuantity(event, index);}}
             />
          </FormControl>
-         <FormControl style={{marginLeft:10, width:50}}>
+         <FormControl style={{marginLeft:10, width:150}}>
           <Input
             disabled
             value={item.lotNumber}

@@ -53,7 +53,7 @@ export default class RecallReport extends React.PureComponent{
 	async componentDidMount(){
 		this.fetchSessionId();
 		await this.fetchAvailableIngredients();
-	}	
+	}
 
 	fetchSessionId(){
 		sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
@@ -72,7 +72,7 @@ export default class RecallReport extends React.PureComponent{
   		console.log(ingredients);
   		console.log("this.state.availableIngredientObjects:");
   		console.log(this.state.availableIngredientObjects);
-    	
+
   		var labelValuePairs = ingredients.map(ingredientObject => ({
   			value: ingredientObject.name,
   			label: ingredientObject.name,
@@ -107,7 +107,7 @@ export default class RecallReport extends React.PureComponent{
 		//name is not null
 		const selectedIngredientObject = this.findSelectedIngredientObject(name);
 		if(!selectedIngredientObject) {
-			alert("An error has occured! No ingredient object exists for the selected name " 
+			alert("An error has occured! No ingredient object exists for the selected name "
 				+ name);
 			return;
 		}
@@ -130,7 +130,7 @@ export default class RecallReport extends React.PureComponent{
 		if(selectedIngredientObject.isIntermediate){
 			this.skipVendor(selectedIngredientObject);
 		}
-		
+
 	}
 
 	findSelectedIngredientObject(selectedIngredientName){
@@ -257,7 +257,7 @@ export default class RecallReport extends React.PureComponent{
 		return filteredArray;
 	}
 
-	
+
 
 
 	setLot(lotNumber){
@@ -271,7 +271,7 @@ export default class RecallReport extends React.PureComponent{
 		if (lotId){
 			this.fetchRecall(lotId);
 		}
-		
+
 	}
 
 	findIdOfLot(lotNumber){
@@ -298,7 +298,7 @@ export default class RecallReport extends React.PureComponent{
 		console.log("araryOfRecalledLots");
 		console.log(araryOfRecalledLots);
 		// do dfs
-		var frontier = araryOfRecalledLots;
+		var frontier = araryOfRecalledLots ? araryOfRecalledLots : [];
 		console.log("initial frontier:");
 		console.log(frontier);
 		// this.setState({
@@ -336,13 +336,13 @@ export default class RecallReport extends React.PureComponent{
 			recalledLots: lotsNeedToBeRecalled,
 			recallDataReady:true,
 		});
-		
+
 
 	}
 
 	render() {
 		const {selectedIngredientName, selectedIngredientObject, selectedVendor, lotNumber,
-			vendorLabelValuePairs, lotLabelValuePairs, ingredientLabelValuePairs, 
+			vendorLabelValuePairs, lotLabelValuePairs, ingredientLabelValuePairs,
 			ingredientIsIntermediate, recallDataReady, recalledLots} = this.state;
 		return (
 			<Paper>
@@ -352,12 +352,12 @@ export default class RecallReport extends React.PureComponent{
 			{selectedIngredientName && <p> selectedVendor is {selectedVendor} </p>}
 			{selectedIngredientName && (selectedVendor || ingredientIsIntermediate) && <p> lot number is {lotNumber} </p>}
 			*/}
-			<IngredientSelection 
+			<IngredientSelection
 				setIngredient={this.selectIngredient}
 				ingredientLabelValuePairs={ingredientLabelValuePairs}
 			/>
 			{
-				selectedIngredientName && 
+				selectedIngredientName &&
 				!ingredientIsIntermediate &&
 				<VendorSelection
 					vendorLabelValuePairs={vendorLabelValuePairs}
@@ -365,19 +365,19 @@ export default class RecallReport extends React.PureComponent{
 				/>
 			}
 			{
-				selectedIngredientName && 
+				selectedIngredientName &&
 				(selectedVendor || ingredientIsIntermediate) &&
 				<LotSelection
 					lotLabelValuePairs={lotLabelValuePairs}
 					setLot={this.setLot}
 				/>
-				
+
 			}
 			{
 				recallDataReady &&
 				<div>
 				{false && <p> Recall Data Ready! </p>}
-				<RecallTable 
+				<RecallTable
 					recallData={recalledLots}
 				/>
 				</div>
