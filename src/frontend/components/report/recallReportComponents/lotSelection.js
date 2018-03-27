@@ -1,11 +1,11 @@
-// vendorSelection.js
+// lotSelection.js
 
 import React from 'react';
 import createClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 
-export default class VendorSelection extends React.PureComponent{
+export default class LotSelection extends React.PureComponent{
 	constructor(props){
 		super(props);
 		this.state = {
@@ -15,24 +15,24 @@ export default class VendorSelection extends React.PureComponent{
 			rtl: false,
 			value: null,
 			//
-			vendors: props.vendorLabelValuePairs,
+			lots: props.lotLabelValuePairs,
 
 		}
 		//binding functions
 		this.updateValue = this.updateValue.bind(this);
-		this.setVendor = props.setVendor;
+		this.setLot = props.setLot;
 	}
 
 	componentDidMount(){
-		console.log("vendors:");
-		console.log(this.state.vendors);
+		console.log("lots:");
+		console.log(this.state.lots);
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if(nextProps.vendorLabelValuePairs == this.state.vendors) return;
+		if(nextProps.lotLabelValuePairs == this.state.lots) return;
 
   		this.setState({ 
-  			vendors: nextProps.vendorLabelValuePairs,
+  			lots: nextProps.lotLabelValuePairs,
   			value: null,
   		});  
 	}
@@ -42,20 +42,19 @@ export default class VendorSelection extends React.PureComponent{
 			value: newValue,
 		});
 		console.log(newValue);
-		this.setVendor(newValue);
+		this.setLot(newValue);
 	}
-	
 
 	
 
 	render() {
-		const {vendors} = this.state;
+		const {lots} = this.state;
 
 		return (
 			<div>
-			{/*<p> This is vendor selection </p>*/}
+			{/*<p> This is lot selection </p>*/}
 			<Select
-				options={vendors}
+				options={lots}
 				simpleValue
 				clearable={this.state.clearable}
 				name="selected-state"
@@ -63,11 +62,9 @@ export default class VendorSelection extends React.PureComponent{
 				onChange={this.updateValue}
 				rtl={this.state.rtl}
 				searchable={this.state.searchable}
-				placeholder="Select Vendor..."
+				placeholder="Select Lot Number..."
 			/>
-
-
-			{/*<p> Here ends vendor selection </p>*/}
+			{/*<p> Here ends lot selection </p>*/}
 			</div>
 		)
 	}

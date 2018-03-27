@@ -54,13 +54,13 @@ exports.listLotNumbers = function(req, res, next) {
 //                numberUniqueArray.push(lotNumberUnique);
 //            }
 //        }
-//        res.send(numberArray);
+//        res.send(numberArray); 
         res.json(items);
     });
 };
 
 exports.getRecall = function(req, res, next) {
-    IngredientProduct.findById(req.params.lotId, function(err, ingredients){
+    IngredientProduct.find({lotId: req.params.lotId}, function(err, ingredients){
         if (err) return next(err);
         else res.json(ingredients);
     });

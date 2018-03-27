@@ -5,77 +5,146 @@ import Paper from 'material-ui/Paper';
 //local import
 import IngredientSelection from './recallReportComponents/ingredientSelection.js'
 import VendorSelection from './recallReportComponents/vendorSelection.js'
+import LotSelection from './recallReportComponents/lotSelection.js'
 import * as IngredientInterface from '../../interface/ingredientInterface';
 // import * as IngredientLotInterface from '../../interface/ingredientLotInterface';
-//
+// globals
 var sessionId = "";
-
+var lotsNeedToBeRecalled = [];
+var idOfLotsAlreadyConsidered = [];
 //
 export default class RecallReport extends React.PureComponent{
 	constructor(props){
 		super(props); //required
 		this.state = {
-			ingredientName: null,
-			ingredientInfo: undefined,
+			//don't change these
+			availableIngredientObjects:[],
+			ingredientLabelValuePairs: [],
+			//okay to change these
+			selectedIngredientName: null,
+			selectedIngredientObject: null,
+			ingredientIsIntermediate: false,
 			selectedVendor: null,
 			vendorLabelValuePairs: [],
-			lotNumber: null
+			lotLabelValuePairs:[],
+			availableLotObjects:[],
+			lotNumber: null,
+			//for bfs purposes
+			recalledLots:[],
 		}
 		//bind functions
-		this.setIngredient = this.setIngredient.bind(this);
+		this.fetchAvailableIngredients = this.fetchAvailableIngredients.bind(this);
+		this.selectIngredient = this.selectIngredient.bind(this);
+		this.findSelectedIngredientObject = this.findSelectedIngredientObject.bind(this);
 		this.getVendorLabelValuePairs = this.getVendorLabelValuePairs.bind(this);
 		this.setVendor = this.setVendor.bind(this);
+		this.skipVendor = this.skipVendor.bind(this);
 		this.getLotInfo = this.getLotInfo.bind(this);
+		this.filterLotsBasedOnVendorName = this.filterLotsBasedOnVendorName.bind(this);
+		this.setLot = this.setLot.bind(this);
+		this.fetchRecall = this.fetchRecall.bind(this);
+		this.findIdOfLot = this.findIdOfLot.bind(this);
 
 	}
+
+	async componentDidMount(){
+		this.fetchSessionId();
+		await this.fetchAvailableIngredients();
+	}	
+
 	fetchSessionId(){
 		sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
 		console.log("sessionId: " + sessionId);
 	}
 
-	componentDidMount(){
-		this.fetchSessionId();
-	}	
+	async fetchAvailableIngredients(){
+  		const response = await IngredientInterface.getAllIngredientsAsync(sessionId);
+  		console.log("response:")
+  		console.log(response);
+  		const ingredients = response;
+  		this.setState({
+			availableIngredientObjects: ingredients,
+		});
+  		console.log("ingredients")
+  		console.log(ingredients);
+  		console.log("this.state.availableIngredientObjects:");
+  		console.log(this.state.availableIngredientObjects);
+    	
+  		var labelValuePairs = ingredients.map(ingredientObject => ({
+  			value: ingredientObject.name,
+  			label: ingredientObject.name,
+		}));
 
-	setIngredient(name, info){
-		if(name === this.state.ingredientName) return;//do nothing if it has not been changed
-		const vendorLabelValuePairs = this.getVendorLabelValuePairs(info);
+  		this.setState({
+			ingredientLabelValuePairs: labelValuePairs,
+		});
+
+		console.log("this.state.ingredientLabelValuePairs");
+		console.log(this.state.ingredientLabelValuePairs);
+  	}
+
+	selectIngredient(name){
+		if(name === this.state.selectedIngredientName) return;//do nothing if it has not been changed
+		console.log("Changing selectedIngredientName from " + this.state.selectedIngredientName +
+			" to " + name);
+		if(!name){ //name is null, reinitialize the state
+			this.setState({
+				selectedIngredientName: null,
+				selectedIngredientObject: null,
+				selectedVendor: null,
+				vendorLabelValuePairs: [],
+				lotLabelValuePairs:[],
+				availableLotObjects:[],
+				lotNumber: null
+			});
+			return;
+		}
+		//name is not null
+		const selectedIngredientObject = this.findSelectedIngredientObject(name);
+		if(!selectedIngredientObject) {
+			alert("An error has occured! No ingredient object exists for the selected name " 
+				+ name);
+			return;
+		}
+		// selectedIngredientObject is not null
+		const vendorLabelValuePairs = this.getVendorLabelValuePairs(selectedIngredientObject);
 		console.log("vendorLabelValuePairs");
 		console.log(vendorLabelValuePairs);
+
 		this.setState({
-			ingredientName: name,
-			ingredientInfo: info,
+			selectedIngredientName: name,
+			selectedIngredientObject: selectedIngredientObject,
+			ingredientIsIntermediate: selectedIngredientObject.isIntermediate,
 			selectedVendor: null,
 			vendorLabelValuePairs: vendorLabelValuePairs,
+			lotLabelValuePairs:[],
+			availableLotObjects:[],
 			lotNumber: null
 		});
-	}
-	async getLotInfo(){
-		console.log(this.state.ingredientInfo);
-		const ingredientId = this.state.ingredientInfo._id;
-		const response = await IngredientInterface.getAllLotNumbersAsync(ingredientId, sessionId);
-		console.log('response');
-		console.log(response);
-		const arrayOfLots = response.data;
-		console.log("arrayOfLots");
-		console.log(arrayOfLots);
-	}
-	setVendor(vendorName){
-		if(vendorName === this.state.selectedVendor) return; //do nothing if it has not been changed
-		//get lot information from backend
-		this.getLotInfo();
-		this.setState({
-			selectedVendor: vendorName,
-			lotNumber: null
-		})
+		if(selectedIngredientObject.isIntermediate){
+			this.skipVendor(selectedIngredientObject);
+		}
+		
 	}
 
-	getVendorLabelValuePairs(ingredientInfo){
+	findSelectedIngredientObject(selectedIngredientName){
+		if (!this.state.availableIngredientObjects) return null;
+		for (var i = 0; i < this.state.availableIngredientObjects.length; i++) {
+      		if (this.state.availableIngredientObjects[i].name === selectedIngredientName){
+      			console.log("Found an ingredient with name " + selectedIngredientName);
+      			console.log(this.state.availableIngredientObjects[i]);
+      			return this.state.availableIngredientObjects[i];
+      		}
+    	}
+    	return null;
+	}
+
+	getVendorLabelValuePairs(selectedIngredientObject){
 		console.log("Entered getVendorLabelValuePairs");
-		console.log("ingredientInfo");
-		console.log(ingredientInfo);
-		if(!ingredientInfo) return;
-		const vendors = ingredientInfo.vendors;
+		console.log("selectedIngredientObject");
+		console.log(selectedIngredientObject);
+		if(!selectedIngredientObject) return;
+		const vendors = selectedIngredientObject.vendors;
 		console.log("vendors of the selected ingredient");
 		console.log(vendors);
 		var intermediateData = [];
@@ -96,24 +165,187 @@ export default class RecallReport extends React.PureComponent{
 
 	}
 
+	async setVendor(vendorName){
+		if(vendorName === this.state.selectedVendor) return; //do nothing if it has not been changed
+		//get lot information from backend
+		const arrayOfLots = await this.getLotInfo();
+		const filteredLots = this.filterLotsBasedOnVendorName(arrayOfLots, vendorName);
+		const possibleLotNumbers = filteredLots.map(lotObject => (lotObject.lotNumber))
+		const labelValuePairs = possibleLotNumbers.map(lotNumber => ({
+			value: lotNumber,
+			label: lotNumber
+		}));
+		console.log("possibleLotNumbers:");
+		console.log(possibleLotNumbers);
+		console.log("labelValuePairs");
+		console.log(labelValuePairs);
+		this.setState({
+			selectedVendor: vendorName,
+			lotLabelValuePairs:labelValuePairs,
+			availableLotObjects:filteredLots,
+			lotNumber: null
+		})
+	}
+
+	async skipVendor(selectedIngredientObject){
+		const arrayOfLots = await this.getLotInfoFromObject(selectedIngredientObject);
+		const possibleLotNumbers = arrayOfLots.map(lotObject => (lotObject.lotNumber))
+		const labelValuePairs = possibleLotNumbers.map(lotNumber => ({
+			value: lotNumber,
+			label: lotNumber
+		}));
+		console.log("possibleLotNumbers:");
+		console.log(possibleLotNumbers);
+		console.log("labelValuePairs");
+		console.log(labelValuePairs);
+		this.setState({
+			lotLabelValuePairs:labelValuePairs,
+			availableLotObjects:arrayOfLots,
+			lotNumber: null
+		})
+	}
+
+	async getLotInfo(){
+		console.log(this.state.selectedIngredientObject);
+		const ingredientId = this.state.selectedIngredientObject._id;
+		const response = await IngredientInterface.getAllLotNumbersAsync(ingredientId, sessionId);
+		console.log('response');
+		console.log(response);
+		const arrayOfLots = response.data;
+		console.log("arrayOfLots");
+		console.log(arrayOfLots);
+		return arrayOfLots;
+	}
+
+	async getLotInfoFromObject(selectedIngredientObject){
+		console.log(selectedIngredientObject);
+		const ingredientId = selectedIngredientObject._id;
+		const response = await IngredientInterface.getAllLotNumbersAsync(ingredientId, sessionId);
+		console.log('response');
+		console.log(response);
+		const arrayOfLots = response.data;
+		console.log("arrayOfLots");
+		console.log(arrayOfLots);
+		return arrayOfLots;
+	}
+
+	filterLotsBasedOnVendorName(arrayOfLots, vendorName){
+		var filteredArray = [];
+		console.log("Entered filterLotsBasedOnVendorName()")
+		if(arrayOfLots){
+			for(var i = 0; i < arrayOfLots.length; i++){
+				const lot = arrayOfLots[i];
+				if(lot.vendorName === vendorName){
+					console.log("adding lot ");
+					console.log(lot);
+					filteredArray.push(lot);
+				}
+			}
+		}
+
+		console.log("Filtered array:");
+		console.log(filteredArray);
+
+		return filteredArray;
+	}
+
+	
+
+
+	setLot(lotNumber){
+		if(lotNumber === this.state.lotNumber) return; //do nothing if it has not been changed
+		this.setState({
+			lotNumber: lotNumber,
+		});
+		const lotId = this.findIdOfLot(lotNumber);
+		console.log("id of this lot is " + lotId);
+		if (lotId){
+			this.fetchRecall(lotId);
+		}
+		
+	}
+
+	findIdOfLot(lotNumber){
+		if (!this.state.availableLotObjects) return null;
+		for (var i = 0; i < this.state.availableLotObjects.length; i++) {
+      		if (this.state.availableLotObjects[i].lotNumber === lotNumber){
+      			console.log("Found an lot with lot number " + lotNumber);
+      			console.log(this.state.availableLotObjects[i]);
+      			return this.state.availableLotObjects[i]._id;
+      		}
+    	}
+    	return null;
+	}
+
+	async fetchRecall(lotId){
+		//reinitialize globals
+		lotsNeedToBeRecalled = [];
+		idOfLotsAlreadyConsidered = [];
+		const response = await IngredientInterface.getRecallAsync(lotId, sessionId);
+		console.log("response for getRecallAsync");
+		console.log(response);
+		const araryOfRecalledLots = response.data;
+		console.log("araryOfRecalledLots");
+		console.log(araryOfRecalledLots);
+		// do dfs
+		var frontier = araryOfRecalledLots;
+		console.log("initial frontier:");
+		console.log(frontier);
+		// this.setState({
+		// 	lotsNeedToBeExamined: frontier,
+		// });
+		while(frontier.length > 0){
+			var currentLot = frontier.pop();
+			var currentLotId = currentLot._id;
+			if(idOfLotsAlreadyConsidered.includes(currentLotId)) {
+				continue; //do not consider repeated elements
+			}
+			lotsNeedToBeRecalled = lotsNeedToBeRecalled.concat(currentLot);
+			idOfLotsAlreadyConsidered = idOfLotsAlreadyConsidered.concat(currentLotId);
+			const responseRecurse = await IngredientInterface.getRecallAsync(currentLotId, sessionId);
+			console.log("responseRecurse");
+			console.log(responseRecurse);
+			const araryOfRecalledLotsRecurse = response.data;
+			console.log("araryOfRecalledLotsRecurse");
+			console.log(araryOfRecalledLotsRecurse);
+			frontier = frontier.concat(araryOfRecalledLotsRecurse);
+		}
+		this.setState({
+			recalledLots: lotsNeedToBeRecalled,
+		});
+
+	}
+
 	render() {
-		const {ingredientName, ingredientInfo, selectedVendor, lotNumber,
-			vendorLabelValuePairs} = this.state;
+		const {selectedIngredientName, selectedIngredientObject, selectedVendor, lotNumber,
+			vendorLabelValuePairs, lotLabelValuePairs, ingredientLabelValuePairs, 
+			ingredientIsIntermediate} = this.state;
 		return (
 			<Paper>
-			<p> ingredient name is {ingredientName}</p>
-			{ingredientInfo && <p> ingredient id is {ingredientInfo._id} </p>}
-			{ingredientName && <p> selectedVendor is {selectedVendor} </p>}
-			{ingredientName && selectedVendor && <p> lot number is {lotNumber} </p>}
+			<p> ingredient name is {selectedIngredientName}</p>
+			{selectedIngredientObject && <p> ingredient id is {selectedIngredientObject._id} </p>}
+			{selectedIngredientName && <p> selectedVendor is {selectedVendor} </p>}
+			{selectedIngredientName && (selectedVendor || ingredientIsIntermediate) && <p> lot number is {lotNumber} </p>}
 			<IngredientSelection 
-				setIngredient={this.setIngredient}
+				setIngredient={this.selectIngredient}
+				ingredientLabelValuePairs={ingredientLabelValuePairs}
 			/>
 			{
-				ingredientName && 
+				selectedIngredientName && 
+				!ingredientIsIntermediate &&
 				<VendorSelection
 					vendorLabelValuePairs={vendorLabelValuePairs}
 					setVendor={this.setVendor}
 				/>
+			}
+			{
+				selectedIngredientName && 
+				(selectedVendor || ingredientIsIntermediate) &&
+				<LotSelection
+					lotLabelValuePairs={lotLabelValuePairs}
+					setLot={this.setLot}
+				/>
+				
 			}
 			</Paper>
 		)

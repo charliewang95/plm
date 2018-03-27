@@ -14,7 +14,9 @@ var sessionId = "";
 const MAX_CONTRIBUTORS = 6;
 const MAX_INGREDIENTS = 10;
 const ASYNC_DELAY = 500;
-
+//NOTE: this file is problematic since it does not follow standard of this.state.variable and setState().
+// instead, it uses this.variable =
+//this might cause unexpected bug
 export default class IngredientSelection extends React.PureComponent{
 	constructor(props){
 		super(props);
@@ -22,30 +24,20 @@ export default class IngredientSelection extends React.PureComponent{
 		this.state = {
 			multi: false,
 			value: null,
-			availableIngredientLabelValuePair: [],
-			availableIngredients:[],
+			availableIngredientLabelValuePair: props.ingredientLabelValuePairs,
+			
 		}
 		//binding functions
 		this.onChange = this.onChange.bind(this);
-		this.switchToMulti = this.switchToMulti.bind(this);
-		this.switchToSingle = this.switchToSingle.bind(this);
-		this.fetchAvailableIngredients = this.fetchAvailableIngredients.bind(this);
+		
 		this.getFilteredIngredients = this.getFilteredIngredients.bind(this);
-		this.findIngredientInfo = this.findIngredientInfo.bind(this);
+		
 		//functions from props
 		this.setIngredient = this.props.setIngredient;
 	}
 
-	findIngredientInfo(ingredientName){
-		if (!this.availableIngredients) return -1;
-		for (var i = 0; i < this.availableIngredients.length; i++) {
-      		if (this.availableIngredients[i].name === ingredientName){
-      			console.log("Found an ingredient with name " + ingredientName);
-      			console.log(this.availableIngredients[i]);
-      			return this.availableIngredients[i];
-      		}
-    	}
-    	return -1;
+	componentWillReceiveProps(nextProps) {
+  		this.setState({ availableIngredientLabelValuePair: nextProps.ingredientLabelValuePairs });  
 	}
 
 	onChange (value) {
@@ -55,74 +47,29 @@ export default class IngredientSelection extends React.PureComponent{
 		console.log("Value of ingredient selection changed to");
 		console.log(value);
 		if(value){
-			const ingredientName = value.label;
-			console.log("Ingredient name is extracted to be");
-			console.log(ingredientName); 
-			const ingredientInfo = this.findIngredientInfo(ingredientName);
-			this.setIngredient(ingredientName, ingredientInfo);
+			const ingredientName = value;
+			this.setIngredient(ingredientName);
 		} else {
-			this.setIngredient(null,null);
+			this.setIngredient(null);
 		}
 		
 	}
 
-	switchToMulti () {
-		this.setState({
-			multi: true,
-			value: [this.state.value],
-		});
-	}
-	switchToSingle () {
-		this.setState({
-			multi: false,
-			value: this.state.value[0],
-		});
-	}
 	//dan methods
 	fetchSessionId(){
 		sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
 		console.log("sessionId: " + sessionId);
   	}
 
-  	async fetchAvailableIngredients(){
-  		const response = await IngredientInterface.getAllIngredientsAsync(sessionId);
-  		console.log("response:")
-  		console.log(response);
-  		const ingredients = response;
-  		this.availableIngredients = ingredients;
-  		console.log("ingredients")
-  		console.log(ingredients);
-  		console.log("this.state.availableIngredients:");
-  		console.log(this.availableIngredients);
-  		var intermediateData = [];
 
-  		if(ingredients){
-  			for (var i = 0; i < ingredients.length; i++) {
-      			var singleData = new Object ();
-      			singleData.label = ingredients[i].name;
-      			intermediateData.push(singleData);
-    		}
-  		}
-
-  		console.log("intermediateData:");
-  		console.log(intermediateData);
-    
-    	this.availableIngredientLabelValuePair = intermediateData.map(ingredientName => ({
-  			value: ingredientName.label.toLowerCase(),
-  			label: ingredientName.label,
-		}));
-
-		console.log("availableIngredientLabelValuePair");
-		console.log(this.availableIngredientLabelValuePair);
-  	}
 
 	async componentWillMount(){
 		this.fetchSessionId();
-		await this.fetchAvailableIngredients();
+		
 	}
 
 	getFilteredIngredients (input, callback) {	
-		if(!this.availableIngredientLabelValuePair) {
+		if(!this.state.availableIngredientLabelValuePair) {
 			console.log("availableIngredientLabelValuePair has not been loaded yet")
 			var data = {
 				options: [],
@@ -135,8 +82,8 @@ export default class IngredientSelection extends React.PureComponent{
 		}
 		input = input.toLowerCase();
 		console.log("availableIngredientLabelValuePair:");
-		console.log(this.availableIngredientLabelValuePair);
-		var options = this.availableIngredientLabelValuePair.filter(i => {
+		console.log(this.state.availableIngredientLabelValuePair);
+		var options = this.state.availableIngredientLabelValuePair.filter(i => {
 			return i.value.substr(0, input.length) === input;
 		});
 		console.log("options");
@@ -151,19 +98,20 @@ export default class IngredientSelection extends React.PureComponent{
 	}
 	//
 	render () {
+		const {availableIngredientLabelValuePair} = this.state;
 		return (
 			<div>
 				{/*<h3 className="section-heading">{this.props.label}  <a href="https://github.com/JedWatson/react-select/tree/master/examples/src/components/Contributors.js">(Source)</a></h3>*/}
-				<Select.Async 
-					multi={this.state.multi} 
-					value={this.state.value} 
+				<Select
+					options={availableIngredientLabelValuePair}
+					simpleValue
+					clearable={this.state.clearable}
+					name="selected-state"
+					value={this.state.value}
 					onChange={this.onChange} 
-					// onValueClick={this.gotoContributor} 
-					valueKey="value" 
-					labelKey="label" 
-					loadOptions={this.getFilteredIngredients} 
+					searchable={this.state.searchable} 
 					noResultsText="No results found"
-					placeholder="Type to search for an ingredient"
+					placeholder="Type to search for an ingredient or intermediate product"
 				/>
 			</div>
 		);
