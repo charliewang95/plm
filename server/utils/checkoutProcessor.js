@@ -31,7 +31,6 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
         }
         else {
             validateOrders(items, res, next, function(wSpace, rSpace, fSpace){
-
                 console.log("Orders validated.");
                 addIngredientLots(req, res, next, items, 0, function(){
                     deleteProcessor.process(model, items, '', res, next);
