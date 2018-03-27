@@ -560,11 +560,11 @@ class AdminIngredients extends React.PureComponent {
   async loadAllIngredients(){
     var rawData = await ingredientInterface.getAllIngredientsOnlyAsync(sessionId);
     // var rawData = testData.tablePage.lots_test;
-
+    rawData = rawData.data;
     if(rawData.length==0){
       return
     }
-    console.log("rawData asdfasdfasdf");
+    console.log(rawData);
     console.log(rawData[0].vendors);
     var processedData=[];
     // //loop through ingredient
