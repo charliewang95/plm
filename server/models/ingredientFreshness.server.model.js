@@ -10,6 +10,7 @@ var IngredientFreshnessSchema = new Schema({
 	ingredientNameUnique: {
         type: String,
         required: true,
+        unique: true
     },
     oldestMilli: {
         type: Number,

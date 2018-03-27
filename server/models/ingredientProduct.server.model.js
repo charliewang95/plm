@@ -14,6 +14,10 @@ var IngredientProductSchema = new Schema({
         type: String,
         required: true
     },
+    lotId: {
+        type: String,
+        required: true
+    },
     productName: {
         type: String,
         required: true

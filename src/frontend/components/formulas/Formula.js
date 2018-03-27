@@ -132,7 +132,7 @@ const AddToProdButton = ({selectedFormula, onExecute}) => (
     </Button>
 );
 AddToProdButton.propTypes = {
-  onExecute: PropTypes.func.isRequired,
+  onExecute: PropTypes.func,
 };
 
 const Cell = (props) => {
@@ -204,7 +204,11 @@ class Formula extends React.PureComponent {
 
     this.commitChanges = ({ deleted }) => {
       let { rows } = this.state;
+      console.log("delete formula");
+      console.log(deleted);
+      console.log(this.state.deletingRows);
       this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
+      console.log(this.state.deletingRows);
      // if (deleted) {
      //  const deletedSet = new Set(deleted);
      //  rows = rows.filter(row => !deletedSet.has(row.id));
@@ -216,6 +220,8 @@ class Formula extends React.PureComponent {
     this.cancelDelete = () => this.setState({ deletingRows: [] });
 
     this.deleteRows = () => {
+      console.log("delete formula rows");
+      console.log(this.state.deletingRows);
       const rows = this.state.rows.slice();
 
       this.state.deletingRows.forEach((rowId) => {
@@ -227,7 +233,9 @@ class Formula extends React.PureComponent {
           var formulaId = rows[index]._id;
 
           // TODO: Delete does not work
-         formulaActions.deleteFormula(formulaId, sessionId);
+         formulaActions.deleteFormula(formulaId, sessionId, function(res){
+
+         });
           console.log("delete " );
           console.log(rows[index]._id);
           console.log(sessionId);
@@ -291,7 +299,7 @@ class Formula extends React.PureComponent {
           })),
         ];
       }
-      
+
       console.log(" PROCESSED DATA ")
        console.log(processedData);
       this.setState({rows: processedData});
@@ -468,7 +476,7 @@ class Formula extends React.PureComponent {
       {isAdmin &&
       <div>
         <br></br>
-        Click <a href="./BulkImportEV2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
+        Click <a href="./BulkImportEV3Proposalv2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
       </div>
     }
   </div>

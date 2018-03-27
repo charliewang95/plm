@@ -311,7 +311,7 @@ class AdminIngredients extends React.PureComponent {
       currentPage: 0,
       deletingRows: [],
       pageSize: 10,
-      pageSizes: [5, 10, 0],
+      pageSizes: [10, 50, 100, 500],
       columnOrder: ['name', 'temperatureZone', 'packageNameString', 'numUnitString', 'space', 'vendors'],
       options:[],
       // currentTab: 0,
@@ -458,7 +458,9 @@ class AdminIngredients extends React.PureComponent {
         };
         //TODO: send data to the back end
       }
-
+    console.log("delete ingredient");
+    console.log(deleted);
+    console.log(this.state.deletingRows);
     this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
     };
 
@@ -488,7 +490,8 @@ class AdminIngredients extends React.PureComponent {
           });
         }
       });
-
+      console.log("delete");
+      console.log(this.state.deletingRows);
       this.setState({ rows, deletingRows: [] });
     };
 
@@ -544,24 +547,26 @@ class AdminIngredients extends React.PureComponent {
     });
     this.setState({idToNameMap:map});
   }
-
-  async loadInventoryData(ingredientId, sessionId){
-    console.log("enterasdf");
-    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    var inventoryData = await inventoryInterface.getInventoryAsync(ingredientId, sessionId);
-    console.log("loading inventory");
-    console.log(inventoryData);
-    return inventoryData;
-  }
+  //
+  // async loadInventoryData(ingredientId, sessionId){
+  //   console.log("enterasdf");
+  //   sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+  //   var inventoryData = await inventoryInterface.getInventoryAsync(ingredientId, sessionId);
+  //   console.log("loading inventory");
+  //   console.log(inventoryData);
+  //   return inventoryData;
+  // }
 
   async loadAllIngredients(){
-    var rawData = await ingredientInterface.getAllIngredientsAsync(sessionId);
+    var rawData = await ingredientInterface.getAllIngredientsOnlyAsync(sessionId);
     // var rawData = testData.tablePage.lots_test;
-
+    console.log("ingredients raw Data ");
+    console.log(rawData);
+    rawData = rawData.data;
     if(rawData.length==0){
       return
     }
-    console.log("rawData asdfasdfasdf");
+    console.log(rawData);
     console.log(rawData[0].vendors);
     var processedData=[];
     // //loop through ingredient
@@ -785,7 +790,7 @@ class AdminIngredients extends React.PureComponent {
       {isAdmin &&
       <div>
         <br></br>
-        Click <a href="./BulkImportEV2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
+        Click <a href="./BulkImportEV3Proposalv2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
       </div>
     }
         <br/>

@@ -27,6 +27,7 @@ class LotNumberArray extends Component {
         <div key={index}>
           <FormControl style={{width:50}}>
             <Input
+              required={true}
               type="number"
               value={item.package}
               onChange={(event)=>{this.props.updateQuantity(event, index);}}
@@ -34,6 +35,7 @@ class LotNumberArray extends Component {
          </FormControl>
          <FormControl style={{marginLeft:10}}>
           <Input
+            required={true}
             value={item.lotNumber}
             onChange={(event)=>{this.props.updateLotNumber(event, index);}}
           />
