@@ -31,7 +31,7 @@ const styles = {
       width: 100,
     },
     unitsProvided:{
-      width: 140,
+      width: 200,
       marginRight: 30
     },
     productType:{
@@ -337,13 +337,12 @@ async loadFormula(){
             </FormGroup>
             <br></br>
             <FormControl required style={styles.unitsProvided}>
-              <InputLabel htmlFor="unitsProvided">Amount Produced</InputLabel>
+              <InputLabel htmlFor="unitsProvided">{(!this.state.isIntermediate)?'Product Units':'Amount Produced'}</InputLabel>
               <Input
                 id="unitsProvided"
                 value={this.state.unitsProvided}
                 onChange={(event)=>this.handleUnitsProvidedChange(event)}
                 disabled = {this.state.isDisabled}
-                margin="normal"
                 endAdornment={<InputAdornment position="end">{(!this.state.isIntermediate)?'':(this.state.nativeUnit)} </InputAdornment>}
               />
             </FormControl>
