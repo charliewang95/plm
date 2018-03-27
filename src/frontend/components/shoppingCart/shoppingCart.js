@@ -39,10 +39,12 @@ import {cartData, ingredientData} from './dummyData';
 import LotNumberButton from '../admin/LotNumberSelector/LotNumberButton.js';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
 import PubSub from 'pubsub-js';
+import ViewLotButton from '../admin/LotNumberSelector/ViewLotButton.js';
 
 // TODO: Get the user ID
 const READ_FROM_DATABASE = true;
 var isAdmin= "";
+var isManager= "";
 var userId = "";
 var sessionId = "";
 
@@ -104,11 +106,13 @@ const LotNumberFormatter = (props) =>{
   console.log("Formatter");
   console.log(props.row.lotAssigned);
   const quantity = props.row.lotNumberArray.packageNum;
+  const totalAssigned = props.row.totalAssigned;
+  const deepCopy = props.row.lotNumberArray.ingredientLots;
 
   if(!props.row.lotAssigned){
     return <p>{quantity} / <font color="red">Actions Needed</font></p>
   }else{
-    return <p>{quantity} / <font color="green">Completed</font></p>
+    return <p>{quantity} / <font color="green">Completed</font> <ViewLotButton totalAssigned = {totalAssigned} initialArray={deepCopy} quantity = {quantity}></ViewLotButton></p>
   }
 };
 
@@ -375,12 +379,9 @@ class ShoppingCart extends React.Component {
       console.log("checkout" );
       console.log(" ORDERED DATA " + this.state.rows);
        var temp = this;
-
       await orderActions.checkoutOrder(sessionId, function(res){
         if (res.status == 400) {
             if (!alert(res.data)) {
-                //window.location.reload();
-                //temp.setState({rows:rows});
             }
         } else {
           // temp.setState({snackBarMessage : "Checkout successful!"});
@@ -402,6 +403,7 @@ class ShoppingCart extends React.Component {
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     userId =  JSON.parse(sessionStorage.getItem('user'))._id;
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
     this.loadCartData();
   }
 
@@ -409,6 +411,7 @@ class ShoppingCart extends React.Component {
   sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
       userId =  JSON.parse(sessionStorage.getItem('user'))._id;
       isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+      isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
     this.loadCartData();
     // TODO: Change later ?
   }
@@ -528,7 +531,7 @@ class ShoppingCart extends React.Component {
               onRowChangesChange={this.changeRowChanges}
               onCommitChanges={this.commitChanges}/>
 
-          {isAdmin && <TableEditRow
+          {(isAdmin || isManager)&& <TableEditRow
             cellComponent={EditCell}/>
         }
 

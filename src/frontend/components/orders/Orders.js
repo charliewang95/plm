@@ -141,6 +141,7 @@ class Orders extends React.PureComponent{
         vendorName: row.vendorName,
       })),
     ];
+
     console.log("Vendor options " + JSON.stringify(parsedVendorOptions));
     this.setState({vendor_options:parsedVendorOptions});
     this.setState({vendorId:parsedVendorOptions[0].value});

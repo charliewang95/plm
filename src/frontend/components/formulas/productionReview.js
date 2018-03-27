@@ -45,6 +45,8 @@ class ProductionReview extends React.Component {
   constructor(props) {
     super(props);
     // var dummyObject = new Object();
+    // const selectedFormula = (props.location.state.selectedFormula)?(props.location.state.selectedFormula):dummyObject;
+
     this.state = {
       columns:[],
       formulaColumns: [
@@ -63,6 +65,7 @@ class ProductionReview extends React.Component {
           {name: "delta" , title:'Additional Required Amount'},
         ],
         rows:[],
+        
         addedQuantity:(props.location.state) ? (props.location.state.selectedFormula.unitsProvided) : '',
         // needToOrderIngredients:false,
         ingredientsToOrder:[],
