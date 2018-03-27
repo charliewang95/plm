@@ -217,7 +217,7 @@ class PersistentDrawer extends React.Component {
     return (
       <div className={classes.root}>
         <div className={classes.appFrame}>
-          {this.state.loggedIn && <AppBar
+          {this.state.loggedIn && <AppBar style={{marginLeft: 180}}
             className={classNames(classes.appBar, {
               [classes.appBarShift]: open,
               [classes[`appBarShift-${anchor}`]]: open,
@@ -232,10 +232,10 @@ class PersistentDrawer extends React.Component {
               >
                 <MenuIcon />
               </IconButton>
-              <Typography type="title" className={classes.flex} color="inherit" noWrap>
+              <Typography type="title" className={classes.flex} color="inherit" style={{marginLeft: 180}} noWrap>
                 Real Producers
               </Typography>
-              <Button raised color="secondary" onClick={this.logout} component={Link} to="/"><ExitToApp className={classes.icon}/> Logout</Button>
+              <Button raised color="secondary" style={{marginRight: 30}} onClick={this.logout} component={Link} to="/"><ExitToApp className={classes.icon}/> Logout</Button>
             </Toolbar>
           </AppBar>}
           {before}
