@@ -95,7 +95,6 @@ exports.getLatestInfo = function(res, next, ingredientName, callback) {
     IngredientFreshness.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, fresh){
         if (err) return next(err);
         else if (!fresh) {
-            callback();
             return res.status(400).send('Ingredient '+ingredientName+' does not exist. 004');
         }
         else {
