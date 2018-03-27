@@ -20,7 +20,7 @@ import axios from 'axios'
  * amountInNativeUnitPerPackage: number, amount in native unit per package.
 **/
 function packIntoJson(name, packageType, temperatureZone, vendors, moneySpent,
-	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space){
+	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, isIntermediate){
 	var ingredientJson = new Object();
 	ingredientJson.name = name;
 	ingredientJson.packageName = packageType;
@@ -32,7 +32,7 @@ function packIntoJson(name, packageType, temperatureZone, vendors, moneySpent,
 	ingredientJson.numUnit = numUnit;
 	ingredientJson.space = space;
 	ingredientJson.numUnitPerPackage = amountInNativeUnitPerPackage;
-	ingredientJson.isIntermediate = false;
+	ingredientJson.isIntermediate = isIntermediate;
 	console.log("An ingredient with the following details has been prepared to be \
 		sent to the back-end:");
 	console.log(ingredientJson);
@@ -47,10 +47,10 @@ function packIntoJson(name, packageType, temperatureZone, vendors, moneySpent,
  * callback: function, function to be executed after attempting to add the ingredient to the database
  */
 async function addIngredient(name, packageType, temperatureZone, vendors, moneySpent,
-	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, sessionId, callback) {
+	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, isIntermediate, sessionId, callback) {
 	console.log("add ingredient interface");
 	var newIngredient = packIntoJson(name, packageType, temperatureZone, vendors, moneySpent,
-	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space);
+	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, isIntermediate);
 	//return await ingredientActions.addIngredient(newIngredient, sessionId);
 	ingredientActions.addIngredient(newIngredient, sessionId, function(res){
 	    callback(res);
@@ -137,9 +137,9 @@ async function editLotAsync(lotId, quantity, sessionId) {
  * callback: function, the function that will be executed after attempting to update the ingredient
  */
 async function updateIngredient(ingredientId, name, packageType, temperatureZone, vendors, moneySpent,
-	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, sessionId, callback) {
+	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, isIntermediate, sessionId, callback) {
 	var updatedIngredient = packIntoJson(name, packageType, temperatureZone, vendors, moneySpent,
-	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space);
+	moneyOnProduction, nativeUnit, amountInNativeUnitPerPackage, numUnit, space, isIntermediate);
 	//return await ingredientActions.updateIngredient(ingredientId, sessionId, updatedIngredient);
 	ingredientActions.updateIngredient(ingredientId, sessionId, updatedIngredient, function(res){
 	    callback(res);

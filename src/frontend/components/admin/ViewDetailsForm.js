@@ -266,6 +266,7 @@ class AddIngredientForm extends React.Component{
       moneyProd: details.moneyProd,
       numUnit: details.numUnit,
       space: details.space,
+      isIntermediate: details.isIntermediate,
     });
 
     this.computeVendorString();
@@ -284,9 +285,10 @@ class AddIngredientForm extends React.Component{
       alert(" Quantity must be a positive number");
       return false;
       // Add validation for lotNumberArray and quantity
-    }else if (!this.checkQuantityMatchLotArray()){
-      alert("the total quantity must equal to the sum of quantities in lots.")
     }
+//    else if (!this.checkQuantityMatchLotArray()){
+//      alert("the total quantity must equal to the sum of quantities in lots.")
+//    }
     else if(this.state.temperatureZone==null || this.state.temperatureZone==''){
       alert("Please fill out temperature.");
       return false;
@@ -331,7 +333,7 @@ class AddIngredientForm extends React.Component{
       var numUnit = Number(temp.state.numUnit);
       await ingredientInterface.addIngredient(temp.state.name, temp.state.packageName, temp.state.temperatureZone,
         temp.state.vendorsArray, temp.state.moneySpent, temp.state.moneyProd, temp.state.nativeUnit,
-        temp.state.numUnitPerPackage, numUnit, temp.state.space, sessionId, function(res){
+        temp.state.numUnitPerPackage, temp.state.numUnit, temp.state.space, false, sessionId, function(res){
                   if (res.status == 400) {
                       alert(res.data);
                   } else if (res.status == 500) {
@@ -356,7 +358,7 @@ class AddIngredientForm extends React.Component{
       var numUnit = Number(temp.state.numUnit);
       await ingredientInterface.updateIngredient(temp.state.ingredientId, temp.state.name, temp.state.packageName,
                 temp.state.temperatureZone, temp.state.vendorsArray, temp.state.moneySpent, temp.state.moneyProd,
-                temp.state.nativeUnit, temp.state.numUnitPerPackage, numUnit, temp.state.space, sessionId, function(res){
+                temp.state.nativeUnit, temp.state.numUnitPerPackage, numUnit, temp.state.space, temp.state.isIntermediate, sessionId, function(res){
                   if (res.status == 400) {
                       alert(res.data);
                   } else if (res.status == 500) {
@@ -367,16 +369,20 @@ class AddIngredientForm extends React.Component{
                     temp.setState({snackBarOpen:true});
                     // alert(" Ingredient Successfully edited! ");
                   }
-              });
-      temp.setState({isDisabled:true});
 
-      //Update lots lotId,
-      if(temp.state.lotNumberArray.length > 0){
-        for(var i =0; i < temp.state.lotNumberArray.length-1;i++){
-          await ingredientInterface.editLotAsync(lotIdMap[temp.state.lotNumberArray[i].lotNumber],
-                    temp.state.lotNumberArray[i].numUnit,sessionId );
-        }
-      }
+                  temp.setState({isDisabled:true});
+
+                        //Update lots lotId,
+                        if(temp.state.lotNumberArray.length > 0){
+
+                          for(var i =0; i < temp.state.lotNumberArray.length;i++){
+                            console.log('edit');
+                            ingredientInterface.editLotAsync(lotIdMap[temp.state.lotNumberArray[i].lotNumber],
+                                      temp.state.lotNumberArray[i].numUnit,sessionId );
+                          }
+                        }
+              });
+
     }
   }
 
