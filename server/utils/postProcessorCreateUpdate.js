@@ -14,9 +14,9 @@ exports.process = function(model, item, itemId, res, next) {
     else if (model == Ingredient) {
         processIngredient(item, itemId, res, next);
     }
-//    else if (model == Cart) {
-//        processCart(item, res, next);
-//    }
+    else if (model == Formula) {
+        processCart(item, itemId, res, next);
+    }
     else if (model == Storage) {
         processStorage(item, itemId, res, next);
     }
@@ -161,4 +161,24 @@ var processVendor = function(item, itemId, res, next) {
             }
         }
     });
+}
+
+var processFormula = function(item, itemId, res, next){
+    var formulaName = item.name;
+    Ingredient.findOne({nameUnique: formulaName.toLowerCase()}, function(err, ingredient){
+        if (err) return next(err);
+        else if (!ingredient && item.isIntermediate) {
+            var newIngredient = new Ingredient();
+            newIngredient.name = formulaName;
+            newIngredient.nameUnique = formulaName.toLowerCase();
+            newIngredient.packageName = item.packageName;
+            newIngredient.temperatureZone = item.temperatureZone;
+            newIngredient.nativeUnit = item.nativeUnit;
+            newIngredient.numUnitPerPackage = item.numUnitPerPackage;
+            newIngredient.isIntermediate = true;
+            newIngredient.save(function(err){
+                if (err) return next(err);
+            })
+        }
+    })
 }
