@@ -42,6 +42,7 @@ import SnackBarDisplay from '../snackBar/snackBarDisplay';
 // TODO: Get the user ID
 const READ_FROM_DATABASE = true;
 var isAdmin= "";
+var isManager= "";
 var userId = "";
 var sessionId = "";
 
@@ -398,6 +399,7 @@ class ShoppingCart extends React.Component {
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     userId =  JSON.parse(sessionStorage.getItem('user'))._id;
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
     this.loadCartData();
   }
 
@@ -405,6 +407,7 @@ class ShoppingCart extends React.Component {
   sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
       userId =  JSON.parse(sessionStorage.getItem('user'))._id;
       isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+      isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
     this.loadCartData();
     // TODO: Change later ?
   }
@@ -525,7 +528,7 @@ class ShoppingCart extends React.Component {
               onRowChangesChange={this.changeRowChanges}
               onCommitChanges={this.commitChanges}/>
 
-          {isAdmin && <TableEditRow
+          {(isAdmin || isManager)&& <TableEditRow
             cellComponent={EditCell}/>
         }
 
