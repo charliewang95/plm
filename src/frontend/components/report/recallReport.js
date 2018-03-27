@@ -318,6 +318,7 @@ export default class RecallReport extends React.PureComponent{
 				continue; //do not consider repeated elements
 			}
 			lotsNeedToBeRecalled = lotsNeedToBeRecalled.concat(currentLot);
+
 			idOfLotsAlreadyConsidered.push(currentLotId);
 			const lotNumber = currentLot.lotNumber;
 			const ingredientName = currentLot.productName;

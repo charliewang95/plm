@@ -105,6 +105,8 @@ class LotNumberSelector extends Component {
     var quantity = event.target.value;
     if(index>=0){
       const re = /^\d*\.?\d*$/;
+      console.log('update quantity in selector');
+      console.log(quantity);
       if(!re.test(quantity)){
         alert("Quantity must be a positive integer");
       }else{
