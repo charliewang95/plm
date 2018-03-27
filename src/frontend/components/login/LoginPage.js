@@ -37,7 +37,7 @@ const styles = {
       padding: 50,
       width: 500,
       textAlign: 'center',
-      marginLeft: 'auto',
+      marginLeft: 630,
       marginRight: 'auto',
       marginTop: 50
     },
