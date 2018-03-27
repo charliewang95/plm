@@ -24,7 +24,7 @@ import ExitToApp from 'material-ui-icons/ExitToApp';
 import {MenuList} from 'material-ui/Menu';
 import MainList from './MainList'
 
-const drawerWidth = 220;
+const drawerWidth = 230;
 
 const styles = theme => ({
   root: {
@@ -94,12 +94,7 @@ const styles = theme => ({
       marginTop: 64,
     },
   },
-  'content-left': {
-    marginLeft: -drawerWidth,
-  },
-  'content-right': {
-    marginRight: -drawerWidth,
-  },
+
   contentShift: {
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,
@@ -189,7 +184,7 @@ class PersistentDrawer extends React.Component {
     const { anchor, open } = this.state;
     const drawer = user && (
        <Drawer
-        type="persistent"
+        type="permanent"
         classes={{
           paper: classes.drawerPaper,
         }}
@@ -198,9 +193,9 @@ class PersistentDrawer extends React.Component {
       >
         <div className={classes.drawerInner}>
           <div className={classes.drawerHeader}>
-            <IconButton onClick={this.handleDrawerClose}>
+            {/* <IconButton onClick={this.handleDrawerClose}>
               {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-            </IconButton>
+            </IconButton> */}
           </div>
           <Divider />
           {isAdmin && <List className={classes.list}>{UserListItems}</List> }
