@@ -39,9 +39,9 @@ class LotNumberArray extends Component {
             onChange={(event)=>{this.props.updateLotNumber(event, index);}}
           />
          </FormControl>
-          <IconButton aria-label="Delete" onClick={()=>{this.props.deleteLotNumberItem(index);}}>
+          {/* <IconButton aria-label="Delete" onClick={()=>{this.props.deleteLotNumberItem(index);}}>
             <RemoveCircleIcon />
-          </IconButton>
+          </IconButton> */}
 
         </div>
       ))}
