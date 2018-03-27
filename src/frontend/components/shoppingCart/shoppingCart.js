@@ -272,7 +272,7 @@ class ShoppingCart extends React.Component {
                     rows[i].lotAssigned = (packageNum-sum)==0;
                   }else{
                      rows[i].lotAssigned = false;
-                  } 
+                  }
                 orderActions.updateOrder(rows[i]._id, userId,rows[i].ingredientId,rows[i].ingredientName,
                         vendor, packageNum ,price,ingredientLots,sessionId,function(res){
                         console.log(res);
@@ -431,53 +431,55 @@ class ShoppingCart extends React.Component {
       var singleIngredientData = {};
 
       // TODO: Get vendors from ingredients interface
-      if(READ_FROM_DATABASE){
-        //TODO: get ingredientDetails from back End
+      try{
         singleIngredientData = await ingredientActions.getIngredientAsync(rawData[i].ingredientId, sessionId);
         console.log(rawData[i].ingredientId);
-        console.log(singleIngredientData);
-      }else{
-        singleIngredientData = ingredientData[i];
+        singleIngredientData.vendors.sort(function(a, b) {return a.price - b.price });
+
+        console.log(" ingredient DATA " + JSON.stringify(singleIngredientData));
+        
+          /* Parse vendors Options */
+          var parsedVendorOptions = [...singleIngredientData.vendors.map((row,index)=> ({
+              value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
+              price: row.price, vendorName:row.vendorName,
+            })),
+          ];
+          // console.log(" Vendors Select " + parsedVendorOptions);
+
+          singleData.vendors = parsedVendorOptions[0].label;
+          singleData.vendorOptions= parsedVendorOptions;
+          singleData.selectedVendorName= parsedVendorOptions[0].vendorName;
+          singleData.selectedVendorPrice= parsedVendorOptions[0].price;
+          // Id is the value
+          singleData.selectedVendorId = parsedVendorOptions[0].value;
+          singleData.lotNumberArray = new Object();
+          singleData.lotNumberArray.ingredientLots = rawData[i].ingredientLots;
+          singleData.lotNumberArray.packageNum = rawData[i].packageNum;
+
+
+          var sum = 0;
+          if(rawData[i].ingredientLots.length>0){
+            console.log("this is the ingredientLots");
+            for(var j=0; j<rawData[i].ingredientLots.length;j++){
+              sum+=parseInt(rawData[i].ingredientLots[j].package);
+            }
+          }
+          singleData.totalAssigned = sum;
+          singleData.lotAssigned = (rawData[i].packageNum-sum)==0;
+          if(!singleData.lotAssigned){
+            this.setState({canCheckout:false});
+          }
+          console.log("this is the single data");
+          console.log(singleData);
+          processedData.push(singleData);
+      }catch(e){
+        console.log('An error passed to the front end!')
+        alert(e);
       }
-      console.log(" ingredient DATA " + JSON.stringify(singleIngredientData));
+
 
       // Sort the vendors
-      singleIngredientData.vendors.sort(function(a, b) {return a.price - b.price });
 
-        /* Parse vendors Options */
-        var parsedVendorOptions = [...singleIngredientData.vendors.map((row,index)=> ({
-            value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
-            price: row.price, vendorName:row.vendorName,
-          })),
-        ];
-        // console.log(" Vendors Select " + parsedVendorOptions);
-
-        singleData.vendors = parsedVendorOptions[0].label;
-        singleData.vendorOptions= parsedVendorOptions;
-        singleData.selectedVendorName= parsedVendorOptions[0].vendorName;
-        singleData.selectedVendorPrice= parsedVendorOptions[0].price;
-        // Id is the value
-        singleData.selectedVendorId = parsedVendorOptions[0].value;
-        singleData.lotNumberArray = new Object();
-        singleData.lotNumberArray.ingredientLots = rawData[i].ingredientLots;
-        singleData.lotNumberArray.packageNum = rawData[i].packageNum;
-
-
-        var sum = 0;
-        if(rawData[i].ingredientLots.length>0){
-          console.log("this is the ingredientLots");
-          for(var j=0; j<rawData[i].ingredientLots.length;j++){
-            sum+=parseInt(rawData[i].ingredientLots[j].package);
-          }
-        }
-        singleData.totalAssigned = sum;
-        singleData.lotAssigned = (rawData[i].packageNum-sum)==0;
-        if(!singleData.lotAssigned){
-          this.setState({canCheckout:false});
-        }
-        console.log("this is the single data");
-        console.log(singleData);
-        processedData.push(singleData);
   }
     // console.log("Vendor Options " + JSON.stringify(parsedVendorOptions));
 

@@ -111,7 +111,7 @@ class Orders extends React.PureComponent{
     }
 
 
-  async handleIngredientChange(option) {
+ async handleIngredientChange(option) {
     var packageNameHelpText = option.numUnitPerPackage + ' ' + option.nativeUnit + ' / ' +
     this.packageWeight(option.packageName) + ' sqft';
     this.setState({helpText:packageNameHelpText});
@@ -179,6 +179,7 @@ class Orders extends React.PureComponent{
     //TODO: Send data to back end
    try{
      if(temp.isValid()){
+
        await orderActions.addOrder(userId,temp.state.ingredientId,temp.state.ingredientName,
        temp.state.vendorName,parseInt(temp.state.packageNum,10),temp.state.price,[], sessionId,function(res){
            if (res.status == 400) {
@@ -256,9 +257,8 @@ class Orders extends React.PureComponent{
   isValid(){
     if(!this.state.ingredientName){
       alert(" Please select an ingredient");
-  }else if(!this.state.vendorName){
-      alert(" Please select a vendor.");
-    }else{
+      return false;
+  }else{
       return true;
     }
   }
@@ -305,7 +305,7 @@ class Orders extends React.PureComponent{
                   onChange = {(event) => this.handleQuantityChange(event)}
                   margin="dense"
               />
-              <div style = {styles.buttons}>
+              {/* <div style = {styles.buttons}>
                 <p><font size="3">Vendor</font></p>
                 <Select
                   required
@@ -315,7 +315,7 @@ class Orders extends React.PureComponent{
                   value = {vendorId}
                   placeholder="Type to select a Vendor..."
                 />
-              </div>
+              </div> */}
               <br></br>
               <br></br>
               <Divider></Divider>
@@ -328,6 +328,7 @@ class Orders extends React.PureComponent{
                     color="primary"
                     // component = {Link} to = "/vendors" //commented out because it overrides onSubmit
                     type="Submit"
+                    disabled = {this.state.packageNum==0 || this.state.ingredientName==''}
                     primary="true"> ORDER </RaisedButton>
                     <RaisedButton raised color = "secondary"
                     style={styles.saveButton}
