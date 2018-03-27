@@ -487,8 +487,8 @@ class AdminIngredients extends React.PureComponent {
                 } else {
                     // alert(" Ingredient successfully deleted ! ");
                     rows.splice(index, 1);
-                    PubSub.publish('showMessage', ' Ingredient successfully deleted !' );
-                    window.location.reload();
+                    //window.location.reload();
+                    PubSub.publish('showMessageAlt', ' Ingredient successfully deleted !' );
                 }
           });
         }

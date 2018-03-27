@@ -170,7 +170,7 @@ class Vendors extends React.PureComponent
                   temp.setState({rows:oldRows});
                 }
             }else{
-              PubSub.publish('showMessage', 'vendor successfully edited!' );
+              PubSub.publish('showMessage', 'Vendor successfully edited!' );
             }
           });
         }
@@ -195,7 +195,7 @@ class Vendors extends React.PureComponent
                     window.location.reload();
                   }
               }else{
-                PubSub.publish('showMessage', 'vendor successfully deleted!' );
+                PubSub.publish('showMessage', 'Vendor successfully deleted!' );
               }
           });
           // removes data from the table
