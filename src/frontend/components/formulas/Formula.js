@@ -347,6 +347,7 @@ class Formula extends React.PureComponent {
           let form = new FormData();
           form.append('file', file);
           console.log(form);
+          
            await uploadInterface.uploadIntermediate(form, sessionId, function(res){
                 if (res.status == 400) {
                     if (!alert(res.data))
