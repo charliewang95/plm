@@ -4,6 +4,7 @@ var Log = mongoose.model('Log');
 var Storage = mongoose.model('Storage');
 var Formula = mongoose.model('Formula');
 var Vendor = mongoose.model('Vendor');
+var ProductionLine = mongoose.model('ProductionLine');
 var Ingredient = mongoose.model('Ingredient');
 var modifierCreateUpdate = require('./modifierCreateUpdate');
 //var modifierDelete = require('./modifierDelete');

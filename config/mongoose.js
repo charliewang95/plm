@@ -15,6 +15,7 @@ module.exports = function() {
     require('../server/models/ingredientLot.server.model');
     require('../server/models/ingredientProduct.server.model');
     require('../server/models/ingredientFreshness.server.model');
+    require('../server/models/productionLine.server.model');
 
 	return db;
 };

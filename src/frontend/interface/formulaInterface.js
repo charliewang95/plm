@@ -109,6 +109,10 @@ async function checkoutFormula(action, formulaId, quantity, sessionId, callback)
      });
 };
 
+async function getAllFormulaNamesAsync(sessionId) {
+   const res = await axios.get('/formulas/formulaNames/user/'+sessionId);
+   return res;
+}
 
 //export functions above for use by other modules
-export { addFormula, getAllFormulasAsync, getFormulaAsync, updateFormula, deleteFormula, checkoutFormula};
+export { addFormula, getAllFormulasAsync, getFormulaAsync, updateFormula, deleteFormula, checkoutFormula, getAllFormulaNamesAsync};
