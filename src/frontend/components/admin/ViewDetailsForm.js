@@ -379,23 +379,25 @@ class AddIngredientForm extends React.Component{
                   } else if (res.status == 500) {
                       alert('Ingredient name already exists');
                   } else {
-
-                    // temp.setState({snackBarMessage : "Ingredient Successfully edited! "});
-                    // temp.setState({snackBarOpen:true});
-                    // alert(" Ingredient Successfully edited! ");
-                    PubSub.publish('showMessage', 'Ingredient Successfully edited!' );
+                    // Move edit lot here
+                    if(temp.state.lotNumberArray.length > 0){
+                      for(var i =0; i < temp.state.lotNumberArray.length;i++){
+                        console.log('edit');
+                        ingredientInterface.editLotAsync(lotIdMap[temp.state.lotNumberArray[i].lotNumber],
+                                  temp.state.lotNumberArray[i].numUnit,sessionId );
+                      }
+                    }
+                  PubSub.publish('showMessage', 'Ingredient Successfully edited!' );
                   }
 
                   temp.setState({isDisabled:true});
 
                         //Update lots lotId,
-                        if(temp.state.lotNumberArray.length > 0){
 
-                          for(var i =0; i < temp.state.lotNumberArray.length;i++){
-                            console.log('edit');
-                            ingredientInterface.editLotAsync(lotIdMap[temp.state.lotNumberArray[i].lotNumber],
-                                      temp.state.lotNumberArray[i].numUnit,sessionId );
-                          }
+
+                          // Wait for the check in the back end
+                          // Do the
+
                         }
               });
     }
