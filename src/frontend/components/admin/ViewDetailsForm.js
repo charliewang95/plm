@@ -20,6 +20,7 @@ import SnackBarDisplay from '../snackBar/snackBarDisplay.js';
 import { Redirect } from 'react-router';
 import testData from './testIngredients.js';
 import PubSub from 'pubsub-js';
+import { ToastContainer, toast } from 'react-toastify';
 
 /* Replace with the data from the back end */
 const ingredient_options = [
@@ -310,7 +311,8 @@ class AddIngredientForm extends React.Component{
     }
     else if((!this.state.isIntermediate)&&
             (this.state.vendorsArray.length==0 || this.state.vendorsArray == null)){
-      alert("Please add a vendor.");
+      //alert("Please add a vendor.");
+      PubSub.publish('showAlert', 'Vendors must be filled' );
       return false;
     }
     else if (!(/^[A-z]+$/).test(this.state.nativeUnit)){
@@ -435,7 +437,10 @@ class AddIngredientForm extends React.Component{
          var computeSpace = Math.ceil(this.state.numUnit/event.target.value) * this.packageSpace(this.state.packageName);
          this.setState({space: computeSpace});
       }else{
-        alert("Quantity must be a positive number");
+        //PubSub.publish('showMessage', 'Quantity must be a positive number' );
+        toast.error("Quantity must be a positive number", {
+          position: toast.POSITION.TOP_RIGHT
+        });
       }
   }
 

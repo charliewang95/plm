@@ -29,7 +29,8 @@ import * as productActions from '../../interface/productInterface';
 
 import * as testConfig from '../../../resources/testConfig.js';
 import productData from './testData';
-
+import { CircularProgress } from 'material-ui/Progress';
+import { LinearProgress } from 'material-ui/Progress';
 
 var pickerStyle = {
   color: 'white',
@@ -86,6 +87,7 @@ class Product extends React.PureComponent {
       currentPage: 0,
       pageSize: 10,
       pageSizes: [100, 250, 500],
+      loading: true,
     };
 
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
@@ -147,7 +149,9 @@ class Product extends React.PureComponent {
 
 
   componentDidMount() {
-    this.loadProductInfo();
+    var temp = this;
+    setTimeout(function(){ temp.loadProductInfo(); temp.setState({loading: false})}, 1000);
+    
   }
 
   async loadProductInfo(){
@@ -190,7 +194,7 @@ class Product extends React.PureComponent {
       pageSize, pageSizes, currentPage} = this.state;
 
     return (
-      <Paper>
+      <Paper style={{ position: 'relative' }}>
         <div> Start Date: </div>
           <DatePickerInput style={pickerStyle}
             readOnly = {true}
@@ -206,13 +210,16 @@ class Product extends React.PureComponent {
             value={this.state.endDate}
             className='my-custom-datepicker-component'
           />
-
+          <br/>
+             {this.state.loading && <LinearProgress/>}
+          <br/>
         <Grid
           allowColumnResizing = {true}
           rows={rows}
           columns={columns}
           getRowId={getRowId}
         >
+
           <FilteringState defaultFilters={[]} />
           <IntegratedFiltering />
           <PagingState
@@ -223,9 +230,13 @@ class Product extends React.PureComponent {
           />
           <IntegratedPaging />
 
-          <Table cellComponent={Cell}/>
+          <Table cellComponent={Cell}>
+                  
+          </Table>
           <TableHeaderRow />
+
           <TableFilterRow />
+
           <PagingPanel
             pageSizes={pageSizes}
           />

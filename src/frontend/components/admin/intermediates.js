@@ -172,7 +172,7 @@ class Intermediates extends React.PureComponent {
     };
 
     this.cancelDelete = () => this.setState({ deletingRows: [] });
-
+    var tempThis = this;
     this.deleteRows = () => {
       const rows = this.state.rows.slice();
       this.state.deletingRows.forEach((rowId) => {
@@ -188,10 +188,10 @@ class Intermediates extends React.PureComponent {
                 if (res.status == 400) {
                     alert(res.data);
                 } else {
+                    rows.splice(index, 1);
+                    tempThis.loadAllIngredients();
                     PubSub.publish('showMessage', ' Ingredient Successfully deleted!' );
                     // alert(" Ingredient successfully deleted ! ");
-                    rows.splice(index, 1);
-                    window.location.reload();
                 }
           });
         }

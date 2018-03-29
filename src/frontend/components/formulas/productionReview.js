@@ -211,11 +211,12 @@ class ProductionReview extends React.Component {
          if (res.status == 400) {
             alert(res.data);
          } else {
-
+             PubSub.publish('showMessage', ' Successfully added to production !' );
+            // window.location.reload();
             // alert('Successfully added to production .');
          }
       });
-      window.location.reload();
+      
     // event.stopPropagation();
   };
 
