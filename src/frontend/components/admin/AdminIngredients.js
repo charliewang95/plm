@@ -376,12 +376,10 @@ class AdminIngredients extends React.PureComponent {
           added[0].vendorsArray, 0, 0, added[0].nativeUnit, added[0].numUnitPerPackage, false, sessionId, function(res){
             if (res.status == 400) {
                 if (!alert(res.data))
-                    //window.location.reload();
                     temp.setState({rows:rows});
 
             } else if (res.status == 500) {
                 if (!alert('Cannot add ingredient (ingredient already exists/one or more fields are empty)'))
-                    //window.location.reload();
                     temp.setState({rows:rows});
           }else{
             // rows = [...rows,added[0]];
@@ -467,7 +465,7 @@ class AdminIngredients extends React.PureComponent {
     };
 
     this.cancelDelete = () => this.setState({ deletingRows: [] });
-
+    var temp = this;
     this.deleteRows = () => {
       const rows = this.state.rows.slice();
 
@@ -481,14 +479,19 @@ class AdminIngredients extends React.PureComponent {
           var packageName = rows[index].packageName;
           console.log("delete");
           console.log(rows[index].ingredientId);
-          ingredientInterface.deleteIngredient(rows[index].ingredientId, sessionId, function(res){
+
+          const tempId = rows[index].ingredientId;
+         // rows.splice(index, 1);
+         
+          ingredientInterface.deleteIngredient(tempId, sessionId, function(res){
                 if (res.status == 400) {
                     alert(res.data);
+                   
                 } else {
                     // alert(" Ingredient successfully deleted ! ");
                     rows.splice(index, 1);
-                    //window.location.reload();
-                    PubSub.publish('showMessageAlt', ' Ingredient successfully deleted !' );
+                    temp.loadAllIngredients();
+                    PubSub.publish('showMessage', ' Ingredient successfully deleted !' );
                 }
           });
         }
@@ -520,6 +523,10 @@ class AdminIngredients extends React.PureComponent {
 
   componentDidMount(){
     //this.createMap();
+  }
+
+  componentDidUpdate(){
+   // this.loadAllIngredients();
   }
 
   async loadCodeNameArray(){

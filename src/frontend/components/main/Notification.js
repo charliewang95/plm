@@ -47,16 +47,7 @@ class Notification extends React.Component {
       this.setState({open: true});
       this.setState({currentMessage: message});
     });
-
-     var listenerAlt = PubSub.subscribe( 'showMessageAlt', (subscribe, message) => {
-            window.location.reload();
-      console.log("notification is called");
-      console.log(message);
-      console.log(subscribe);
-      this.setState({open: true});
-      this.setState({currentMessage: message});
-
-    });
+      
   }
 
   render() {
