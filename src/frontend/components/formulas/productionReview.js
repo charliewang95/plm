@@ -212,7 +212,7 @@ class ProductionReview extends React.Component {
             alert(res.data);
          } else {
              PubSub.publish('showMessage', ' Successfully added to production !' );
-             window.location.reload();
+            // window.location.reload();
             // alert('Successfully added to production .');
          }
       });

@@ -435,6 +435,8 @@ class ShoppingCart extends React.Component {
       singleData.packageNum = rawData[i].packageNum;
       singleData.ingredientId = rawData[i].ingredientId;
       singleData._id = rawData[i]._id;
+      console.log("shopping cart rawData");
+      console.log(rawData[i]);
       var singleIngredientData = {};
 
       // TODO: Get vendors from ingredients interface
