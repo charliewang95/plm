@@ -65,7 +65,7 @@ class ProductionReview extends React.Component {
           {name: "delta" , title:'Additional Required Amount'},
         ],
         rows:[],
-        
+
         addedQuantity:(props.location.state) ? (props.location.state.selectedFormula.unitsProvided) : '',
         // needToOrderIngredients:false,
         ingredientsToOrder:[],
@@ -110,6 +110,7 @@ class ProductionReview extends React.Component {
                      id:index,...row,
                      currentUnit:Math.round(row.currentUnit*100)/100,
                      delta:Math.round(row.delta*100)/100,
+                     totalAmountNeeded:Math.round(row.totalAmountNeeded*100)/100,
                      })),
                    ];
                    // console.log(" Formula " + JSON.stringify(review));
@@ -216,17 +217,24 @@ class ProductionReview extends React.Component {
             // alert('Successfully added to production .');
          }
       });
-      
+
     // event.stopPropagation();
   };
 
   handleFormulaQuantity(event){
-  const re = /^\d*\.?\d*$/;
-      if (event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
-         this.setState({addedQuantity: event.target.value})
-      }else{
-        alert(" Quantity must be a positive number.");
-      }
+    console.log("handleFormulaChange")
+    console.log(this.state.formulaRows);
+    console.log(this.state.formulaRows[0].isIntermediate);
+    var re = /^\d*[1-9]\d*$/;
+    if(this.state.formulaRows[0].isIntermediate){
+      console.log("isIntermediate");
+      re = /^\d{0,10}(\.\d{0,2})?$/;
+    }
+    if (event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
+       this.setState({addedQuantity: event.target.value})
+    }else{
+      alert(" Quantity must be a positive number.");
+    }
   }
 
   componentWillMount(){
