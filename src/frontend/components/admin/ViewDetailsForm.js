@@ -393,15 +393,7 @@ class AddIngredientForm extends React.Component{
                   }
 
                   temp.setState({isDisabled:true});
-
-                        //Update lots lotId,
-
-
-                          // Wait for the check in the back end
-                          // Do the
-
-                        }
-              });
+                        });
     }
   }
 
