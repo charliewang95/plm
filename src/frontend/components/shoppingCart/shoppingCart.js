@@ -38,7 +38,9 @@ import * as ingredientActions from '../../interface/ingredientInterface.js';
 import {cartData, ingredientData} from './dummyData';
 import LotNumberButton from '../admin/LotNumberSelector/LotNumberButton.js';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
+import PubSub from 'pubsub-js';
 import ViewLotButton from '../admin/LotNumberSelector/ViewLotButton.js';
+
 // TODO: Get the user ID
 const READ_FROM_DATABASE = true;
 var isAdmin= "";
@@ -294,8 +296,9 @@ class ShoppingCart extends React.Component {
           if(tempCheckout){
             this.setState({canCheckout: true});
           }
-          this.setState({snackBarMessage : "Order successfully edited."});
-          this.setState({snackBarOpen:true});
+          // this.setState({snackBarMessage : "Order successfully edited."});
+          // this.setState({snackBarOpen:true});
+          PubSub.publish('showMessage', 'Order successfully edited.' );
         }//changed bracket
         // Delete
         // TODO: Add SnackBar
@@ -361,8 +364,9 @@ class ShoppingCart extends React.Component {
             // }else{
               rows.splice(index, 1);
               // TODO: Add SnackBar
-              temp.setState({snackBarMessage : "Order successfully deleted."});
-              temp.setState({snackBarOpen:true});
+              // temp.setState({snackBarMessage : "Order successfully deleted."});
+              // temp.setState({snackBarOpen:true});
+              PubSub.publish('showMessage', 'Order successfully deleted.' );
             });
         }
       console.log("deleted twice");
@@ -380,8 +384,9 @@ class ShoppingCart extends React.Component {
             if (!alert(res.data)) {
             }
         } else {
-          temp.setState({snackBarMessage : "Checkout successful!"});
-          temp.setState({snackBarOpen:true});
+          // temp.setState({snackBarMessage : "Checkout successful!"});
+          // temp.setState({snackBarOpen:true});
+          PubSub.publish('showMessage', 'Checkout Successful.' );
             // alert('Checkout successful!');
             temp.setState({rows:[]});
         }
@@ -430,6 +435,8 @@ class ShoppingCart extends React.Component {
       singleData.packageNum = rawData[i].packageNum;
       singleData.ingredientId = rawData[i].ingredientId;
       singleData._id = rawData[i]._id;
+      console.log("shopping cart rawData");
+      console.log(rawData[i]);
       var singleIngredientData = {};
 
       // TODO: Get vendors from ingredients interface
@@ -439,7 +446,7 @@ class ShoppingCart extends React.Component {
         singleIngredientData.vendors.sort(function(a, b) {return a.price - b.price });
 
         console.log(" ingredient DATA " + JSON.stringify(singleIngredientData));
-        
+
           /* Parse vendors Options */
           var parsedVendorOptions = [...singleIngredientData.vendors.map((row,index)=> ({
               value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
@@ -478,7 +485,6 @@ class ShoppingCart extends React.Component {
         console.log('An error passed to the front end!')
         alert(e);
       }
-
 
       // Sort the vendors
 
@@ -543,11 +549,11 @@ class ShoppingCart extends React.Component {
             pageSizes={pageSizes}
           />
 
-          {this.state.snackBarOpen && <SnackBarDisplay
+          {/* {this.state.snackBarOpen && <SnackBarDisplay
                 open = {this.state.snackBarOpen}
                 message = {this.state.snackBarMessage}
                 handleSnackBarClose = {this.handleSnackBarClose}
-              /> }
+              /> } */}
 
         </Grid>
           <Dialog

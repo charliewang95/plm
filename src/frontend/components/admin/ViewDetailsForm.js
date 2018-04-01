@@ -19,6 +19,8 @@ import LotNumberSelector from './StockEditorInLot/StockLotNumberSelector.js';
 import SnackBarDisplay from '../snackBar/snackBarDisplay.js';
 import { Redirect } from 'react-router';
 import testData from './testIngredients.js';
+import PubSub from 'pubsub-js';
+import { ToastContainer, toast } from 'react-toastify';
 
 /* Replace with the data from the back end */
 const ingredient_options = [
@@ -309,7 +311,8 @@ class AddIngredientForm extends React.Component{
     }
     else if((!this.state.isIntermediate)&&
             (this.state.vendorsArray.length==0 || this.state.vendorsArray == null)){
-      alert("Please add a vendor.");
+      //alert("Please add a vendor.");
+      PubSub.publish('showAlert', 'Vendors must be filled' );
       return false;
     }
     else if (!(/^[A-z]+$/).test(this.state.nativeUnit)){
@@ -339,7 +342,7 @@ class AddIngredientForm extends React.Component{
     var temp = this;
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     var isValid = temp.isValid();
-    if(isValid && temp.state.isCreateNew){
+    if( temp.state.isCreateNew && isValid){
       console.log(" Add ingredient ");
       var numUnit = Number(temp.state.numUnit);
       await ingredientInterface.addIngredient(temp.state.name, temp.state.packageName, temp.state.temperatureZone,
@@ -351,8 +354,11 @@ class AddIngredientForm extends React.Component{
                       alert('Ingredient name already exists');
                   } else{
                       // SnackBarPop("Row was successfully added!");
-                      temp.setState({snackBarMessage : "Ingredient Successfully added! "});
-                      temp.setState({snackBarOpen:true});
+                      // temp.setState({snackBarMessage : "Ingredient Successfully added! "});
+                      // temp.setState({snackBarOpen:true});
+
+                      PubSub.publish('showMessage', ' Ingredient Successfully added!' );
+
                       temp.setState({fireRedirect: true});
                       // alert(" Ingredient Successfully added! ");
                   }
@@ -375,24 +381,19 @@ class AddIngredientForm extends React.Component{
                   } else if (res.status == 500) {
                       alert('Ingredient name already exists');
                   } else {
-
-                    temp.setState({snackBarMessage : "Ingredient Successfully edited! "});
-                    temp.setState({snackBarOpen:true});
-                    // alert(" Ingredient Successfully edited! ");
+                    // Move edit lot here
+                    if(temp.state.lotNumberArray.length > 0){
+                      for(var i =0; i < temp.state.lotNumberArray.length;i++){
+                        console.log('edit');
+                        ingredientInterface.editLotAsync(lotIdMap[temp.state.lotNumberArray[i].lotNumber],
+                                  temp.state.lotNumberArray[i].numUnit,sessionId );
+                      }
+                    }
+                  PubSub.publish('showMessage', 'Ingredient Successfully edited!' );
                   }
 
                   temp.setState({isDisabled:true});
-
-                        //Update lots lotId,
-                        if(temp.state.lotNumberArray.length > 0){
-
-                          for(var i =0; i < temp.state.lotNumberArray.length;i++){
-                            console.log('edit');
-                            ingredientInterface.editLotAsync(lotIdMap[temp.state.lotNumberArray[i].lotNumber],
-                                      temp.state.lotNumberArray[i].numUnit,sessionId );
-                          }
-                        }
-              });
+                        });
     }
   }
 
@@ -428,7 +429,10 @@ class AddIngredientForm extends React.Component{
          var computeSpace = Math.ceil(this.state.numUnit/event.target.value) * this.packageSpace(this.state.packageName);
          this.setState({space: computeSpace});
       }else{
-        alert("Quantity must be a positive number");
+        //PubSub.publish('showMessage', 'Quantity must be a positive number' );
+        toast.error("Quantity must be a positive number", {
+          position: toast.POSITION.TOP_RIGHT
+        });
       }
   }
 
@@ -475,11 +479,11 @@ class AddIngredientForm extends React.Component{
       <form onSubmit={this.onFormSubmit} style={styles.formControl}>
         <p><font size="6">Basic Information</font></p>
         {(this.state.numUnit!=0)? <Chip label="In Stock"/> : ''}
-        {this.state.snackBarOpen && <SnackBarDisplay
+        {/* {this.state.snackBarOpen && <SnackBarDisplay
               open = {this.state.snackBarOpen}
               message = {this.state.snackBarMessage}
               handleSnackBarClose = {this.handleSnackBarClose}
-            /> }
+            /> } */}
           <FormGroup>
             <TextField
               disabled = {this.state.isDisabled}

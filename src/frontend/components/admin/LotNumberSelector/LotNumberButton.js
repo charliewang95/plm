@@ -68,10 +68,15 @@ class LotNumberButton extends Component {
     event.preventDefault();
     console.log("change quantity");
     console.log(event.target.value);
-      this.setState({
+    const re =/^[1-9]\d*$/;
+    if (event.target.value == '' || re.test(event.target.value)) {
+        this.setState({
         currentQuantity: event.target.value,
       });
     this.saveToProps(event.target.value);
+    }else{
+      alert(" No of Packages must be a number.");
+    }
   }
 
   handleCancel(e){

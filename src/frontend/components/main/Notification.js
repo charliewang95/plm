@@ -35,19 +35,20 @@ class Notification extends React.Component {
   // mySubscriber(msg, data) {
   //   this.setState({open: true});
   //   this.setState({currentMessage: data});
-  // }; 
+  // };
 
   componentDidMount() {
   //  var listener = PubSub.subscribe('showMessage', mySubscriber);
 
-    var listener = PubSub.subscribe( 'showMessage', (subscribe, message) => { 
+    var listener = PubSub.subscribe( 'showMessage', (subscribe, message) => {
       console.log("notification is called");
       console.log(message);
       console.log(subscribe);
       this.setState({open: true});
       this.setState({currentMessage: message});
     });
-  } 
+      
+  }
 
   render() {
     const { classes } = this.props;
@@ -55,11 +56,11 @@ class Notification extends React.Component {
       <div>
         <Snackbar
           anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
+            vertical: 'top',
+            horizontal: 'right',
           }}
           open={this.state.open}
-          autoHideDuration={6000}
+          autoHideDuration={4000}
           onClose={this.handleClose}
           SnackbarContentProps={{
             'aria-describedby': 'message-id',

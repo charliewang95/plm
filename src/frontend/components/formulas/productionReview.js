@@ -22,6 +22,7 @@ import RaisedButton from 'material-ui/Button';
 import * as orderActions from '../../interface/orderInterface';
 import * as productActions from '../../interface/productInterface';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
+import PubSub from 'pubsub-js';
 
 import {reviewData} from './dummyData';
 
@@ -64,7 +65,7 @@ class ProductionReview extends React.Component {
           {name: "delta" , title:'Additional Required Amount'},
         ],
         rows:[],
-        
+
         addedQuantity:(props.location.state) ? (props.location.state.selectedFormula.unitsProvided) : '',
         // needToOrderIngredients:false,
         ingredientsToOrder:[],
@@ -109,6 +110,7 @@ class ProductionReview extends React.Component {
                      id:index,...row,
                      currentUnit:Math.round(row.currentUnit*100)/100,
                      delta:Math.round(row.delta*100)/100,
+                     totalAmountNeeded:Math.round(row.totalAmountNeeded*100)/100,
                      })),
                    ];
                    // console.log(" Formula " + JSON.stringify(review));
@@ -141,8 +143,9 @@ class ProductionReview extends React.Component {
                    temp.setState({ingredientsToOrder:data});
                    temp.setState({open:false});
 
-                   temp.setState({snackBarMessage : "Formula successfully sent for production review. "});
-                   temp.setState({snackBarOpen:true});
+                   // temp.setState({snackBarMessage : "Formula successfully sent for production review. "});
+                   // temp.setState({snackBarOpen:true});
+                   PubSub.publish('showMessage', 'Formula successfully sent for production review.' );
               }
       });
 
@@ -189,8 +192,9 @@ class ProductionReview extends React.Component {
           alert(res.data);
         }else{
           // success = true;
-          temp.setState({snackBarMessage : "Ingredients Successfully added to cart. "});
-          temp.setState({snackBarOpen:true});
+          // temp.setState({snackBarMessage : "Ingredients Successfully added to cart. "});
+          // temp.setState({snackBarOpen:true});
+          PubSub.publish('showMessage', ' Ingredients successfully added to cart !' );
         }
       });
     }
@@ -208,20 +212,29 @@ class ProductionReview extends React.Component {
          if (res.status == 400) {
             alert(res.data);
          } else {
+             PubSub.publish('showMessage', ' Successfully added to production !' );
+            // window.location.reload();
             // alert('Successfully added to production .');
          }
       });
-      window.location.reload();
+
     // event.stopPropagation();
   };
 
   handleFormulaQuantity(event){
-  const re = /^\d*\.?\d*$/;
-      if (event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
-         this.setState({addedQuantity: event.target.value})
-      }else{
-        alert(" Quantity must be a positive number.");
-      }
+    console.log("handleFormulaChange")
+    console.log(this.state.formulaRows);
+    console.log(this.state.formulaRows[0].isIntermediate);
+    var re = /^\d*[1-9]\d*$/;
+    if(this.state.formulaRows[0].isIntermediate){
+      console.log("isIntermediate");
+      re = /^\d{0,10}(\.\d{0,2})?$/;
+    }
+    if (event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
+       this.setState({addedQuantity: event.target.value})
+    }else{
+      alert(" Quantity must be a positive number.");
+    }
   }
 
   componentWillMount(){
@@ -261,11 +274,11 @@ class ProductionReview extends React.Component {
 
       <Divider/>
 
-      {this.state.snackBarOpen && <SnackBarDisplay
+      {/* {this.state.snackBarOpen && <SnackBarDisplay
             open = {this.state.snackBarOpen}
             message = {this.state.snackBarMessage}
             handleSnackBarClose = {this.handleSnackBarClose}
-          /> }
+          /> } */}
 
           <Dialog
             open={this.state.open}

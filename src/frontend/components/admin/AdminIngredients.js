@@ -46,6 +46,7 @@ import MyPdfViewer from './PdfViewer';
 import {Link} from 'react-router-dom';
 import Chip from 'material-ui/Chip';
 import testData from './testIngredients';
+import PubSub from 'pubsub-js';
 
 // import Snackbar from 'material-ui/Snackbar';
 
@@ -375,18 +376,16 @@ class AdminIngredients extends React.PureComponent {
           added[0].vendorsArray, 0, 0, added[0].nativeUnit, added[0].numUnitPerPackage, false, sessionId, function(res){
             if (res.status == 400) {
                 if (!alert(res.data))
-                    //window.location.reload();
                     temp.setState({rows:rows});
 
             } else if (res.status == 500) {
                 if (!alert('Cannot add ingredient (ingredient already exists/one or more fields are empty)'))
-                    //window.location.reload();
                     temp.setState({rows:rows});
           }else{
             // rows = [...rows,added[0]];
             // temp.setState({rows:rows});
-            window.location.reload();
-            alert(" New Ingredient Successfully added! ");
+            window.reload();
+            PubSub.publish('showMessage', 'New Ingredient Successfully added!' );
           }
         });
 
@@ -450,7 +449,8 @@ class AdminIngredients extends React.PureComponent {
                 } else {
                     // SnackBarPop("Row was successfully added!");
                     console.log("sdfadfsdf");
-                    alert(" Ingredient Successfully edited! ");
+                    // alert(" Ingredient Successfully edited! ");
+                    PubSub.publish('showMessage', ' Ingredient Successfully edited!' );
                 }
             });
 
@@ -465,7 +465,7 @@ class AdminIngredients extends React.PureComponent {
     };
 
     this.cancelDelete = () => this.setState({ deletingRows: [] });
-
+    var temp = this;
     this.deleteRows = () => {
       const rows = this.state.rows.slice();
 
@@ -479,13 +479,19 @@ class AdminIngredients extends React.PureComponent {
           var packageName = rows[index].packageName;
           console.log("delete");
           console.log(rows[index].ingredientId);
-          ingredientInterface.deleteIngredient(rows[index].ingredientId, sessionId, function(res){
+
+          const tempId = rows[index].ingredientId;
+         // rows.splice(index, 1);
+         
+          ingredientInterface.deleteIngredient(tempId, sessionId, function(res){
                 if (res.status == 400) {
                     alert(res.data);
+                   
                 } else {
-                    alert(" Ingredient successfully deleted ! ");
+                    // alert(" Ingredient successfully deleted ! ");
                     rows.splice(index, 1);
-                    window.location.reload();
+                    temp.loadAllIngredients();
+                    PubSub.publish('showMessage', ' Ingredient successfully deleted !' );
                 }
           });
         }
@@ -517,6 +523,10 @@ class AdminIngredients extends React.PureComponent {
 
   componentDidMount(){
     //this.createMap();
+  }
+
+  componentDidUpdate(){
+   // this.loadAllIngredients();
   }
 
   async loadCodeNameArray(){
@@ -645,17 +655,13 @@ class AdminIngredients extends React.PureComponent {
                         window.location.reload();
                 } else if (res.status == 200) {
                     console.log(res);
-                    if(!alert(res.data))
+                    if(!alert(res.data)){
                         window.location.reload();
+                        PubSub.publish('showMessage', 'File successfully uploaded!');
+                      }
                 }
            });
 
-//          console.log(res);
-//          if(res == "SUCCESS") {
-//            alert("File successfully uploaded!");
-//          } else {
-//            alert("File upload failed!");
-//          }
         }
     }
 
