@@ -244,8 +244,10 @@ exports.checkoutFormula = function(req, res, next, model, username) { //main che
                                             } else {
                                                 //TODO: add ingredient and ingerdientLot object if intermediate
                                                 addIntermediateProductIngredientLot(req, res, next, formula, quantity, totalSpace, date, function(){
-                                                    logger.log(username, 'checkout', formula, model);
-                                                    return res.send(formula);
+                                                    addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
+                                                        logger.log(username, 'checkout', formula, model);
+                                                        return res.send(formula);
+                                                    });
                                                 });
                                             }
                                           }

@@ -4,6 +4,7 @@ var Order = mongoose.model('Order');
 var Vendor = mongoose.model('Vendor');
 var Ingredient = mongoose.model('Ingredient');
 var Storage = mongoose.model('Storage');
+var ProductionLine = mongoose.model('ProductionLine');
 
 exports.validate = function(model, itemId, item, res, next, callback) {
     console.log(item);
@@ -17,6 +18,14 @@ exports.validate = function(model, itemId, item, res, next, callback) {
     }
     else if (model == Ingredient) {
          validateIngredient(itemId, item, res, next, function(err, obj){
+              if (err) return next(err);
+              else {
+                  callback(err, obj);
+              }
+         });
+    }
+    else if (model == ProductionLine) {
+         validateProductionLine(itemId, item, res, next, function(err, obj){
               if (err) return next(err);
               else {
                   callback(err, obj);
@@ -56,4 +65,17 @@ var validateIngredient = function(itemId, item, res, next, callback) { //check i
             callback(err, true);
         }
     });
+};
+
+var validateProductionLine = function(itemId, item, res, next, callback) { //check if capacity below inventory quantity
+   ProductionLine.findById(itemId, function(err, oldProductionLine){
+       var newProductionLine = item;
+       var newFormulas = newProductionLine.formulaNames;
+       var currentFormula = newProductionLine.currentFormula;
+       if (oldProductionLine.includes(currentFormula) && !newFormulas.includes(currentFormula)){
+            return res.status(400).send('Action denied. Prodcution Line is currently producing '+currentFormula+'. Cannot delete it from the formula list');
+       } else {
+            callback(null, true);
+       }
+   });
 };

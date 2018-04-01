@@ -20,6 +20,9 @@ var ProductionLineSchema = new Schema({
     isIdle: {
         type: Boolean,
         required: true
+    },
+    currentFormula: {
+        type: String
     }
 });
 

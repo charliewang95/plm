@@ -21,3 +21,11 @@ exports.update = function(req, res, next) {
 exports.delete = function(req, res, next) {
 	utils.doWithAccess(req, res, next, ProductionLine, 'delete', req.params.userId, req.params.productionLineId, true, true);
 };
+
+exports.getAllIdleServers = function(req, res, next) {
+    ProductionLine.find({isIdle: true}, function(err, idles){
+        if (err) return next(err);
+        else return res.json(idles);
+    });
+}
+

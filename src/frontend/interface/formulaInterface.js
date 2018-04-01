@@ -4,6 +4,7 @@
 //creates the corresponding json object if necessary
 //and calls actions to send the actual requests
 import * as formulaActions from '../actions/formulaAction'
+import axios from 'axios'
 
 /**
 takes in various properties of formula,
