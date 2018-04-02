@@ -93,5 +93,20 @@ async function deleteDistributorNetwork(distributorNetworkId, sessionId) {
 	return await distributorNetworkActions.deleteDistributorNetwork(distributorNetworkId,sessionId);
 };
 
+async function sellItemsAsync(products, sessionId, callback) {
+    try {
+        const res = await axios.put('/distributorNetworks/sell/user/'+sessionId, products);
+        console.log(res.data);
+        callback(res.data);
+    } catch (e) {
+        if (e.response.status == 400 || e.response.status == 500)
+            callback(e.response);
+        else {
+            console.log(e.response);
+            throw e;
+        }
+    }
+}
+
 //export functions above for use by other modules
-export { addDistributorNetwork, getAllDistributorNetworksAsync, getDistributorNetworkAsync, updateDistributorNetwork, deleteDistributorNetwork, getAllDistributorNetworkNamesCodesAsync};
+export { addDistributorNetwork, getAllDistributorNetworksAsync, getDistributorNetworkAsync, updateDistributorNetwork, deleteDistributorNetwork, getAllDistributorNetworkNamesCodesAsync, sellItemsAsync};

@@ -4,11 +4,13 @@ var mongoose = require('mongoose'),
 var DistributorNetworkSchema = new Schema({
 	productName: {
 	    type: String,
-	    required: true
+	    required: true,
+	    unique: true
 	},
 	productNameUnique: { //auto
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
 	isSold: {
 	    type: Boolean,
