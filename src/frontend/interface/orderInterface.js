@@ -5,6 +5,7 @@
 //and calls actions to send the actual requests
 import * as dummyOrder from '../dummyDatas/order.js'
 import * as orderActions from '../actions/orderAction'
+import axios from 'axios'
 
 /**
 takes in various properties of order,
@@ -84,11 +85,15 @@ async function deleteOrder(orderId, sessionId, callback) {
 	});
 };
 
-async function checkoutOrder(sessionId, callback) {
-    return await orderActions.checkoutOrder(sessionId, function(res){
-        callback(res);
-    });
+async function getPendingsOnlyAsync(sessionId) {
+	const res = await axios.put('/orders/pendingsOnly/user/'+sessionId);
+    return res;
+};
+
+async function getRawOnlyAsync(sessionId) {
+	const res = await axios.put('/orders/rawOnly/user/'+sessionId);
+    return res;
 };
 
 //export functions above for use by other modules
-export { addOrder, getAllOrdersAsync, getOrderAsync, updateOrder, deleteOrder, checkoutOrder};
+export { addOrder, getAllOrdersAsync, getOrderAsync, updateOrder, deleteOrder, checkoutOrder, getPendingsOnlyAsync, getRawOnlyAsync};
