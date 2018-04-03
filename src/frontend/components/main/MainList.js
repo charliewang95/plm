@@ -17,6 +17,7 @@ import BugReportIcon from 'material-ui-icons/BugReport'; // Logs
 import RestaurantIcon from 'material-ui-icons/Restaurant';
 import CafeIcon from 'material-ui-icons/LocalCafe';
 import BalanceIcon from 'material-ui-icons/AccountBalance';
+import DistributionIcon from 'material-ui-icons/DeviceHub';
 
 const styles = theme => ({
   menuItem: {
@@ -96,12 +97,12 @@ function ListItemComposition(props) {
           <ListItemText classes={{ primary: classes.primary }} inset primary="Reports" />
         </MenuItem>
 
-        {/* <MenuItem className={classes.menuItem} component={Link} to="/prod-report" button>
+        <MenuItem className={classes.menuItem} component={Link} to="/distribution-network" button>
           <ListItemIcon className={classes.icon}>
-            <BalanceIcon />
+            <DistributionIcon/>
           </ListItemIcon>
-          <ListItemText classes={{ primary: classes.primary }} inset primary="Production Report" />
-        </MenuItem> */}
+          <ListItemText classes={{ primary: classes.primary }} inset primary="Distribution Network" />
+        </MenuItem>
 
         {(isManager || isAdmin) &&
         <MenuItem className={classes.menuItem} component={Link} to="/log" button>
