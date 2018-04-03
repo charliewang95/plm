@@ -9,6 +9,7 @@ var Storage = mongoose.model('Storage');
 var Formula = mongoose.model('Formula');
 var Product = mongoose.model('Product');
 var IngredientLot = mongoose.model('IngredientLot');
+var ProductionLine = mongoose.model('ProductionLine');
 
 
 exports.modify = function(action, model, item, itemId, res, next, callback) {
@@ -54,6 +55,14 @@ exports.modify = function(action, model, item, itemId, res, next, callback) {
     }
     else if (model == IngredientLot) {
         modifyIngredientLot(action, item, itemId, res, next, function(err, obj){
+            if (err) next(err);
+            else {
+                callback(err, obj);
+            }
+        });
+    }
+    else if (model == ProductionLine) {
+        modifyProductionLine(action, item, itemId, res, next, function(err, obj){
             if (err) next(err);
             else {
                 callback(err, obj);
@@ -202,5 +211,10 @@ var modifyIngredientLot = function(action, item, itemId, res, next, callback) { 
     item.ingredientNameUnique = item.ingredientName.toLowerCase();
     item.vendorNameUnique = item.vendorName.toLowerCase();
     if (item.date == null) item.date = new Date();
+    callback(0, item);
+};
+
+var modifyProductionLine = function(action, item, itemId, res, next, callback) { //add unique lowercase code to check code uniqueness
+    item.nameUnique = item.name.toLowerCase();
     callback(0, item);
 };

@@ -5,4 +5,5 @@ module.exports = function(app) {
     app.route('/formulas/formula/:formulaId/user/:userId').get(formulas.read).put(formulas.update).delete(formulas.delete);
     //app.route('/formulas/bulkImport').post(formulas.bulkImportFormulas);
     app.route('/formulas/checkout/:action/formula/:formulaId/amount/:quantity/user/:userId').delete(formulas.checkout);
+    app.route('/formulas/formulaNames/user/:userId').get(formulas.listNames);
 };

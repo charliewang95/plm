@@ -4,6 +4,7 @@ var Log = mongoose.model('Log');
 var Storage = mongoose.model('Storage');
 var Formula = mongoose.model('Formula');
 var Vendor = mongoose.model('Vendor');
+var ProductionLine = mongoose.model('ProductionLine');
 var Ingredient = mongoose.model('Ingredient');
 var modifierCreateUpdate = require('./modifierCreateUpdate');
 //var modifierDelete = require('./modifierDelete');
@@ -179,11 +180,16 @@ var update = function(req, res, next, model, itemId, username) {
                 else if (valid) {
                     console.log("updating, validated");
                     console.log("updating, updating");
-                        Ingredient.findById(itemId, function(err, ingredient){
-                        if (ingredient)
+                    Ingredient.findById(itemId, function(err, ingredient){
+                        if (ingredient) {
                             var temp = ingredient;
-                        console.log(temp);
-                           model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
+                        }
+                        ProductionLine.findById(itemId, function(err, productionLine){
+                            if (productionLine) {
+                                var temp = productionLine;
+                            }
+                            console.log(temp);
+                            model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
                                if (err) {
                                    return next(err);
                                }
@@ -192,7 +198,7 @@ var update = function(req, res, next, model, itemId, username) {
                                    logger.log(username, 'update', obj2, model);
                                    if (model == Storage || model == Vendor) {
                                        postProcessor.process(model, obj, itemId, res, next);
-                                   } else if (model == Ingredient) {
+                                   } else if (model == Ingredient || model == productionLine) {
                                        postProcessor.process(model, temp, itemId, res, next);
                                    }
                                    res.json(obj2);
@@ -200,7 +206,8 @@ var update = function(req, res, next, model, itemId, username) {
                                    res.status(400);
                                    res.send("Object doesn't exist");
                                }
-                           });
+                            });
+                        });
                     });
                 }
             });

@@ -24,6 +24,7 @@ function packIntoJson(userId, ingredientId, ingredientName, vendorName, _package
 	orderJson.packageNum = _package;
 	orderJson.ingredientLots = ingredientLots;
 	orderJson.price = price;
+//	orderJson.isPending = isPending;
 	console.log("JSON");
 	console.log(orderJson);
 	return orderJson;

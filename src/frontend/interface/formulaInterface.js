@@ -4,6 +4,7 @@
 //creates the corresponding json object if necessary
 //and calls actions to send the actual requests
 import * as formulaActions from '../actions/formulaAction'
+import axios from 'axios'
 
 /**
 takes in various properties of formula,
@@ -109,6 +110,10 @@ async function checkoutFormula(action, formulaId, quantity, sessionId, callback)
      });
 };
 
+async function getAllFormulaNamesAsync(sessionId) {
+   const res = await axios.get('/formulas/formulaNames/user/'+sessionId);
+   return res;
+}
 
 //export functions above for use by other modules
-export { addFormula, getAllFormulasAsync, getFormulaAsync, updateFormula, deleteFormula, checkoutFormula};
+export { addFormula, getAllFormulasAsync, getFormulaAsync, updateFormula, deleteFormula, checkoutFormula, getAllFormulaNamesAsync};

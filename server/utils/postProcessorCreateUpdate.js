@@ -7,6 +7,7 @@ var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
 var Formula = mongoose.model('Formula');
+var ProductionLine = mongoose.model('ProductionLine');
 
 exports.process = function(model, item, itemId, res, next) {
     if (model == Vendor) {
@@ -19,6 +20,9 @@ exports.process = function(model, item, itemId, res, next) {
         processFormula(item, itemId, res, next);
     }
     else if (model == Storage) {
+        processStorage(item, itemId, res, next);
+    }
+    else if (model == ProductionLine) {
         processStorage(item, itemId, res, next);
     }
 //    else if (model == Order) {
@@ -184,4 +188,71 @@ var processFormula = function(item, itemId, res, next){
             })
         }
     })
+}
+
+var processProductionLine = function(item, itemId, res, next){
+    var oldFormulaNames = item.formulaNames;
+    ProductionLine.findById(itemId, function(err, newProductionLine){
+        var newFormulaNames = newProductionLine.formulaNames;
+        processProductionLineHelperDeleteOld(res, next, 0, newFormulaNames, oldFormulaNames, function(){
+
+        });
+    });
+}
+
+var processProductionLineHelperDeleteOld = function(res, next, i, newFormulaNames, oldFormulaNames, callback){
+    if (i == oldFormulaNames.length) {
+        processProductionLineHelperAddNew(res, next, 0, newFormulaNames, oldFormulaNames, callback)
+    }
+    else {
+        var oldFormulaName = oldFormulaNames[i];
+        if (!newFormulaNames.includes(oldFormulaName)) {
+            Formula.find({nameUnique: oldFormulaName.toLowerCase()}, function(err, formula){
+                if (err) return next(err);
+                else if (!formula){
+                    return res.status(400).send('Formula '+formulaName+' does not exist');
+                }
+                else {
+                    var productionLinesInFormula = formula.productionLines;
+                    var newArray = [];
+                    for (var j = 0; j < productionLinesInFormula.length; j++) {
+                        if (productionLinesInFormula[j] != oldFormulaName) {
+                            newArray.push(productionLinesInFormula[j]);
+                        }
+                    }
+                    formula.update({productionLines: newArray}, function(err, newFormula){
+                        processProductionLineHelperDeleteOld(res, next, i+1, newFormulaNames, oldFormulaNames, callback);
+                    });
+                }
+            });
+        }
+        else {
+            processProductionLineHelperDeleteOld(res, next, i+1, newFormulaNames, oldFormulaNames, callback);
+        }
+    }
+}
+
+var processProductionLineHelperAddNew = function(res, next, i, newFormulaNames, oldFormulaNames, callback){
+    if (i == newFormulaNames.length) {
+        callback();
+    }
+    else {
+        var newFormulaName = newFormulaNames[i];
+        if (!oldFormulaName.includes(newFormulaName)){
+            Formula.find({nameUnique: newFormulaName.toLowerCase()}, function(err, formula){
+                if (err) return next(err);
+                else if (!formula){
+                    return res.status(400).send('Formula '+formulaName+' does not exist');
+                } else {
+                    var productionLinesInFormula = formula.productionLines;
+                    productionLinesInFormula.push(newFormulaName);
+                    formula.update({productionLines: productionLinesInFormula}, function(err, newFormula){
+                        processProductionLineHelperAddNew(res, next, i+1, newFormulaNames, oldFormulaNames, callback);
+                    });
+                }
+            });
+        } else {
+            processProductionLineHelperAddNew(res, next, i+1, newFormulaNames, oldFormulaNames, callback);
+        }
+    }
 }

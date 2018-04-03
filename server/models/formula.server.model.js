@@ -19,6 +19,18 @@ var IngredientQuantitySchema = new Schema({
 });
 mongoose.model('IngredientQuantity', IngredientQuantitySchema);
 
+//var ProductionLineInFormulaSchema = new Schema({
+//    productionLineName: {
+//        type: String,
+//        required: true
+//    },
+//    productionLineId: {
+//        type: String,
+//        required: true
+//    }
+//});
+//mongoose.model('ProductionLineInFormula', ProductionLineInFormulaSchema);
+
 var FormulaSchema = new Schema({
     name: {
         type: String,
@@ -68,6 +80,9 @@ var FormulaSchema = new Schema({
         type: Number,
         //
     },
+    productionLines: [{
+        type: String,
+    }],
     ingredients : [IngredientQuantitySchema]
 });
 
