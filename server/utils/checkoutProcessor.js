@@ -549,7 +549,7 @@ var updateIngredientProduct = function(req, res, next, ingredientName, formula, 
         console.log('FFFFFFFFF='+formula);
         var newIngredientProduct = new IngredientProduct();
         newIngredientProduct.ingredientNameUnique = ingredientName.toLowerCase();
-        newIngredientProduct.vendorNameUnique = (lot.vendorNameUnique == null) ? lot.vendorNameUnique: '';
+        newIngredientProduct.vendorNameUnique = (lot.vendorNameUnique == null) ? '' : lot.vendorNameUnique;
         newIngredientProduct.lotNumberUnique = lot.lotNumberUnique;
         newIngredientProduct.lotId = lot._id;
         newIngredientProduct.productName = formula.name;
