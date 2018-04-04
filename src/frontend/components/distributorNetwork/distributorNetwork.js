@@ -250,10 +250,10 @@ export default class Demo extends React.PureComponent {
       var numSold = selectedRows[i].numSold;
       var totalRevenue = selectedRows[i].totalRevenue;
       var totalCost = selectedRows[i].totalCost;
-      var isIdle = true;
+      
 
       await distributorNetworkActions. updateDistributorNetwork(distributorNetworkId,
-        productName, isSold,numUnit, numSold, totalRevenue, totalCost, isIdle, sessionId, function(res){
+        productName, isSold,numUnit, numSold, totalRevenue, totalCost, sessionId, function(res){
           if(res.status){
             alert(res.data);
           }else{
