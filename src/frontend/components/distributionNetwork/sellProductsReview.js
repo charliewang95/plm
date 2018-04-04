@@ -20,6 +20,7 @@ import { TableCell } from 'material-ui/Table';
 
 import {DeleteButton,EditButton,CancelButton,CommitButton} from '../vendors/Buttons.js';
 import Button from 'material-ui/Button';
+import {ToastContainer, toast} from 'react-toastify';
 
 import {Link} from 'react-router-dom';
 import Dialog, {
@@ -121,13 +122,41 @@ class SellProductsReview extends React.Component {
           for(var i = 0; i < rows.length;i++){
             if(changed[rows[i].id]){
               if(changed[rows[i].id].numSold){
-                console.log("changed quantity");
-                console.log(changed[rows[i].id].numSold);
+                var quantity = (changed[rows[i].id].numSold);
+
+                var re = /^\d*[1-9]\d*$/;
+                if(quantity > rows[i].numUnsold){
+                  alert("sale quantity cannot be higher than the unsold quantity!");
+                }else if (quantity==0 || !(quantity>0 && re.test(quantity))){
+                  alert("sale quantity must be a positive integer.");
+                }else{
+                  //TODO: Change it to snackbar
+                  console.log(quantity);
+                  console.log(unitPrice);
+                  rows[i].numSold = quantity;
+                  rows[i].totalRevenue = quantity * rows[i].unitPrice;
+                  alert("successfully changed quantity!");
                 }
+              }
 
                if (changed[rows[i].id].unitPrice){
                  console.log("changed UnitPrice");
                  console.log(changed[rows[i].id].unitPrice);
+                 var unitPrice = (changed[rows[i].id].unitPrice);
+
+                 const re = /^\d{0,10}(\.\d{0,2})?$/;
+
+                 if (unitPrice==0 || !(unitPrice>0 && re.test(unitPrice))){
+                   alert("sale quantity must be a positive number.");
+                 }else{
+                   //TODO: Change it to snackbar
+                   alert("successfully changed unit Price!");
+                   console.log(unitPrice);
+                   console.log(rows[i].numSold);
+                   console.log(rows[i].numSold * unitPrice);
+                   rows[i].unitPrice = unitPrice;
+                   rows[i].totalRevenue = Math.round(rows[i].numSold * unitPrice)*100/100;
+                 }
               }
             }
           }
@@ -196,6 +225,7 @@ class SellProductsReview extends React.Component {
 
     var processedData = [...data.map((row, index)=> ({
         id: index,...row,
+        numUnsold:row.numUnit - row.numSold,
       })),
     ];
 
@@ -240,8 +270,6 @@ class SellProductsReview extends React.Component {
           {isAdmin && <TableEditRow
             cellComponent={EditCell}/>
         }
-
-
           <TableEditColumn
             width={120}
             showEditCommand
@@ -260,10 +288,10 @@ class SellProductsReview extends React.Component {
             onClose={this.cancelDelete}
             // classes={{ paper: classes.dialog }}
           >
-            <DialogTitle>Remove ingredient from shopping cart</DialogTitle>
+            <DialogTitle>Remove product from the sale</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Are you sure to remove this ingredient from shopping cart?
+                Are you sure to remove this product from the sale?
               </DialogContentText>
               <Paper>
                 <Grid
