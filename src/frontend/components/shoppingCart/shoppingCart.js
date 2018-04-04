@@ -379,18 +379,18 @@ class ShoppingCart extends React.Component {
       console.log("checkout" );
       console.log(" ORDERED DATA " + this.state.rows);
        var temp = this;
-      await orderActions.checkoutOrder(sessionId, function(res){
-        if (res.status == 400) {
-            if (!alert(res.data)) {
-            }
-        } else {
-          // temp.setState({snackBarMessage : "Checkout successful!"});
-          // temp.setState({snackBarOpen:true});
-          PubSub.publish('showMessage', 'Checkout Successful.' );
-            // alert('Checkout successful!');
-            temp.setState({rows:[]});
-        }
-      });
+      // await orderActions.checkoutOrder(sessionId, function(res){
+      //   if (res.status == 400) {
+      //       if (!alert(res.data)) {
+      //       }
+      //   } else {
+      //     // temp.setState({snackBarMessage : "Checkout successful!"});
+      //     // temp.setState({snackBarOpen:true});
+      //     PubSub.publish('showMessage', 'Checkout Successful.' );
+      //       // alert('Checkout successful!');
+      //       temp.setState({rows:[]});
+      //   }
+      // });
     };
   }
 
