@@ -13,7 +13,7 @@ contact: string
 code: string
 ingredients: an array of objects following IngredientPriceSchema
 **/
-function packIntoJson(productName, isSold, numUnit, numSold, totalRevenue, totalCost, isIdle){
+function packIntoJson(productName, isSold, numUnit, numSold, totalRevenue, totalCost){
 	var distributorNetworkJson = new Object();
 	distributorNetworkJson.productName = productName;
 	distributorNetworkJson.isSold = isSold;
@@ -21,7 +21,6 @@ function packIntoJson(productName, isSold, numUnit, numSold, totalRevenue, total
 	distributorNetworkJson.numSold = numSold;
 	distributorNetworkJson.totalRevenue = totalRevenue;
 	distributorNetworkJson.totalCost = totalCost;
-	distributorNetworkJson.isIdle = isIdle;
 	// distributorNetworkJson.ingredients = ingredients;
 	console.log("Ingredient JSON");
 	console.log(distributorNetworkJson);
@@ -33,8 +32,8 @@ function packIntoJson(productName, isSold, numUnit, numSold, totalRevenue, total
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-async function addDistributorNetwork(productName, isSold, numUnit, numSold, totalRevenue, totalCost, isIdle, sessionId, callback) {
-	var newDistributorNetwork = packIntoJson(productName, isSold, numUnit, numSold, totalRevenue, totalCost, isIdle);
+async function addDistributorNetwork(productName, isSold, numUnit, numSold, totalRevenue, totalCost, sessionId, callback) {
+	var newDistributorNetwork = packIntoJson(productName, isSold, numUnit, numSold, totalRevenue, totalCost);
 //	try{
 //		return await distributorNetworkActions.addDistributorNetwork(newDistributorNetwork, sessionId);
 //	} catch (e) {
@@ -76,8 +75,8 @@ async function getDistributorNetworkAsync(distributorNetworkId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-async function updateDistributorNetwork(distributorNetworkId, productName, isSold, numUnit, numSold, totalRevenue, totalCost, isIdle, sessionId, callback) {
-	var updatedDistributorNetwork = packIntoJson(productName, isSold, numUnit, numSold, totalRevenue, totalCost, isIdle);
+async function updateDistributorNetwork(distributorNetworkId, productName, isSold, numUnit, numSold, totalRevenue, totalCost, sessionId, callback) {
+	var updatedDistributorNetwork = packIntoJson(productName, isSold, numUnit, numSold, totalRevenue, totalCost);
 	//return await distributorNetworkActions.updateDistributorNetwork(distributorNetworkId, sessionId, updatedDistributorNetwork);
 	distributorNetworkActions.updateDistributorNetwork(distributorNetworkId, sessionId, updatedDistributorNetwork, function(res){
         callback(res);
