@@ -10,7 +10,7 @@ import Dialog, {
 } from 'material-ui/Dialog';
 import Paper from 'material-ui/Paper';
 import { TableCell } from 'material-ui/Table';
-
+import { ToastContainer, toast } from 'react-toastify';
 
 class LotNumberButton extends Component {
 
@@ -75,7 +75,9 @@ class LotNumberButton extends Component {
       });
     this.saveToProps(event.target.value);
     }else{
-      alert(" No of Packages must be a number.");
+      toast.error("No. of packages must be a number.", {
+        position: toast.POSITION.TOP_RIGHT
+      });
     }
   }
 
@@ -86,7 +88,6 @@ class LotNumberButton extends Component {
     console.log("hit Cancel");
     this.setState({lotNumberArray:this.props.initialArray});
     this.setState({totalAssigned:this.props.totalAssigned});
-    alert("You have unsaved changes, are you sure?");
     window.location.reload();
     //current workaround...
     //e.stopPropagation();

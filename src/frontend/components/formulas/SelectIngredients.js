@@ -13,7 +13,6 @@ import { FormControl, FormGroup, FormHelperText } from 'material-ui/Form';
 import { MenuItem } from 'material-ui/Menu';
 import Button from 'material-ui/Button';
 import IngredientItem from './IngredientItem.js';
-
 import {ingredientData} from '../shoppingCart/dummyData';
 
 
@@ -261,7 +260,6 @@ updateQuantityHere(event){
             required
             onChange={(value)=>{this.updateQuantityHere(value);}}
             value={this.state.inputQuantity}
-            startAdornment={<InputAdornment position="start"></InputAdornment>}
           />
          </FormControl>
          {this.state.selectName && (this.state.inputQuantity>0) &&

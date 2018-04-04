@@ -22,6 +22,7 @@ import { withStyles } from 'material-ui/styles';
 import IconButton from 'material-ui/IconButton';
 
 import axios from 'axios';
+import PubSub from 'pubsub-js';
 // import * as userActions from  '../../interface/userInterface';
 const queryString = require('query-string');
 
@@ -187,6 +188,7 @@ handleMouseDownPassword(event){
         if (res.status == 400) {
             message = res.data;
             alert(message);
+            PubSub.publish('showAlert', message);
             sessionStorage.removeItem('user');
             sessionStorage.removeItem('fromDukeOAuth');
         } else {

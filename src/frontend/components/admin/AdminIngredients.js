@@ -42,12 +42,11 @@ import * as uploadInterface from '../../interface/uploadInterface';
 import * as inventoryInterface from '../../interface/inventoryInterface';
   // TODO: get the sessionId
 import * as testConfig from '../../../resources/testConfig.js';
-import MyPdfViewer from './PdfViewer';
 import {Link} from 'react-router-dom';
 import Chip from 'material-ui/Chip';
 import testData from './testIngredients';
 import PubSub from 'pubsub-js';
-
+import { ToastContainer, toast } from 'react-toastify';
 // import Snackbar from 'material-ui/Snackbar';
 
 // import Tabs, {Tab} from 'material-ui/Tabs';
@@ -335,129 +334,9 @@ class AdminIngredients extends React.PureComponent {
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
-    this.commitChanges = async ({ added, changed, deleted }) => {
+    this.commitChanges = async ({ deleted }) => {
       console.log("Commit Changes");
       let { rows } = this.state;
-
-      if (added) {
-        const startingAddedId = (rows.length - 1) > 0 ? rows[rows.length - 1].id + 1 : 0;
-
-        // TODO: Add checks for Values
-        var vendors_string = "";
-        if (added[0].vendors == null){
-            alert('Vendors must be filled');
-        } else {
-        for(var i =0; i < added[0].vendors.length; i++){
-          var vendorObject = added[0].vendors[i];
-          //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
-          var vendorName = vendorObject.vendorName;
-          console.log(vendorName);
-          var namePrice = vendorName + " / $" + vendorObject.price;
-          vendors_string += namePrice;
-          console.log("this is I");
-          console.log(i);
-          if(i!= (added[0].vendors).length -1){
-            vendors_string+=', ';
-          }
-        }
-
-        console.log("Added vendors");
-        added[0].vendorsArray = added[0].vendors;
-        console.log(added[0].vendorsArray);
-        added[0].vendors = vendors_string;
-        added[0].id = startingAddedId;
-
-        console.log("********************************");
-        console.log(added[0].vendorsArray);
-        // TODO: Send data to back end
-        var temp = this;
-
-        await ingredientInterface.addIngredient(added[0].name, added[0].packageName, added[0].temperatureZone,
-          added[0].vendorsArray, 0, 0, added[0].nativeUnit, added[0].numUnitPerPackage, false, sessionId, function(res){
-            if (res.status == 400) {
-                if (!alert(res.data))
-                    temp.setState({rows:rows});
-
-            } else if (res.status == 500) {
-                if (!alert('Cannot add ingredient (ingredient already exists/one or more fields are empty)'))
-                    temp.setState({rows:rows});
-          }else{
-            // rows = [...rows,added[0]];
-            // temp.setState({rows:rows});
-            window.reload();
-            PubSub.publish('showMessage', 'New Ingredient Successfully added!' );
-          }
-        });
-
-      }}
-
-      if (changed) {
-        console.log("changed " + Object.keys(changed));
-
-        for(var i =0; i < rows.length; i++){
-          // Accessing the changes made to the rows and displaying them=
-
-          if(changed[rows[i].id]){
-            if(changed[rows[i].id].name){
-              rows[i].name = changed[rows[i].id].name;
-            }
-            if(changed[rows[i].id].packageName){
-              rows[i].packageName = changed[rows[i].id].packageName;
-            }
-            if(changed[rows[i].id].temperatureZone){
-              rows[i].temperatureZone = changed[rows[i].id].temperatureZone;
-            }
-            if(changed[rows[i].id].nativeUnit){
-              rows[i].nativeUnit = changed[rows[i].id].nativeUnit;
-            }
-            if(changed[rows[i].id].numUnitPerPackage){
-              const re = /^\d*\.?\d*$/;
-              if(changed[rows[i].id].numUnitPerPackage>0 && re.test(changed[rows[i].id].numUnitPerPackage)){
-                rows[i].numUnitPerPackage = changed[rows[i].id].numUnitPerPackage;
-              }else{
-                alert("Quantity must be a number greater than 0!");
-              }
-            }
-            var vendors_string = "";
-
-            // parse vendors into a string
-            if(changed[rows[i].id].vendors){
-              for(var j = 0; j < (changed[rows[i].id].vendors).length ; j++){
-                console.log("Is this changed?");
-                console.log(changed[rows[i].id].vendors[j]);
-                var vendorObject = changed[rows[i].id].vendors[j];
-                //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
-                var vendorName = vendorObject.vendorName;
-                var namePrice = vendorName + " / $" + vendorObject.price;
-                vendors_string += namePrice;
-              //   vendors_string += changed[rows[i].id].vendors[j].value;
-                if(j!= (changed[rows[i].id].vendors).length -1){
-                  vendors_string+=', ';
-                }
-              }
-              rows[i].vendorsArray = changed[rows[i].id].vendors;
-              rows[i].vendors = vendors_string;
-            }
-
-            ingredientInterface.updateIngredient(rows[i].ingredientId, rows[i].name, rows[i].packageName,
-              rows[i].temperatureZone, rows[i].vendorsArray, rows[i].moneySpent, rows[i].moneyProd,
-              rows[i].nativeUnit, rows[i].numUnitPerPackage, sessionId, function(res){
-                if (res.status == 400) {
-                    alert(res.data);
-                } else if (res.status == 500) {
-                    alert('Ingredient name already exists');
-                } else {
-                    // SnackBarPop("Row was successfully added!");
-                    console.log("sdfadfsdf");
-                    // alert(" Ingredient Successfully edited! ");
-                    PubSub.publish('showMessage', ' Ingredient Successfully edited!' );
-                }
-            });
-
-          };
-        };
-        //TODO: send data to the back end
-      }
     console.log("delete ingredient");
     console.log(deleted);
     console.log(this.state.deletingRows);
@@ -485,13 +364,17 @@ class AdminIngredients extends React.PureComponent {
          
           ingredientInterface.deleteIngredient(tempId, sessionId, function(res){
                 if (res.status == 400) {
-                    alert(res.data);
+                    //alert(res.data);
+                    PubSub.publish('showAlert', res.data);
                    
                 } else {
                     // alert(" Ingredient successfully deleted ! ");
                     rows.splice(index, 1);
                     temp.loadAllIngredients();
-                    PubSub.publish('showMessage', ' Ingredient successfully deleted !' );
+                    toast.success('Ingredient successfully deleted!', {
+                      position: toast.POSITION.TOP_RIGHT
+                    });
+                    //PubSub.publish('showMessage', ' Ingredient successfully deleted !' );
                 }
           });
         }

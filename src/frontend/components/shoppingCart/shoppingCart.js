@@ -39,6 +39,7 @@ import {cartData, ingredientData} from './dummyData';
 import LotNumberButton from '../admin/LotNumberSelector/LotNumberButton.js';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
 import PubSub from 'pubsub-js';
+import { ToastContainer, toast } from 'react-toastify';
 import ViewLotButton from '../admin/LotNumberSelector/ViewLotButton.js';
 
 // TODO: Get the user ID
@@ -219,7 +220,7 @@ class ShoppingCart extends React.Component {
                 var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].price;
                 var ingredientLots = rows[i].ingredientLots;
                 if (!re.test(enteredQuantity)) {
-                  alert(" Number of packages must be a positive integer");
+                  toast.error(" Number of packages must be a positive integer");
                 }else{
                   // TODO: Update back end
                   rows[i].packageNum = changed[rows[i].id].packageNum;
@@ -298,7 +299,7 @@ class ShoppingCart extends React.Component {
           }
           // this.setState({snackBarMessage : "Order successfully edited."});
           // this.setState({snackBarOpen:true});
-          PubSub.publish('showMessage', 'Order successfully edited.' );
+          toast.success('Order successfully edited.' );
         }//changed bracket
         // Delete
         // TODO: Add SnackBar
@@ -366,7 +367,7 @@ class ShoppingCart extends React.Component {
               // TODO: Add SnackBar
               // temp.setState({snackBarMessage : "Order successfully deleted."});
               // temp.setState({snackBarOpen:true});
-              PubSub.publish('showMessage', 'Order successfully deleted.' );
+              toast.success('Order successfully deleted.' );
             });
         }
       console.log("deleted twice");
@@ -381,14 +382,15 @@ class ShoppingCart extends React.Component {
        var temp = this;
       await orderActions.checkoutOrder(sessionId, function(res){
         if (res.status == 400) {
-            if (!alert(res.data)) {
-            }
+          PubSub.publish('showAlert', res.data );
+            // if (!alert(res.data)) {
+            // }
         } else {
           // temp.setState({snackBarMessage : "Checkout successful!"});
           // temp.setState({snackBarOpen:true});
-          PubSub.publish('showMessage', 'Checkout Successful.' );
-            // alert('Checkout successful!');
-            temp.setState({rows:[]});
+          //PubSub.publish('showAlert', 'Checkout Successful.' );
+          toast.success('Checkout successful!');
+          temp.setState({rows:[]});
         }
       });
     };
@@ -483,7 +485,8 @@ class ShoppingCart extends React.Component {
           processedData.push(singleData);
       }catch(e){
         console.log('An error passed to the front end!')
-        alert(e);
+        PubSub.publish('showAlert', e);
+        //alert(e);
       }
 
       // Sort the vendors

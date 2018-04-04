@@ -20,14 +20,13 @@ import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 import Styles from  'react-select/dist/react-select.css';
 import PubSub from 'pubsub-js';
-
-
 import dummyData from './dummyData.js';
 import * as vendorActions from '../../interface/vendorInterface.js';
 import * as buttons from './Buttons.js';
 
 import * as testConfig from '../../../resources/testConfig.js';
 import cookie from 'react-cookies';
+import { ToastContainer, toast } from 'react-toastify';
 
 // TODO: get session Id from the user
 //var sessionId = (sessionStorage.getItem('user') == null) ? null: JSON.parse(sessionStorage.getItem('user'))._id;
@@ -164,14 +163,15 @@ class Vendors extends React.PureComponent
               if(!alert(res.data)){
                 window.location.reload();
               }
-              }else if (res.status == 500) {
-                if(!alert("Vendor name or code already exists")){
-                  window.location.reload();
+            }else if (res.status == 500) {
+               if(!PubSub.publish('showAlert', 'Vendor name or code already exists.')){
                   temp.setState({rows:oldRows});
+                  //PubSub.publish('showAlert', 'Vendor name or code already exists.');
                 }
             }else{
-              PubSub.publish('showMessage', 'Vendor successfully edited!' );
+              toast.success('Vendor successfully edited!' );
             }
+            window.location.reload();
           });
         }
       };
@@ -195,7 +195,7 @@ class Vendors extends React.PureComponent
                     window.location.reload();
                   }
               }else{
-                PubSub.publish('showMessage', 'Vendor successfully deleted!' );
+                toast.success('Vendor successfully deleted!' );
               }
           });
           // removes data from the table

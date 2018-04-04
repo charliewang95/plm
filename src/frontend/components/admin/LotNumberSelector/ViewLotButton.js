@@ -83,7 +83,6 @@ class ViewLotButton extends Component {
     console.log("hit Cancel");
     this.setState({lotNumberArray:this.props.initialArray});
     this.setState({totalAssigned:this.props.totalAssigned});
-    alert("You have unsaved changes, are you sure?");
     window.location.reload();
     //current workaround...
     //e.stopPropagation();

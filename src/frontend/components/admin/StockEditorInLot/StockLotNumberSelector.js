@@ -6,7 +6,7 @@ import { FormControl, FormGroup, FormHelperText } from 'material-ui/Form';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import LotNumberArray from './StockLotNumberArray';
-
+import { ToastContainer, toast } from 'react-toastify';
 
 class LotNumberSelector extends Component {
 
@@ -76,7 +76,9 @@ class LotNumberSelector extends Component {
     if(index>=0){
       const re = /^\d*\.?\d*$/;
       if(!re.test(quantity)){
-        alert("Quantity must be a positive integer");
+        toast.error("Quantity must be a positive integer.", {
+          position: toast.POSITION.TOP_RIGHT
+        });
       }else{
         this.state.lotNumberArray[index].numUnit = quantity;
         this.setState({lotNumberArray: this.state.lotNumberArray});

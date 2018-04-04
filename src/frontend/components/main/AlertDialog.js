@@ -7,6 +7,9 @@ import Dialog, {
   DialogTitle,
 } from 'material-ui/Dialog';
 import PubSub from 'pubsub-js';
+import ErrorIcon from 'material-ui-icons/Error';
+import Typography from 'material-ui/Typography';
+import { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 
 class AlertDialog extends React.Component {
   state = {
@@ -46,7 +49,7 @@ class AlertDialog extends React.Component {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">{"Error"}</DialogTitle>
+          <DialogTitle id="alert-dialog-title">Error</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
               {this.state.currentMessage}

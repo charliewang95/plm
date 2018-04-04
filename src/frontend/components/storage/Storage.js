@@ -21,7 +21,8 @@ import * as storageActions from '../../interface/storageInterface';
 import * as testConfig from '../../../resources/testConfig.js'
 
 import dummyData from './dummyData';
-
+import PubSub from 'pubsub-js';
+import { ToastContainer, toast } from 'react-toastify';
 //TODO: get user data
 // const sessionId = testConfig.sessionId;
 
@@ -117,7 +118,12 @@ class Storage extends React.PureComponent {
             var oldCap = rows[i].capacity;
             var enteredQuantity = changed[rows[i].id].capacity;
                 if (!re.test(enteredQuantity)) {
-                  alert(" Quantity must be a number.");
+                  toast.error(" Quantity must be a number.");
+                  return;
+                }
+                else if(enteredQuantity<rows[i].currentOccupiedSpace){
+                   PubSub.publish('showAlert', "Entered quantity must be greater than current occupied space");
+                   return;
                 }
                 else {
                     rows[i].capacity = enteredQuantity;
@@ -131,13 +137,14 @@ class Storage extends React.PureComponent {
 
                     console.log(rows);
                       //Reload window when cancelled
-                        if(!alert(res.data)){
+                         PubSub.publish('showAlert', res.data);
+                         // PubSub.publish('showAlert', res.data);
                           window.location.reload();
                           console.log(oldCap);
-                        }
+                        
                       }else{
                         temp.loadStorageInfo();
-                        alert(" Storage capacity updated successfully! ");
+                        toast.success(" Storage capacity updated successfully! ");
                       }
                   });
               }
