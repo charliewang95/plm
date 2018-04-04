@@ -15,13 +15,13 @@ import {
   TableSelection,
   TableEditColumn,PagingPanel,TableEditRow,
 } from '@devexpress/dx-react-grid-material-ui';
+import Divider from 'material-ui/Divider';
 
 
 import {DeleteButton,EditButton,CancelButton,CommitButton} from '../vendors/Buttons.js';
 import { Redirect } from 'react-router';
 import Button from 'material-ui/Button';
 import {Link} from 'react-router-dom';
-import SellProductsReview from './sellProductsReview.js';
 import Dialog, {
   DialogActions,
   DialogContent,
@@ -30,7 +30,8 @@ import Dialog, {
 } from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
 
-import testData from './testData.js'
+import testData from './testData.js';
+import * as distributorNetworkActions from '../../interface/distributorNetworkInterface.js';
 
 
 
@@ -38,49 +39,6 @@ var userId;
 var sessionId;
 var isAdmin;
 var isManager;
-
-const Cell = (props)=>{
-  return <Table.Cell {...props}/>
-};
-
-Cell.propTypes = {
-  column: PropTypes.shape({ name: PropTypes.string }).isRequired,
-};
-
-const EditCell = (props) => {
-  if(props.column.name == 'numSold' || props.column.name == 'unitPrice'){
-    return <TableEditRow.Cell {...props}
-            required style={{backgroundColor:'aliceblue'}}
-          />;
-    }else{
-      return <Cell {...props} style={{backgroundColor:'aliceblue'}}  />;
-  };
-};
-
-EditCell.propTypes = {
-  column: PropTypes.shape({ name: PropTypes.string }).isRequired,
-};
-
-const commandComponents = {
-  edit: EditButton,
-  delete: DeleteButton,
-  commit: CommitButton,
-  cancel: CancelButton,
-};
-
-const Command = ({ id, onExecute }) => {
-  const CommandButton = commandComponents[id];;
-  return (
-    <CommandButton
-      onExecute={onExecute}
-    />
-  );
-};
-
-Command.propTypes = {
-  id: PropTypes.string.isRequired,
-  onExecute: PropTypes.func.isRequired,
-};
 
 
 export default class Demo extends React.PureComponent {
@@ -103,12 +61,11 @@ export default class Demo extends React.PureComponent {
       currentPage:0,
       pageSize:20,
       selectedRows:[],
-      rowChanges: {},
-      editingRowIds: [],
-      deletingRows:[],
       currentRowSelected:{},
       quantity:'',
       unitPrice:'',
+      review:false,
+      grandTotalRevenue:0,
     };
 
     this.changeSelection = selection => {
@@ -145,79 +102,6 @@ export default class Demo extends React.PureComponent {
       this.setState({ currentPage });
     };
     this.changePageSize = pageSize => this.setState({ pageSize });
-    this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
-    this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
-
-    this.commitChanges =  ({ deleted }) => {
-      let { rows } = this.state;
-      var temp = this;
-
-      // if(changed){
-      //     for(var i = 0; i < rows.length;i++){
-      //       if(changed[rows[i].id]){
-      //         if(changed[rows[i].id].numSold){
-      //           var quantity = (changed[rows[i].id].numSold);
-      //
-      //           var re = /^\d*[1-9]\d*$/;
-      //           if(quantity > rows[i].numUnsold){
-      //             alert("sale quantity cannot be higher than the unsold quantity!");
-      //           }else if (quantity==0 || !(quantity>0 && re.test(quantity))){
-      //             alert("sale quantity must be a positive integer.");
-      //           }else{
-      //             //TODO: Change it to snackbar
-      //             console.log(quantity);
-      //             console.log(unitPrice);
-      //             rows[i].numSold = quantity;
-      //             rows[i].totalRevenue = quantity * rows[i].unitPrice;
-      //             // alert("successfully changed quantity!");
-      //           }
-      //         }
-      //
-      //          if (changed[rows[i].id].unitPrice){
-      //            console.log("changed UnitPrice");
-      //            console.log(changed[rows[i].id].unitPrice);
-      //            var unitPrice = (changed[rows[i].id].unitPrice);
-      //
-      //            const re = /^\d{0,10}(\.\d{0,2})?$/;
-      //
-      //            if (unitPrice==0 || !(unitPrice>0 && re.test(unitPrice))){
-      //              // alert("sale quantity must be a positive number.");
-      //            }else{
-      //              //TODO: Change it to snackbar
-      //              // alert("successfully changed unit Price!");
-      //              console.log(unitPrice);
-      //              console.log(rows[i].numSold);
-      //              console.log(rows[i].numSold * unitPrice);
-      //              rows[i].unitPrice = unitPrice;
-      //              rows[i].totalRevenue = Math.round(rows[i].numSold * unitPrice)*100/100;
-      //            }
-      //         }
-      //       }
-      //     }
-      //   }
-        // Delete
-        this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
-        // TODO: Add SnackBar
-    }
-
-    this.cancelDelete = () => this.setState({ deletingRows: [] });
-
-    // this.deleteRows = () => {
-    //   var temp = this;
-    //   const rows = temp.state.rows.slice();
-    //   temp.state.deletingRows.forEach((rowId) => {
-    //     const index = rows.findIndex(row => row.id === rowId);
-    //     if (index > -1) {
-    //       var orderId = rows[index]._id;
-    //       // TODO: update back End
-    //       rows.splice(index, 1);
-    //       // TODO: Add SnackBar
-    //       // alert(" Ingredient successfully deleted ! ");
-    //     }
-    //   });
-    //   temp.setState({rows:rows});
-    //   temp.setState({ deletingRows: [] });
-    // };
 
 
     this.cancelSelection = () => {
@@ -234,11 +118,12 @@ export default class Demo extends React.PureComponent {
       temp.setState({unitPrice:''});
 
     }
-    this.loadDistributionNetworkData = this.loadDistributionNetworkData.bind(this);
-    this.reviewProductsToSell = this.reviewProductsToSell.bind(this);
+    this.loadDistributorNetworkData = this.loadDistributorNetworkData.bind(this);
     this.updateUnitPrice = this.updateUnitPrice.bind(this);
     this.updateQuantity = this.updateQuantity.bind(this);
     this.checkSelectionValid = this.checkSelectionValid.bind(this);
+    this.sellProducts = this.sellProducts.bind(this);
+    this.cancelSale = this.cancelSale.bind(this);
 
     this.updatePriceQtyTable = () => {
       console.log("update price qty in table");
@@ -251,12 +136,15 @@ export default class Demo extends React.PureComponent {
       console.log(temp.state.unitPrice);
       console.log(temp.state.quantity);
 
+      var grandTotalRev = 0;
       for(var i =0; i < rows.length;i++){
         console.log(rows[i].id);
         if(rows[i].id == rowId){
           rows[i].unitPrice = temp.state.unitPrice;
           rows[i].numSold = temp.state.quantity;
-          rows[i].totalRevenue = Math.round(temp.state.quantity * temp.state.unitPrice) *100/100;
+          rows[i].totalRevenue = Math.round(temp.state.quantity * temp.state.unitPrice *100)/100;
+          grandTotalRev+=rows[i].totalRevenue;
+
           console.log("inside");
           console.log(rows[i].unitPrice);
           console.log(rows[i].numSold);
@@ -268,6 +156,8 @@ export default class Demo extends React.PureComponent {
       temp.setState({unitPrice:''});
       temp.setState({currentRowSelected:{}});
       temp.setState({rows:rows});
+
+      temp.setState({grandTotalRevenue:grandTotalRev});
     }
 
   }
@@ -279,11 +169,11 @@ export default class Demo extends React.PureComponent {
     isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
     userId = JSON.parse(sessionStorage.getItem('user'))._id;
 
-    this.loadDistributionNetworkData();
+    this.loadDistributorNetworkData();
   }
 
-  async loadDistributionNetworkData(){
-    var data = testData;
+  async loadDistributorNetworkData(){
+    var data = await distributorNetworkActions.getAllDistributorNetworksAsync(sessionId);
     console.log("load distribution network data");
     var processedData = [...data.map((row, index)=> ({
         id:index,...row,
@@ -327,7 +217,7 @@ export default class Demo extends React.PureComponent {
     console.log("check sell Valid");
     var temp = this;
     var selectedRows  = this.state.selectedRows;
-    if(selectedRows){
+    if(selectedRows.length > 0 ){
       console.log(selectedRows);
       for(var i =0; i < selectedRows.length;i++){
         if(selectedRows[i].numSold <= 0 || selectedRows[i].unitPrice <=0){
@@ -335,27 +225,55 @@ export default class Demo extends React.PureComponent {
         }
       }
       return true;
+    }else{
+      return false;
     }
   }
 
-  reviewProductsToSell(){
-    console.log("send products to sell");
-    var temp = this;
-    let {rows} = temp.state;
-    console.log(temp.state.selection);
-    console.log(rows);
+  cancelSale(){
+    console.log("cancel sell");
+    console.log(this.state.selection);
+    console.log(this.state.selectedRows);
+    this.setState({review:false});
+  }
 
-    temp.setState({fireRedirect:true});
+  async sellProducts(){
+    console.log("sell products");
+    console.log(this.state.selectedRows);
+    var selectedRows = this.state.selectedRows;
+
+    for(var i =0; i < this.state.selectedRows;i++){
+      var distributorNetworkId = selectedRows[i]._id;
+      var productName = selectedRows[i].productName;
+      var isSold = true;
+      var numUnit = selectedRows[i].numUnit;
+      var numSold = selectedRows[i].numSold;
+      var totalRevenue = selectedRows[i].totalRevenue;
+      var totalCost = selectedRows[i].totalCost;
+      var isIdle = true;
+
+      await distributorNetworkActions. updateDistributorNetwork(distributorNetworkId,
+        productName, isSold,numUnit, numSold, totalRevenue, totalCost, isIdle, sessionId, function(res){
+          if(res.status){
+            alert(res.data);
+          }else{
+            // TODO: SnackBar
+          }
+        });
+      }
+    //TODO: Call the back end and update the values
+    this.setState({fireRedirect:true});
+    this.setState({review:false});
   }
 
   render() {
     const { rows, columns, selection,pageSizes,currentPage ,pageSize,
-      fireRedirect,selectedRows,editingRowIds,rowChanges,deletingRows,currentRowSelected,
-      quantity,unitPrice} = this.state;
+      fireRedirect,selectedRows,currentRowSelected,
+      quantity,unitPrice,grandTotalRevenue} = this.state;
 
     return (
       <div>
-        <span>Total rows selected: {selection.length}</span>
+        <span>Total revenue: {grandTotalRevenue}</span>
         <Paper>
           <Grid
             rows={rows}
@@ -375,53 +293,11 @@ export default class Demo extends React.PureComponent {
             <IntegratedSelection />
             <Table />
             <TableHeaderRow />
-            <TableSelection showSelectAll />
-            <EditingState
-              editingRowIds={editingRowIds}
-              onEditingRowIdsChange={this.changeEditingRowIds}
-              rowChanges={rowChanges}
-              onRowChangesChange={this.changeRowChanges}
-              onCommitChanges={this.commitChanges}/>
-
-          {isAdmin && <TableEditRow
-            cellComponent={EditCell}/>
-        }
-          <TableEditColumn
-            width={120}
-            // showEditCommand
-            showDeleteCommand
-            commandComponent={Command}
-          />
-
+            <TableSelection/>
             <PagingPanel
               pageSizes={pageSizes}
             />
           </Grid>
-          <Dialog
-            open={!!deletingRows.length}
-            onClose={this.cancelDelete}
-            // classes={{ paper: classes.dialog }}
-          >
-            <DialogTitle>Remove product from the sale</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                Are you sure to remove this product from the sale?
-              </DialogContentText>
-              <Paper>
-                <Grid
-                  rows={rows.filter(row => deletingRows.indexOf(row.id) > -1)}
-                  columns={columns}
-                >
-                  <Table/>
-                  <TableHeaderRow />
-                </Grid>
-              </Paper>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={this.cancelDelete} color="primary">Cancel</Button>
-              <Button onClick={this.deleteRows} color="secondary">Delete</Button>
-            </DialogActions>
-          </Dialog>
           <Dialog
             open={(currentRowSelected) ? Object.keys(currentRowSelected).length!=0 : false}
             onClose={this.cancelSelection}
@@ -432,15 +308,18 @@ export default class Demo extends React.PureComponent {
               {/* <DialogContentText>
                 Are you sure to remove this product from the sale?
               </DialogContentText> */}
-              <Paper>
+              <Paper
+                style = {{backgroundColor:'aliceblue'}}>
                 <Grid
                   rows={[currentRowSelected]}
                   columns={columns}
+
                 >
                   <Table/>
                   <TableHeaderRow />
                 </Grid>
               </Paper>
+              <Divider/>
               <Paper>
                 <TextField
                   required
@@ -470,6 +349,7 @@ export default class Demo extends React.PureComponent {
                     martginRight: 20
                     }}/>
               </Paper>
+
             </DialogContent>
             <DialogActions>
               <Button onClick={this.cancelSelection} color="secondary">Cancel</Button>
@@ -477,18 +357,18 @@ export default class Demo extends React.PureComponent {
             </DialogActions>
           </Dialog>
           <Dialog
-            open={!!deletingRows.length}
-            onClose={this.cancelDelete}
+            open={this.state.review}
+            onClose={this.cancelSale}
             // classes={{ paper: classes.dialog }}
           >
-            <DialogTitle>Remove product from the sale</DialogTitle>
+            <DialogTitle>Sell products </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Are you sure to remove this product from the sale?
+                Are you sure to sell the selected products?
               </DialogContentText>
               <Paper>
                 <Grid
-                  rows={rows.filter(row => deletingRows.indexOf(row.id) > -1)}
+                  rows={ selectedRows}
                   columns={columns}
                 >
                   <Table/>
@@ -497,15 +377,15 @@ export default class Demo extends React.PureComponent {
               </Paper>
             </DialogContent>
             <DialogActions>
-              <Button onClick={this.cancelDelete} color="primary">Cancel</Button>
-              <Button onClick={this.deleteRows} color="secondary">Delete</Button>
+              <Button onClick={this.cancelSale} color="primary">Cancel</Button>
+              <Button onClick={this.sellProducts} color="secondary">Sell</Button>
             </DialogActions>
           </Dialog>
           <Button raised
                 color="primary"
                 disabled = {!this.checkSelectionValid()}
                 style = {{marginLeft: 550, marginBottom: 30}}
-                onClick = {(event) => this.sellProducts(event)}
+                onClick = {(event) => this.setState({review:true})}
                 primary="true">Sell</Button>
         </Paper>
       </div>
