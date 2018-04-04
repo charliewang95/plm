@@ -58,7 +58,8 @@ var OrderSchema = new Schema({
     },
     isPending: {
         type: Boolean,
-//        required: true
+//        required: true,
+        default: false
     },
     ingredientLots: [IngredientLotUsedInOrderSchema]
 });

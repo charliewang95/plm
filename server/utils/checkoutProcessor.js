@@ -31,30 +31,39 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
         }
         else {
             validateOrders(items, res, next, function(wSpace, rSpace, fSpace){
-                console.log("Orders validated.");
-                addIngredientLots(req, res, next, items, 0, function(){
-                    deleteProcessor.process(model, items, '', res, next);
-                    updateStorage(wSpace, rSpace, fSpace);
-                    logger.log(username, 'checkout', items[0], model);
-                    res.send(items);
-                });
+                console.log("Orders validated. Added to pending");
+                for (var i = 0; i < items.length; i++) {
+                    var order = items[i];
+                    order.update({isPending: true}, function(err, obj){
+                        //
+                    })
+                }
             });
         }
     });
 };
 
-var addIngredientLots = function(req, res, next, items, i, callback){
-    if (i == items.length) {
-        console.log('called');
-        callback();
-    } else {
-        var order = items[i];
-        var assignments = order.ingredientLots;
-        addIngredientLotsHelper(req, res, next, 0, order, assignments, function(){
-            addIngredientLots(req, res, next, items, i+1, callback);
-        });
-    }
-};
+exports.orderArrived = function(req, res, next, order) {
+    addIngredientLotsHelper(req, res, next, 0, order, order.ingredientLots, function(){
+        deleteProcessor.process(model, order, '', res, next);
+        updateStorage(order);
+        logger.log(username, 'checkout', order, model);
+        res.send(order);
+    });
+}
+
+//var addIngredientLots = function(req, res, next, items, i, callback){
+//    if (i == items.length) {
+//        console.log('called');
+//        callback();
+//    } else {
+//        var order = items[i];
+//        var assignments = order.ingredientLots;
+//        addIngredientLotsHelper(req, res, next, 0, order, assignments, function(){
+//            addIngredientLots(req, res, next, items, i+1, callback);
+//        });
+//    }
+//};
 
 var addIngredientLotsHelper = function(req, res, next, j, order, assignments, callback) {
     if (j == assignments.length) callback();
@@ -106,30 +115,49 @@ var addIngredientLotsHelper = function(req, res, next, j, order, assignments, ca
     }
 }
 
-var updateStorage = function(wSpace, rSpace, fSpace) {
-    Storage.findOne({temperatureZone: 'warehouse'}, function(err, storage){
-        var capacity = storage.capacity;
-        var newOccupied = storage.currentOccupiedSpace + wSpace;
-        var newEmpty = capacity - newOccupied;
-        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+var updateStorage = function(order) {
+//    Storage.findOne({temperatureZone: 'warehouse'}, function(err, storage){
+//        var capacity = storage.capacity;
+//        var newOccupied = storage.currentOccupiedSpace + wSpace;
+//        var newEmpty = capacity - newOccupied;
+//        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+//
+//        });
+//    });
+//    Storage.findOne({temperatureZone: 'refrigerator'}, function(err, storage){
+//        var capacity = storage.capacity;
+//        var newOccupied = storage.currentOccupiedSpace + rSpace;
+//        var newEmpty = capacity - newOccupied;
+//        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+//
+//        });
+//    });
+//    Storage.findOne({temperatureZone: 'freezer'}, function(err, storage){
+//        var capacity = storage.capacity;
+//        var newOccupied = storage.currentOccupiedSpace + fSpace;
+//        var newEmpty = capacity - newOccupied;
+//        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
+//
+//        });
+//    });
+    var ingredientId = order.ingredientId;
+    var space = order.space;
+    Ingredient.findById(ingredientId, function(err, ingredient){
+        if (err) return next(err);
+        else if (!ingredient) return res.status(400).send('Ingredinet '+order.ingredientName+' does not exist any more');
+        else {
+            Storage.findOne({temperatureZone: ingredient.temperatureZone}, function(err, storage){
+                if (err) return next(err);
+                else {
+                    var capacity = storage.capacity;
+                    var newOccupied = storage.currentOccupiedSpace + space;
+                    var newEmpty = capacity - newOccupied;
+                    storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
 
-        });
-    });
-    Storage.findOne({temperatureZone: 'refrigerator'}, function(err, storage){
-        var capacity = storage.capacity;
-        var newOccupied = storage.currentOccupiedSpace + rSpace;
-        var newEmpty = capacity - newOccupied;
-        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
-
-        });
-    });
-    Storage.findOne({temperatureZone: 'freezer'}, function(err, storage){
-        var capacity = storage.capacity;
-        var newOccupied = storage.currentOccupiedSpace + fSpace;
-        var newEmpty = capacity - newOccupied;
-        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
-
-        });
+                    });
+                }
+            })
+        }
     });
 };
 
@@ -521,7 +549,7 @@ var updateIngredientProduct = function(req, res, next, ingredientName, formula, 
         console.log('FFFFFFFFF='+formula);
         var newIngredientProduct = new IngredientProduct();
         newIngredientProduct.ingredientNameUnique = ingredientName.toLowerCase();
-        newIngredientProduct.vendorNameUnique = (lot.vendorNameUnique == null) ? lot.vendorNameUnique: '';
+        newIngredientProduct.vendorNameUnique = (lot.vendorNameUnique == null) ? '' : lot.vendorNameUnique;
         newIngredientProduct.lotNumberUnique = lot.lotNumberUnique;
         newIngredientProduct.lotId = lot._id;
         newIngredientProduct.productName = formula.name;
