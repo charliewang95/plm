@@ -180,13 +180,14 @@ var update = function(req, res, next, model, itemId, username) {
                 else if (valid) {
                     console.log("updating, validated");
                     console.log("updating, updating");
+                    var temp;
                     Ingredient.findById(itemId, function(err, ingredient){
                         if (ingredient) {
-                            var temp = ingredient;
+                            temp = ingredient;
                         }
                         ProductionLine.findById(itemId, function(err, productionLine){
                             if (productionLine) {
-                                var temp = productionLine;
+                                temp = productionLine;
                             }
                             console.log(temp);
                             model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
