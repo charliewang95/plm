@@ -102,4 +102,4 @@ async function getRawOnlyAsync(sessionId) {
 };
 
 //export functions above for use by other modules
-export { addOrder, getAllOrdersAsync, getOrderAsync, updateOrder, deleteOrder, checkoutOrder, getPendingsOnlyAsync, getRawOnlyAsync};
+export { addOrder, getAllOrdersAsync, getOrderAsync, updateOrder, deleteOrder, getPendingsOnlyAsync, getRawOnlyAsync};
