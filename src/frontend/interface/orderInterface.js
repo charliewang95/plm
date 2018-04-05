@@ -85,6 +85,12 @@ async function deleteOrder(orderId, sessionId, callback) {
 	});
 };
 
+async function checkoutOrder(sessionId, callback) {
+    return await orderActions.checkoutOrder(sessionId, function(res){
+        callback(res);
+    });
+};
+
 async function getPendingsOnlyAsync(sessionId) {
 	const res = await axios.put('/orders/pendingsOnly/user/'+sessionId);
     return res;

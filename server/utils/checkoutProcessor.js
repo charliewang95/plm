@@ -8,6 +8,7 @@ var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
 var Formula = mongoose.model('Formula');
 var Product = mongoose.model('Product');
+var ProductionLine = mongoose.model('ProductionLine');
 var IngredientLot = mongoose.model('IngredientLot');
 var IngredientProduct = mongoose.model('IngredientProduct');
 var validator = require('./validator');
@@ -235,62 +236,111 @@ CHECKOUT FORMULA PROCESSOR
 exports.checkoutFormula = function(req, res, next, model, username) { //main checkout method
     var formulaId = req.params.formulaId;
     var quantity = req.params.quantity;
-    Formula.findById(formulaId, function(err, formula){
-        if (err) return next(err);
-        else if (!formula){
-            return res.status(400).send('Formula does not exist');
-        } else {
-            checkProductAmount(req, res, next, formula, quantity, function(){
-                checkNewStorageHelper(req, res, next, formula, quantity, function(totalSpace){
-                    var multiplier = quantity/formula.unitsProvided;
-                    console.log('multiplier is '+multiplier);
-                    console.log('quantity is '+quantity);
-                    console.log('unitsProvided is '+formula.unitsProvided);
-                    var ingredients = formula.ingredients;
-                    checkIngredientHelper(req, res, next, multiplier, 0, ingredients, [], true, function(array, viable){
-                          if (req.params.action == 'review') {
-                              res.json(array);
-                          } else {
-                              if (viable) { //check complete
-                                  var date = new Date();
-                                  console.log('Before update ingredient');
-                                  updateIngredientHelper(req, res, next, multiplier, ingredients, formula, 0, 0, [], date, function(newSpentMoney, arrayInProductOut) {
-                                      var totalProvided = formula.totalProvided;
-                                      var totalCost = formula.totalCost;
-                                      console.log('Before update formula');
-                                      formula.update({totalProvided: Number(totalProvided)+Number(quantity), totalCost:totalCost+newSpentMoney}, function(err, obj) {
-                                          if (err) return next(err);
-                                          else {
-                                            updateStorageAfterCheckoutIP(res, req, next, formula, totalSpace);
-                                            console.log(formula.isIntermediate);
-                                            if (!formula.isIntermediate) {
-                                                //TODO: add ingredientLotUsedInProduct in the product object
-                                                addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
-                                                    logger.log(username, 'checkout', formula, model);
-                                                    return res.send(formula);
-                                                });
-                                            } else {
-                                                //TODO: add ingredient and ingerdientLot object if intermediate
-                                                addIntermediateProductIngredientLot(req, res, next, formula, quantity, totalSpace, date, function(){
-                                                    addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
-                                                        logger.log(username, 'checkout', formula, model);
-                                                        return res.send(formula);
-                                                    });
-                                                });
-                                            }
-                                          }
-                                      });
-                                  });
-                              } else {
-                                  return res.status(406).json(array);
-                              }
-                          }
+    var productionLineName = req.params.productionLineName;
+    ProductionLine.findOne({nameUnique: productionLineName.toLowerCase()}, function(err, productionLine){
+        if (!productionLine) return res.status(400).send('Production line does not exist');
+        else if (!productionLine.isIdle) return res.status(400).send('Production line is currently used by '+productionLine.currentFormula);
+        else {
+            Formula.findById(formulaId, function(err, formula){
+                if (err) return next(err);
+                else if (!formula){
+                    return res.status(400).send('Formula does not exist');
+                } else {
+                    checkProductAmount(req, res, next, formula, quantity, function(){
+                        checkNewStorageHelper(req, res, next, formula, quantity, function(totalSpace){
+                            var multiplier = quantity/formula.unitsProvided;
+                            console.log('multiplier is '+multiplier);
+                            console.log('quantity is '+quantity);
+                            console.log('unitsProvided is '+formula.unitsProvided);
+                            var ingredients = formula.ingredients;
+                            checkIngredientHelper(req, res, next, multiplier, 0, ingredients, [], true, function(array, viable){
+                                  if (req.params.action == 'review') {
+                                      res.json(array);
+                                  } else {
+                                      if (viable) { //check complete
+                                          var date = new Date();
+                                          console.log('Before update ingredient');
+                                          updateIngredientHelper(req, res, next, multiplier, ingredients, formula, 0, 0, [], date, function(newSpentMoney, arrayInProductOut) {
+                                              updateProductionLineAfterCheckout(res, next, productionLine, formula, date, quantity, newSpentMoney, totalSpace, arrayInProductOut);
+                                          });
+                                      } else {
+                                          return res.status(406).json(array);
+                                      }
+                                  }
+                            });
+                        });
                     });
-                });
+                }
             });
         }
     });
 };
+
+var updateProductionLineAfterCheckout = function(res, next, productionLine, formula, date, quantity, newSpentMoney, totalSpace, arrayInProductOut) {
+    var startDates = productionLine.startDates;
+    startDates = (startDates == null) ? [] : startDates;
+    startDates.push(date);
+    productionLine.update({isIdle: false, currentFormula: formula.name, startDates: startDates,
+                           quantity: quantity, newSpentMoney: newSpentMoney, totalSpace: totalSpace, arrayInProductOut:arrayInProductOut}, function(err, obj){
+
+    });
+}
+
+exports.markComplete = function(req, res, next){
+    var date = new Date();
+    ProductionLine.findById(req.productionLineId, function(err, pl){
+        if (err) return next(err);
+        else if (!pl) return res.status(400).send('Production line does not exist');
+        else {
+            var quantity = pl.quantity;
+            var newSpentMoney = pl.newSpentMoney;
+            var totalSpace = pl.totalSpace;
+            Formula.findOne({nameUnique: pl.currentFormula.toLowerCase()}, function(err, formula){
+                if (err) return next(err);
+                else if (!formula) return res.status(400).send('Formula does not exist');
+                else {
+                    var totalProvided = formula.totalProvided;
+                    var totalCost = formula.totalCost;
+
+                    console.log('Before update formula');
+                    formula.update({totalProvided: Number(totalProvided)+Number(quantity), totalCost:totalCost+newSpentMoney}, function(err, obj) {
+                      if (err) return next(err);
+                      else {
+                        updateStorageAfterCheckoutIP(res, req, next, formula, totalSpace);
+                        console.log(formula.isIntermediate);
+
+                        updateProductionLineAfterComplete(res, next, productionLine, date);
+
+                        if (!formula.isIntermediate) {
+                            //TODO: add ingredientLotUsedInProduct in the product object
+                            addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
+                                return res.send(pl);
+                            });
+                        } else {
+                            //TODO: add ingredient and ingerdientLot object if intermediate
+                            addIntermediateProductIngredientLot(req, res, next, formula, quantity, totalSpace, date, function(){
+                                addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
+                                    return res.send(pl);
+                                });
+                            });
+                        }
+
+                      }
+                    });
+                }
+            });
+        }
+    });
+}
+
+var updateProductionLineAfterComplete = function(res, next, productionLine, date) {
+    var endDates = productionLine.endDates;
+    endDates = (endDates == null) ? [] : endDates;
+    endDates.push(date);
+    productionLine.update({isIdle: true, endDates: endDates}, function(err, obj){
+
+    });
+}
 
 var checkProductAmount = function(req, res, next, formula, quantity, callback) { // check amount larger than min
     var unitsProvided = formula.unitsProvided;
@@ -453,6 +503,29 @@ var lotPickerHelper = function(req, res, next, ingredientName, quantity, arrayIn
             }
         });
     });
+};
+
+
+var updateIngredientProduct = function(req, res, next, ingredientName, formula, date, lot, callback) {
+//    if (i == ingredients.length) {
+//        callback();
+//    }
+//    else {
+        console.log('FFFFFFFFF='+formula);
+        var newIngredientProduct = new IngredientProduct();
+        newIngredientProduct.ingredientNameUnique = ingredientName.toLowerCase();
+        newIngredientProduct.vendorNameUnique = (lot.vendorNameUnique == null) ? lot.vendorNameUnique: '';
+        newIngredientProduct.lotNumberUnique = lot.lotNumberUnique;
+        newIngredientProduct.lotId = lot._id;
+        newIngredientProduct.productName = formula.name;
+        newIngredientProduct.date = date;
+        newIngredientProduct.lotNumber = (formula.isIntermediate) ? 'IP'+date.getTime() : 'PR'+date.getTime();
+        console.log(newIngredientProduct);
+        newIngredientProduct.save(function(err){
+            callback();
+//            updateIngredientProduct(req, res, next, ingredients, formula, date, i+1);
+        });
+//    }
 };
 
 var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, date, callback){
