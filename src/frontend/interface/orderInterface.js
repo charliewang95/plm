@@ -92,12 +92,12 @@ async function checkoutOrder(sessionId, callback) {
 };
 
 async function getPendingsOnlyAsync(sessionId) {
-	const res = await axios.put('/orders/pendingsOnly/user/'+sessionId);
+	const res = await axios.get('/orders/pendingsOnly/user/'+sessionId);
     return res;
 };
 
 async function getRawOnlyAsync(sessionId) {
-	const res = await axios.put('/orders/rawOnly/user/'+sessionId);
+	const res = await axios.get('/orders/rawOnly/user/'+sessionId);
     return res;
 };
 

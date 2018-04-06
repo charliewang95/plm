@@ -10,6 +10,9 @@ var IngredientLotUsedInProductSchema2 = new Schema({
     },
     lotNumber: {
         type: String,
+    },
+    lotId: {
+        type: String,
     }
 });
 mongoose.model('IngredientLotUsedInProduct2', IngredientLotUsedInProductSchema2);
