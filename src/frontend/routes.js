@@ -22,6 +22,8 @@ import FormulaDetails from './components/formulas/formulaDetails.js';
 import PageNotFound from './components/error/PageNotFound';
 import ProductDetails from './components/product/productDetails';
 import Report from './components/report/report.js';
+import DistributionNetwork from './components/distributorNetwork/distributorNetwork.js';
+
 
 import MainIngredientView from './components/admin/mainIngredientView';
 
@@ -51,6 +53,8 @@ const Routes = () => (
             <Route path="/admin-users" component={AdminUserPage} />
             <Route path="/product" component={Product} />
             <Route path="/product-details" component={ProductDetails} />
+            <Route path="/distribution-network" component={DistributionNetwork} />
+
 		  </Switch>
       </div>
 );

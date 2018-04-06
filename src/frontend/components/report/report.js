@@ -9,6 +9,7 @@ import FinancialReport from './financialReport';
 import ProductionReport from './productionReport';
 import FreshnessReport from './freshnessReport';
 import RecallReport from './recallReport';
+import ProfitabilityReport from './profitabilityReport';
 
 function TabContainer(props) {
   return (
@@ -59,12 +60,14 @@ class ScrollableTabsButtonAuto extends React.Component {
             <Tab label="Production Report" />
             <Tab label="Freshness Report" />
             <Tab label="Recall Report" />
+            <Tab label="Profitability Report" />
           </Tabs>
         </AppBar>
         {value === 0 && <FinancialReport/>}
         {value === 1 && <ProductionReport/>}
         {value === 2 && <FreshnessReport/>}
         {value === 3 && <RecallReport/>}
+        {value === 4 && <ProfitabilityReport/>}
       </Paper>
     );
   }

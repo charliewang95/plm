@@ -68,10 +68,17 @@ exports.getRecall = function(req, res, next) {
 };
 
 exports.getRecallAlternate = function(req, res, next) {
-    var vendorNameUnique = req.params.vendorName!="null" ? req.params.vendorName.toLowerCase() : "";
-    IngredientProduct.find({ingredientNameUnique: req.params.ingredientName.toLowerCase(), lotNumberUnique: req.params.lotNumber.toLowerCase(),
+    const ingredientNameUnique =  req.params.ingredientName.toLowerCase();
+    const lotNumberUnique = req.params.lotNumber.toLowerCase();
+    const vendorNameUnique = req.params.vendorName!="null" ? req.params.vendorName.toLowerCase() : "";
+    console.log("Received request to process alternative recall with the following parameters:\n" +
+        "ingredientNameUnique: " + ingredientNameUnique + "\n" +
+        "lotNumberUnique: " + lotNumberUnique + "\n" + 
+        "vendorNameUnique: " + vendorNameUnique);
+    IngredientProduct.find({ingredientNameUnique: ingredientNameUnique, lotNumberUnique: lotNumberUnique,
                             vendorNameUnique: vendorNameUnique}, function(err, ingredients){
-        console.log(req.params.ingredientName.toLowerCase()+' '+req.params.lotNumber.toLowerCase()+' '+req.params.vendorName.toLowerCase());
+        // console.log(req.params.ingredientName.toLowerCase()+' '+req.params.lotNumber.toLowerCase()+' '+req.params.vendorName.toLowerCase());
+        console.log("Found the following in IngredientProduct:");
         console.log(ingredients);
         if (err) return next(err);
         else res.json(ingredients);

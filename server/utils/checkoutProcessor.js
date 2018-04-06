@@ -548,7 +548,7 @@ var updateIngredientProductHelper = function(req, res, next, arrayInProductOut, 
     }
 }
 
-var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, date, callback){
+var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, date, callback){ //history
     var product = new Product();
     product.name = formula.name;
     product.nameUnique = formula.name.toLowerCase();
@@ -564,7 +564,7 @@ var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, d
     })
 };
 
-var addDistributorNetwork = function(req, res, next, formula, pl, callback){
+var addDistributorNetwork = function(req, res, next, formula, pl, callback){ //distribution
     DistributorNetwork.findOne({productNameUnique: formula.nameUnique}, function(err, dn){
         if (err) return next(err);
         else if (!dn) {
@@ -590,7 +590,7 @@ var addDistributorNetwork = function(req, res, next, formula, pl, callback){
 
 };
 
-var addIntermediateProductIngredientLot = function(req, res, next, formula, numUnit, totalSpace, date, callback){
+var addIntermediateProductIngredientLot = function(req, res, next, formula, numUnit, totalSpace, date, callback){ //lot
     Ingredient.findOne({nameUnique: formula.nameUnique}, function(err, ingredient){
         if (err) return next(err);
         else if (!ingredient){
@@ -659,3 +659,26 @@ var addIntermediateProductIngredientLot = function(req, res, next, formula, numU
         }
     });
 };
+
+var updateIngredientProduct = function(req, res, next, ingredientName, formula, date, lot, callback) { //recall report
+//    if (i == ingredients.length) {
+//        callback();
+//    }
+//    else {
+        console.log('FFFFFFFFF='+formula);
+        var newIngredientProduct = new IngredientProduct();
+        newIngredientProduct.ingredientNameUnique = ingredientName.toLowerCase();
+        newIngredientProduct.vendorNameUnique = (lot.vendorNameUnique == null) ? '' : lot.vendorNameUnique;
+        newIngredientProduct.lotNumberUnique = lot.lotNumberUnique;
+        newIngredientProduct.lotId = lot._id;
+        newIngredientProduct.productName = formula.name;
+        newIngredientProduct.date = date;
+        newIngredientProduct.lotNumber = (formula.isIntermediate) ? 'IP'+date.getTime() : 'PR'+date.getTime();
+        console.log(newIngredientProduct);
+        newIngredientProduct.save(function(err){
+            callback();
+//            updateIngredientProduct(req, res, next, ingredients, formula, date, i+1);
+        });
+//    }
+};
+
