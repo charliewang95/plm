@@ -421,13 +421,13 @@ class ShoppingCart extends React.Component {
     var startingIndex = 0;
     var rawData = [];
     if(READ_FROM_DATABASE){
-      rawData = await orderActions.getAllOrdersAsync(sessionId);
-      console.log("rawData " + JSON.stringify(rawData));
-
+      rawData = await orderActions.getRawOnlyAsync(sessionId);
+      console.log(rawData);
     } else {
       rawData = cartData;
     }
     var processedData=[];
+
 
     for(var i =0; i < rawData.length; i++){
       var singleData = new Object ();
