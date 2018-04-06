@@ -5,6 +5,7 @@ var Ingredient = mongoose.model('Ingredient');
 var IngredientPrice = mongoose.model('IngredientPrice');
 var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
+var DistributorNetwork = mongoose.model('DistributorNetwork');
 var Storage = mongoose.model('Storage');
 var Formula = mongoose.model('Formula');
 var Product = mongoose.model('Product');
@@ -36,9 +37,10 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
                 for (var i = 0; i < items.length; i++) {
                     var order = items[i];
                     order.update({isPending: true}, function(err, obj){
-                        //
+
                     })
                 }
+                logger.log(username, 'checkout', items[0], model);
             });
         }
     });
@@ -48,8 +50,10 @@ exports.orderArrived = function(req, res, next, order) {
     addIngredientLotsHelper(req, res, next, 0, order, order.ingredientLots, function(){
         deleteProcessor.process(model, order, '', res, next);
         updateStorage(order);
-        logger.log(username, 'checkout', order, model);
-        res.send(order);
+        User.findById(req.params.userId, function(err, user){
+            if (user) logger.log(user.username, 'order arrived', order, Order);
+            res.send(order);
+        });
     });
 }
 
@@ -314,13 +318,17 @@ exports.markComplete = function(req, res, next){
                         if (!formula.isIntermediate) {
                             //TODO: add ingredientLotUsedInProduct in the product object
                             addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
-                                return res.send(pl);
+                                updateIngredientProduct(req, res, next, pl, formula, date, function(){
+                                    return res.send(pl);
+                                });
                             });
                         } else {
                             //TODO: add ingredient and ingerdientLot object if intermediate
                             addIntermediateProductIngredientLot(req, res, next, formula, quantity, totalSpace, date, function(){
                                 addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
-                                    return res.send(pl);
+                                    updateIngredientProduct(req, res, next, pl, formula, date, function(){
+                                        return res.send(pl);
+                                    });
                                 });
                             });
                         }
@@ -470,12 +478,20 @@ var lotPickerHelper = function(req, res, next, ingredientName, quantity, arrayIn
     console.log('!!!!!!!!'+formula);
     IngredientLot.getOldestLot(res, ingredientName.toLowerCase(), function(lot){
         console.log('Before update ingredient-product');
-        updateIngredientProduct(req, res, next, ingredientName, formula, date, lot, function(){
+//        updateIngredientProduct(req, res, next, ingredientName, formula, date, lot, function(){
             console.log('After update ingredient-product');
+//            var newIngredientProduct = new IngredientProduct();
+//            newIngredientProduct.ingredientNameUnique = ingredientName.toLowerCase();
+//            newIngredientProduct.vendorNameUnique = (lot.vendorNameUnique == null) ? lot.vendorNameUnique: '';
+//            newIngredientProduct.lotNumberUnique = lot.lotNumberUnique;
+//            newIngredientProduct.lotId = lot._id;
+//            newIngredientProduct.productName = formula.name;
+
             var ingredientLotUsedInProduct = new Object();
             ingredientLotUsedInProduct.ingredientName = ingredientName;
             ingredientLotUsedInProduct.vendorName = lot.vendorName;
             ingredientLotUsedInProduct.lotNumber = lot.lotNumber;
+            ingredientLotUsedInProduct.lotId = lot._id.toString();
             arrayInProduct.push(ingredientLotUsedInProduct);
             if (quantity < lot.numUnit) {
                 var newNumUnit = lot.numUnit - quantity;
@@ -501,32 +517,36 @@ var lotPickerHelper = function(req, res, next, ingredientName, quantity, arrayIn
                     });
                 });
             }
-        });
+//        });
     });
 };
 
 
-var updateIngredientProduct = function(req, res, next, ingredientName, formula, date, lot, callback) {
-//    if (i == ingredients.length) {
-//        callback();
-//    }
-//    else {
-        console.log('FFFFFFFFF='+formula);
+var updateIngredientProduct = function(req, res, next, pl, formula, date, callback) {
+    console.log('FFFFFFFFF='+formula);
+    var arrayInProductOut = pl.arrayInProductOut;
+    updateIngredientProductHelper(req, res, next, arrayInProductOut, formula, date, 0, callback);
+};
+
+var updateIngredientProductHelper = function(req, res, next, arrayInProductOut, formula, date, i, callback) {
+    if (i == arrayInProductOut.length) {
+        callback();
+    } else {
+        item = arrayInProductOut[i];
         var newIngredientProduct = new IngredientProduct();
-        newIngredientProduct.ingredientNameUnique = ingredientName.toLowerCase();
-        newIngredientProduct.vendorNameUnique = (lot.vendorNameUnique == null) ? lot.vendorNameUnique: '';
-        newIngredientProduct.lotNumberUnique = lot.lotNumberUnique;
-        newIngredientProduct.lotId = lot._id;
+        newIngredientProduct.ingredientNameUnique = item.ingredientName.toLowerCase();
+        newIngredientProduct.vendorNameUnique = (item.vendorName == null) ? '': item.vendorName.toLowerCase();
+        newIngredientProduct.lotNumberUnique = item.lotNumber.toLowerCase();
+        newIngredientProduct.lotId = item.lotId;
         newIngredientProduct.productName = formula.name;
         newIngredientProduct.date = date;
         newIngredientProduct.lotNumber = (formula.isIntermediate) ? 'IP'+date.getTime() : 'PR'+date.getTime();
         console.log(newIngredientProduct);
         newIngredientProduct.save(function(err){
-            callback();
-//            updateIngredientProduct(req, res, next, ingredients, formula, date, i+1);
+            updateIngredientProductHelper(req, res, next, arrayInProductOut, formula, date, i+1, callback);
         });
-//    }
-};
+    }
+}
 
 var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, date, callback){
     var product = new Product();
@@ -542,6 +562,32 @@ var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, d
         if (err) return next(err);
         else callback();
     })
+};
+
+var addDistributorNetwork = function(req, res, next, formula, pl, callback){
+    DistributorNetwork.findOne({productNameUnique: formula.nameUnique}, function(err, dn){
+        if (err) return next(err);
+        else if (!dn) {
+            var newDistributorNetworkItem = new DistributorNetwork();
+            newDistributorNetworkItem.productName = formula.name;
+            newDistributorNetworkItem.productNameUnique = formula.nameUnique;
+            newDistributorNetworkItem.numUnit = pl.quantity;
+            newDistributorNetworkItem.numSold = 0;
+            newDistributorNetworkItem.totalRevenue = 0;
+            newDistributorNetworkItem.totalCost = pl.newSpentMoney;
+            newDistributorNetworkItem.save(function(err){
+                callback();
+            });
+        } else {
+            var numUnit = dn.numUnit;
+            var totalCost = dn.totalCost;
+            dn.update({numUnit: numUnit + pl.quantity, totalCost: totalCost + pl.newSpentMoney}, function(err, obj){
+                callback();
+            });
+        }
+    })
+
+
 };
 
 var addIntermediateProductIngredientLot = function(req, res, next, formula, numUnit, totalSpace, date, callback){
@@ -613,6 +659,3 @@ var addIntermediateProductIngredientLot = function(req, res, next, formula, numU
         }
     });
 };
-
-
-// var updateIngredientProductAfterIP = function

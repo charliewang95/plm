@@ -13,8 +13,7 @@ var DistributorNetworkSchema = new Schema({
         unique: true
     },
 	isSold: {
-	    type: Boolean,
-	    required: true
+	    type: Boolean
 	},
 	numUnit: {
 	    type: Number,
