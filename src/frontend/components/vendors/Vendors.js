@@ -95,7 +95,6 @@ class Vendors extends React.PureComponent
         { name: 'contact', title: 'Contact' },
         { name: 'code', title: 'Code' },
       ],
-
       rows:[],
       sorting: [],
       editingRowIds: [],
@@ -104,7 +103,7 @@ class Vendors extends React.PureComponent
       deletingRows: [],
       pageSize: 10,
       pageSizes: [5,10,0],
-      columnOrder: ['name', 'contact', 'code'],
+      columnOrder: ['name', 'contact', 'code']
     };
     var temp = this;
     this.changeSorting = sorting => this.setState({ sorting });
@@ -124,7 +123,7 @@ class Vendors extends React.PureComponent
         var vendorContact = "";
         var vendorCode = "";
         var vendorId="";
-        var oldRows = rows;
+        let oldRows = JSON.parse(JSON.stringify(rows));
         for(var i =0; i < rows.length; i++)
         {
           // Accessing the changes made to the rows and displaying them
@@ -164,18 +163,19 @@ class Vendors extends React.PureComponent
                 window.location.reload();
               }
             }else if (res.status == 500) {
-               if(!PubSub.publish('showAlert', 'Vendor name or code already exists.')){
                   temp.setState({rows:oldRows});
-                  //PubSub.publish('showAlert', 'Vendor name or code already exists.');
-                }
+                  console.log("old rows");
+                  console.log(temp.state.rows);
+                  PubSub.publish('showAlert', 'Vendor name or code already exists.');
             }else{
               toast.success('Vendor successfully edited!' );
             }
-            window.location.reload();
           });
         }
       };
       // Delete pop up
+      // let deepCopy = JSON.parse(JSON.stringify(rows));
+      // this.setState({ oldRows: deepCopy});
       this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
     };
 

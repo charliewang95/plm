@@ -110,7 +110,12 @@ class LotNumberSelector extends Component {
   updateQuantity(event, index) {
     var quantity = event.target.value;
     if(index>=0){
-      const re = /^\d*\.?\d*$/;
+      var re;
+      if(this.props.fromDetails){
+        re = /^\d*\.?\d*$/;
+      }else{
+        re = /^[1-9][0-9]*$/;
+      }
       console.log('update quantity in selector');
       console.log(quantity);
       if(!re.test(quantity)){

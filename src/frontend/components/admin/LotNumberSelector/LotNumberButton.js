@@ -68,7 +68,7 @@ class LotNumberButton extends Component {
     event.preventDefault();
     console.log("change quantity");
     console.log(event.target.value);
-    const re =/^[1-9]\d*$/;
+    const re =/^[1-9][0-9]*$/;
     if (event.target.value == '' || re.test(event.target.value)) {
         this.setState({
         currentQuantity: event.target.value,
@@ -145,7 +145,7 @@ class LotNumberButton extends Component {
              <DialogContentText>
                 i.e. If you want to assign lot number A123 to 4 packages, enter 4 for number of packages and A123 for lot number.
               </DialogContentText>
-              <LotNumberSelector initialArray={this.state.lotNumberArray} quantity={this.state.currentQuantity} updateArray={this.updateArray} totalAssigned={this.state.totalAssigned}/>
+              <LotNumberSelector initialArray={this.state.lotNumberArray} quantity={this.state.currentQuantity} updateArray={this.updateArray} totalAssigned={this.state.totalAssigned} fromDetails={false}/>
             </DialogContent>
             <DialogActions>
               {/*<Button onClick={(e)=>this.handleCancel(e)} color="primary">Cancel</Button>*/}

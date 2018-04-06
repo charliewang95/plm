@@ -43,10 +43,10 @@ import * as uploadInterface from '../../interface/uploadInterface';
 import * as inventoryInterface from '../../interface/inventoryInterface';
   // TODO: get the sessionId
 import * as testConfig from '../../../resources/testConfig.js';
-//import PubSub from 'pubsub-js';
+import PubSub from 'pubsub-js';
 import { ToastContainer, toast } from 'react-toastify';
 import {Link} from 'react-router-dom';
-import PubSub from 'pubsub-js';
+
 
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 var isAdmin = "";

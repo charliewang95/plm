@@ -97,6 +97,9 @@ class AddIngredientForm extends React.Component{
       snackBarOpen:false,
       initialNumUnit:(details.numUnit)? (Math.round(details.numUnit*100)/100):0,
       initialName: (details.name)?(details.name):'',
+      initialLotNumberArray: [],
+      initialLotNumberString: '',
+      initialTotalAssigned: 0,
     }
     this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -188,6 +191,8 @@ class AddIngredientForm extends React.Component{
       temp.loadIngredient();
       temp.loadLotNumbers(function(){
         temp.computeLotNumberString();
+        temp.setState({initialTotalAssigned: temp.state.totalAssigned});
+        temp.setState({initialLotNumberString: temp.state.lotNumberString});
       });
     }
     console.log("props");
@@ -197,6 +202,8 @@ class AddIngredientForm extends React.Component{
       console.log("inStock");
       temp.loadLotNumbers(function(){
         temp.computeLotNumberString();
+        temp.setState({initialTotalAssigned: temp.state.totalAssigned});
+        temp.setState({initialLotNumberString: temp.state.lotNumberString});
       });
     }
   }
@@ -221,6 +228,8 @@ class AddIngredientForm extends React.Component{
       lotIdMap[lotArray[i].lotNumber]= lotArray[i]._id;
     }
      this.setState({lotNumberArray:array});
+     var deepCopy = JSON.parse(JSON.stringify(array));
+     this.setState({initialLotNumberArray: deepCopy});
      callback();
 
   }
@@ -394,13 +403,22 @@ class AddIngredientForm extends React.Component{
       console.log(Number(temp.state.numUnit));
       var numUnit = Number(temp.state.numUnit);
       var oldName = temp.state.initialName;
+      var oldQuantity = temp.state.initialNumUnit;
+      var oldLotNumberString = temp.state.initialLotNumberString;
+      var oldLotNumberArray = JSON.parse(JSON.stringify(temp.state.initialLotNumberArray));
+      var oldTotalAssigned = temp.state.initialTotalAssigned;
       console.log(oldName);
       await ingredientInterface.updateIngredient(temp.state.ingredientId, temp.state.name, temp.state.packageName,
                 temp.state.temperatureZone, temp.state.vendorsArray, temp.state.moneySpent, temp.state.moneyProd,
                 temp.state.nativeUnit, temp.state.numUnitPerPackage, numUnit, temp.state.space, temp.state.isIntermediate, sessionId, function(res){
                   if (res.status == 400) {
                       //alert(res.data);
+                      temp.setState({numUnit: oldQuantity});
+                      temp.setState({lotNumberArray: oldLotNumberArray});
+                      temp.setState({lotNumberString: oldLotNumberString});
+                      temp.setState({totalAssigned: oldTotalAssigned});
                       PubSub.publish('showAlert', res.data);
+
                   } else if (res.status == 500) {
                       temp.setState({name: oldName});
                       toast.error("Ingredient name already exists.", {
@@ -418,6 +436,10 @@ class AddIngredientForm extends React.Component{
                       } 
                     }
                     temp.setState({initialName: temp.state.name});
+                    temp.setState({initialNumUnit: temp.state.numUnit});
+                    temp.setState({initialLotNumberArray: temp.state.lotNumberArray});
+                    temp.setState({initialLotNumberString: temp.state.lotNumberString});
+                    temp.setState({initialTotalAssigned: temp.state.totalAssigned});
                     toast.success("Ingredient successfully edited!");
                   }
                   temp.setState({isDisabled:true});
@@ -628,7 +650,9 @@ class AddIngredientForm extends React.Component{
                     initialArray = {this.state.lotNumberArray}
                     quantity={this.state.numUnit}
                     updateArray={this.updateArray}
-                    totalAssigned={this.state.totalAssigned}/>}
+                    totalAssigned={this.state.totalAssigned}
+                    fromDetails={true}
+                    />}
                 <TextField
                   disabled
                   id="space"
