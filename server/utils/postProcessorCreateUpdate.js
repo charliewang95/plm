@@ -33,6 +33,7 @@ exports.process = function(model, item, itemId, res, next) {
 
 
 var processIngredient = function(item, itemId, res, next) {
+    console.log(item);
     var oldItem = item;
     var oldTemperatureZone = item.temperatureZone;
     var oldSpace = oldItem.space;

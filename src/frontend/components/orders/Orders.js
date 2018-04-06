@@ -19,7 +19,7 @@ import Typography from 'material-ui/Typography';
 import { FormControl, FormHelperText } from 'material-ui/Form';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
 import PubSub from 'pubsub-js';
-
+import { ToastContainer, toast } from 'react-toastify';
 //TODO: get session Id
 //const userId = "5a765f3d9de95bea24f905d9";
 // const sessionId = testConfig.sessionId;
@@ -129,7 +129,8 @@ class Orders extends React.PureComponent{
        ingredientDetails = await ingredientActions.getIngredientAsync(option.value,sessionId);
     }catch(e){
       console.log('An error passed to the front end!')
-      alert(e);
+      PubSub.publish('showAlert', e);
+      //alert(e);
     }
 
     console.log("Vendors " + JSON.stringify(ingredientDetails.vendors));
@@ -162,7 +163,7 @@ class Orders extends React.PureComponent{
       if (event.target.value == '' || re.test(event.target.value)) {
          this.setState({packageNum: event.target.value})
       }else{
-        alert(" No of Packages must be a number.");
+        toast.error(" No of Packages must be a number.");
       }
   }
 
@@ -186,16 +187,16 @@ class Orders extends React.PureComponent{
        await orderActions.addOrder(userId,temp.state.ingredientId,temp.state.ingredientName,
        temp.state.vendorName,parseInt(temp.state.packageNum,10),temp.state.price,[], sessionId,function(res){
            if (res.status == 400) {
-               alert(res.data);
+               PubSub.publish('showAlert', res.data);
            }else if (res.status == 500) {
-               alert('ingredient already in cart');
+               toast.error('Ingredient already in cart');
            }
            else{
              // alert("ORDERED");
              // temp.setState({snackBarMessage : "Ingredient ordered successfully!"});
              // temp.setState({snackBarOpen:true});
-             PubSub.publish('showMessage', 'Ingredient added to cart!');
-             temp.setState({ fireRedirect: true });
+              toast.success('Ingredient added to cart!');
+              temp.setState({ fireRedirect: true });
              }
            });
        };
@@ -203,7 +204,8 @@ class Orders extends React.PureComponent{
    catch (e){
      console.log('An error passed to the front end!')
      //TODO: error handling in the front end
-     alert(e);
+     PubSub.publish('showAlert', e);
+     // alert(e);
    }
   }
 
@@ -260,7 +262,7 @@ class Orders extends React.PureComponent{
   // Check for validation of the data fields before submitting an order
   isValid(){
     if(!this.state.ingredientName){
-      alert(" Please select an ingredient");
+      toast.error(" Please select an ingredient");
       return false;
   }else{
       return true;

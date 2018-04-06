@@ -8,6 +8,7 @@ import VendorSelection from './recallReportComponents/vendorSelection.js'
 import LotSelection from './recallReportComponents/lotSelection.js'
 import RecallTable from './recallReportComponents/recallTable.js'
 import * as IngredientInterface from '../../interface/ingredientInterface';
+import { ToastContainer, toast } from 'react-toastify';
 // import * as IngredientLotInterface from '../../interface/ingredientLotInterface';
 // globals
 var sessionId = "";
@@ -107,7 +108,7 @@ export default class RecallReport extends React.PureComponent{
 		//name is not null
 		const selectedIngredientObject = this.findSelectedIngredientObject(name);
 		if(!selectedIngredientObject) {
-			alert("An error has occured! No ingredient object exists for the selected name "
+			toast.error("An error has occured! No ingredient object exists for the selected name "
 				+ name);
 			return;
 		}
