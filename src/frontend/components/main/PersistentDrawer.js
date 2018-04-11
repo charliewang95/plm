@@ -14,14 +14,13 @@ import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui-icons/Menu';
 import ChevronLeftIcon from 'material-ui-icons/ChevronLeft';
 import ChevronRightIcon from 'material-ui-icons/ChevronRight';
-import { UserListItems, MainListItems } from './NavMenuList';
+import { AdminItems} from './AdminMenu.js'; //admin only
 import Routes from '../../routes.js';
 import Login from '../login/LoginPage';
 import cookie from 'react-cookies';
 import Button from 'material-ui/Button';
 import {Link} from 'react-router-dom';
 import ExitToApp from 'material-ui-icons/ExitToApp';
-import {MenuList} from 'material-ui/Menu';
 import MainList from './MainList'
 
 const drawerWidth = 230;
@@ -198,7 +197,7 @@ class PersistentDrawer extends React.Component {
             </IconButton> */}
           </div>
           <Divider />
-          {isAdmin && <List className={classes.list}>{UserListItems}</List> }
+          {isAdmin && <List className={classes.list}>{AdminItems}</List> }
           <Divider />
           <MainList > </MainList>
         </div>
