@@ -58,6 +58,11 @@ async function getAllProductionLineNamesCodesAsync(sessionId) {
    return res;
 }
 
+async function getProductionLineByNameAsync(productionLineName, sessionId) {
+   const res = await axios.get('/productionLines/productionLineName/'+productionLineName+'/user/'+sessionId);
+   return res;
+}
+
 /*
  * get one productionLine
  * productionLineId: string, the id of the productionLine
@@ -91,4 +96,4 @@ async function deleteProductionLine(productionLineId, sessionId) {
 };
 
 //export functions above for use by other modules
-export { addProductionLine, getAllProductionLinesAsync, getProductionLineAsync, updateProductionLine, deleteProductionLine, getAllProductionLineNamesCodesAsync};
+export { addProductionLine, getAllProductionLinesAsync, getProductionLineAsync, updateProductionLine, deleteProductionLine, getAllProductionLineNamesCodesAsync, getProductionLineByNameAsync};

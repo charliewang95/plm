@@ -115,5 +115,10 @@ async function getAllFormulaNamesAsync(sessionId) {
    return res;
 }
 
+async function getFormulaByNameAsync(formulaName, sessionId) {
+   const res = await axios.get('/formulas/formulaName/'+formulaName+'/user/'+sessionId);
+   return res;
+}
+
 //export functions above for use by other modules
-export { addFormula, getAllFormulasAsync, getFormulaAsync, updateFormula, deleteFormula, checkoutFormula, getAllFormulaNamesAsync};
+export { addFormula, getAllFormulasAsync, getFormulaAsync, updateFormula, deleteFormula, checkoutFormula, getAllFormulaNamesAsync, getFormulaByNameAsync};

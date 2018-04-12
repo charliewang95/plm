@@ -82,6 +82,7 @@ var list = function(req, res, next, model, username) {
 			return next(err);
 		}
 		else {
+		    console.log(items);
 			res.json(items);
 		}
 	});
