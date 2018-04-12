@@ -320,7 +320,9 @@ exports.markComplete = function(req, res, next){
                             //TODO: add ingredientLotUsedInProduct in the product object
                             addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
                                 updateIngredientProduct(req, res, next, pl, formula, date, function(){
-                                    return res.send(pl);
+                                    addDistributorNetwork(req, res, next, formula, pl, date, function(){
+                                        return res.send(pl);
+                                    })
                                 });
                             });
                         } else {
@@ -565,7 +567,7 @@ var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, d
     })
 };
 
-var addDistributorNetwork = function(req, res, next, formula, pl, callback){ //distribution
+var addDistributorNetwork = function(req, res, next, formula, pl, date, callback){ //distribution
     DistributorNetwork.findOne({productNameUnique: formula.nameUnique}, function(err, dn){
         if (err) return next(err);
         else if (!dn) {
@@ -577,13 +579,17 @@ var addDistributorNetwork = function(req, res, next, formula, pl, callback){ //d
             newDistributorNetworkItem.totalRevenue = 0;
             newDistributorNetworkItem.totalCost = pl.newSpentMoney;
             newDistributorNetworkItem.save(function(err){
-                callback();
+                freshness.updateProductAverageAdd(res, next, newDistributorNetworkItem, date, pl.quantity, function(){
+                    callback();
+                })
             });
         } else {
             var numUnit = dn.numUnit;
             var totalCost = dn.totalCost;
             dn.update({numUnit: numUnit + pl.quantity, totalCost: totalCost + pl.newSpentMoney}, function(err, obj){
-                callback();
+                freshness.updateProductAverageAdd(res, next, dn, date, pl.quantity, function(){
+                    callback();
+                })
             });
         }
     })
@@ -659,25 +665,25 @@ var addIntermediateProductIngredientLot = function(req, res, next, formula, numU
     });
 };
 
-var updateIngredientProduct = function(req, res, next, ingredientName, formula, date, lot, callback) { //recall report
-//    if (i == ingredients.length) {
-//        callback();
-//    }
-//    else {
-        console.log('FFFFFFFFF='+formula);
-        var newIngredientProduct = new IngredientProduct();
-        newIngredientProduct.ingredientNameUnique = ingredientName.toLowerCase();
-        newIngredientProduct.vendorNameUnique = (lot.vendorNameUnique == null) ? '' : lot.vendorNameUnique;
-        newIngredientProduct.lotNumberUnique = lot.lotNumberUnique;
-        newIngredientProduct.lotId = lot._id;
-        newIngredientProduct.productName = formula.name;
-        newIngredientProduct.date = date;
-        newIngredientProduct.lotNumber = (formula.isIntermediate) ? 'IP'+date.getTime() : 'PR'+date.getTime();
-        console.log(newIngredientProduct);
-        newIngredientProduct.save(function(err){
-            callback();
-//            updateIngredientProduct(req, res, next, ingredients, formula, date, i+1);
-        });
-//    }
-};
+//var updateIngredientProduct = function(req, res, next, ingredientName, formula, date, lot, callback) { //recall report
+////    if (i == ingredients.length) {
+////        callback();
+////    }
+////    else {
+//        console.log('FFFFFFFFF='+formula);
+//        var newIngredientProduct = new IngredientProduct();
+//        newIngredientProduct.ingredientNameUnique = ingredientName.toLowerCase();
+//        newIngredientProduct.vendorNameUnique = (lot.vendorNameUnique == null) ? '' : lot.vendorNameUnique;
+//        newIngredientProduct.lotNumberUnique = lot.lotNumberUnique;
+//        newIngredientProduct.lotId = lot._id;
+//        newIngredientProduct.productName = formula.name;
+//        newIngredientProduct.date = date;
+//        newIngredientProduct.lotNumber = (formula.isIntermediate) ? 'IP'+date.getTime() : 'PR'+date.getTime();
+//        console.log(newIngredientProduct);
+//        newIngredientProduct.save(function(err){
+//            callback();
+////            updateIngredientProduct(req, res, next, ingredients, formula, date, i+1);
+//        });
+////    }
+//};
 

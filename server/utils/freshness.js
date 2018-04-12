@@ -2,6 +2,8 @@ var mongoose = require('mongoose'),
     Ingredient = require('mongoose').model('Ingredient'),
     IngredientLot = require('mongoose').model('IngredientLot'),
     IngredientFreshness = require('mongoose').model('IngredientFreshness'),
+    ProductFreshness = require('mongoose').model('ProductFreshness'),
+    DistributorNetwork = require('mongoose').model('DistributorNetwork'),
 	Schema = mongoose.Schema;
 
 exports.updateAverageAdd = function(res, next, ingredientName, date, numUnit, callback) {
@@ -153,3 +155,32 @@ var addTotal = function(res, next, totalAverage, totalWorst, callback){
         }
     });
 }
+
+exports.updateProductAverageAdd = function(res, next, dn, date, numUnit, callback) {
+    var oldNumUnit = ingredient.numUnit;
+    ProductFreshness.findOne({productNameUnique: dn.productNameUnique}, function(err, fresh){
+        if (err) return next(err);
+        else if (fresh) {
+            console.log('freshness already exists');
+            var averageMilli = fresh.averageMilli;
+            console.log('average '+averageMilli);
+            var newAverageMilli = Math.floor((Number(averageMilli)*Number(oldNumUnit) + date.getTime()*Number(numUnit)) / (Number(oldNumUnit) + Number(numUnit)));
+            console.log('now date '+date.getTime());
+            console.log('old num '+oldNumUnit+'numUnit '+numUnit);
+            console.log('new average '+newAverageMilli);
+            fresh.update({averageMilli: newAverageMilli}, function(err, obj){
+                callback();
+            });
+        }
+        else {
+            var newFresh = new ProductFreshness();
+            newFresh.productName = dn.productName;
+            newFresh.productNameUnique = dn.productNameUnique;
+            newFresh.averageMilli = date.getTime();
+            newFresh.oldestMilli = date.getTime();
+            newFresh.save(function(err, obj){
+                callback();
+            });
+        }
+    });
+};
