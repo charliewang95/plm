@@ -46,7 +46,7 @@ exports.getPendingsOnly = function(req, res, next) {
 
 exports.getRawOnly = function(req, res, next) {
     Order.find({isPending: false}, function(err, items){
-        //console.log(items);
+        console.log(items);
         if (err) return next(err);
         else res.send(items);
     });

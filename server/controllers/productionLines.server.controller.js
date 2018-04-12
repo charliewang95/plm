@@ -34,3 +34,10 @@ exports.getAllIdleServers = function(req, res, next) {
     });
 }
 
+exports.getProductionLineByName = function(req, res, next) {
+    ProductionLine.findOne({nameUnique: req.params.productionLineName.toLowerCase()}, function(err, pl){
+        if (err) return next(err);
+        else return res.json(pl);
+    });
+}
+
