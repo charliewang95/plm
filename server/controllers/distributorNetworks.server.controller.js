@@ -1,6 +1,8 @@
 var User = require('mongoose').model('User');
 var DistributorNetwork = require('mongoose').model('DistributorNetwork');
+var ProductFreshness = require('mongoose').model('ProductFreshness');
 var utils = require('../utils/utils');
+var freshness = require('../utils/freshness');
 
 exports.create = function(req, res, next) {
     utils.doWithAccess(req, res, next, DistributorNetwork, 'create', req.params.userId, '', true, true);
@@ -24,12 +26,13 @@ exports.delete = function(req, res, next) {
 
 exports.updateNetwork = function(req, res, next){
     var items = req.body;
-    updateNetworkHelper(res, next, 0, items, function(){
+    var date = new Date();
+    updateNetworkHelper(res, next, date, 0, items, function(){
         res.json(items);
     });
 };
 
-var updateNetworkHelper = function(res, next, i, items, callback) {
+var updateNetworkHelper = function(res, next, date, i, items, callback) {
     if (i == items.length) {
         callback();
     } else {
@@ -45,10 +48,50 @@ var updateNetworkHelper = function(res, next, i, items, callback) {
                 var newSoldUnit = dn.numSold + quantity;
                 var newTotalRevenue = dn.totalRevenue + totalRevenue;
                 dn.update({totalRevenue: newTotalRevenue, numSold:newSoldUnit}, function(err, obj){
-                    updateNetworkHelper(res, next, i+1, items, callback);
+                    if (newSoldUnit == dn.numUnit) {
+                        dn.remove(function(err){
+                            freshness.findOne({productNameUnique: productionName.toLowerCase()}, function(err, fresh){
+                                fresh.remove(function(err){
+                                    updateNetworkHelper(res, next, date, i+1, items, callback);
+                                })
+                            })
+                        })
+                    } else {
+                        freshness.updateProductAverageDelete(res, next, date, dn, quantity, function(){
+                            freshness.updateProductOldestDelete(res, next, date, dn, quantity, function(){
+                                updateNetworkHelper(res, next, date, i+1, items, callback);
+                            })
+                        })
+                    }
                 });
             }
         });
     }
 };
+
+exports.getFresh = function(req, res, next) {
+    console.log("get product fresh called");
+    DistributorNetwork.find({}, function(err, dns){
+        getFreshHelper(req, res, next, 0, dns, function(){
+            console.log('got it?');
+            ProductFreshness.find({}, function(err, fresh){
+                //console.log(fresh);
+                res.json(fresh);
+            });
+        });
+    });
+}
+
+var getFreshHelper = function(req, res, next, i, dns, callback){
+    console.log(i+' '+dns.length)
+    if (i == dns.length){
+        callback();
+    } else {
+        var dn = dns[i];
+        var productName = dn.productName;
+        freshness.getProductLatestInfo(res, next, productName, function(){
+            getFreshHelper(req, res, next, i+1, dns, callback);
+        });
+    }
+}
 

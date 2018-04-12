@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
     Ingredient = require('mongoose').model('Ingredient'),
     IngredientLot = require('mongoose').model('IngredientLot'),
+    IngredientProduct = require('mongoose').model('IngredientProduct'),
     IngredientFreshness = require('mongoose').model('IngredientFreshness'),
     ProductFreshness = require('mongoose').model('ProductFreshness'),
     DistributorNetwork = require('mongoose').model('DistributorNetwork'),
@@ -184,3 +185,88 @@ exports.updateProductAverageAdd = function(res, next, dn, date, numUnit, callbac
         }
     });
 };
+
+exports.updateProductAverageDelete = function(res, next, date, dn, numUnit, callback) {
+    var oldNumUnit = ingredient.numUnit;
+    ProductFreshness.findOne({productNameUnique: dn.productNameUnique}, function(err, fresh){
+        if (err) return next(err);
+        else if (fresh) {
+            var averageMilli = fresh.averageMilli;
+            Product.getOldestLot(res, dn.productNameUnique, function(lot){
+                if (lot) {
+                    var newAverageMilli = Math.floor((averageMilli * oldNumUnit - lot.date.getTime() * numUnit) / (oldNumUnit - numUnit));
+                    console.log("OLD AVERAGE "+averageMilli+"NEW AVERAGE "+newAverageMilli);
+                    fresh.update({averageMilli: newAverageMilli}, function(err, obj){
+                        callback();
+                    });
+                }
+                else {
+                    fresh.remove(function(err){
+                        callback();
+                    });
+                }
+            });
+        } else {
+            callback();
+        }
+    });
+};
+
+exports.updateProductOldestDelete = function(res, next, date, dn, numUnit, callback) {
+    var oldNumUnit = ingredient.numUnit;
+    ProductFreshness.findOne({productNameUnique: dn.productNameUnique}, function(err, fresh){
+        if (err) return next(err);
+        else if (fresh) {
+            Product.getOldestLot(res, dn.productNameUnique, function(lot){
+                if (lot) {
+                    fresh.update({oldestMilli: lot.date.getTime()}, function(err, obj){
+                        callback();
+                    });
+                } else {
+                    fresh.remove(function(err){
+                        callback();
+                    });
+                }
+            });
+        }
+        else {
+            callback();
+        }
+    });
+};
+
+exports.getProductLatestInfo = function(res, next, productName, callback) {
+    if (!productName) return res.json([]);
+    ProductFreshness.findOne({productNameUnique: productName.toLowerCase()}, function(err, fresh){
+        if (err) return next(err);
+        else if (fresh){
+            console.log('updating freshness data');
+            var nowDate = new Date();
+            var nowTime = nowDate.getTime();
+            var oldestDiff = Math.floor((nowTime - fresh.oldestMilli)/1000/60);
+            console.log('oldestDiff '+oldestDiff);
+            var oldestMinute = Math.floor(oldestDiff % 60);
+            var oldestHour = Math.floor((oldestDiff/60) % 24);
+            var oldestDay = Math.floor(oldestDiff/60/24);
+            var averageDiff = Math.floor((nowTime - fresh.averageMilli)/1000/60);
+            console.log('averageDiff '+averageDiff);
+            var averageMinute = Math.floor(averageDiff % 60);
+            var averageHour = Math.floor((averageDiff/60) % 24);
+            var averageDay = Math.floor(averageDiff/60/24);
+
+            fresh.update({oldestDay: oldestDay,
+                          oldestHour: oldestHour,
+                          oldestMinute: oldestMinute,
+                          averageDay: averageDay,
+                          averageHour: averageHour,
+                          averageMinute: averageMinute}, function(err, obj){
+                            console.log('updated freshness data');
+                            //console.log(fresh);
+                            callback();
+                          });
+        }
+        else {
+            callback();
+        }
+    });
+}
