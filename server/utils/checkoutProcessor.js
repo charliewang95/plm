@@ -241,40 +241,41 @@ exports.checkoutFormula = function(req, res, next, model, username) { //main che
     var formulaId = req.params.formulaId;
     var quantity = req.params.quantity;
     var productionLineName = req.params.productionLineName;
-    ProductionLine.findOne({nameUnique: productionLineName.toLowerCase()}, function(err, productionLine){
-        if (!productionLine) return res.status(400).send('Production line does not exist');
-        else if (!productionLine.isIdle) return res.status(400).send('Production line is currently used by '+productionLine.currentFormula);
-        else {
-            Formula.findById(formulaId, function(err, formula){
-                if (err) return next(err);
-                else if (!formula){
-                    return res.status(400).send('Formula does not exist');
-                } else {
-                    checkProductAmount(req, res, next, formula, quantity, function(){
-                        checkNewStorageHelper(req, res, next, formula, quantity, function(totalSpace){
-                            var multiplier = quantity/formula.unitsProvided;
-                            console.log('multiplier is '+multiplier);
-                            console.log('quantity is '+quantity);
-                            console.log('unitsProvided is '+formula.unitsProvided);
-                            var ingredients = formula.ingredients;
-                            checkIngredientHelper(req, res, next, multiplier, 0, ingredients, [], true, function(array, viable){
-                                  if (req.params.action == 'review') {
-                                      res.json(array);
-                                  } else {
+
+    Formula.findById(formulaId, function(err, formula){
+        if (err) return next(err);
+        else if (!formula){
+            return res.status(400).send('Formula does not exist');
+        } else {
+            checkProductAmount(req, res, next, formula, quantity, function(){
+                checkNewStorageHelper(req, res, next, formula, quantity, function(totalSpace){
+                    var multiplier = quantity/formula.unitsProvided;
+                    console.log('multiplier is '+multiplier);
+                    console.log('quantity is '+quantity);
+                    console.log('unitsProvided is '+formula.unitsProvided);
+                    var ingredients = formula.ingredients;
+                    checkIngredientHelper(req, res, next, multiplier, 0, ingredients, [], true, function(array, viable){
+                          if (req.params.action == 'review') {
+                              return res.json(array);
+                          } else {
+                              ProductionLine.findOne({nameUnique: productionLineName.toLowerCase()}, function(err, productionLine){
+                                   if (!productionLine) return res.status(400).send('Production line does not exist');
+                                   else if (!productionLine.isIdle) return res.status(400).send('Production line is currently used by '+productionLine.currentFormula);
+                                   else {
                                       if (viable) { //check complete
-                                          var date = new Date();
-                                          console.log('Before update ingredient');
-                                          updateIngredientHelper(req, res, next, multiplier, ingredients, formula, 0, 0, [], date, function(newSpentMoney, arrayInProductOut) {
-                                              updateProductionLineAfterCheckout(res, next, productionLine, formula, date, quantity, newSpentMoney, totalSpace, arrayInProductOut);
-                                          });
+                                         var date = new Date();
+                                         console.log('Before update ingredient');
+                                         updateIngredientHelper(req, res, next, multiplier, ingredients, formula, 0, 0, [], date, function(newSpentMoney, arrayInProductOut) {
+                                             updateProductionLineAfterCheckout(res, next, productionLine, formula, date, quantity, newSpentMoney, totalSpace, arrayInProductOut);
+                                         });
                                       } else {
-                                          return res.status(406).json(array);
+                                         return res.status(406).json(array);
                                       }
-                                  }
-                            });
-                        });
+                                   }
+                              });
+                          }
                     });
-                }
+                });
             });
         }
     });
