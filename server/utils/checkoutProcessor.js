@@ -587,8 +587,6 @@ var addDistributorNetwork = function(req, res, next, formula, pl, callback){ //d
             });
         }
     })
-
-
 };
 
 var addIntermediateProductIngredientLot = function(req, res, next, formula, numUnit, totalSpace, date, callback){ //lot
