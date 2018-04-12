@@ -58,3 +58,10 @@ exports.bulkImportIntermediate = function(req, res, next, contents, callback) {
         callback();
     });
 };
+
+exports.getFormulaByName = function(req, res, next) {
+    Formula.findOne({nameUnique: req.params.formulaName.toLowerCase()}, function(err, formula){
+        if (err) return next(err);
+        else return res.json(formula);
+    });
+}
