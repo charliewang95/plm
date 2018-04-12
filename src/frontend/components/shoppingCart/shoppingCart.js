@@ -386,19 +386,19 @@ class ShoppingCart extends React.Component {
       console.log("checkout" );
       console.log(" ORDERED DATA " + this.state.rows);
        var temp = this;
-      // await orderActions.checkoutOrder(sessionId, function(res){
-      //   if (res.status == 400) {
-      //     PubSub.publish('showAlert', res.data );
-      //       // if (!alert(res.data)) {
-      //       // }
-      //   } else {
-      //     // temp.setState({snackBarMessage : "Checkout successful!"});
-      //     // temp.setState({snackBarOpen:true});
-      //     //PubSub.publish('showAlert', 'Checkout Successful.' );
-      //     toast.success('Checkout successful!');
-      //     temp.setState({rows:[]});
-      //   }
-      // });
+       await orderActions.checkoutOrder(sessionId, function(res){
+         if (res.status == 400) {
+           PubSub.publish('showAlert', res.data );
+             // if (!alert(res.data)) {
+             // }
+         } else {
+           // temp.setState({snackBarMessage : "Checkout successful!"});
+           // temp.setState({snackBarOpen:true});
+           //PubSub.publish('showAlert', 'Checkout Successful.' );
+           toast.success('Checkout successful!');
+           temp.setState({rows:[]});
+         }
+       });
     };
   }
 
@@ -430,6 +430,7 @@ class ShoppingCart extends React.Component {
     var rawData = [];
     if(READ_FROM_DATABASE){
       rawData = await orderActions.getRawOnlyAsync(sessionId);
+      rawData = rawData.data;
       console.log(rawData);
     } else {
       rawData = cartData;

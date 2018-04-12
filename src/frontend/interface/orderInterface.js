@@ -98,8 +98,9 @@ async function getPendingsOnlyAsync(sessionId) {
 
 async function getRawOnlyAsync(sessionId) {
 	const res = await axios.get('/orders/rawOnly/user/'+sessionId);
+	console.log(res);
     return res;
 };
 
 //export functions above for use by other modules
-export { addOrder, getAllOrdersAsync, getOrderAsync, updateOrder, deleteOrder, getPendingsOnlyAsync, getRawOnlyAsync};
+export { addOrder, getAllOrdersAsync, getOrderAsync, updateOrder, deleteOrder, checkoutOrder, getPendingsOnlyAsync, getRawOnlyAsync};
