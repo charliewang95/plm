@@ -102,5 +102,18 @@ async function getRawOnlyAsync(sessionId) {
     return res;
 };
 
+async function checkoutOneOrderAsync(order, sessionId, callback) {
+    try{
+        const res = await axios.delete(order, '/orders/checkoutOneOrder/user/'+sessionId);
+        console.log(res);
+        return res.data;
+    } catch(e) {
+        if (e.response.status == 400 || e.response.status == 500)
+            callback(e.response);
+        else
+            throw e;
+    }
+};
+
 //export functions above for use by other modules
-export { addOrder, getAllOrdersAsync, getOrderAsync, updateOrder, deleteOrder, checkoutOrder, getPendingsOnlyAsync, getRawOnlyAsync};
+export { addOrder, getAllOrdersAsync, getOrderAsync, updateOrder, deleteOrder, checkoutOrder, getPendingsOnlyAsync, getRawOnlyAsync, checkoutOneOrderAsync};

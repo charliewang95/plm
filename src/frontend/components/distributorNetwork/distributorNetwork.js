@@ -49,7 +49,7 @@ export default class Demo extends React.PureComponent {
       columns: [
         { name: 'productName', title: 'Product Name' },
         // { name: 'numUnit', title: 'Total Quantity' },
-        { name: 'numUnsold', title: 'Quantity Unsold' },
+        { name: 'numUnsold', title: 'Tot. Quantity' },
         { name: 'quantityToSell', title: ' Sale Quantity' },
         { name: 'unitPrice', title: 'Unit Price ($)' },
         { name: 'totalRevenue', title: 'Revenue ($)' },
@@ -262,7 +262,8 @@ export default class Demo extends React.PureComponent {
 
     // var temp = this;
     var products = [];
-    for(var i =0; i < this.state.selectedRows;i++){
+    console.log(this.state.selectedRows);
+    for(var i =0; i < this.state.selectedRows.length; i++){
       var productObject = new Object();
       productObject.productName = selectedRows[i].productName;
       productObject.totalRevenue = selectedRows[i].totalRevenue;
@@ -270,6 +271,7 @@ export default class Demo extends React.PureComponent {
       products.push(productObject);
     }
       // (products, sessionId, callback)
+      console.log(products);
       await distributorNetworkActions.sellItemsAsync(products,sessionId,function(res){
         if(res.status){
           alert(res.data);
@@ -283,7 +285,7 @@ export default class Demo extends React.PureComponent {
     this.setState({selection:[]});
     //TODO: Reload here to get the updated value from backend
 
-    window.location.reload();
+    //window.location.reload();
 
   }
 

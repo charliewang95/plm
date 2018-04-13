@@ -112,6 +112,7 @@ var create = function(req, res, next, model, username) {
             console.log("creating, modified");
             console.log("creating, validating");
             modifiedItem = new model(obj);
+            console.log("modified item is");
             console.log(modifiedItem);
             validator.validate(model, modifiedItem, '', res, next, function(err, valid){
                 if (err) {

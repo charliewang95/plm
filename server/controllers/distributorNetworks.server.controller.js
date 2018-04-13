@@ -27,6 +27,8 @@ exports.delete = function(req, res, next) {
 exports.updateNetwork = function(req, res, next){
     var items = req.body;
     var date = new Date();
+    console.log("selling items");
+    console.log(items);
     updateNetworkHelper(res, next, date, 0, items, function(){
         res.json(items);
     });
@@ -37,16 +39,22 @@ var updateNetworkHelper = function(res, next, date, i, items, callback) {
         callback();
     } else {
         var item = items[i];
-        var productionName = item.productionName;
-        var quantity = item.quantity;
-        var totalRevenue = item.totalRevenue;
-        DistributorNetwork.findOne({productionNameUnique: productionName.toLowerCase()}, function(err, dn){
+        var productionName = item.productName;
+        var quantity = Number(item.quantity);
+        var totalRevenue = Number(item.totalRevenue);
+        console.log("selling item "+productionName);
+        console.log(item);
+        DistributorNetwork.findOne({productNameUnique: productionName.toLowerCase()}, function(err, dn){
             if (err) return next(err);
             else {
+                console.log("quantity to sell = "+quantity);
+                console.log("quantity in total = "+dn.numUnit);
+                console.log("quantity sold = "+dn.numSold);
                 if (quantity + dn.numSold > dn.numUnit) return res.status(400).send('Action Denied. Quantity of product '+
                     productionName+' in storage is '+(dn.numUnit - dn.numSold));
                 var newSoldUnit = dn.numSold + quantity;
                 var newTotalRevenue = dn.totalRevenue + totalRevenue;
+                console.log("newSoldUnit "+newSoldUnit+" newTotalRevenue "+newTotalRevenue);
                 dn.update({totalRevenue: newTotalRevenue, numSold:newSoldUnit}, function(err, obj){
                     if (newSoldUnit == dn.numUnit) {
                         dn.remove(function(err){

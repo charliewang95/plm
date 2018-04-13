@@ -32,6 +32,7 @@ exports.delete = function(req, res, next) {
 };
 
 exports.getOldestLot = function(req, res, next) {
+    console.log("Getting oldest lot");
     IngredientLot.find({ingredientId: req.params.ingredientId}, {},
                {sort: {date: 1} },function(err, lots){
         if (err) return next(err);
@@ -43,6 +44,7 @@ exports.getOldestLot = function(req, res, next) {
 };
 
 exports.listLotNumbers = function(req, res, next) {
+    console.log("Listing Lot Numbers");
     IngredientLot.find({ingredientId: req.params.ingredientId}, function(err, items){
 //        var numberArray = [];
 //        var numberUniqueArray = [];
