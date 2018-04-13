@@ -49,8 +49,8 @@ export default class Demo extends React.PureComponent {
       columns: [
         { name: 'productName', title: 'Product Name' },
         // { name: 'numUnit', title: 'Total Quantity' },
-        { name: 'numUnsold', title: 'Unsold Quantity' },
-        { name: 'numSold', title: 'Sale Quantity' },
+        { name: 'numUnsold', title: 'Quantity Unsold' },
+        { name: 'quantityToSell', title: ' Sale Quantity' },
         { name: 'unitPrice', title: 'Unit Price ($)' },
         { name: 'totalRevenue', title: 'Revenue ($)' },
       ],
@@ -124,6 +124,7 @@ export default class Demo extends React.PureComponent {
     this.checkSelectionValid = this.checkSelectionValid.bind(this);
     this.sellProducts = this.sellProducts.bind(this);
     this.cancelSale = this.cancelSale.bind(this);
+    this.quantitySaveValid = this.quantitySaveValid.bind(this);
 
     this.updatePriceQtyTable = () => {
       console.log("update price qty in table");
@@ -141,13 +142,13 @@ export default class Demo extends React.PureComponent {
         console.log(rows[i].id);
         if(rows[i].id == rowId){
           rows[i].unitPrice = temp.state.unitPrice;
-          rows[i].numSold = temp.state.quantity;
+          rows[i].quantityToSell = temp.state.quantity;
           rows[i].totalRevenue = Math.round(temp.state.quantity * temp.state.unitPrice *100)/100;
           grandTotalRev+=rows[i].totalRevenue;
 
           console.log("inside");
           console.log(rows[i].unitPrice);
-          console.log(rows[i].numSold);
+          console.log(rows[i].quantityToSell);
         }
       }
       console.log(rows);
@@ -180,7 +181,6 @@ export default class Demo extends React.PureComponent {
         numUnsold:Math.round((row.numUnit-row.numSold)*100)/100,
         })),
       ];
-
     this.setState({rows:processedData});
   }
 
@@ -188,18 +188,18 @@ export default class Demo extends React.PureComponent {
     event.preventDefault();
     console.log("update quantity");
     var temp = this;
+    // TODO: Fix this
     var re = /^\d*[1-9]\d*$/;
     var unsoldQty = temp.state.currentRowSelected.numUnsold;
     var quantity = event.target.value;
     if(quantity > unsoldQty){
       alert("sale quantity cannot be higher than the unsold quantity!");
-    }else if (quantity==0 || !(quantity>0 && re.test(quantity))){
-      alert("sale quantity must be a positive integer.");
+    }else if (quantity == '' || (quantity>0 && re.test(event.target.value))){
+      temp.setState({quantity: event.target.value});
     }else{
-       temp.setState({quantity: event.target.value});
+       alert("Quantity must be a positive integer!");
     }
   };
-
 
   updateUnitPrice(event){
     event.preventDefault();
@@ -213,6 +213,24 @@ export default class Demo extends React.PureComponent {
     }
   }
 
+  quantitySaveValid(){
+    console.log("check if save quantity valid");
+    var temp = this;
+
+    var quantity = temp.state.quantity;
+    var unitPrice = temp.state.unitPrice;
+
+    if(quantity && unitPrice){
+      if(unitPrice == 0 || unitPrice == 0 || quantity == '' || unitPrice == ''){
+        console.log("null value ");
+        return false;
+      }else{
+        return true;
+      }
+    }
+    return false;
+  }
+
   checkSelectionValid(){
     console.log("check sell Valid");
     var temp = this;
@@ -220,7 +238,7 @@ export default class Demo extends React.PureComponent {
     if(selectedRows.length > 0 ){
       console.log(selectedRows);
       for(var i =0; i < selectedRows.length;i++){
-        if(selectedRows[i].numSold <= 0 || selectedRows[i].unitPrice <=0){
+        if(selectedRows[i].quantityToSell <= 0 || selectedRows[i].unitPrice <=0){
           return false;
         }
       }
@@ -242,28 +260,31 @@ export default class Demo extends React.PureComponent {
     console.log(this.state.selectedRows);
     var selectedRows = this.state.selectedRows;
 
+    // var temp = this;
+    var products = [];
     for(var i =0; i < this.state.selectedRows;i++){
-      var distributorNetworkId = selectedRows[i]._id;
-      var productName = selectedRows[i].productName;
-      var isSold = true;
-      var numUnit = selectedRows[i].numUnit;
-      var numSold = selectedRows[i].numSold;
-      var totalRevenue = selectedRows[i].totalRevenue;
-      var totalCost = selectedRows[i].totalCost;
-      
-
-      await distributorNetworkActions. updateDistributorNetwork(distributorNetworkId,
-        productName, isSold,numUnit, numSold, totalRevenue, totalCost, sessionId, function(res){
-          if(res.status){
-            alert(res.data);
-          }else{
-            // TODO: SnackBar
-          }
-        });
-      }
-    //TODO: Call the back end and update the values
-    this.setState({fireRedirect:true});
+      var productObject = new Object();
+      productObject.productName = selectedRows[i].productName;
+      productObject.totalRevenue = selectedRows[i].totalRevenue;
+      productObject.quantity = selectedRows[i].quantityToSell;
+      products.push(productObject);
+    }
+      // (products, sessionId, callback)
+      await distributorNetworkActions.sellItemsAsync(products,sessionId,function(res){
+        if(res.status){
+          alert(res.data);
+        }else{
+          //TODO: SnackBar
+        }
+      });
     this.setState({review:false});
+    this.setState({currentRowSelected:{}});
+    this.setState({selectedRows:[]});
+    this.setState({selection:[]});
+    //TODO: Reload here to get the updated value from backend
+
+    window.location.reload();
+
   }
 
   render() {
@@ -326,7 +347,7 @@ export default class Demo extends React.PureComponent {
                   margin="dense"
                   id="quantity"
                   label="Enter Quantity"
-                  value = { quantity}
+                  value = {quantity}
                   fullWidth = {false}
                   onChange={(event) => this.updateQuantity(event)}
                   // verticalSpacing= "desnse"
@@ -353,7 +374,9 @@ export default class Demo extends React.PureComponent {
             </DialogContent>
             <DialogActions>
               <Button onClick={this.cancelSelection} color="secondary">Cancel</Button>
-              <Button onClick={this.updatePriceQtyTable} color="primary">SAVE</Button>
+              <Button
+                disabled = {!this.quantitySaveValid()}
+                onClick={this.updatePriceQtyTable} color="primary">SAVE</Button>
             </DialogActions>
           </Dialog>
           <Dialog
@@ -368,7 +391,7 @@ export default class Demo extends React.PureComponent {
               </DialogContentText>
               <Paper>
                 <Grid
-                  rows={ selectedRows}
+                  rows={selectedRows}
                   columns={columns}
                 >
                   <Table/>
