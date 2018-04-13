@@ -13,10 +13,7 @@ import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
 import { FormControl, FormGroup, FormHelperText } from 'material-ui/Form';
 import { MenuItem } from 'material-ui/Menu';
 import Button from 'material-ui/Button';
-
-
-const VENDORS = require('./dummyVendors');
-
+import { ToastContainer, toast } from 'react-toastify';
 
 // TODO: get session Id from the user
 //const sessionId = testConfig.sessionId;
@@ -195,7 +192,9 @@ class SelectVendors extends Component {
         console.log(this.state.vendorsArray);
         this.props.handleChange(this.state.vendorsArray);
       }else{
-        alert("Price must be a positive number.");
+        toast.success('Price must be a positive number.', {
+          position: toast.POSITION.TOP_RIGHT
+        });
       }
   }
 
@@ -216,7 +215,10 @@ updatePriceHere(event){
       if ( event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
          this.setState({inputPrice: event.target.value})
       }else{
-        alert("Price must be a positive number.");
+        //alert("Price must be a positive number.");
+        toast.success('Price must be a positive number.', {
+          position: toast.POSITION.TOP_RIGHT
+        });
       }
   }
   // updateName(value){

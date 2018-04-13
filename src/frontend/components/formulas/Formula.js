@@ -41,12 +41,11 @@ import {Link} from 'react-router-dom';
 import * as ingredientActions from '../../interface/ingredientInterface';
 import * as formulaActions from '../../interface/formulaInterface';
 import * as testConfig from '../../../resources/testConfig.js';
-import MyPdfViewer from '../admin/PdfViewer';
 import * as uploadInterface from '../../interface/uploadInterface';
 import formulaData from './dummyData';
 import PubSub from 'pubsub-js';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
-
+import { ToastContainer, toast } from 'react-toastify';
 //TODO: Set the user ID
 var sessionId = "";
 var isAdmin = "";
@@ -245,7 +244,10 @@ class Formula extends React.PureComponent {
           // alert(" Ingredient successfully deleted ! ");
           // this.setState({snackBarMessage : "Formula successfully deleted."});
           // this.setState({snackBarOpen:true});
-          PubSub.publish('showMessage', 'Formula successfully deleted.' );
+          toast.success('Formula successfully deleted.', {
+            position: toast.POSITION.TOP_RIGHT
+          });
+          //PubSub.publish('showMessage', 'Formula successfully deleted.' );
         }
       });
       this.setState({ rows, deletingRows: [] });
@@ -329,7 +331,10 @@ class Formula extends React.PureComponent {
                 } else if (res.status == 200) {
                     console.log(res);
                     if(!alert(res.data)){
-                        PubSub.publish('showMessage', 'File successfully uploaded.' );
+                        //PubSub.publish('showMessage', 'File successfully uploaded.' );
+                        toast.success('File successfully uploaded', {
+                          position: toast.POSITION.TOP_RIGHT
+                        });
                         window.location.reload();
                       }
                 }

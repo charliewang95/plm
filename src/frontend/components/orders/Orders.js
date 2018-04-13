@@ -193,7 +193,8 @@ class Orders extends React.PureComponent{
        ingredientDetails = await ingredientActions.getIngredientAsync(option.value,sessionId);
     }catch(e){
       console.log('An error passed to the front end!')
-      alert(e);
+      PubSub.publish('showAlert', e);
+      //alert(e);
     }
 
     console.log("Vendors " + JSON.stringify(ingredientDetails.vendors));
@@ -226,7 +227,7 @@ class Orders extends React.PureComponent{
       if (event.target.value == '' || re.test(event.target.value)) {
          this.setState({packageNum: event.target.value})
       }else{
-        alert(" No of Packages must be a number.");
+        toast.error(" No of Packages must be a number.");
       }
   }
 
@@ -273,8 +274,8 @@ class Orders extends React.PureComponent{
              // alert("ORDERED");
              // temp.setState({snackBarMessage : "Ingredient ordered successfully!"});
              // temp.setState({snackBarOpen:true});
-             PubSub.publish('showMessage', 'Ingredient added to cart!');
-             temp.setState({ fireRedirect: true });
+              toast.success('Ingredient added to cart!');
+              temp.setState({ fireRedirect: true });
              }
            });
        };
@@ -282,7 +283,8 @@ class Orders extends React.PureComponent{
    catch (e){
      console.log('An error passed to the front end!')
      //TODO: error handling in the front end
-     alert(e);
+     PubSub.publish('showAlert', e);
+     // alert(e);
    }
   }
 
@@ -308,9 +310,6 @@ class Orders extends React.PureComponent{
   // Check for validation of the data fields before submitting an order
   isValid(){
     if(!this.state.ingredientName){
-      // toast.error("Please select an ingredient", {
-      //     position: toast.POSITION.TOP_RIGHT
-      //   });
       this.showError("Please select an ingredient");
       // alert(" Please select an ingredient");
       return false;

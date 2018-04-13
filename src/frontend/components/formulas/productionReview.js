@@ -23,7 +23,7 @@ import * as orderActions from '../../interface/orderInterface';
 import * as productActions from '../../interface/productInterface';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
 import PubSub from 'pubsub-js';
-
+import { ToastContainer, toast } from 'react-toastify';
 import {reviewData} from './dummyData';
 
 const styles = {
@@ -95,11 +95,15 @@ class ProductionReview extends React.Component {
                           Number(temp.state.addedQuantity),sessionId, function(res){
 
               if (res.status == 400) {
-                if (!alert(res.data)){
+                // if (!alert(res.data)){
+                //     return;
+                // }
+                if (!PubSub.publish('showAlert',res.data)){
                     return;
                 }
               } else if (res.status == 500){
-                alert(res.data)
+                PubSub.publish('showAlert', res.data);
+                //alert(res.data)
               }
               else {
                  review = res.data;
@@ -145,7 +149,8 @@ class ProductionReview extends React.Component {
 
                    // temp.setState({snackBarMessage : "Formula successfully sent for production review. "});
                    // temp.setState({snackBarOpen:true});
-                   PubSub.publish('showMessage', 'Formula successfully sent for production review.' );
+                   //PubSub.publish('showMessage', 'Formula successfully sent for production review.' );
+                   toast.success('Formula successfully sent for production review.');
               }
       });
 
@@ -189,12 +194,14 @@ class ProductionReview extends React.Component {
         //TODO: Please update this
         console.log(res.status);
         if(res.status == 400){
-          alert(res.data);
+          PubSub.publish('showAlert', res.data);
+          //alert(res.data);
         }else{
           // success = true;
           // temp.setState({snackBarMessage : "Ingredients Successfully added to cart. "});
           // temp.setState({snackBarOpen:true});
-          PubSub.publish('showMessage', ' Ingredients successfully added to cart !' );
+          toast.success('Ingredients successfully added to cart !');
+          //PubSub.publish('showMessage', ' Ingredients successfully added to cart !' );
         }
       });
     }
@@ -210,9 +217,11 @@ class ProductionReview extends React.Component {
                               Number(temp.state.addedQuantity),
                               sessionId, function(res){
          if (res.status == 400) {
-            alert(res.data);
+            PubSub.publish('showAlert', res.data);
+            //alert(res.data);
          } else {
-             PubSub.publish('showMessage', ' Successfully added to production !' );
+             //PubSub.publish('showMessage', ' Successfully added to production !' );
+             toast.success('Successfully added to production !');
             // window.location.reload();
             // alert('Successfully added to production .');
          }
@@ -233,7 +242,8 @@ class ProductionReview extends React.Component {
     if (event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
        this.setState({addedQuantity: event.target.value})
     }else{
-      alert(" Quantity must be a positive number.");
+
+      toast.error(" Quantity must be a positive number.");
     }
   }
 

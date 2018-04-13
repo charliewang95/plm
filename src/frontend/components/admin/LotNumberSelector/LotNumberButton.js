@@ -10,7 +10,7 @@ import Dialog, {
 } from 'material-ui/Dialog';
 import Paper from 'material-ui/Paper';
 import { TableCell } from 'material-ui/Table';
-
+import { ToastContainer, toast } from 'react-toastify';
 
 class LotNumberButton extends Component {
 
@@ -68,14 +68,16 @@ class LotNumberButton extends Component {
     event.preventDefault();
     console.log("change quantity");
     console.log(event.target.value);
-    const re =/^[1-9]\d*$/;
+    const re =/^[1-9][0-9]*$/;
     if (event.target.value == '' || re.test(event.target.value)) {
         this.setState({
         currentQuantity: event.target.value,
       });
     this.saveToProps(event.target.value);
     }else{
-      alert(" No of Packages must be a number.");
+      toast.error("No. of packages must be a number.", {
+        position: toast.POSITION.TOP_RIGHT
+      });
     }
   }
 
@@ -86,7 +88,6 @@ class LotNumberButton extends Component {
     console.log("hit Cancel");
     this.setState({lotNumberArray:this.props.initialArray});
     this.setState({totalAssigned:this.props.totalAssigned});
-    alert("You have unsaved changes, are you sure?");
     window.location.reload();
     //current workaround...
     //e.stopPropagation();
@@ -144,7 +145,7 @@ class LotNumberButton extends Component {
              <DialogContentText>
                 i.e. If you want to assign lot number A123 to 4 packages, enter 4 for number of packages and A123 for lot number.
               </DialogContentText>
-              <LotNumberSelector initialArray={this.state.lotNumberArray} quantity={this.state.currentQuantity} updateArray={this.updateArray} totalAssigned={this.state.totalAssigned}/>
+              <LotNumberSelector initialArray={this.state.lotNumberArray} quantity={this.state.currentQuantity} updateArray={this.updateArray} totalAssigned={this.state.totalAssigned} fromDetails={false}/>
             </DialogContent>
             <DialogActions>
               {/*<Button onClick={(e)=>this.handleCancel(e)} color="primary">Cancel</Button>*/}

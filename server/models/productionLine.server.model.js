@@ -1,6 +1,22 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
+var IngredientLotUsedInProductSchema2 = new Schema({
+    ingredientName: {
+        type: String,
+    },
+    vendorName: {
+        type: String,
+    },
+    lotNumber: {
+        type: String,
+    },
+    lotId: {
+        type: String,
+    }
+});
+mongoose.model('IngredientLotUsedInProduct2', IngredientLotUsedInProductSchema2);
+
 var ProductionLineSchema = new Schema({
 	name: {
 	    type: String,
@@ -23,7 +39,18 @@ var ProductionLineSchema = new Schema({
     },
     currentFormula: {
         type: String
-    }
+    },
+    startDates: [{
+        type: Date
+    }],
+    endDates: [{
+        type: Date
+    }],
+    quantity: Number,
+    newSpentMoney: Number,
+    totalSpace: Number,
+    arrayInProductOut: [IngredientLotUsedInProductSchema2]
+
 });
 
 ProductionLineSchema.index({ nameUnique: 1, lotNumberUnique: 1, date: 1}, { unique: true });

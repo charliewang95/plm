@@ -3,8 +3,6 @@ import { Switch, Route } from 'react-router-dom'
 //import App from './App';
 import DashBoard from './components/dashboard/DashBoard';
 // import AdminIngredients from './components/admin/AdminIngredients';
-// import UserIngredients from './components/ingredients/UserIngredients';
-import Inventory from './components/inventory/Inventory';
 import Orders from './components/orders/Orders';
 import Storage from './components/storage/Storage';
 import Vendors from './components/vendors/Vendors';
@@ -22,6 +20,8 @@ import FormulaDetails from './components/formulas/formulaDetails.js';
 import PageNotFound from './components/error/PageNotFound';
 import ProductDetails from './components/product/productDetails';
 import Report from './components/report/report.js';
+import DistributionNetwork from './components/distributorNetwork/distributorNetwork.js';
+
 
 import MainIngredientView from './components/admin/mainIngredientView';
 
@@ -32,9 +32,7 @@ const Routes = () => (
             <Route exact path="/" component={MainIngredientView} />
             <Route path="/dashboard" component={DashBoard} />
             <Route path="/admin-ingredients" component={MainIngredientView} />
-            {/* <Route path="/user-ingredients" component={UserIngredients} /> */}
             <Route path="/ingredient-details" component={ViewDetailsForm} />
-            <Route path="/inventory" component={Inventory} />
             <Route path="/orders" component={Orders} />
             <Route path="/storage" component={Storage} />
             <Route path="/login" component={Login} />
@@ -51,6 +49,8 @@ const Routes = () => (
             <Route path="/admin-users" component={AdminUserPage} />
             <Route path="/product" component={Product} />
             <Route path="/product-details" component={ProductDetails} />
+            <Route path="/distribution-network" component={DistributionNetwork} />
+
 		  </Switch>
       </div>
 );

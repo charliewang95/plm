@@ -44,8 +44,9 @@ import * as inventoryInterface from '../../interface/inventoryInterface';
   // TODO: get the sessionId
 import * as testConfig from '../../../resources/testConfig.js';
 import PubSub from 'pubsub-js';
-
+import { ToastContainer, toast } from 'react-toastify';
 import {Link} from 'react-router-dom';
+
 
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 var isAdmin = "";
@@ -186,11 +187,15 @@ class Intermediates extends React.PureComponent {
           console.log(rows[index].ingredientId);
           ingredientInterface.deleteIngredient(rows[index].ingredientId, sessionId, function(res){
                 if (res.status == 400) {
-                    alert(res.data);
+                    //alert(res.data);
+                    PubSub.publish('showAlert', res.data);
                 } else {
                     rows.splice(index, 1);
                     tempThis.loadAllIngredients();
-                    PubSub.publish('showMessage', ' Ingredient Successfully deleted!' );
+                    toast.success('Ingredient successfully deleted!', {
+                      position: toast.POSITION.TOP_RIGHT
+                    });
+                    //PubSub.publish('showMessage', ' Ingredient Successfully deleted!' );
                     // alert(" Ingredient successfully deleted ! ");
                 }
           });

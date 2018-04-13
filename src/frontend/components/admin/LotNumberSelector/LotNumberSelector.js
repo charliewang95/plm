@@ -6,7 +6,7 @@ import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
 import { FormControl, FormGroup, FormHelperText } from 'material-ui/Form';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
-
+import { ToastContainer, toast } from 'react-toastify';
 
 class LotNumberSelector extends Component {
 
@@ -59,7 +59,9 @@ class LotNumberSelector extends Component {
       console.log(this.state.lotNumberArray);
       this.props.updateArray(this.state.lotNumberArray);
     }else{
-      alert("Lot Numbers should be unique!");
+      toast.error("Lot numbers must be unique.", {
+        position: toast.POSITION.TOP_RIGHT
+      });
     }
   }
 
@@ -88,10 +90,14 @@ class LotNumberSelector extends Component {
     const re = /^[a-zA-Z0-9_.-]*$/;
     if(index!=-1 ){
       if(!this.checkLotNumberUnique(lotNumber)){
-        alert("Lot number must be unique!");
+        toast.error("Lot numbers must be unique.", {
+          position: toast.POSITION.TOP_RIGHT
+        });
 
       }else if(!re.test(lotNumber)){
-        alert("Lot number must be alphanumeric!");
+        toast.error("Lot numbers must be alphanumeric", {
+          position: toast.POSITION.TOP_RIGHT
+        });
       }else {
       //Add check for data type
         this.state.lotNumberArray[index].lotNumber = lotNumber;
@@ -104,11 +110,19 @@ class LotNumberSelector extends Component {
   updateQuantity(event, index) {
     var quantity = event.target.value;
     if(index>=0){
-      const re = /^\d*\.?\d*$/;
+      var re;
+      if(this.props.fromDetails){
+        re = /^\d*\.?\d*$/;
+      }else{
+        re = /^[1-9][0-9]*$/;
+      }
       console.log('update quantity in selector');
       console.log(quantity);
       if(!re.test(quantity)){
-        alert("Quantity must be a positive integer");
+        // alert("Quantity must be a positive integer");
+        toast.error("Quantity must be a positive integer", {
+          position: toast.POSITION.TOP_RIGHT
+        });
       }else{
         console.log("updateQuantity");
         this.state.lotNumberArray[index].package = quantity;
@@ -127,7 +141,10 @@ class LotNumberSelector extends Component {
       if((re.test(lotNumber))) {
         this.setState({currentLotNumber: lotNumber});
       }else{
-        alert("Lot Number must be alphanumeric.");
+        toast.error("Lot number must be alphanumeric.", {
+          position: toast.POSITION.TOP_RIGHT
+        });
+        // alert("Lot Number must be alphanumeric.");
       }
   }
 
@@ -138,9 +155,15 @@ class LotNumberSelector extends Component {
     // }
     const re = /^\d*\.?\d*$/;
     if(!re.test(quantity)){
-      alert("Quantity must be a positive integer");
+      toast.error("Quantity must be a positive integer", {
+          position: toast.POSITION.TOP_RIGHT
+      });
+      //alert("Quantity must be a positive integer");
     }else if(quantity>(this.props.quantity-this.props.totalAssigned) || (quantity==0 && quantity!='')){
-      alert("Please enter a positive integer less than or equal to " + (this.props.quantity-this.props.totalAssigned));
+      //alert("Please enter a positive integer less than or equal to " + (this.props.quantity-this.props.totalAssigned));
+      toast.error("Please enter a positive integer less than or equal to " + (this.props.quantity-this.props.totalAssigned), {
+          position: toast.POSITION.TOP_RIGHT
+      });
     }else{
       this.setState({currentQuantity:quantity});
     }

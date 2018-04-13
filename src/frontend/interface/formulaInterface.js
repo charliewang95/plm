@@ -104,8 +104,8 @@ async function deleteFormula(formulaId, sessionId, callback) {
 	});
 };
 
-async function checkoutFormula(action, formulaId, quantity, sessionId, callback) {
-     await formulaActions.checkoutFormula(action, formulaId, quantity, sessionId, function(res){
+async function checkoutFormula(action, formulaId, quantity, productionLineName, sessionId, callback) {
+     await formulaActions.checkoutFormula(action, formulaId, quantity, productionLineName, sessionId, function(res){
         callback(res);
      });
 };
@@ -115,5 +115,10 @@ async function getAllFormulaNamesAsync(sessionId) {
    return res;
 }
 
+async function getFormulaByNameAsync(formulaName, sessionId) {
+   const res = await axios.get('/formulas/formulaName/'+formulaName+'/user/'+sessionId);
+   return res;
+}
+
 //export functions above for use by other modules
-export { addFormula, getAllFormulasAsync, getFormulaAsync, updateFormula, deleteFormula, checkoutFormula, getAllFormulaNamesAsync};
+export { addFormula, getAllFormulasAsync, getFormulaAsync, updateFormula, deleteFormula, checkoutFormula, getAllFormulaNamesAsync, getFormulaByNameAsync};

@@ -58,12 +58,13 @@ var OrderSchema = new Schema({
     },
     isPending: {
         type: Boolean,
-//        required: true
+//        required: true,
+        default: false
     },
     ingredientLots: [IngredientLotUsedInOrderSchema]
 });
 
-OrderSchema.index({ userId: 1, ingredientName: 1}, { unique: true });
+OrderSchema.index({ userId: 1, ingredientName: 1, vendorName: 1}, { unique: true });
 
 OrderSchema.statics.getNumSpaceAndNumUnits = function(ingredientName, package, res, next, callback) {
     Ingredient.findOne({nameUnique:ingredientName.toLowerCase()}, function(err, ingredient) {

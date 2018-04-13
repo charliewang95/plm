@@ -1,5 +1,6 @@
 var Order = require('mongoose').model('Order');
 var utils = require('../utils/utils');
+var checkoutProcessor = require('../utils/checkoutProcessor');
 
 exports.create = function(req, res, next) {
 	utils.doWithAccess(req, res, next, Order, 'create', req.params.userId, '', false, true);
@@ -32,6 +33,21 @@ exports.checkout = function(req, res, next) {
     utils.doWithAccess(req, res, next, Order, 'checkoutOrders', req.params.userId, '', false, true);
 };
 
-exports.listPendings = function(req, res, next) {
+exports.cargoArrived = function(req, res, next) {
+    checkoutProcessor.orderArrived(req, res, next, req.body);
+}
 
+exports.getPendingsOnly = function(req, res, next) {
+    Order.find({isPending: true}, function(err, items){
+        if (err) return next(err);
+        else res.send(items);
+    });
+}
+
+exports.getRawOnly = function(req, res, next) {
+    Order.find({isPending: false}, function(err, items){
+        console.log(items);
+        if (err) return next(err);
+        else res.send(items);
+    });
 }

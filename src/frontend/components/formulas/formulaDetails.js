@@ -16,6 +16,7 @@ import SelectIngredients from './SelectIngredients';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
 import { Redirect } from 'react-router';
 import PubSub from 'pubsub-js';
+import { ToastContainer, toast } from 'react-toastify';
 
 const styles = {
     buttons: {
@@ -191,33 +192,34 @@ async loadFormula(){
 
 
   isValid(){
+    console.log("is valid is called");
     var temp = this;
     const re =/^[1-9]\d*$/;
     if(!temp.state.name){
-      alert(" Please enter the formula name. ");
+      toast.error(" Please enter the formula name. ");
       return false;
     }else if (!temp.state.description){
-      alert(" Please enter the description. ");
+      toast.error(" Please enter the description. ");
       return false;
     }else if (!re.test(temp.state.unitsProvided)) {
-      alert(" Units of product of formula must be a positive integer. ");
+      toast.error(" Units of product of formula must be a positive integer. ");
       return false;
     }else if (temp.state.ingredientsArray.length==0){
-      alert(" Please add ingredients needed for the formula.");
+      toast.error(" Please add ingredients needed for the formula.");
       return false;
       // Add checks for intermediateProductFields
     }else if ((temp.state.isIntermediate)){
       if (!temp.state.temperatureZone){
-        alert(" please select a temperature zone ");
+        toast.error("Please select a temperature zone ");
         return false;
       }else if (!this.state.numUnitPerPackage){
-        alert("Please enter the number of units per package!");
+        toast.error("Please enter the number of units per package!");
         return false;
       }else if((!(/^[A-z]+$/).test(temp.state.nativeUnit))) {
-          alert(" Native unit must be a string!");
+          toast.error("Native unit must be a string!");
           return false;
         }else if(!temp.state.packageName){
-          alert("Please select a package ");
+          toast.error("Please select a package ");
           return false;
         }
     // }else if (temp.state.ingredientsArray.length==0){
@@ -226,8 +228,9 @@ async loadFormula(){
     }else if (temp.state.ingredientsArray.length){
       // loop through and make sure all ingredients have quantities updated
       for(var i =0; i < this.state.ingredientsArray.length;i++){
-        if(!temp.state.ingredientsArray[i].quantity){
-          alert(" Please add a positive integer quantity for ingredient " + temp.state.ingredientsArray[i].ingredientName);
+        if(!temp.state.ingredientsArray[i].quantity || temp.state.ingredientsArray[i].quantity==0){
+          toast.error(" Please add a positive integer quantity for ingredient " + temp.state.ingredientsArray[i].ingredientName);
+          //alert(" Please add a positive integer quantity for ingredient " + temp.state.ingredientsArray[i].ingredientName);
           return false;
         }
       }
@@ -240,10 +243,11 @@ async loadFormula(){
   async onFormSubmit(e) {
     var temp = this;
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    var temp = this;
     e.preventDefault();
     console.log("submit formula ");
-    if(temp.isValid() && temp.state.isCreateNew){
+    var isValid = temp.isValid();
+
+    if(isValid && temp.state.isCreateNew){
 
       console.log(" Array " + JSON.stringify(temp.state.ingredientsArray));
       //TODO: Check for adding order
@@ -254,17 +258,19 @@ async loadFormula(){
             sessionId, function(res){
               //TODO: Please update the error accordingly
               if(res.status==400){
-                alert(res.data);
+                PubSub.publish('showAlert', res.data );
+                //alert(res.data);
               }else{
                 // TODO: Snackbar
                 // temp.setState({snackBarMessage : "Formula successfully added"});
                 // temp.setState({snackBarOpen:true});
                 temp.setState({fireRedirect: true});
-                PubSub.publish('showMessage', 'Formula successfully added.' );
+                toast.success('Formula successfully added.');
+                //PubSub.publish('showMessage', 'Formula successfully added.' );
                 // alert(" Formula successfully added! ");
               }
             });
-    }else if (!temp.state.isCreateNew && temp.isValid()){
+    }else if (!temp.state.isCreateNew && isValid){
       console.log("update formula ");
       console.log(temp.state);
 
@@ -274,13 +280,15 @@ async loadFormula(){
         temp.state.nativeUnit,temp.state.numUnitPerPackage,sessionId, function(res){
           //TODO: Update error status
           if(res.status == 400){
-            alert(res.data);
+            //alert(res.data);
+            PubSub.publish('showAlert', res.data);
           }else{
             //TODO: SnackBar
             // temp.setState({snackBarMessage : "Formula successfully updated."});
             // temp.setState({snackBarOpen:true});
             temp.setState({fireRedirect: true});
-            PubSub.publish('showMessage', 'Formula successfully updated.' );
+            //PubSub.publish('showMessage', 'Formula successfully updated.' );
+            toast.success('Formula successfully updated.');
             // alert(" Formula successfully updated. ");
           }
         });
@@ -300,7 +308,8 @@ async loadFormula(){
       if ( event.target.value == '' || (event.target.value>=0 && re.test(event.target.value))) {
          this.setState({unitsProvided: event.target.value})
       }else{
-        alert("The units of product must be a positive integer. ");
+        toast.error("The units of product must be a positive number. ");
+        //alert("The units of product must be a positive integer. ");
       }
   }
 
@@ -310,7 +319,8 @@ async loadFormula(){
       if ( event.target.value == '' || (event.target.value>=0 && re.test(event.target.value))) {
          this.setState({numUnitPerPackage: event.target.value})
       }else{
-        alert("The units of product must be a positive number. ");
+        toast.error("The units of product must be a positive number. ");
+        //alert("The units of product must be a positive number. ");
       }
   }
 

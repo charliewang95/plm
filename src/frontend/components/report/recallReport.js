@@ -8,6 +8,7 @@ import VendorSelection from './recallReportComponents/vendorSelection.js'
 import LotSelection from './recallReportComponents/lotSelection.js'
 import RecallTable from './recallReportComponents/recallTable.js'
 import * as IngredientInterface from '../../interface/ingredientInterface';
+import { ToastContainer, toast } from 'react-toastify';
 // import * as IngredientLotInterface from '../../interface/ingredientLotInterface';
 // globals
 var sessionId = "";
@@ -107,7 +108,7 @@ export default class RecallReport extends React.PureComponent{
 		//name is not null
 		const selectedIngredientObject = this.findSelectedIngredientObject(name);
 		if(!selectedIngredientObject) {
-			alert("An error has occured! No ingredient object exists for the selected name "
+			toast.error("An error has occured! No ingredient object exists for the selected name "
 				+ name);
 			return;
 		}
@@ -285,11 +286,13 @@ export default class RecallReport extends React.PureComponent{
     	}
     	return null;
 	}
-
+	//Given the id of a particular lot in the back-end, get everything that is made either directly
+	//or indirectly from it
 	async fetchRecall(lotId){
 		//reinitialize globals
 		lotsNeedToBeRecalled = [];
 		idOfLotsAlreadyConsidered = [];
+		console.log("Tracing recall based on lot with id:")
 		console.log(lotId);
 		const response = await IngredientInterface.getRecallAsync(lotId, sessionId);
 		console.log("response for getRecallAsync");
@@ -304,7 +307,10 @@ export default class RecallReport extends React.PureComponent{
 		// this.setState({
 		// 	lotsNeedToBeExamined: frontier,
 		// });
+		var numberOfIterations = 0;
+		console.log("Finding Recall Recursively");
 		while(frontier.length > 0){
+			console.log("Interation " + numberOfIterations);
 			var currentLot = frontier.pop();
 			console.log("currentLot:");
 			console.log(currentLot);
@@ -320,10 +326,14 @@ export default class RecallReport extends React.PureComponent{
 			lotsNeedToBeRecalled = lotsNeedToBeRecalled.concat(currentLot);
 
 			idOfLotsAlreadyConsidered.push(currentLotId);
-			const lotNumber = currentLot.lotNumber;
-			const ingredientName = currentLot.productName;
+			const lotNumberofNextIngredient = currentLot.lotNumber;
+			const nameOfNextIngredient = currentLot.productName;
 			const vendorName = "null";
-			const responseRecurse = await IngredientInterface.getRecallAlternateAsync(lotNumber, ingredientName, vendorName, sessionId);
+			console.log("Requesting recall based on the following parameters: \n" + 
+				"lot number: " + lotNumberofNextIngredient + "\n" +
+				"name of ingredient: " + nameOfNextIngredient + "\n" +
+				"vendor name: " + vendorName );
+			const responseRecurse = await IngredientInterface.getRecallAlternateAsync(lotNumberofNextIngredient, nameOfNextIngredient, vendorName, sessionId);
 			console.log("responseRecurse");
 			console.log(responseRecurse);
 			const araryOfRecalledLotsRecurse = responseRecurse.data;
@@ -332,6 +342,7 @@ export default class RecallReport extends React.PureComponent{
 			frontier = frontier.concat(araryOfRecalledLotsRecurse);
 			console.log("frontier:");
 			console.log(frontier);
+			numberOfIterations++;
 		}
 
 		console.log("lotsNeedToBeRecalled:");
