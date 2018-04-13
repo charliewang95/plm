@@ -36,7 +36,8 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
                 console.log("Orders validated. Added to pending");
                 for (var i = 0; i < items.length; i++) {
                     var order = items[i];
-                    order.update({isPending: true}, function(err, obj){
+                    var date = new Date();
+                    order.update({isPending: true, tag: date.getTime().toString()}, function(err, obj){
 
                     })
                 }
