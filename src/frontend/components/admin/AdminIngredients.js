@@ -50,6 +50,7 @@ var sessionId = "";
 var isAdmin = "";
 var isManager = "";
 
+//styles
 const styles = theme => ({
   lookupEditCell: {
     verticalAlign: 'top',
@@ -68,7 +69,7 @@ const styles = theme => ({
   },
 });
 
-
+//commands components for table
 const commandComponents = { //for table to use
   add: AddButton,
   // edit: EditButton,
@@ -77,6 +78,7 @@ const commandComponents = { //for table to use
   // cancel: CancelButton,
 };
 
+//Filter Cell of table
 const FilterCell = (props) => {
   return <TableFilterRow.Cell {...props} />
 }
@@ -698,11 +700,12 @@ class AdminIngredients extends React.PureComponent {
       </div>
     }
         <br/>
+
       {(isAdmin || isManager) && <Button raised color="primary"
       align="left"
       component={Link} to="/orders"
       style = {{marginLeft: 380, marginBottom: 30}}
-      > ORDER INGREDIENTS</Button>}
+      > Document Order for Ingredients</Button>}
 
       {/* {currentTab===1 && <Paper> <Intermediates/> </Paper>} */}
     </div>

@@ -19,13 +19,11 @@ import Typography from 'material-ui/Typography';
 import { FormControl, FormHelperText } from 'material-ui/Form';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
 import PubSub from 'pubsub-js';
+import { ToastContainer, toast } from 'react-toastify';
 
-//TODO: get session Id
-//const userId = "5a765f3d9de95bea24f905d9";
-// const sessionId = testConfig.sessionId;
 var sessionId = '';
 var userId = '';
-var isAdmin;
+var isAdmin = false;
 const READ_FROM_DATABASE = true;
 
 
@@ -75,43 +73,109 @@ class Orders extends React.PureComponent{
     this.isValid = this.isValid.bind(this);
     this.packageWeight = this.packageWeight.bind(this);
     this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
+    this.showError = this.showError.bind(this);
+  }
+
+  componentWillMount(){
+      sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+      userId =  JSON.parse(sessionStorage.getItem('user'))._id;
+      isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
   }
 
   // load all the ingredients initially
   componentDidMount(){
-    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    userId =  JSON.parse(sessionStorage.getItem('user'))._id;
-    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    // sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    // userId =  JSON.parse(sessionStorage.getItem('user'))._id;
+    // isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
     this.loadAllIngredients();
   }
 
-    componentWillMount(){
-        sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-        userId =  JSON.parse(sessionStorage.getItem('user'))._id;
-        isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
-    }
+  //get available ingredients from the backend 
+  //loads them into state.ingredient_options
   async loadAllIngredients(){
-    console.log(" LOAD ALL INGREDIENTS");
+    console.log(" Loading all ingredients");
     var rawData = [];
     if(READ_FROM_DATABASE){
-      sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+      // sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
       rawData = await ingredientActions.getAllIngredientsOnlyAsync(sessionId);
       rawData = rawData.data;
-      console.log("data from DB " + JSON.stringify(rawData));
+      console.log("ingredient data from DB ");
+      console.log(rawData);
     }else{
       rawData = dummyData;
     }
+
     var parsedIngredientOptions = [...rawData.map((row, index)=> ({
         value: row._id,label: row.name, numUnitPerPackage:
         row.numUnitPerPackage, nativeUnit: row.nativeUnit,
         packageName: row.packageName,
       })),
     ];
-    console.log("parsedIngredientOptions" + JSON.stringify(parsedIngredientOptions));
-    this.setState({ingredient_options:parsedIngredientOptions});
-    console.log("Ingredient Options " + JSON.stringify(parsedIngredientOptions));
-    }
 
+    console.log("parsedIngredientOptions");
+    console.log(parsedIngredientOptions);
+    this.setState({ingredient_options:parsedIngredientOptions});
+    console.log("state.ingredient_options");
+    console.log(parsedIngredientOptions);
+  }
+
+  componentDidUpdate(){
+    this.calculate(); //recompute total
+  }
+
+  //calculate information displayed to the user for current order
+  //including total quantity, total floor space, and total cost
+  calculate(){
+    console.log("Calculating...");
+    const temp = this;
+    const numberOfPackages = temp.state.packageNum;
+    console.log("Number of packages:" + numberOfPackages);
+    //calculate total cost
+    const pricePerPackage = temp.state.price;
+    console.log("Price per package: " + pricePerPackage);
+    //var packageWeight = this.packageWeight();
+    const totalPrice = numberOfPackages * pricePerPackage;
+    console.log("Total cost: " + totalPrice);
+    //calculate total number of native units
+    const nativeUnitsPerPackage = temp.state.numUnitPerPackage;
+    console.log("nativeUnitsPerPackage: " + nativeUnitsPerPackage);
+    const totalNativeUnits = numberOfPackages * nativeUnitsPerPackage;
+    console.log("totalNativeUnits: " + totalNativeUnits);
+  //  var packageWeight = parseFloat(packageWeight());
+   //calculate square footprint
+    var totalSqft;
+    const packageType = temp.state.packageName;
+    const spacePerPackage = temp.packageWeight(packageType);
+    console.log("space per package is " + spacePerPackage);
+    if(spacePerPackage === 'N/A'){
+      totalSqft = 'N/A';
+    }else{
+      var computeFloor = numberOfPackages * spacePerPackage;
+      totalSqft = computeFloor.toString();
+    }
+    console.log("totalSqft is " + totalSqft);
+    //set state
+    temp.setState({total: totalPrice});
+    temp.setState({totalQuantity: totalNativeUnits});
+    temp.setState({totalFloorSpace: totalSqft});
+   // this.setState({totalFloorSpace: totalSqft});
+  }
+
+  //look up for how many space each type of package takes
+  packageWeight(input){
+    if(input==='drum'){
+      return '3';
+    }
+    else if(input==='supersack'){
+      return '16';
+    }else if(input==='sack'){
+      return '0.5';
+    }else if(input==='pail'){
+      return '1';
+    }else{
+      return 'N/A';
+    }
+  }
 
  async handleIngredientChange(option) {
     var packageNameHelpText = option.numUnitPerPackage + ' ' + option.nativeUnit + ' / ' +
@@ -166,29 +230,44 @@ class Orders extends React.PureComponent{
       }
   }
 
- componentDidUpdate(){
-  this.calculate();
- }
+  showError(msg){
+    toast.error(msg, {
+          position: toast.POSITION.TOP_RIGHT
+        });
+  }
 
+ //what happens when user submits order to be documented
  async onFormSubmit(e) {
    var temp = this;
-    console.log("SUBMIT");
-    console.log("Vendor Name " + this.state.vendorName);
-    console.log("package Name " + this.state.packageName);
-    console.log("ingredientId " + this.state.ingredientId);
-    console.log("vendorId " + this.state.vendorId);
-    console.log("packageNum " + this.state.packageNum);
-    e.preventDefault();
+   console.log("Submitting form with the following information:");
+   const vendorName = this.state.vendorName;
+   const packageName = this.state.packageName;
+   const ingredientId = this.state.ingredientId;
+   const ingredientName = this.state.ingredientName;
+   const vendorId = this.state.vendorId;
+   const numberOfPackages = this.state.packageNum;
+   const price = this.state.price;
+   //print out
+   console.log("Vendor Name " + vendorName);
+   console.log("package Name " + packageName);
+   console.log("ingredientId " + ingredientId);
+   console.log("ingredientName " + ingredientName);
+   console.log("vendorId " + vendorId);
+   console.log("packageNum " + numberOfPackages);
+   console.log("price " + price);
+   e.preventDefault();
     //TODO: Send data to back end
    try{
      if(temp.isValid()){
-
-       await orderActions.addOrder(userId,temp.state.ingredientId,temp.state.ingredientName,
-       temp.state.vendorName,parseInt(temp.state.packageNum,10),temp.state.price,[], sessionId,function(res){
+       const ingredientLots = [];
+       await orderActions.addOrder(userId,ingredientId,ingredientName, vendorName, 
+        parseInt(numberOfPackages,10), price, ingredientLots, sessionId,function(res){
            if (res.status == 400) {
-               alert(res.data);
+               alert(res.data);//because this should not be happening
+               console.log(res.data);
            }else if (res.status == 500) {
-               alert('ingredient already in cart');
+               // alert('ingredient already in cart');
+               temp.showError("Ingredient already exists in the cart");
            }
            else{
              // alert("ORDERED");
@@ -207,40 +286,9 @@ class Orders extends React.PureComponent{
    }
   }
 
-  packageWeight(input){
-    if(input=='drum'){
-      return '3';
-    }
-    else if(input=='supersack'){
-      return '16';
-    }else if(input=='sack'){
-      return '0.5';
-    }else if(input=='pail'){
-      return '1';
-    }else{
-      return 'N/A';
-    }
-  }
+  
 
-  calculate(){
-    var temp = this;
-    //var packageWeight = this.packageWeight();
-    var totalPrice = temp.state.packageNum * temp.state.price;
-    var totalNativeUnits = temp.state.packageNum * temp.state.numUnitPerPackage;
-  //  var packageWeight = parseFloat(packageWeight());
-    var totalSqft;
-
-    if(temp.packageWeight(temp.state.packageName)=='N/A'){
-      totalSqft = 'N/A';
-    }else{
-      var computeFloor = temp.state.packageNum * temp.packageWeight(temp.state.packageName);
-      totalSqft = computeFloor.toString();
-    }
-    temp.setState({total: totalPrice});
-    temp.setState({totalQuantity: totalNativeUnits});
-    temp.setState({totalFloorSpace: totalSqft});
-   // this.setState({totalFloorSpace: totalSqft});
-  }
+  
 
   handleSnackBarClose(){
     this.setState({snackBarOpen:false});
@@ -260,7 +308,11 @@ class Orders extends React.PureComponent{
   // Check for validation of the data fields before submitting an order
   isValid(){
     if(!this.state.ingredientName){
-      alert(" Please select an ingredient");
+      // toast.error("Please select an ingredient", {
+      //     position: toast.POSITION.TOP_RIGHT
+      //   });
+      this.showError("Please select an ingredient");
+      // alert(" Please select an ingredient");
       return false;
   }else{
       return true;
@@ -272,7 +324,7 @@ class Orders extends React.PureComponent{
       fireRedirect ,ingredient_options,vendor_options} = this.state;
     return (
         <div>
-         <p><font size="6">Place an Order</font></p>
+         <p><font size="6">Document an Order</font></p> 
             <form style={{width:400}} onSubmit={this.onFormSubmit} >
               <div style = {styles.buttons}>
                  <p><font size="3">Ingredient Name:</font></p>
@@ -325,7 +377,7 @@ class Orders extends React.PureComponent{
               <Divider></Divider>
               <p><font size="6">Total Quantity: {this.state.totalQuantity} {this.state.nativeUnit}</font></p>
               <p><font size="6">Total Floor Space: {this.state.totalFloorSpace} sqft</font></p>
-              <p><font size="6">Current Total: $ {this.state.total.toFixed(2)}</font></p>
+              <p><font size="6">Total Cost: From $ {this.state.total.toFixed(2)}</font></p>
               <br></br>
               <div style={styles.buttons}>
                   <RaisedButton raised
@@ -333,7 +385,7 @@ class Orders extends React.PureComponent{
                     // component = {Link} to = "/vendors" //commented out because it overrides onSubmit
                     type="Submit"
                     disabled = {this.state.packageNum==0 || this.state.ingredientName==''}
-                    primary="true"> ORDER </RaisedButton>
+                    primary="true"> DOCUMENT ORDER </RaisedButton>
                     <RaisedButton raised color = "secondary"
                     style={styles.saveButton}
                     component = {Link} to = "/admin-ingredients"
