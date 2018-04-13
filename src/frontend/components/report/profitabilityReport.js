@@ -60,10 +60,10 @@ export default class FreshnessReport extends React.PureComponent {
     var processedData = [...data.map((row, index)=> ({
         id:index,...row,
         numSold:Math.round(row.numSold*100)/100,
-        averagePerUnitPrice:Math.round((row.totalRevenue/row.numSold)*100)/100,
+        averagePerUnitPrice:Math.round((Number(row.totalRevenue)/Number(row.numSold))*100)/100,
         totalProfit:Math.round((row.totalRevenue - row.totalCost)*100)/100,
-        perUnitProfit: Math.round((row.totalProfit/row.numSold)*100)/100,
-        profitMargin:Math.round((row.totalRevenue/row.totalCost)*100)/100,
+        perUnitProfit: Math.round((Number(row.totalProfit)/Number(row.numSold))*100)/100,
+        profitMargin:Math.round((Number(row.totalRevenue)/Number(row.totalCost))*100)/100,
         })),
       ];
 
