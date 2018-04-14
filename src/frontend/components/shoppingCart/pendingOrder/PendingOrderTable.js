@@ -169,7 +169,8 @@ const FinishLotAssignment = async (updatedRowData) => {
 	const vendorName = updatedRowData.selectedVendorName;
 	const _package = packageNum;
 	const price = updatedRowData.selectedVendorPrice;
-	
+	console.log(updatedRowData);
+
 	const temp = this;
 	//ask to checkout order
 	 await orderActions.checkoutOneOrderAsync(orderId, userId, ingredientId, ingredientName, 
@@ -185,7 +186,7 @@ const FinishLotAssignment = async (updatedRowData) => {
               toast.success(msg);
               
               //refresh table
-              window.location.reload();
+              //window.location.reload();
             });
 }
 

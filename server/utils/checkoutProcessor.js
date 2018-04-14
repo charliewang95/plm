@@ -19,6 +19,7 @@ var deleteProcessor = require('./postProcessorDelete');
 var checkoutProcessor = require('./checkoutProcessor');
 var logger = require('./logger');
 var freshness = require('./freshness');
+var modifierCreateUpdate = require('./modifierCreateUpdate');
 
 /*************
 
@@ -52,12 +53,15 @@ exports.orderArrived = function(req, res, next, order, model) {
     console.log("orderArrived()");
     console.log("order:");
     console.log(order);
-    addIngredientLotsHelper(req, res, next, 0, order, order.ingredientLots, function(){
-        deleteProcessor.process(model, order, '', res, next);
-        updateStorage(order);
-        User.findById(req.params.userId, function(err, user){
-            if (user) logger.log(user.username, 'order arrived', order, Order);
-            res.send(order);
+    modifierCreateUpdate.modify('update', model, order, '', res, next, function(err, obj){
+        order = obj;
+        addIngredientLotsHelper(req, res, next, 0, order, order.ingredientLots, function(){
+            deleteProcessor.process(model, order, '', res, next);
+            updateStorage(order);
+            User.findById(req.params.userId, function(err, user){
+                if (user) logger.log(user.username, 'order arrived', order, Order);
+                res.send(order);
+            });
         });
     });
 }
@@ -159,7 +163,10 @@ var updateStorage = function(order) {
 //    });
     var ingredientId = order.ingredientId;
     var space = order.space;
+    console.log("CALLED())()()()())()()()())(");
+    console.log(order);
     Ingredient.findById(ingredientId, function(err, ingredient){
+        console.log(ingredient);
         if (err) return next(err);
         else if (!ingredient) return res.status(400).send('Ingredinet '+order.ingredientName+' does not exist any more');
         else {
