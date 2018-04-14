@@ -107,5 +107,11 @@ async function sellItemsAsync(products, sessionId, callback) {
     }
 }
 
+
+async function getFreshAsync(sessionId) {
+    const res = await axios.get('/distributorNetworks/fresh/user/'+sessionId);
+    return res;
+}
+
 //export functions above for use by other modules
-export { addDistributorNetwork, getAllDistributorNetworksAsync, getDistributorNetworkAsync, updateDistributorNetwork, deleteDistributorNetwork, getAllDistributorNetworkNamesCodesAsync, sellItemsAsync};
+export { addDistributorNetwork, getAllDistributorNetworksAsync, getDistributorNetworkAsync, updateDistributorNetwork, deleteDistributorNetwork, getAllDistributorNetworkNamesCodesAsync, sellItemsAsync, getFreshAsync};

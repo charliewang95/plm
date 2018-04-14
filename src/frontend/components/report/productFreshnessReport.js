@@ -12,34 +12,34 @@ import {
 import Styles from  'react-select/dist/react-select.css';
 import { withStyles } from 'material-ui/styles';
 import dummyData from '../orders/dummyData';
-import * as distributorNetworkActions from '../../interface/distributorNetworkInterface.js';
+import * as DistributorNetworkActions from '../../interface/distributorNetworkInterface';
 
 
-import data from '../distributorNetwork/testData';
+import * as testConfig from '../../../resources/testConfig.js';
+import freshnessReportData from './testData';
 
+// const sessionId = testConfig.sessionId;
 var sessionId = "";
+// var userId = "";
+const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
+
 
 export default class FreshnessReport extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-    columns: [
-      { name: 'productName', title: 'Product Name' },
-      // { name: 'numUnit', title: 'Total Quantity' },
-      { name: 'numSold', title: 'Sale Quantity' },
-      { name: 'averagePerUnitPrice', title: 'Avg. Per-unit Price ($)' },
-      { name: 'totalRevenue', title: 'Total Revenue ($)' },
-      { name: 'totalCost', title: 'Ingredient Cost ($)' },
-      { name: 'totalProfit', title: 'Total Profit ($)' },
-      { name: 'perUnitProfit', title: 'Per Unit Profit ($)' },
-      { name: 'profitMargin', title: 'Profit Margin' },
-    ],
+      columns: [
+        // ingredientName also includes intermediate name
+        { name: 'productName', title: 'Product Name' },
+        { name: 'averageWaitTime', title: 'Average Wait Time' },
+        { name: 'worstWaitTime', title: 'Worst-case Wait Time' },
+      ],
       rows: [],
       sorting:[],
       currentPage: 0,
       pageSize: 10,
       pageSizes: [10, 50, 100, 500],
-      columnOrder: ['name', 'averageWaitTime', 'worstWaitTime'],
+      columnOrder: ['productName', 'averageWaitTime', 'worstWaitTime'],
     };
     this.changeSorting = sorting => this.setState({ sorting });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
@@ -50,27 +50,29 @@ export default class FreshnessReport extends React.PureComponent {
   }
 
   componentDidMount(){
+    this.loadAllIngredients();
+  }
+
+  async loadAllIngredients(){
+    var rawData = [];
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    this.loadDistributorNetworkData();
-  }
+     console.log('getting fresh data '+sessionId);
+     rawData = await DistributorNetworkActions.getFreshAsync(sessionId);
+     console.log(rawData);
 
-  async loadDistributorNetworkData(){
-    console.log("load distribution network data");
-    var data = await distributorNetworkActions.getAllDistributorNetworksAsync(sessionId);
-    console.log("Here");
-    console.log(data);
-    var processedData = [...data.map((row, index)=> ({
-        id:index,...row,
-        numSold:Math.round(row.numSold*100)/100,
-        averagePerUnitPrice:Math.round((Number(row.totalRevenue)/Number(row.numSold))*100)/100,
-        totalProfit:Math.round((row.totalRevenue - row.totalCost)*100)/100,
-        perUnitProfit: Math.round((Number(row.totalRevenue - row.totalCost)/Number(row.numSold))*100)/100,
-        profitMargin:Math.round((Number(row.totalRevenue)/Number(row.totalCost))*100)/100,
-        })),
-      ];
-
-    this.setState({rows:processedData});
-  }
+    var processedData = [];
+    if (rawData.data) rawData = rawData.data; // to handle response
+    if (rawData){
+      processedData = [...rawData.map((row, index)=> ({
+         id: index,
+         ...row,
+         averageWaitTime: row.averageDay + "d  " + row.averageHour + "h " + row.averageMinute + "m",
+         worstWaitTime: row.oldestDay + "d  " + row.oldestHour + "h " + row.oldestMinute + "m",
+       })),
+     ];
+    }
+     this.setState({rows:processedData});
+   }
 
   render() {
     const {classes,} = this.props;

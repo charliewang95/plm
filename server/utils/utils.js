@@ -112,6 +112,7 @@ var create = function(req, res, next, model, username) {
             console.log("creating, modified");
             console.log("creating, validating");
             modifiedItem = new model(obj);
+            console.log("modified item is");
             console.log(modifiedItem);
             validator.validate(model, modifiedItem, '', res, next, function(err, valid){
                 if (err) {
@@ -128,7 +129,10 @@ var create = function(req, res, next, model, username) {
                             console.log("creating, saved");
                             logger.log(username, 'create', modifiedItem, model);
                             if (model == Formula) {
-                                  postProcessor.process(model, modifiedItem, '', res, next);
+                                processFormulaCreate(modifiedItem, res, next);
+                            }
+                            if (model == ProductionLine) {
+                                processProductionLineCreate(modifiedItem, res, next);
                             }
                             res.json(modifiedItem);
                         }
@@ -190,24 +194,30 @@ var update = function(req, res, next, model, itemId, username) {
                             if (productionLine) {
                                 temp = productionLine;
                             }
-                            console.log(temp);
-                            model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
-                               if (err) {
-                                   return next(err);
-                               }
-                               else if (obj2){
-                                   console.log("updating, updated");
-                                   logger.log(username, 'update', obj2, model);
-                                   if (model == Storage || model == Vendor) {
-                                       postProcessor.process(model, obj, itemId, res, next);
-                                   } else if (model == Ingredient || model == productionLine) {
-                                       postProcessor.process(model, temp, itemId, res, next);
+                            Formula.findById(itemId, function(err, formula){
+                                if (formula) {
+                                    temp = formula;
+                                }
+                                console.log(temp);
+                                model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
+                                   if (err) {
+                                       return next(err);
                                    }
-                                   res.json(obj2);
-                               } else {
-                                   res.status(400);
-                                   res.send("Object doesn't exist");
-                               }
+                                   else if (obj2){
+                                       console.log("updating, updated");
+                                       logger.log(username, 'update', obj2, model);
+                                       if (model == Storage || model == Vendor) {
+                                           postProcessor.process(model, obj, itemId, res, next);
+                                       } else if (model == Ingredient || model == ProductionLine || model == Formula) {
+                                           postProcessor.process(model, temp, itemId, res, next);
+                                       }
+                                       res.json(obj2);
+                                   } else {
+                                       res.status(400);
+                                       res.send("Object doesn't exist");
+                                   }
+                                });
+
                             });
                         });
                     });
@@ -533,3 +543,83 @@ var updateIngredientHelper = function(req, res, next, multiplier, ingredients, n
         });
     }
 };
+
+
+var processFormulaCreate = function(item, res, next){
+    var formulaName = item.name;
+    Ingredient.findOne({nameUnique: formulaName.toLowerCase()}, function(err, ingredient){
+        if (err) return next(err);
+        else if (!ingredient && item.isIntermediate) {
+            var newIngredient = new Ingredient();
+            newIngredient.name = formulaName;
+            newIngredient.nameUnique = formulaName.toLowerCase();
+            newIngredient.packageName = item.packageName;
+            newIngredient.temperatureZone = item.temperatureZone;
+            newIngredient.nativeUnit = item.nativeUnit;
+            newIngredient.numUnitPerPackage = item.numUnitPerPackage;
+            newIngredient.isIntermediate = true;
+            console.log("&&&&&&&&&&&&&&&&");
+            console.log(newIngredient);
+            newIngredient.save(function(err){
+                if (err) return next(err);
+                var newProductionLineNames = item.productionLines;
+                processFormulaHelperAddNewCreate(res, next, 0, newProductionLineNames, []);
+            })
+        }
+    })
+};
+
+var processFormulaHelperAddNewCreate = function(res, next, i, newProductionLineNames, oldProductionLineNames){
+    if (i == newProductionLineNames.length) {
+        return;
+    }
+    else {
+        var newProductionLineName = newProductionLineNames[i];
+        if (!oldProductionLineNames.includes(newProductionLineName)){
+            ProductionLine.find({nameUnique: newProductionLineName.toLowerCase()}, function(err, pl){
+                if (err) return next(err);
+                else if (!pl){
+                    return res.status(400).send('Production Line '+newProductionLineName+' does not exist');
+                } else {
+                    var formulasInProductionLine = pl.formulaNames;
+                    formulasInProductionLine.push(newProductionLineName);
+                    pl.update({formulaNames: formulasInProductionLine}, function(err, newPl){
+                        processFormulaHelperAddNewCreate(res, next, i+1, newProductionLineNames, oldProductionLineNames);
+                    });
+                }
+            });
+        } else {
+            processFormulaHelperAddNewCreate(res, next, i+1, newProductionLineNames, oldProductionLineNames);
+        }
+    }
+}
+
+var processProductionLineCreate = function(item, res, next){
+    processProductionLineHelperAddNew(res, next, 0, newFormulaNames, []);
+}
+
+var processProductionLineHelperAddNew = function(res, next, i, newFormulaNames, oldFormulaNames){
+    if (i == newFormulaNames.length) {
+        return;
+    }
+    else {
+        var newFormulaName = newFormulaNames[i];
+        if (!oldFormulaName.includes(newFormulaName)){
+            Formula.find({nameUnique: newFormulaName.toLowerCase()}, function(err, formula){
+                if (err) return next(err);
+                else if (!formula){
+                    return res.status(400).send('Formula '+newFormulaName+' does not exist');
+                } else {
+                    var productionLinesInFormula = formula.productionLines;
+                    productionLinesInFormula.push(newFormulaName);
+                    formula.update({productionLines: productionLinesInFormula}, function(err, newFormula){
+                        processProductionLineHelperAddNew(res, next, i+1, newFormulaNames, oldFormulaNames);
+                    });
+                }
+            });
+        } else {
+            processProductionLineHelperAddNew(res, next, i+1, newFormulaNames, oldFormulaNames);
+        }
+    }
+}
+
