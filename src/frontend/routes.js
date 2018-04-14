@@ -24,6 +24,8 @@ import DistributionNetwork from './components/distributorNetwork/distributorNetw
 
 
 import MainIngredientView from './components/admin/mainIngredientView';
+// import ShoppingCartAndOrders from './components/shoppingCart/mainPage';
+import PendingOrderView from './components/shoppingCart/pendingOrder/PendingOrderTable'
 
 
 const Routes = () => (
@@ -50,6 +52,7 @@ const Routes = () => (
             <Route path="/product" component={Product} />
             <Route path="/product-details" component={ProductDetails} />
             <Route path="/distribution-network" component={DistributionNetwork} />
+            <Route path="/pending-orders" component={PendingOrderView} />
 
 		  </Switch>
       </div>
