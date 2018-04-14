@@ -186,7 +186,7 @@ const FinishLotAssignment = async (updatedRowData) => {
               toast.success(msg);
               
               //refresh table
-              //window.location.reload();
+              window.location.reload();
             });
 }
 
