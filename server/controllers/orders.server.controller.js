@@ -34,7 +34,9 @@ exports.checkout = function(req, res, next) {
 };
 
 exports.cargoArrived = function(req, res, next) {
-    checkoutProcessor.orderArrived(req, res, next, req.body);
+    console.log("cargoArrived()");
+    // console.log(req);
+    checkoutProcessor.orderArrived(req, res, next, req.body, Order);
 }
 
 exports.getPendingsOnly = function(req, res, next) {

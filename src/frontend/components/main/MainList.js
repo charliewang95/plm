@@ -18,6 +18,7 @@ import RestaurantIcon from 'material-ui-icons/Restaurant';
 import QueryBuilderIcon from 'material-ui-icons/QueryBuilder';
 import BalanceIcon from 'material-ui-icons/AccountBalance';
 import DistributionIcon from 'material-ui-icons/DeviceHub';
+import DateRangeIcon from 'material-ui-icons/DateRange';
 
 const styles = theme => ({
   menuItem: {
@@ -66,6 +67,15 @@ function ListItemComposition(props) {
             <ShoppingCartIcon />
           </ListItemIcon>
           <ListItemText classes={{ primary: classes.primary }} inset primary="Cart" />
+        </MenuItem>
+        }
+
+        { (isManager || isAdmin) &&
+        <MenuItem className={classes.menuItem} component={Link} to="/pending-orders" button>
+          <ListItemIcon className={classes.icon}>
+            <DateRangeIcon />
+          </ListItemIcon>
+          <ListItemText classes={{ primary: classes.primary }} inset primary="Pending orders" />
         </MenuItem>
         }
 

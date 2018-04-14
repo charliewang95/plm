@@ -102,10 +102,13 @@ async function getRawOnlyAsync(sessionId) {
     return res;
 };
 
-async function checkoutOneOrderAsync(order, sessionId, callback) {
+async function checkoutOneOrderAsync(orderId, userId, ingredientId, ingredientName, vendorName, _package, price, ingredientLots, sessionId, callback) {
+    var order = packIntoJson(userId, ingredientId, ingredientName, vendorName, _package, price, ingredientLots);
+    order._id = orderId;
     try{
-        const res = await axios.delete(order, '/orders/checkoutOneOrder/user/'+sessionId);
+        const res = await axios.post('/orders/checkoutOneOrder/user/'+sessionId, order);
         console.log(res);
+        callback(null);
         return res.data;
     } catch(e) {
         if (e.response.status == 400 || e.response.status == 500)

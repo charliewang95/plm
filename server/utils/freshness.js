@@ -187,7 +187,7 @@ exports.updateProductAverageAdd = function(res, next, dn, date, numUnit, callbac
 };
 
 exports.updateProductAverageDelete = function(res, next, date, dn, numUnit, callback) {
-    var oldNumUnit = ingredient.numUnit;
+    var oldNumUnit = dn.numUnit;
     ProductFreshness.findOne({productNameUnique: dn.productNameUnique}, function(err, fresh){
         if (err) return next(err);
         else if (fresh) {

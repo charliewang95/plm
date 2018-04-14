@@ -97,7 +97,7 @@ export const MainListItems = (
       <ListItemIcon>
         <ShoppingCartIcon />
       </ListItemIcon>
-      <ListItemText primary="Cart" />
+      <ListItemText primary="Cart and Orders" />
     </ListItem>
     <ListItem component={Link} to="/report" button>
       <ListItemIcon>
