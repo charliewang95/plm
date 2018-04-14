@@ -39,6 +39,7 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
                     order.update({isPending: true}, function(err, obj){
 
                     })
+                    res.send(items);
                 }
                 logger.log(username, 'checkout', items[0], model);
             });

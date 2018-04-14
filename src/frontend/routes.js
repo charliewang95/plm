@@ -14,7 +14,7 @@ import AdminUserPage from './components/admin/users/userPage'
 import ViewDetailsForm from './components/admin/ViewDetailsForm';
 import Log from './components/log/Log';
 import Formula from './components/formulas/Formula.js';
-import ShoppingCart from './components/shoppingCart/shoppingCart';
+// import ShoppingCart from './components/shoppingCart/shoppingCart';
 import ProductionReview from './components/formulas/productionReview.js';
 import FormulaDetails from './components/formulas/formulaDetails.js';
 import PageNotFound from './components/error/PageNotFound';
@@ -24,6 +24,7 @@ import DistributionNetwork from './components/distributorNetwork/distributorNetw
 
 
 import MainIngredientView from './components/admin/mainIngredientView';
+import ShoppingCartAndOrders from './components/shoppingCart/mainPage';
 
 
 const Routes = () => (
@@ -39,7 +40,7 @@ const Routes = () => (
             <Route path="/register" component={Register} />
             <Route path="/vendors" component={Vendors} />
             <Route path="/addVendorForm" component={AddVendorForm} />
-            <Route path="/cart" component={ShoppingCart} />
+            <Route path="/cart" component={ShoppingCartAndOrders} />
             <Route path="/report" component={Report} />
             <Route path="/log" component={Log} />
             <Route path="/formula" component={Formula} />

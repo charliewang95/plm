@@ -1,3 +1,4 @@
+// PendingOrderTable.js
 
 import React from 'react';
 import Paper from 'material-ui/Paper';
@@ -17,9 +18,8 @@ import Divider from 'material-ui/Divider';
 import Styles from  'react-select/dist/react-select.css';
 import { TableCell } from 'material-ui/Table';
 
-import {DeleteButton,EditButton,CancelButton,CommitButton} from '../vendors/Buttons.js';
 import Button from 'material-ui/Button';
-import dummyData from './dummyData.js';
+
 import {Link} from 'react-router-dom';
 import Dialog, {
   DialogActions,
@@ -30,16 +30,18 @@ import Dialog, {
 import PubSub from 'pubsub-js';
 import { ToastContainer, toast } from 'react-toastify';
 //local imports
-import VendorCell from './vendorCell';
+import VendorCell from '../vendorCell';
+import {DeleteButton,EditButton,CancelButton,CommitButton} from '../../vendors/Buttons.js';
+import dummyData from '../dummyData.js';
 
-import * as orderActions from '../../interface/orderInterface.js';
-import * as ingredientActions from '../../interface/ingredientInterface.js';
+import * as orderActions from '../../../interface/orderInterface.js';
+import * as ingredientActions from '../../../interface/ingredientInterface.js';
 
-import {cartData, ingredientData} from './dummyData';
-import LotNumberButton from '../admin/LotNumberSelector/LotNumberButton.js';
-import SnackBarDisplay from '../snackBar/snackBarDisplay';
+import {cartData, ingredientData} from '../dummyData';
+import LotNumberButton from '../../admin/LotNumberSelector/LotNumberButton.js';
+import SnackBarDisplay from '../../snackBar/snackBarDisplay';
 
-import ViewLotButton from '../admin/LotNumberSelector/ViewLotButton.js';
+import ViewLotButton from '../../admin/LotNumberSelector/ViewLotButton.js';
 
 // TODO: Get the user ID
 const READ_FROM_DATABASE = true;
@@ -47,6 +49,8 @@ var isAdmin= "";
 var isManager= "";
 var userId = "";
 var sessionId = "";
+
+var currentRowBeingAssignedLots;
 
 const Cell = (props)=>{
    return <Table.Cell {...props}/>
@@ -118,6 +122,7 @@ const LotNumberFormatter = (props) =>{
     return <p>{quantity} / <font color="green">Completed</font> <ViewLotButton totalAssigned = {totalAssigned} initialArray={deepCopy} quantity = {quantity}></ViewLotButton></p>
   }
   */
+
 };
 
 const lotNumberEditor = (props) => {
@@ -140,6 +145,52 @@ const LotNumberProvider = props => (
   <DataTypeProvider
     formatterComponent={LotNumberFormatter}
     editorComponent={lotNumberEditor}
+    {...props}
+  />
+);
+
+const FinishLotAssignment = lotNumberArray => {
+	console.log("Lot Assignment Finished");
+	console.log("lotNumberArray: ");
+	console.log(lotNumberArray);
+	const ingredientLots = lotNumberArray.ingredientLots;
+	const packageNum = lotNumberArray.packageNum;
+	console.log("ingredientLots:");
+	console.log(ingredientLots);
+	console.log("packageNum");
+	console.log(packageNum);
+	//ask to checkout order
+
+	//refresh table
+
+}
+
+const ActionFormatter = (props) =>{
+  console.log("Formatter");
+  console.log(props.row.lotAssigned);
+  const quantity = props.row.lotNumberArray.packageNum;
+  const totalAssigned = props.row.totalAssigned;
+  currentRowBeingAssignedLots = props.row;
+  // const deepCopy = props.row.lotNumberArray.ingredientLots;
+	let deepCopy = JSON.parse(JSON.stringify(props.row.lotNumberArray.ingredientLots));
+	console.log("action formatter props:");
+	console.log(props);
+  return <LotNumberButton totalAssigned = {totalAssigned} initialArray={deepCopy} quantity = {quantity} handlePropsChange={FinishLotAssignment} allowLotEditing={true}></LotNumberButton>
+  /*
+  //no longer assign lot number here
+  if(!props.row.lotAssigned){
+    return <p>{quantity} / <font color="red">Actions Needed</font></p>
+  }else{
+    return <p>{quantity} / <font color="green">Completed</font> <ViewLotButton totalAssigned = {totalAssigned} initialArray={deepCopy} quantity = {quantity}></ViewLotButton></p>
+  }
+  */
+
+};
+
+const ActionProvider = props => (
+  <DataTypeProvider
+    formatterComponent={ActionFormatter}
+    // editorComponent={lotNumberEditor}
     {...props}
   />
 );
@@ -167,12 +218,14 @@ class ShoppingCart extends React.Component {
        // { name: 'packageNum', title: 'null },
         { name: 'vendors', title: 'Vendor / Price ($)' },
         // { key: 'lotNumberArray', title: 'Lot Numbers'}
-        { name: 'lotNumberArray',title: 'No. of Packages'}
+        { name: 'lotNumberArray',title: 'No. of Packages'},
         // getCellValue: row => (props.row.totalAssigned!=props.row.packageNum) ? <TableCell><p><font color="red">Actions Needed</font></p></TableCell> :
         //    <TableCell><p><font color="green">Completed</font></p></TableCell>
-
+        { name: 'actionOnOrder', title: 'Action'}
       ],
+
       lotNumColumns: ['lotNumberArray'],
+      actionColumns: ['actionOnOrder'],
       rows: [],
       rowChanges: {},
       editingRowIds: [],
@@ -196,7 +249,7 @@ class ShoppingCart extends React.Component {
 
 
     };
-    this.switchToPendingOrders = this.props.switchToPendingOrders;
+    // this.switchToPendingOrders = this.props.switchToPendingOrders;
     this.changeCurrentPage = currentPage => {
       this.setState({ currentPage });
     };
@@ -403,7 +456,7 @@ class ShoppingCart extends React.Component {
            //PubSub.publish('showAlert', 'Checkout Successful.' );
            toast.success('Checkout successful!');
            temp.setState({rows:[]});
-           temp.switchToPendingOrders();
+           // temp.switchToPendingOrders();
 
          }
        });
@@ -415,29 +468,21 @@ class ShoppingCart extends React.Component {
     this.setState({snackBarMessage: ''});
   }
 
-  componentDidMount(){
-    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    userId =  JSON.parse(sessionStorage.getItem('user'))._id;
-    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
-    isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
-    this.loadCartData();
-  }
-
   componentWillMount(){
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     userId =  JSON.parse(sessionStorage.getItem('user'))._id;
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
     isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
-    this.loadCartData();
+    this.loadPendingOrders();
     // TODO: Change later ?
   }
 
   // Initialize data in the table
-  async loadCartData(){
+  async loadPendingOrders(){
     var startingIndex = 0;
     var rawData = [];
     if(READ_FROM_DATABASE){
-      rawData = await orderActions.getRawOnlyAsync(sessionId);
+      rawData = await orderActions.getPendingsOnlyAsync(sessionId);
       rawData = rawData.data;
       console.log(rawData);
     } else {
@@ -538,6 +583,9 @@ class ShoppingCart extends React.Component {
           <LotNumberProvider
             for={this.state.lotNumColumns}
           />
+      		<ActionProvider
+      			for={this.state.actionColumns}
+      		/>
           <PagingState
             currentPage={currentPage}
             onCurrentPageChange={this.changeCurrentPage}
@@ -577,6 +625,7 @@ class ShoppingCart extends React.Component {
               /> } */}
 
         </Grid>
+    	{/* Dialog box for removing an order item*/}
           <Dialog
             open={!!deletingRows.length}
             onClose={this.cancelDelete}
@@ -610,6 +659,9 @@ class ShoppingCart extends React.Component {
               <Button onClick={this.deleteRows} color="secondary">Delete</Button>
             </DialogActions>
           </Dialog>
+        
+
+        {/*
         <div
           style = {{marginTop: 30,
                   float: 'center'}}>
@@ -622,6 +674,7 @@ class ShoppingCart extends React.Component {
                   primary="true"
                   disabled = {!this.state.canCheckout}> Checkout </Button>}
       </div>
+      */}
       </Paper>
     </div>
 

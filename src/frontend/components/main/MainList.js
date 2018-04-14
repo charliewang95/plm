@@ -65,7 +65,7 @@ function ListItemComposition(props) {
           <ListItemIcon className={classes.icon}>
             <ShoppingCartIcon />
           </ListItemIcon>
-          <ListItemText classes={{ primary: classes.primary }} inset primary="Cart" />
+          <ListItemText classes={{ primary: classes.primary }} inset primary="Cart and Orders" />
         </MenuItem>
         }
 
