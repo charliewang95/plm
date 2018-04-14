@@ -103,16 +103,41 @@ var processVendor = function(itemId, res, next) {
 
 var processOrder = function(order, res, next) {
     //processOrderHelper(0, items, res, next);
+    console.log("deleting an order");
+    console.log(order);
+    const orderId = order._id;
+    console.log("order id:" + orderId);
     Ingredient.findOne({nameUnique: order.ingredientName.toLowerCase()}, function(err, ingredient){
-        var newSpace = ingredient.space + order.space;
-        var numUnit = ingredient.numUnit + order.numUnit;
-        var moneySpent = ingredient.moneySpent + order.totalPrice;
-        ingredient.update({numUnit: numUnit, space: newSpace, moneySpent: moneySpent}, function(err, obj){
-            if (err) return next(err);
-            order.remove(function(err){
+        console.log("Found ingreidnet:")
+        console.log(ingredient);
+        console.log("with error:")
+        console.log(err);
+        // const orderObjectId = new ObjectId(orderId);
+        // console.log("order object id:");
+        // console.log(orderObjectId);
+        Order.findById(orderId, function(err, order) {
+            if(!order){
+                console.log("cannot find order with id " + orderId);
+            }
+            console.log("Found order with id");
+            console.log(order);
+            var newSpace = ingredient.space + order.space;
+            var numUnit = ingredient.numUnit + order.numUnit;
+            var moneySpent = ingredient.moneySpent + order.totalPrice;
+            ingredient.update({numUnit: numUnit, space: newSpace, moneySpent: moneySpent}, function(err, obj){
+                console.log("updating ingredient in processOrder");
+                if (err) {
+                    console.log("Error encountered in updating ingredient in deleting order");
+                    console.log(err);
+                    return next(err);
+                }
+                //delete order
+                console.log("deleting order after ingredient amount is updated");
+                order.remove(function(err){
                 if (err) return next(err);
-                //else processOrderHelper(i+1, items, res, next);
-            });
+                    //else processOrderHelper(i+1, items, res, next);
+                });
+            });      
         });
     })
 };

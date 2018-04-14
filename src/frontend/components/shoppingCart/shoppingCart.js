@@ -403,7 +403,8 @@ class ShoppingCart extends React.Component {
            //PubSub.publish('showAlert', 'Checkout Successful.' );
            toast.success('Checkout successful!');
            temp.setState({rows:[]});
-           temp.switchToPendingOrders();
+           // temp.switchToPendingOrders();
+           window.location.replace('/pending-orders');
 
          }
        });

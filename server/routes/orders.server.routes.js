@@ -8,5 +8,5 @@ module.exports = function(app) {
 
     app.route('/orders/pendingsOnly/user/:userId').get(orders.getPendingsOnly);
     app.route('/orders/rawOnly/user/:userId').get(orders.getRawOnly);
-    app.route('/orders/checkoutOneOrder/user/:userId').delete(orders.cargoArrived);
+    app.route('/orders/checkoutOneOrder/user/:userId').post(orders.cargoArrived);
 };

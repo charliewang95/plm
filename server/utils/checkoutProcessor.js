@@ -40,7 +40,7 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
                     order.update({isPending: true, tag: date.getTime().toString()}, function(err, obj){
 
                     })
-                    res.send(items);
+                    res.end();
                 }
                 logger.log(username, 'checkout', items[0], model);
             });
@@ -48,7 +48,10 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
     });
 };
 
-exports.orderArrived = function(req, res, next, order) {
+exports.orderArrived = function(req, res, next, order, model) {
+    console.log("orderArrived()");
+    console.log("order:");
+    console.log(order);
     addIngredientLotsHelper(req, res, next, 0, order, order.ingredientLots, function(){
         deleteProcessor.process(model, order, '', res, next);
         updateStorage(order);
@@ -73,6 +76,8 @@ exports.orderArrived = function(req, res, next, order) {
 //};
 
 var addIngredientLotsHelper = function(req, res, next, j, order, assignments, callback) {
+    console.log("addIngredientLotsHelper()");
+    console.log("j: " + j);
     if (j == assignments.length) callback();
     else {
         var assignment = assignments[j];
@@ -110,6 +115,11 @@ var addIngredientLotsHelper = function(req, res, next, j, order, assignments, ca
                  else {
                     var oldNumUnit = ingredientLot.numUnit;
                     var newNumUnit = numPackage * ingredient.numUnitPerPackage + oldNumUnit;
+                    console.log("oldNumUnit: " + oldNumUnit);
+                    console.log("numPackage: " + numPackage);
+                    console.log("ingredient:");
+                    console.log(ingredient);
+                    console.log("newNumUnit: " + newNumUnit); 
                     ingredientLot.update({numUnit: newNumUnit}, function(err, obj){
                         freshness.updateAverageAdd(res, next, order.ingredientName, new Date(), numPackage * ingredient.numUnitPerPackage, function(){
                             console.log('called here 2');

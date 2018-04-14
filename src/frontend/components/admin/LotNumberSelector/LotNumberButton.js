@@ -23,6 +23,7 @@ class LotNumberButton extends Component {
       currentQuantity: this.props.quantity,
       initialArray: (this.props.initialArray)?this.props.initialArray:[],
       allowLotEditing: this.props.allowLotEditing,
+      rowData: this.props.rowData,
     };
     this.updateArray = this.updateArray.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -103,12 +104,13 @@ class LotNumberButton extends Component {
   }
 
   saveToProps(quantity){
-    var object = new Object();
-    object.ingredientLots = this.state.lotNumberArray;
-    object.packageNum = quantity;
+    var rowData = this.state.rowData;
+    // var object = new Object();
+    rowData.ingredientLots = this.state.lotNumberArray;
+    rowData.packageNum = quantity;
     console.log("save to props");
-    console.log(object);
-    this.props.handlePropsChange(object);
+    console.log(rowData);
+    this.props.handlePropsChange(rowData);
   }
 
   handleClickOpen(e){

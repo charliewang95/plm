@@ -149,20 +149,44 @@ const LotNumberProvider = props => (
   />
 );
 
-const FinishLotAssignment = lotNumberArray => {
-	console.log("Lot Assignment Finished");
-	console.log("lotNumberArray: ");
-	console.log(lotNumberArray);
-	const ingredientLots = lotNumberArray.ingredientLots;
-	const packageNum = lotNumberArray.packageNum;
+const FinishLotAssignment = async (updatedRowData) => {
+
+	console.log("updatedRowData:");
+	console.log(updatedRowData);
+	const ingredientLots = updatedRowData.ingredientLots;
+	const packageNum = updatedRowData.packageNum;
 	console.log("ingredientLots:");
 	console.log(ingredientLots);
 	console.log("packageNum");
 	console.log(packageNum);
+	console.log("Row being edited:");
+	console.log(currentRowBeingAssignedLots);
+
+	//parse all arguments
+	const orderId = updatedRowData._id;
+	const ingredientId = updatedRowData.ingredientId;
+	const ingredientName = updatedRowData.ingredientName;
+	const vendorName = updatedRowData.selectedVendorName;
+	const _package = packageNum;
+	const price = updatedRowData.selectedVendorPrice;
+	
+	const temp = this;
 	//ask to checkout order
+	 await orderActions.checkoutOneOrderAsync(orderId, userId, ingredientId, ingredientName, 
+	 	vendorName, _package, price, ingredientLots, sessionId, function (res) {
+            // if(res.status){
 
-	//refresh table
-
+            // }else{
+              // rows.splice(index, 1);
+              // TODO: Add SnackBar
+              // temp.setState({snackBarMessage : "Order successfully deleted."});
+              // temp.setState({snackBarOpen:true});
+              const msg = res ? res :  'Lot number successfully assigned'
+              toast.success(msg);
+              
+              //refresh table
+              window.location.reload();
+            });
 }
 
 const ActionFormatter = (props) =>{
@@ -170,12 +194,23 @@ const ActionFormatter = (props) =>{
   console.log(props.row.lotAssigned);
   const quantity = props.row.lotNumberArray.packageNum;
   const totalAssigned = props.row.totalAssigned;
-  currentRowBeingAssignedLots = props.row;
+  // console.log("Setting currentRowBeingAssignedLots:");
+  console.log(props.row);
+  const rowData = props.row;
+  // currentRowBeingAssignedLots = props.row;
   // const deepCopy = props.row.lotNumberArray.ingredientLots;
 	let deepCopy = JSON.parse(JSON.stringify(props.row.lotNumberArray.ingredientLots));
 	console.log("action formatter props:");
 	console.log(props);
-  return <LotNumberButton totalAssigned = {totalAssigned} initialArray={deepCopy} quantity = {quantity} handlePropsChange={FinishLotAssignment} allowLotEditing={true}></LotNumberButton>
+  return <LotNumberButton 
+  			totalAssigned = {totalAssigned} 
+  			initialArray={deepCopy} 
+  			quantity = {quantity} 
+  			handlePropsChange={FinishLotAssignment} 
+  			allowLotEditing={true}
+  			rowData={rowData}
+  		/>
+
   /*
   //no longer assign lot number here
   if(!props.row.lotAssigned){
