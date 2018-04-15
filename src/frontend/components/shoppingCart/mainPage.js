@@ -1,3 +1,5 @@
+// mainPage.js
+
 import React from 'react';
 import Paper from 'material-ui/Paper';
 import PropTypes from 'prop-types';
@@ -5,12 +7,11 @@ import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import Tabs, { Tab } from 'material-ui/Tabs';
 import Typography from 'material-ui/Typography';
-import FinancialReport from './financialReport';
-import ProductionReport from './productionReport';
-import FreshnessReport from './freshnessReport';
-import RecallReport from './recallReport';
-import ProfitabilityReport from './profitabilityReport';
-import ProductFreshnessReport from './productFreshnessReport';
+
+//local imports
+import ShoppingCart from './shoppingCart';
+import PendingOrderTable from './pendingOrder/PendingOrderTable'
+
 function TabContainer(props) {
   return (
     <Typography component="div" style={{ padding: 8 * 3 }}>
@@ -33,6 +34,7 @@ const styles = theme => ({
 });
 
 class ScrollableTabsButtonAuto extends React.Component {
+
   state = {
     value: 0,
   };
@@ -40,6 +42,12 @@ class ScrollableTabsButtonAuto extends React.Component {
   handleChange = (event, value) => {
     this.setState({ value });
   };
+
+  switchToPendingOrders = () => {
+  	this.setState({value: 1});
+  }
+
+  switchToPendingOrders = this.switchToPendingOrders.bind();
 
   render() {
     const { classes } = this.props;
@@ -56,20 +64,12 @@ class ScrollableTabsButtonAuto extends React.Component {
             scrollable
             scrollButtons="auto"
           >
-            <Tab label="Spending" />
-            <Tab label="Production" />
-            <Tab label="Ingredient Freshness" />
-            <Tab label="Product Freshness" />
-            <Tab label="Profitability" />
-            <Tab label="Recall" />
+            <Tab label="Shopping Cart" />
+            <Tab label="Pending Orders" />
           </Tabs>
         </AppBar>
-        {value === 0 && <FinancialReport/>}
-        {value === 1 && <ProductionReport/>}
-        {value === 2 && <FreshnessReport/>}
-        {value === 3 && <ProductFreshnessReport/>}
-        {value === 4 && <ProfitabilityReport/>}
-        {value === 5 && <RecallReport/>}
+        {value === 0 && <ShoppingCart switchToPendingOrders={this.switchToPendingOrders}/>}
+        {value === 1 && <PendingOrderTable/>}
       </Paper>
     );
   }

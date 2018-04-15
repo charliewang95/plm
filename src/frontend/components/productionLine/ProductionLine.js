@@ -123,7 +123,7 @@ const Cell = (props) => {
   console.log(props);
   if(props.column.name=='name'){
     return <Table.Cell {...props}>
-    <Link to={{pathname: '/formula-details', state:{details: props.row} }}>{props.row.name}</Link>
+    <Link to={{pathname: '/production-line-details', state:{details: props.row} }}>{props.row.name}</Link>
     </Table.Cell>
   }else if(props.column.name=='isIdle'){
     if(!props.row.isIdle){

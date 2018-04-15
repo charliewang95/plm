@@ -6,4 +6,5 @@ module.exports = function(app) {
     app.route('/distributorNetworks/distributorNetwork/:distributorNetworkId/user/:userId').get(distributorNetworks.read).put(distributorNetworks.update).delete(distributorNetworks.delete);
 
     app.route('/distributorNetworks/sell/user/:userId').put(distributorNetworks.updateNetwork);
+    app.route('/distributorNetworks/fresh/user/:userId').get(distributorNetworks.getFresh);
 };

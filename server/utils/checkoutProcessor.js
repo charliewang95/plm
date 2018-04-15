@@ -19,6 +19,7 @@ var deleteProcessor = require('./postProcessorDelete');
 var checkoutProcessor = require('./checkoutProcessor');
 var logger = require('./logger');
 var freshness = require('./freshness');
+var modifierCreateUpdate = require('./modifierCreateUpdate');
 
 /*************
 
@@ -36,9 +37,11 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
                 console.log("Orders validated. Added to pending");
                 for (var i = 0; i < items.length; i++) {
                     var order = items[i];
-                    order.update({isPending: true}, function(err, obj){
+                    var date = new Date();
+                    order.update({isPending: true, tag: date.getTime().toString()}, function(err, obj){
 
                     })
+                    res.end();
                 }
                 logger.log(username, 'checkout', items[0], model);
             });
@@ -46,13 +49,19 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
     });
 };
 
-exports.orderArrived = function(req, res, next, order) {
-    addIngredientLotsHelper(req, res, next, 0, order, order.ingredientLots, function(){
-        deleteProcessor.process(model, order, '', res, next);
-        updateStorage(order);
-        User.findById(req.params.userId, function(err, user){
-            if (user) logger.log(user.username, 'order arrived', order, Order);
-            res.send(order);
+exports.orderArrived = function(req, res, next, order, model) {
+    console.log("orderArrived()");
+    console.log("order:");
+    console.log(order);
+    modifierCreateUpdate.modify('update', model, order, '', res, next, function(err, obj){
+        order = obj;
+        addIngredientLotsHelper(req, res, next, 0, order, order.ingredientLots, function(){
+            deleteProcessor.process(model, order, '', res, next);
+            updateStorage(order);
+            User.findById(req.params.userId, function(err, user){
+                if (user) logger.log(user.username, 'order arrived', order, Order);
+                res.send(order);
+            });
         });
     });
 }
@@ -71,6 +80,8 @@ exports.orderArrived = function(req, res, next, order) {
 //};
 
 var addIngredientLotsHelper = function(req, res, next, j, order, assignments, callback) {
+    console.log("addIngredientLotsHelper()");
+    console.log("j: " + j);
     if (j == assignments.length) callback();
     else {
         var assignment = assignments[j];
@@ -108,6 +119,11 @@ var addIngredientLotsHelper = function(req, res, next, j, order, assignments, ca
                  else {
                     var oldNumUnit = ingredientLot.numUnit;
                     var newNumUnit = numPackage * ingredient.numUnitPerPackage + oldNumUnit;
+                    console.log("oldNumUnit: " + oldNumUnit);
+                    console.log("numPackage: " + numPackage);
+                    console.log("ingredient:");
+                    console.log(ingredient);
+                    console.log("newNumUnit: " + newNumUnit); 
                     ingredientLot.update({numUnit: newNumUnit}, function(err, obj){
                         freshness.updateAverageAdd(res, next, order.ingredientName, new Date(), numPackage * ingredient.numUnitPerPackage, function(){
                             console.log('called here 2');
@@ -147,7 +163,10 @@ var updateStorage = function(order) {
 //    });
     var ingredientId = order.ingredientId;
     var space = order.space;
+    console.log("CALLED())()()()())()()()())(");
+    console.log(order);
     Ingredient.findById(ingredientId, function(err, ingredient){
+        console.log(ingredient);
         if (err) return next(err);
         else if (!ingredient) return res.status(400).send('Ingredinet '+order.ingredientName+' does not exist any more');
         else {

@@ -214,8 +214,8 @@ async loadProductionLine(){
   }
 
   render (){
-    const { formulaId,name, description, unitsProvided, ingredients, isCreateNew,
-      isDisabled,isIntermediate,packageName,nativeUnit,temperatureZone, fireRedirect, pageNotFound} = this.state;
+    const { formulaId,name, description, isCreateNew,
+      isDisabled, fireRedirect, pageNotFound} = this.state;
     return (
       <div>
       <form onSubmit={this.onFormSubmit} style={styles.formControl}>

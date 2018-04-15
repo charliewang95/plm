@@ -294,6 +294,7 @@ class Formula extends React.PureComponent {
         rawData[i].ingredientsArray = rawData[i].ingredients;
         rawData[i].ingredients = ingredientsString;
         rawData[i].formulaId = rawData[i]._id;
+        rawData[i].productionLinesArray = rawData[i].productionLines;
       }
       var processedData = [];
       if(rawData){

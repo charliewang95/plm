@@ -1,4 +1,4 @@
-import React from 'react';
+      import React from 'react';
 import { Switch, Route } from 'react-router-dom'
 //import App from './App';
 import DashBoard from './components/dashboard/DashBoard';
@@ -24,6 +24,8 @@ import DistributionNetwork from './components/distributorNetwork/distributorNetw
 import ProductionLine from './components/productionLine/ProductionLine.js';
 import ProductionLineDetails from './components/productionLine/ProductionLineDetails.js';
 import MainIngredientView from './components/admin/mainIngredientView';
+// import ShoppingCartAndOrders from './components/shoppingCart/mainPage';
+import PendingOrderView from './components/shoppingCart/pendingOrder/PendingOrderTable'
 
 
 const Routes = () => (
@@ -40,6 +42,7 @@ const Routes = () => (
             <Route path="/vendors" component={Vendors} />
             <Route path="/addVendorForm" component={AddVendorForm} />
             <Route path="/cart" component={ShoppingCart} />
+            <Route path="/pending-orders" component={PendingOrderView} />
             <Route path="/report" component={Report} />
             <Route path="/log" component={Log} />
             <Route path="/formula" component={Formula} />

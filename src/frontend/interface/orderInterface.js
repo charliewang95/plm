@@ -102,5 +102,21 @@ async function getRawOnlyAsync(sessionId) {
     return res;
 };
 
+async function checkoutOneOrderAsync(orderId, userId, ingredientId, ingredientName, vendorName, _package, price, ingredientLots, sessionId, callback) {
+    var order = packIntoJson(userId, ingredientId, ingredientName, vendorName, _package, price, ingredientLots);
+    order._id = orderId;
+    try{
+        const res = await axios.post('/orders/checkoutOneOrder/user/'+sessionId, order);
+        console.log(res);
+        callback(null);
+        return res.data;
+    } catch(e) {
+        if (e.response.status == 400 || e.response.status == 500)
+            callback(e.response);
+        else
+            throw e;
+    }
+};
+
 //export functions above for use by other modules
-export { addOrder, getAllOrdersAsync, getOrderAsync, updateOrder, deleteOrder, checkoutOrder, getPendingsOnlyAsync, getRawOnlyAsync};
+export { addOrder, getAllOrdersAsync, getOrderAsync, updateOrder, deleteOrder, checkoutOrder, getPendingsOnlyAsync, getRawOnlyAsync, checkoutOneOrderAsync};
