@@ -172,7 +172,7 @@ var processOrderHelper = function(i, items, res, next) {
 
 var processFormula = function(item, res, next) {
     var name = item.name;
-    ProductionLine.find({}, function(pls){
+    ProductionLine.find({}, function(err, pls){
         for (var i = 0; i < pls.length; i++) {
             var pl = pls[i];
             if (pl.formulaNames && pl.formulaNames.includes(name)) {
@@ -190,9 +190,10 @@ var processFormula = function(item, res, next) {
 
 var processProductionLine = function(item, res, next) {
     var name = item.name;
-    Formula.find({}, function(formulas){
+    Formula.find({}, function(err, formulas){
         for (var i = 0; i < formulas.length; i++) {
             var formula = formulas[i];
+            console.log(formula.name);
             if (formula.productionLines && formula.productionLines.includes(name)) {
                 var newArray = [];
                 for (var j = 0; j < formula.productionLines.length; j++) {
@@ -200,7 +201,7 @@ var processProductionLine = function(item, res, next) {
                         newArray.push(formula.productionLines[j]);
                     }
                 }
-                pl.update({productionLines: newArray}, function(err, obj){});
+                formula.update({productionLines: newArray}, function(err, obj){});
             }
         }
     })

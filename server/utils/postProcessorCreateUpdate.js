@@ -173,15 +173,15 @@ var processFormula = function(item, itemId, res, next){
     var oldProductionLineNames = item.productionLines;
     Formula.findById(itemId, function(err, formula){
         var newProductionLineNames = formula.productionLines;
-        processFormulaHelperDeleteOld(res, next, 0, newProductionLineNames, oldProductionLineNames, function(){
+        processFormulaHelperDeleteOld(res, next, 0, item, newProductionLineNames, oldProductionLineNames, function(){
 
         });
     });
 }
 
-var processFormulaHelperDeleteOld = function(res, next, i, newProductionLineNames, oldProductionLineNames, callback){
+var processFormulaHelperDeleteOld = function(res, next, i, formula, newProductionLineNames, oldProductionLineNames, callback){
     if (i == oldProductionLineNames.length) {
-        processFormulaHelperAddNew(res, next, 0, newProductionLineNames, oldProductionLineNames, callback)
+        processFormulaHelperAddNew(res, next, 0, formula, newProductionLineNames, oldProductionLineNames, callback)
     }
     else {
         var oldProductionLineName = oldProductionLineNames[i];
@@ -200,18 +200,18 @@ var processFormulaHelperDeleteOld = function(res, next, i, newProductionLineName
                         }
                     }
                     pl.update({formulaNames: newArray}, function(err, newPl){
-                        processFormulaHelperDeleteOld(res, next, i+1, newProductionLineNames, oldProductionLineNames, callback);
+                        processFormulaHelperDeleteOld(res, next, i+1, formula, newProductionLineNames, oldProductionLineNames, callback);
                     });
                 }
             });
         }
         else {
-            processFormulaHelperDeleteOld(res, next, i+1, newProductionLineNames, oldProductionLineNames, callback);
+            processFormulaHelperDeleteOld(res, next, i+1, formula, newProductionLineNames, oldProductionLineNames, callback);
         }
     }
 }
 
-var processFormulaHelperAddNew = function(res, next, i, newProductionLineNames, oldProductionLineNames, callback){
+var processFormulaHelperAddNew = function(res, next, i, formula, newProductionLineNames, oldProductionLineNames, callback){
     if (i == newProductionLineNames.length) {
         callback();
     }
@@ -224,14 +224,14 @@ var processFormulaHelperAddNew = function(res, next, i, newProductionLineNames, 
                     return res.status(400).send('Production Line '+newProductionLineName+' does not exist');
                 } else {
                     var formulasInProductionLine = pl.formulaNames;
-                    formulasInProductionLine.push(newProductionLineName);
+                    formulasInProductionLine.push(formula.name);
                     pl.update({formulaNames: formulasInProductionLine}, function(err, newPl){
-                        processFormulaHelperAddNew(res, next, i+1, newProductionLineNames, oldProductionLineNames, callback);
+                        processFormulaHelperAddNew(res, next, i+1, formula, newProductionLineNames, oldProductionLineNames, callback);
                     });
                 }
             });
         } else {
-            processFormulaHelperAddNew(res, next, i+1, newProductionLineNames, oldProductionLineNames, callback);
+            processFormulaHelperAddNew(res, next, i+1, formula, newProductionLineNames, oldProductionLineNames, callback);
         }
     }
 }
@@ -240,15 +240,15 @@ var processProductionLine = function(item, itemId, res, next){
     var oldFormulaNames = item.formulaNames;
     ProductionLine.findById(itemId, function(err, newProductionLine){
         var newFormulaNames = newProductionLine.formulaNames;
-        processProductionLineHelperDeleteOld(res, next, 0, newFormulaNames, oldFormulaNames, function(){
+        processProductionLineHelperDeleteOld(res, next, 0, item, newFormulaNames, oldFormulaNames, function(){
 
         });
     });
 }
 
-var processProductionLineHelperDeleteOld = function(res, next, i, newFormulaNames, oldFormulaNames, callback){
+var processProductionLineHelperDeleteOld = function(res, next, i, pl, newFormulaNames, oldFormulaNames, callback){
     if (i == oldFormulaNames.length) {
-        processProductionLineHelperAddNew(res, next, 0, newFormulaNames, oldFormulaNames, callback)
+        processProductionLineHelperAddNew(res, next, 0, pl, newFormulaNames, oldFormulaNames, callback)
     }
     else {
         var oldFormulaName = oldFormulaNames[i];
@@ -267,18 +267,18 @@ var processProductionLineHelperDeleteOld = function(res, next, i, newFormulaName
                         }
                     }
                     formula.update({productionLines: newArray}, function(err, newFormula){
-                        processProductionLineHelperDeleteOld(res, next, i+1, newFormulaNames, oldFormulaNames, callback);
+                        processProductionLineHelperDeleteOld(res, next, i+1, pl, newFormulaNames, oldFormulaNames, callback);
                     });
                 }
             });
         }
         else {
-            processProductionLineHelperDeleteOld(res, next, i+1, newFormulaNames, oldFormulaNames, callback);
+            processProductionLineHelperDeleteOld(res, next, i+1, pl, newFormulaNames, oldFormulaNames, callback);
         }
     }
 }
 
-var processProductionLineHelperAddNew = function(res, next, i, newFormulaNames, oldFormulaNames, callback){
+var processProductionLineHelperAddNew = function(res, next, i, pl, newFormulaNames, oldFormulaNames, callback){
     if (i == newFormulaNames.length) {
         callback();
     }
@@ -291,14 +291,14 @@ var processProductionLineHelperAddNew = function(res, next, i, newFormulaNames, 
                     return res.status(400).send('Formula '+newFormulaName+' does not exist');
                 } else {
                     var productionLinesInFormula = formula.productionLines;
-                    productionLinesInFormula.push(newFormulaName);
+                    productionLinesInFormula.push(pl.name);
                     formula.update({productionLines: productionLinesInFormula}, function(err, newFormula){
-                        processProductionLineHelperAddNew(res, next, i+1, newFormulaNames, oldFormulaNames, callback);
+                        processProductionLineHelperAddNew(res, next, i+1, pl, newFormulaNames, oldFormulaNames, callback);
                     });
                 }
             });
         } else {
-            processProductionLineHelperAddNew(res, next, i+1, newFormulaNames, oldFormulaNames, callback);
+            processProductionLineHelperAddNew(res, next, i+1, pl, newFormulaNames, oldFormulaNames, callback);
         }
     }
 }
