@@ -178,7 +178,7 @@ async function deleteById(url, propertyName, objectId, sessionId, callback) {
 	// const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName, objectId]);
 	// const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
     try {
-	    const completeUrl = getCompleteUrlWithObjectId(url, propertyName, objectId, sessionId
+	    const completeUrl = getCompleteUrlWithObjectId(url, propertyName, objectId, sessionId)
 		console.log("DELETE send to " + completeUrl);
 	    const res = await axios.delete(completeUrl);
 	    console.log("res");
