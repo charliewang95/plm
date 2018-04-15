@@ -364,6 +364,7 @@ exports.markComplete = function(req, res, next){
 }
 
 var updateProductionLineAfterComplete = function(res, next, productionLine, date) {
+    console.log("Updating Production Line");
     var endDates = productionLine.endDates;
     endDates = (endDates == null) ? [] : endDates;
     endDates.push(date);
