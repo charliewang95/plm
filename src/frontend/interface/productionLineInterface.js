@@ -103,4 +103,4 @@ async function deleteProductionLine(productionLineId, sessionId, callback) {
 };
 
 //export functions above for use by other modules
-export { addProductionLine, getAllProductionLinesAsync, getProductionLineAsync, updateProductionLine, deleteProductionLine, getAllProductionLineNamesCodesAsync, getProductionLineByNameAsync};
+export { addProductionLine, getAllProductionLinesAsync, getProductionLineAsync, updateProductionLine, deleteProductionLine, getAllProductionLineNamesCodesAsync, getProductionLineByNameAsync, markComplete};
