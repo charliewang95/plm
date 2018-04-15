@@ -17,6 +17,7 @@ import SnackBarDisplay from '../snackBar/snackBarDisplay';
 import { Redirect } from 'react-router';
 import PubSub from 'pubsub-js';
 import { ToastContainer, toast } from 'react-toastify';
+import SelectProductionLines from './SelectProductionLines.js';
 
 const styles = {
     buttons: {
@@ -58,6 +59,8 @@ class FormulaDetails extends React.Component{
     console.log(details);
     const isCreateNew = props.location.state.isCreateNew;
     this.state = {
+      productionLinesString:"",
+      productionLinesArray: (details.productionLinesArray)?(details.productionLinesArray):[],
       ingredientsString:"",
       ingredientsArray: (details.ingredientsArray)?(details.ingredientsArray):[],
   		value:undefined,
@@ -80,11 +83,12 @@ class FormulaDetails extends React.Component{
       snackBarMessage:'',
       fireRedirect: false,
       pageNotFound: false,
-      }
+    }
 
     this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.updateIngredients = this.updateIngredients.bind(this);
+    this.updateProductionLines = this.updateProductionLines.bind(this);
     this.computeIngredientsString = this.computeIngredientsString.bind(this);
     this.handleUnitsProvidedChange = this.handleUnitsProvidedChange.bind(this);
     this.handleNumUnitPerPackage = this.handleNumUnitPerPackage.bind(this);
@@ -175,6 +179,11 @@ async loadFormula(){
     this.computeIngredientsString();
   }
 
+  updateProductionLines(updatedArray){
+    this.setState({productionLinesArray: updatedArray});
+    this.computeProductionLinesString();
+  }
+
   computeIngredientsString(){
     console.log(" Ingredients Array " + JSON.stringify(this.state.ingredientsArray));
     var ingredients_string = "";
@@ -190,6 +199,19 @@ async loadFormula(){
     this.setState({ingredientsString: ingredients_string });
   }
 
+  computeProductionLinesString(){
+    var string = "";
+    if(this.state.productionLinesArray){
+    for(var i =0; i < this.state.productionLinesArray.length; i++){
+          var name = this.state.productionLinesArray[i];
+          string += name;
+          if(i!= (this.state.productionLinesArray.length - 1)){
+            string+='\n';
+          }
+        }
+    }
+    this.setState({productionLinesString: string });
+  }
 
   isValid(){
     console.log("is valid is called");
@@ -401,6 +423,17 @@ async loadFormula(){
               style={{lineHeight:1.5}}
             />}
             {(!this.state.isDisabled) && <SelectIngredients initialArray={this.state.ingredientsArray} handleChange={this.updateIngredients}/>}
+            {this.state.isDisabled && <TextField
+              id="selectProductionLines"
+              label="Production Lines"
+              value={this.state.productionLinesString}
+              margin="normal"
+              disabled = {this.state.isDisabled}
+              multiline
+              required
+              style={{lineHeight:1.5}}
+            />}
+            {(!this.state.isDisabled) && <SelectProductionLines initialArray={this.state.productionLinesArray} handleChange={this.updateProductionLines}/>}
             </FormGroup>
 
             <br></br>

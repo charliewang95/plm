@@ -38,13 +38,11 @@ import Styles from  'react-select/dist/react-select.css';
 import ReactSelect from 'react-select';
 import {Link} from 'react-router-dom';
 
-import * as ingredientActions from '../../interface/ingredientInterface';
+import * as productionLineActions from '../../interface/productionLineInterface';
 import * as formulaActions from '../../interface/formulaInterface';
 import * as testConfig from '../../../resources/testConfig.js';
 import * as uploadInterface from '../../interface/uploadInterface';
-import formulaData from './dummyData';
 import PubSub from 'pubsub-js';
-import SnackBarDisplay from '../snackBar/snackBarDisplay';
 import { ToastContainer, toast } from 'react-toastify';
 //TODO: Set the user ID
 var sessionId = "";
@@ -79,8 +77,8 @@ const AddButton = ({ onExecute }) => (
   <div style={{ textAlign: 'center' }}>
     <Button
       color="primary"
-      title="Create New Formula"
-      component={Link} to={{pathname: '/formula-details', state:{isCreateNew: true} }}
+      title="Create New Production Line"
+      component={Link} to={{pathname: '/production-line-details', state:{isCreateNew: true} }}
     >
       New
     </Button>
@@ -120,34 +118,21 @@ Command.propTypes = {
   onExecute: PropTypes.func.isRequired,
 };
 
-const AddToProdButton = ({selectedFormula, onExecute}) => (
-  // formulaSentToProduction = selectedFormula,
-  // alert(formulaSentToProduction),
-    <Button
-      style={{width:50}}
-      color="primary"
-      title="Send formula to production"
-      component={Link} to={{pathname: '/production-review', state:{selectedFormula: selectedFormula} }}
-    > <AddShoppingCartIcon title="Send formula to production"/>
-    </Button>
-);
-AddToProdButton.propTypes = {
-  onExecute: PropTypes.func,
-};
-
 const Cell = (props) => {
-//  console.log(" CELL props value: ");
-//  console.log(props);
+  console.log("Productionline cell props value: ");
+  console.log(props);
   if(props.column.name=='name'){
     return <Table.Cell {...props}>
-    <Link to={{pathname: '/formula-details', state:{details: props.row} }}>{props.row.name}</Link>
+    <Link to={{pathname: '/production-line-details', state:{details: props.row} }}>{props.row.name}</Link>
     </Table.Cell>
-  }else if (props.column.key=='sendToProd' && (isAdmin||isManager)){
-    // <Link to={{pathname: '/product-review', state:{selectedFormula: props.row} }}}
-    console.log('send to prod');
-    return <Table.Cell {...props}>
-            <AddToProdButton selectedFormula = {props.row}/>
-            </Table.Cell>
+  }else if(props.column.name=='isIdle'){
+    if(!props.row.isIdle){
+      return <Table.Cell {...props}>
+      <div>BUSY <Button raised>Mark Complete</Button></div>
+      </Table.Cell>
+    }else{
+      return <Table.Cell {...props} />;
+    }
   }
   else return <Table.Cell {...props} />;
 };
@@ -159,7 +144,7 @@ Cell.propTypes = {
 const getRowId = row => row.id;
 
 
-class Formula extends React.PureComponent {
+class ProductionLine extends React.PureComponent {
   constructor(props) {
     super(props);
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
@@ -169,16 +154,13 @@ class Formula extends React.PureComponent {
       columns: (isAdmin||isManager)?[
         { name: 'name', title: 'Name' },
         { name: 'description', title: 'Description' },
-        { name: 'unitsProvided', title: 'Product Units ' },
-        { name: 'ingredients', title: 'Ingredient / Quantity' },
-        { name: 'productType', title: 'Product Type ' },
-        {key: 'sendToProd', title:''},
+        { name: 'formulaNames', title: 'Formulas' },
+        { name: 'isIdle', title: 'Status' },
       ]:[
         { name: 'name', title: 'Name' },
         { name: 'description', title: 'Description' },
-        { name: 'unitsProvided', title: 'Product Units ' },
-        { name: 'ingredients', title: 'Ingredient / Quantity' },
-        { name: 'productType', title: 'Product Type ' }, // isIntermediate
+        { name: 'formulaNames', title: 'Formulas' },
+        { name: 'isIdle', title: 'Status' },
       ],
       rows:[],
       // sorting: [],
@@ -189,26 +171,19 @@ class Formula extends React.PureComponent {
       deletingRows: [],
       pageSize: 10,
       pageSizes: [10, 50, 100, 500],
-      columnOrder: ['name', 'description', 'unitsProvided', 'ingredients', 'productType','sendToProd' ],
+      columnOrder: ['name', 'description', 'formulaNames','isIdle' ],
       options:[],
       productionFormula:{},
-      snackBarOpen:false,
-      snackBarMessage:'',
     };
 
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
-    this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
 
     this.commitChanges = ({ deleted }) => {
       let { rows } = this.state;
-      console.log("delete formula");
-      console.log(deleted);
-      console.log(this.state.deletingRows);
       this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
-      console.log(this.state.deletingRows);
      // if (deleted) {
      //  const deletedSet = new Set(deleted);
      //  rows = rows.filter(row => !deletedSet.has(row.id));
@@ -252,123 +227,49 @@ class Formula extends React.PureComponent {
       });
       this.setState({ rows, deletingRows: [] });
     };
-    this.uploadFile = this.uploadFile.bind(this);
   }
 
   componentWillMount(){
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
     isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
-    this.loadAllFormulas();
-  }
-
-  handleSnackBarClose(){
-    this.setState({snackBarOpen:false});
-    this.setState({snackBarMessage: ''});
+    this.loadAllProductionLines();
   }
 
   componentDidMount(){
     //this.createMap();
   }
 
-  async loadAllFormulas(){
+  async loadAllProductionLines(){
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     userId = JSON.parse(sessionStorage.getItem('user'))._id;
-
     //TODO: Get from backend
-    var data = await formulaActions.getAllFormulasAsync(sessionId);
+    var data = await productionLineActions.getAllProductionLinesAsync(sessionId);
     var rawData = (data) ? data : []
 
-    for(var i =0; i < rawData.length;i++){
-        var ingredientsArray  = rawData[i].ingredients;
-        var ingredientsString = '';
-
-        for(var j = 0; j < ingredientsArray.length;j++){
-          ingredientsString+=ingredientsArray[j].ingredientName + " / " +
-                          ingredientsArray[j].quantity +' '+ingredientsArray[j].nativeUnit;
-
-          if(j!= ingredientsArray.length -1){
-            ingredientsString+=', ';
+      for(var i =0; i < rawData.length;i++){
+        var formulaNamesArray  = rawData[i].formulaNames;
+        var formulaNamesString = '';
+        for(var j = 0; j < formulaNamesArray.length;j++){
+          formulaNamesString+=formulaNamesArray[j];
+          if(j!= formulaNamesArray.length -1){
+            formulaNamesString+=', ';
           }
         }
-        // NEEDS TO BE BEFORE
-        rawData[i].ingredientsArray = rawData[i].ingredients;
-        rawData[i].ingredients = ingredientsString;
-        rawData[i].formulaId = rawData[i]._id;
-        rawData[i].productionLinesArray = rawData[i].productionLines;
-      }
-      var processedData = [];
-      if(rawData){
-        processedData = [...rawData.map((row, index)=> ({
-          id:index,
-          // select based on whether it is Intermediate or Final
-          productType: (row.isIntermediate) ? "Intermediate" :"Final",...row,
-          })),
-        ];
+        rawData[i].formulaNames = formulaNamesString; 
+        rawData[i].isIdle = rawData[i].isIdle ? "Idle" : "Busy";
+        rawData[i].productionLineId = rawData[i]._id;
       }
 
-      console.log(" PROCESSED DATA ")
-       console.log(processedData);
-      this.setState({rows: processedData});
-      }
+    var processedData = [];
 
-
-    async uploadFile(event) {
-      console.log(" UPLOAD FILE ");
-        let file = event.target.files[0];
-
-        console.log(file);
-
-        if (file) {
-          let form = new FormData();
-          form.append('file', file);
-          console.log(form);
-           await uploadInterface.uploadFormula(form, sessionId, function(res){
-                if (res.status == 400) {
-                    if (!alert(res.data))
-                        window.location.reload();
-                } else if (res.status == 500) {
-                    if (!alert('Duplicate Key on Formula (different package not allowed)'))
-                        window.location.reload();
-                } else if (res.status == 200) {
-                    console.log(res);
-                    if(!alert(res.data)){
-                        //PubSub.publish('showMessage', 'File successfully uploaded.' );
-                        toast.success('File successfully uploaded', {
-                          position: toast.POSITION.TOP_RIGHT
-                        });
-                        window.location.reload();
-                      }
-                }
-           });
-         }
+    if(rawData){
+      processedData = [...rawData.map((row, index)=> ({
+        id:index,...row,
+      })),];
     }
+    this.setState({rows: processedData});
+  }
 
-    async uploadFileInter(event) {
-      console.log(" UPLOAD FILE INTER");
-        let file = event.target.files[0];
-
-        console.log(file);
-
-        if (file) {
-          let form = new FormData();
-          form.append('file', file);
-          console.log(form);
-          
-           await uploadInterface.uploadIntermediate(form, sessionId, function(res){
-                if (res.status == 400) {
-                    if (!alert(res.data))
-                        window.location.reload();
-                } else if (res.status == 500) {
-                    if (!alert('Duplicate Key on Formula (different package not allowed)'))
-                        window.location.reload();
-                } else if (res.status == 200) {
-                    console.log(res);
-                    if(!alert(res.data))
-                        window.location.reload();
-                }
-           });
-         }
-    }
 
   render() {
     const {classes,} = this.props;
@@ -476,21 +377,6 @@ class Formula extends React.PureComponent {
         </Dialog>
       }
     </Paper>
-    {/* <Paper styles = {{color : "#42f4d9"}} > */}
-      {isAdmin && <p><font size="5">Final Formula Bulk Import</font></p>}
-      {isAdmin && <input type="file"
-        name="myFile"
-        onChange={this.uploadFile} /> }
-      {isAdmin && <p><font size="5">Intermediate Product Formula Bulk Import</font></p>}
-      {isAdmin && <input type="file"
-        name="myFile"
-        onChange={this.uploadFileInter} /> }
-      {isAdmin &&
-      <div>
-        <br></br>
-        Click <a href="./BulkImportEV3Proposalv2.pdf" style={{color:"#000000",}}>HERE</a> for format specification
-      </div>
-    }
   </div>
 );
   }
@@ -501,4 +387,4 @@ class Formula extends React.PureComponent {
 //   classes: PropTypes.object.isRequired,
 // };
 
-export default withStyles(styles, { name: 'Formula' })(Formula);
+export default withStyles(styles, { name: 'ProductionLine' })(ProductionLine);

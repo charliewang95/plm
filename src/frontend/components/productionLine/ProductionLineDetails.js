@@ -1,0 +1,309 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import RaisedButton from 'material-ui/Button';
+import {Link} from 'react-router-dom';
+import Styles from  'react-select/dist/react-select.css';
+import Divider from 'material-ui/Divider';
+import TextField from 'material-ui/TextField';
+import Input, { InputLabel, InputAdornment } from 'material-ui/Input';
+import { FormControl, FormGroup, FormHelperText } from 'material-ui/Form';
+import { MenuItem } from 'material-ui/Menu';
+import Select from 'material-ui/Select';
+import Chip from 'material-ui/Chip';
+import * as ingredientActions from '../../interface/ingredientInterface';
+import * as formulaActions from '../../interface/formulaInterface';
+import { Redirect } from 'react-router';
+import PubSub from 'pubsub-js';
+import { ToastContainer, toast } from 'react-toastify';
+import * as productionLineActions from '../../interface/productionLineInterface';
+import SelectFormulas from './SelectFormulas.js';
+
+const styles = {
+    buttons: {
+      marginTop: 30,
+      float: 'center'
+    },
+    saveButton: {
+      marginLeft: 50,
+    },
+    packageName:{
+      marginLeft: 10,
+      float: 'center',
+      width: 100,
+    },
+    unitsProvided:{
+      width: 200,
+      marginRight: 30
+    },
+    productType:{
+      width: 200,
+    },
+    formControl: {
+      width: 400
+    },
+    quantity: {
+      width: 100
+    },
+  };
+
+var sessionId = "";
+var userId = "";
+var isAdmin = "";
+var isManager = "";
+
+class ProductionLineDetails extends React.Component{
+  constructor(props) {
+    super(props);
+    var dummyObject = new Object();
+    const details = (props.location.state.details)?(props.location.state.details):dummyObject;
+    const isCreateNew = props.location.state.isCreateNew;
+    this.state = {
+      formulaNamesString:"",
+      formulasArray: (details.formulaNames)?(details.formulaNames):[],
+      productionLineId: (details.productionLineId)?(details.productionLineId):'',
+      name:(details.name)?(details.name):'',
+      description:(details.description)?(details.description):'',
+      isIdle: isCreateNew ? true : details.isIdle,
+      currentFormula: (details.currentFormula)?(details.currentFormula):{},
+      startDates: (details.startDates)?(details.startDates) : [],
+      endDates: (details.endDates)?(details.endDates):[],
+      quantity:(details.quantity)?(details.quantity):'',
+      newSpentMoney:(details.newSpentMoney)?(details.newSpentMoney):'',
+      totalSpace:(details.totalSpace)?(details.totalSpace):'',
+      arrayInProductOut: (details.arrayInProductOut)?(details.arrayInProductOut):[],
+      isDisabled: (isCreateNew) ? false: true,
+      isCreateNew: (isCreateNew),
+      isValid: false,
+      pageNotFound: false,
+    }
+    this.onFormSubmit = this.onFormSubmit.bind(this);
+    this.updateFormulas = this.updateFormulas.bind(this);
+    this.computeFormulasString = this.computeFormulasString.bind(this);
+    this.isValid = this.isValid.bind(this);
+    this.loadProductionLine = this.loadProductionLine.bind(this);
+    this.markComplete = this.markComplete.bind(this);
+  }
+
+  componentDidMount(){
+    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
+    if(this.props.location.state.fromLogs){
+      this.loadProductionLine(); //if from logs, need to fetch data
+    }
+      this.computeFormulasString();
+  }
+
+async loadProductionLine(){
+    var details = [];
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    userId = JSON.parse(sessionStorage.getItem('user'))._id;
+    details = await productionLineActions.getProductionLineAsync(this.props.location.state.productionLineId, sessionId);
+    
+    if(!details){
+      this.setState({pageNotFound: true}); //redirect if the production line does not exist
+    }else{
+
+    this.setState({
+      name: details.name,
+      productionLineId: this.props.location.state.productionLineId,
+      description: details.description,
+      formulasArray: details.formulaNames,
+      formulaNamesString: details.formulaNamesString,
+      isIdle: details.isIdle,
+      currentFormula: details.currentFormula,
+      startDates: details.startDates,
+      endDates: details.endDates,
+      quantity: details.quantity,
+      newSpentMoney: details.newSpentMoney,
+      totalSpace: details.totalSpace,
+      arrayInProductOut: details.arrayInProductOut,
+      fireRedirect: false,
+      pageNotFound: false,
+    });
+    this.computeFormulasString();
+    }
+  }
+
+  handleChange = name => event => {
+      this.setState({
+        [name]: event.target.value,
+      });
+  };
+
+  updateFormulas(updatedArray){
+    this.setState({'formulaNamesArray': updatedArray});
+    this.computeFormulasString();
+  }
+
+  computeFormulasString(){
+    var formulas_string = "";
+    if(this.state.formulasArray){
+    for(var i =0; i < this.state.formulasArray.length; i++){
+          var formulaName = this.state.formulasArray[i];
+          //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
+          formulas_string += formulaName
+          if(i!= (this.state.formulasArray.length - 1)){
+            formulas_string+='\n';
+          }
+        }
+    }
+    this.setState({formulasString: formulas_string });
+  }
+
+  isValid(){
+    console.log("is valid is called");
+    var temp = this;
+    if(!temp.state.name){
+      toast.error(" Please enter the production line name. ");
+      return false;
+    }else if (!temp.state.description){
+      toast.error(" Please enter the description. ");
+      return false;
+    }else if (temp.state.formulasArray.length==0){
+      toast.error(" Please add formulas for the production line.");
+      return false;
+    }
+      return true;
+  }
+
+  async markComplete(){
+    var temp = this;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    this.setState({isIdle:true});
+    await productionLineActions.updateProductionLine(temp.state.productionLineId, temp.state.name,
+        temp.state.description, temp.state.formulasArray, true, sessionId, function(res){
+          if(res.status == 400){
+            PubSub.publish('showAlert', res.data);
+          }else{
+            temp.setState({fireRedirect: true});
+            toast.success('Production marked as completed');
+          }
+        });
+      temp.setState({isDisabled:true});
+  }
+
+  async onFormSubmit(e) {
+    var temp = this;
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+    e.preventDefault();
+    console.log("submit formula ");
+    var isValid = temp.isValid();
+    if(isValid && temp.state.isCreateNew){
+      await productionLineActions.addProductionLine(temp.state.name, temp.state.description, 
+        temp.state.formulasArray, temp.state.isIdle, sessionId, function(res){
+              //TODO: Please update the error accordingly
+              if(res.status==400 || res.status==500){
+                PubSub.publish('showAlert', res.data );
+              }else{
+                temp.setState({fireRedirect: true});
+                toast.success('Production line successfully added.');
+              }
+            });
+    }else if (!temp.state.isCreateNew && isValid){
+      await productionLineActions.updateProductionLine(temp.state.productionLineId, temp.state.name,
+        temp.state.description, temp.state.formulasArray, temp.state.isIdle, sessionId, function(res){
+          if(res.status == 400){
+            PubSub.publish('showAlert', res.data);
+          }else{
+            temp.setState({fireRedirect: true});
+            toast.success('Production line successfully updated.');
+          }
+        });
+      temp.setState({isDisabled:true});
+    }
+  }
+
+  render (){
+    const { formulaId,name, description, isCreateNew,
+      isDisabled, fireRedirect, pageNotFound} = this.state;
+    return (
+      <div>
+      <form onSubmit={this.onFormSubmit} style={styles.formControl}>
+        <p><font size="6">Basic Information</font></p>
+          <FormGroup>
+            <TextField
+              disabled = {this.state.isDisabled}
+              id="name"
+              label="Name"
+              value={this.state.name}
+              onChange={this.handleChange('name')}
+              margin="normal"
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <TextField
+                id="description"
+                label="Description "
+                value={this.state.description}
+                onChange={this.handleChange('description')}
+                margin="normal"
+                disabled = {this.state.isDisabled}
+                required
+                multiline
+              />
+          </FormGroup>
+          <FormGroup>
+            {this.state.isDisabled && <TextField
+              id="selectFormulas"
+              label="Formulas"
+              value={this.state.formulasString}
+              margin="normal"
+              disabled = {this.state.isDisabled}
+              multiline
+              required
+              style={{lineHeight:1.5}}
+            />}
+            {(!this.state.isDisabled) && <SelectFormulas currentFormula={this.state.currentFormula} initialArray={this.state.formulasArray} handleChange={this.updateFormulas}/>}
+          </FormGroup>
+        <br/>
+        <p><font size="6">Production Run Information</font></p>
+            <TextField
+                required
+                id="isIdle"
+                label="Status"
+                value={(this.state.isIdle)?"Idle":"Busy"}
+                margin="normal"
+                disabled = {true}
+                style={styles.quantity}
+            />
+           {!this.state.isIdle &&(this.state.isDisabled && (isAdmin || isManager)) && <RaisedButton raised color="default" onClick={()=>this.markComplete()}>Complete</RaisedButton>}
+           {!this.state.isIdle && <TextField
+              id="currentFormula"
+              label="Formula under production"
+              value={this.state.nativeUnit}
+              onChange={this.handleChange('currentFormula')}
+              margin="normal"
+              disabled = {this.state.isDisabled}
+              style = {styles.quantity}
+              required
+            />}
+              <div style={styles.buttons}>
+                {(this.state.isDisabled && isAdmin) && <RaisedButton raised color = "secondary" onClick={()=>{this.setState({isDisabled:false});}} >EDIT</RaisedButton>}
+                {(!this.state.isDisabled) && 
+                  <RaisedButton raised
+                      color="primary"
+                      style={styles.saveButton}
+                      type="Submit"
+                      primary="true"
+                  > {(this.state.isCreateNew)? 'ADD' : 'SAVE'} </RaisedButton>}
+
+                {this.props.location.state.fromLogs?
+                  <RaisedButton raised color="default" component={Link} to='/log'
+                  style = {{marginLeft: 10}}> BACK </RaisedButton>:
+                  <RaisedButton raised color="default"
+                  component={Link} to='/production-line'
+                  style = {{marginLeft: 10}}
+                  > BACK </RaisedButton>
+                }
+             </div>
+           </form>
+            {fireRedirect && (<Redirect to={'/production-line'}/>)}
+            {pageNotFound && (<Redirect to={'/pagenotfound'}/>)}
+        </div>
+    )
+	}
+};
+
+
+export default ProductionLineDetails;
