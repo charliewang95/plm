@@ -40,11 +40,9 @@ var sessionId;
 var isAdmin;
 var isManager;
 
-
 export default class Demo extends React.PureComponent {
   constructor(props) {
     super(props);
-
     this.state = {
       columns: [
         { name: 'productName', title: 'Product Name' },
@@ -227,11 +225,13 @@ export default class Demo extends React.PureComponent {
     event.preventDefault();
     console.log("updateUnitPrice");
     var temp = this;
-    const re =  /^\d{0,10}(\.\d{0,2})?$/;
-    if (event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
+    const re = /[0-9]+(\.([0-9]{4,}|000|00|0))?/
+    // const re = /^\d[0-9](\.\d{0,2})?$/;
+    // const re =  /^\d{0,10}(\.\d{0,2})?$/;
+    if (event.target.value == '' || event.target.value == 0 || (event.target.value > 0 && re.test(event.target.value))) {
        temp.setState({unitPrice: event.target.value})
     }else{
-      alert(" unit price must be a positive number.");
+      alert(" Unit price must be a number greater than or equal to 0.");
     }
   }
 
@@ -242,7 +242,7 @@ export default class Demo extends React.PureComponent {
     var unitPrice = temp.state.unitPrice;
 
     if(quantity && unitPrice){
-      if(unitPrice == 0 || unitPrice == 0 || quantity == '' || unitPrice == ''){
+      if(quantity == '' || quantity == 0){
         console.log("null value ");
         return false;
       }else{
@@ -261,7 +261,7 @@ export default class Demo extends React.PureComponent {
     if(selectedRows.length > 0 ){
       for(var i =0; i < selectedRows.length;i++){
         console.log(selectedRows);
-        if(selectedRows[i].revenue <=0){
+        if(selectedRows[i].quantity <=0){
           return false;
         }
       }
@@ -297,18 +297,20 @@ export default class Demo extends React.PureComponent {
       console.log(products);
       await distributorNetworkActions.sellItemsAsync(products,sessionId,function(res){
         if(res.status){
-          alert(res.data);
+          // alert(res.data);
         }else{
           //TODO: SnackBar
         }
       });
     this.setState({review:false});
-    this.setState({currentRowSelected:{}});
-    this.setState({selectedRows:[]});
-    this.setState({selection:[]});
+
     //TODO: Reload here to get the updated value from backend
 
-    //window.location.reload();
+    window.location.reload();
+
+    this.setState({currentRowSelected:{}});
+    this.setState({selection:[]});
+    this.setState({selectedRows:[]});
 
   }
 
@@ -319,7 +321,7 @@ export default class Demo extends React.PureComponent {
 
     return (
       <div>
-        <span>Total revenue: {grandTotalRevenue}</span>
+        {/* <span>Total revenue: {grandTotalRevenue}</span> */}
         <Paper>
           <Grid
             rows={rows}
@@ -385,7 +387,7 @@ export default class Demo extends React.PureComponent {
                     required
                     margin="dense"
                     id="unitPrice"
-                    label="Enter Unit Price"
+                    label="Enter Unit Price ($)"
                     value = {unitPrice}
                     fullWidth = {false}
                     onChange={(event) => this.updateUnitPrice(event)}
@@ -423,6 +425,8 @@ export default class Demo extends React.PureComponent {
                   <TableHeaderRow />
                 </Grid>
               </Paper>
+              <Divider/>
+              <span>Total revenue: $ {grandTotalRevenue}</span>
             </DialogContent>
             <DialogActions>
               <Button onClick={this.cancelSale} color="primary">Cancel</Button>
