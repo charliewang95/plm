@@ -166,15 +166,17 @@ async loadProductionLine(){
     var temp = this;
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     this.setState({isIdle:true});
-    await productionLineActions.updateProductionLine(temp.state.productionLineId, temp.state.name,
-        temp.state.description, temp.state.formulasArray, true, sessionId, function(res){
+    console.log("mark as complete");
+    console.log(temp.state.productionLineId);
+    var res = await productionLineActions.markComplete(temp.state.productionLineId, sessionId);
+          console.log("asdf res");
+          console.log(res);
           if(res.status == 400){
             PubSub.publish('showAlert', res.data);
           }else{
             temp.setState({fireRedirect: true});
             toast.success('Production marked as completed');
           }
-        });
       temp.setState({isDisabled:true});
   }
 
@@ -196,7 +198,6 @@ async loadProductionLine(){
               }
             });
     }else if (!temp.state.isCreateNew && isValid){
-       var idleTemp temp.state.isIdle
       await productionLineActions.updateProductionLine(temp.state.productionLineId, temp.state.name,
         temp.state.description, temp.state.formulasArray, temp.state.isIdle, sessionId, function(res){
           if(res.status == 400){
