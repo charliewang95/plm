@@ -132,8 +132,8 @@ async function updateUser(userId, username, email, password, isAdmin, isManager,
  * userId: string, the id of the user
  * sessionId: string, id of the current session
  */
-async function deleteUser(userId, sessionId) {
-	return await userActions.deleteUser(userId, sessionId);
+async function deleteUser(userId, sessionId, callback) {
+	return await userActions.deleteUser(userId, sessionId, callback);
 };
 
 /*
