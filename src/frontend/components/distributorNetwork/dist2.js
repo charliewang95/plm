@@ -33,8 +33,6 @@ import TextField from 'material-ui/TextField';
 import testData from './testData.js';
 import * as distributorNetworkActions from '../../interface/distributorNetworkInterface.js';
 
-import EditQuantity from './editDetails.js';
-
 
 
 var userId;
@@ -43,53 +41,18 @@ var isAdmin;
 var isManager;
 
 
-const EditQuantityButton = ({row, onSave}) => (
-  console.log("editquantitybutton"),
-  console.log(onSave),
-  <Button
-      disabled = {!row.isSelected}
-      style={{width:50}}
-      color="primary"
-      title="Edit"
-      component={Link} to={{pathname: '/distributorNetwork-edit', state:{row: row, onSave:onSave}}}
-    > EDIT
-    </Button>
-);
-
-
-
-const Cell = (props)=>{
-  console.log("grid cell");
-  console.log(props);
-  // console.log(this.a.prototype.updatePriceQuantityFromEdit);
-
-  // console.log(this.prototype.updatePriceQuantityFromEdit);
-  if(props.column.key=='edit'){
-    return <Table.Cell {...props}>
-            <EditQuantityButton row = {props.row} onSave = {this.a.prototype.updatePriceQuantityFromEdit}/>
-            </Table.Cell>
-  }else{
-  return <Table.Cell {...props}/>
-}
-};
-
-Cell.propTypes = {
-  column: PropTypes.shape({ name: PropTypes.string }).isRequired,
-};
-
-
 export default class Demo extends React.PureComponent {
   constructor(props) {
     super(props);
+
     this.state = {
       columns: [
-        { key: 'edit', title: '' },
         { name: 'productName', title: 'Product Name' },
         // { name: 'numUnit', title: 'Total Quantity' },
-        { name: 'numUnsold', title: 'Tot. Quantity' },
+        { name: 'numUnsold', title: 'Quantity Unsold' },
         { name: 'quantityToSell', title: ' Sale Quantity' },
         { name: 'unitPrice', title: 'Unit Price ($)' },
-        { name: 'revenue', title: 'Revenue ($)' },
+        { name: 'totalRevenue', title: 'Revenue ($)' },
       ],
       fireRedirect:false,
       rows: [],
@@ -109,18 +72,12 @@ export default class Demo extends React.PureComponent {
       console.log("selection");
       console.log(selection);
       var temp = this;
+
       if(selection.length!=0){
-        let {rows} = this.state;
-        // const rows = temp.state.rows.slice();
+        let {rows} = temp.state;
+
         var selectedRows = rows.filter(row => selection.indexOf(row.id) > -1);
         console.log(selectedRows);
-
-        // for(var i =0; i < selectedRows.length;i++){
-        //   if (rows[i].id = selectedRows[i].id){
-        //     rows[i].isSelected = true;
-        //     c
-        //   }
-        // }
 
         if(selectedRows && selectedRows.length >= temp.state.selectedRows.length){
           console.log("second loop");
@@ -133,13 +90,10 @@ export default class Demo extends React.PureComponent {
 
           temp.setState({currentRowSelected:lastSelectedRow[0]});
           temp.setState({selectedRows:selectedRows});
-
-          temp.updateGrandTotalRevenue();
         }
       }else{
         console.log(selectedRows);
         temp.setState({selectedRows:[]});
-        temp.setState({grandTotalRevenue:0});
       }
       temp.setState({ selection });
     }
@@ -163,9 +117,7 @@ export default class Demo extends React.PureComponent {
       temp.setState({quantity:''});
       temp.setState({unitPrice:''});
 
-      temp.updateGrandTotalRevenue();
     }
-
     this.loadDistributorNetworkData = this.loadDistributorNetworkData.bind(this);
     this.updateUnitPrice = this.updateUnitPrice.bind(this);
     this.updateQuantity = this.updateQuantity.bind(this);
@@ -173,8 +125,6 @@ export default class Demo extends React.PureComponent {
     this.sellProducts = this.sellProducts.bind(this);
     this.cancelSale = this.cancelSale.bind(this);
     this.quantitySaveValid = this.quantitySaveValid.bind(this);
-    this.updateGrandTotalRevenue = this.updateGrandTotalRevenue.bind(this);
-    this.updatePriceQuantityFromEdit = this.updatePriceQuantityFromEdit.bind(this);
 
     this.updatePriceQtyTable = () => {
       console.log("update price qty in table");
@@ -193,11 +143,8 @@ export default class Demo extends React.PureComponent {
         if(rows[i].id == rowId){
           rows[i].unitPrice = temp.state.unitPrice;
           rows[i].quantityToSell = temp.state.quantity;
-          rows[i].revenue = Math.round(temp.state.quantity * temp.state.unitPrice *100)/100;
-
-          grandTotalRev+=rows[i].revenue;
-
-          rows[i].isSelected = true;
+          rows[i].totalRevenue = Math.round(temp.state.quantity * temp.state.unitPrice *100)/100;
+          grandTotalRev+=rows[i].totalRevenue;
 
           console.log("inside");
           console.log(rows[i].unitPrice);
@@ -216,28 +163,6 @@ export default class Demo extends React.PureComponent {
 
   }
 
-  updatePriceQuantityFromEdit(quantity,unitPrice){
-    // var temp = this;
-    // var rowId = temp.state.currentRowSelected.id;
-    // const rows = temp.state.rows.slice();
-    // console.log("update from editing child");
-
-  }
-
-
-  updateGrandTotalRevenue(){
-    console.log("updateGrandTotalRevenue");
-    console.log(this.state);
-    var rows = this.state.selectedRows;
-    console.log(rows);
-    var sum =0;
-    if(rows.length){
-      for(var i =0; i < rows.length;i++){
-        sum+=rows[i].revenue;
-      }
-      this.setState({grandTotalRevenue:sum});
-    }
-  }
 
   componentWillMount(){
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
@@ -254,10 +179,6 @@ export default class Demo extends React.PureComponent {
     var processedData = [...data.map((row, index)=> ({
         id:index,...row,
         numUnsold:Math.round((row.numUnit-row.numSold)*100)/100,
-        quantityToSell:'',
-        unitPrice:'',
-        revenue:'',
-        isSelected:false,
         })),
       ];
     this.setState({rows:processedData});
@@ -284,24 +205,23 @@ export default class Demo extends React.PureComponent {
     event.preventDefault();
     console.log("updateUnitPrice");
     var temp = this;
-    const re = /[0-9]+(\.([0-9]{4,}|000|00|0))?/
-    // const re = /^\d[0-9](\.\d{0,2})?$/;
-    // const re =  /^\d{0,10}(\.\d{0,2})?$/;
-    if (event.target.value == '' || event.target.value == 0 || (event.target.value > 0 && re.test(event.target.value))) {
+    const re =  /^\d{0,10}(\.\d{0,2})?$/;
+    if (event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
        temp.setState({unitPrice: event.target.value})
     }else{
-      alert(" Unit price must be a number greater than or equal to 0.");
+      alert(" unit price must be a positive number.");
     }
   }
 
   quantitySaveValid(){
     console.log("check if save quantity valid");
     var temp = this;
+
     var quantity = temp.state.quantity;
     var unitPrice = temp.state.unitPrice;
 
     if(quantity && unitPrice){
-      if(quantity == '' || quantity == 0){
+      if(unitPrice == 0 || unitPrice == 0 || quantity == '' || unitPrice == ''){
         console.log("null value ");
         return false;
       }else{
@@ -312,15 +232,13 @@ export default class Demo extends React.PureComponent {
   }
 
   checkSelectionValid(){
-    console.log("check selection Valid");
+    console.log("check sell Valid");
     var temp = this;
-    var rows = temp.state.rows;
-    var selectedRows = rows.filter(row => temp.state.selection.indexOf(row.id) > -1);
-    console.log(selectedRows);
+    var selectedRows  = this.state.selectedRows;
     if(selectedRows.length > 0 ){
+      console.log(selectedRows);
       for(var i =0; i < selectedRows.length;i++){
-        console.log(selectedRows);
-        if(selectedRows[i].quantity <=0){
+        if(selectedRows[i].quantityToSell <= 0 || selectedRows[i].unitPrice <=0){
           return false;
         }
       }
@@ -344,32 +262,28 @@ export default class Demo extends React.PureComponent {
 
     // var temp = this;
     var products = [];
-    console.log(this.state.selectedRows);
-    for(var i =0; i < this.state.selectedRows.length; i++){
+    for(var i =0; i < this.state.selectedRows;i++){
       var productObject = new Object();
       productObject.productName = selectedRows[i].productName;
-      productObject.totalRevenue = selectedRows[i].revenue;
+      productObject.totalRevenue = selectedRows[i].totalRevenue;
       productObject.quantity = selectedRows[i].quantityToSell;
       products.push(productObject);
     }
       // (products, sessionId, callback)
-      console.log(products);
       await distributorNetworkActions.sellItemsAsync(products,sessionId,function(res){
         if(res.status){
-          // alert(res.data);
+          alert(res.data);
         }else{
           //TODO: SnackBar
         }
       });
     this.setState({review:false});
-
+    this.setState({currentRowSelected:{}});
+    this.setState({selectedRows:[]});
+    this.setState({selection:[]});
     //TODO: Reload here to get the updated value from backend
 
     window.location.reload();
-
-    this.setState({currentRowSelected:{}});
-    this.setState({selection:[]});
-    this.setState({selectedRows:[]});
 
   }
 
@@ -380,7 +294,7 @@ export default class Demo extends React.PureComponent {
 
     return (
       <div>
-        {/* <span>Total revenue: {grandTotalRevenue}</span> */}
+        <span>Total revenue: {grandTotalRevenue}</span>
         <Paper>
           <Grid
             rows={rows}
@@ -398,8 +312,7 @@ export default class Demo extends React.PureComponent {
             />
             <IntegratedPaging />
             <IntegratedSelection />
-            <Table
-            cellComponent={Cell}/>
+            <Table />
             <TableHeaderRow />
             <TableSelection/>
             <PagingPanel
@@ -447,7 +360,7 @@ export default class Demo extends React.PureComponent {
                     required
                     margin="dense"
                     id="unitPrice"
-                    label="Enter Unit Price ($)"
+                    label="Enter Unit Price"
                     value = {unitPrice}
                     fullWidth = {false}
                     onChange={(event) => this.updateUnitPrice(event)}
@@ -485,8 +398,6 @@ export default class Demo extends React.PureComponent {
                   <TableHeaderRow />
                 </Grid>
               </Paper>
-              <Divider/>
-              <span>Total revenue: $ {grandTotalRevenue}</span>
             </DialogContent>
             <DialogActions>
               <Button onClick={this.cancelSale} color="primary">Cancel</Button>

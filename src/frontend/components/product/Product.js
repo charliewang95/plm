@@ -151,14 +151,14 @@ class Product extends React.PureComponent {
   componentDidMount() {
     var temp = this;
     setTimeout(function(){ temp.loadProductInfo(); temp.setState({loading: false})}, 1000);
-    
+
   }
 
   async loadProductInfo(){
       var rawData = [];
       sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-      rawData = await productActions.getAllProductsAsync(sessionId);
-      // rawData = productData;
+      // rawData = await productActions.getAllProductsAsync(sessionId);
+      rawData = productData;
       var tempDates = [];
       for (var i = 0; i<rawData.length; i++) {
         //TODO: Change this with real Date - remove new Date later
@@ -180,8 +180,6 @@ class Product extends React.PureComponent {
           })),
         ];
       }
-      
-
       this.setState({dates:tempDates});
       this.setState({rows:processedData});
       this.setState({unchangedRows:processedData});
@@ -231,7 +229,7 @@ class Product extends React.PureComponent {
           <IntegratedPaging />
 
           <Table cellComponent={Cell}>
-                  
+
           </Table>
           <TableHeaderRow />
 
