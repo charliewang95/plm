@@ -131,7 +131,9 @@ const Cell = (props) => {
       <div>BUSY <Button raised>Mark Complete</Button></div>
       </Table.Cell>
     }else{
-      return <Table.Cell {...props} />;
+      return <Table.Cell {...props}>
+      <div>IDLE</div>
+      </Table.Cell>
     }
   }
   else return <Table.Cell {...props} />;
@@ -255,7 +257,6 @@ class ProductionLine extends React.PureComponent {
           }
         }
         rawData[i].formulaNamesString = formulaNamesString; 
-        rawData[i].isIdle = rawData[i].isIdle ? "Idle" : "Busy";
         rawData[i].productionLineId = rawData[i]._id;
       }
 
