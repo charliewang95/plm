@@ -52,7 +52,7 @@ export default class Demo extends React.PureComponent {
         { name: 'numUnsold', title: 'Tot. Quantity' },
         { name: 'quantityToSell', title: ' Sale Quantity' },
         { name: 'unitPrice', title: 'Unit Price ($)' },
-        { name: 'totalRevenue', title: 'Revenue ($)' },
+        { name: 'revenue', title: 'Revenue ($)' },
       ],
       fireRedirect:false,
       rows: [],
@@ -72,7 +72,6 @@ export default class Demo extends React.PureComponent {
       console.log("selection");
       console.log(selection);
       var temp = this;
-
       if(selection.length!=0){
         let {rows} = temp.state;
 
@@ -90,10 +89,13 @@ export default class Demo extends React.PureComponent {
 
           temp.setState({currentRowSelected:lastSelectedRow[0]});
           temp.setState({selectedRows:selectedRows});
+
+          temp.updateGrandTotalRevenue();
         }
       }else{
         console.log(selectedRows);
         temp.setState({selectedRows:[]});
+        temp.setState({grandTotalRevenue:0});
       }
       temp.setState({ selection });
     }
@@ -117,7 +119,9 @@ export default class Demo extends React.PureComponent {
       temp.setState({quantity:''});
       temp.setState({unitPrice:''});
 
+      temp.updateGrandTotalRevenue();
     }
+
     this.loadDistributorNetworkData = this.loadDistributorNetworkData.bind(this);
     this.updateUnitPrice = this.updateUnitPrice.bind(this);
     this.updateQuantity = this.updateQuantity.bind(this);
@@ -125,6 +129,7 @@ export default class Demo extends React.PureComponent {
     this.sellProducts = this.sellProducts.bind(this);
     this.cancelSale = this.cancelSale.bind(this);
     this.quantitySaveValid = this.quantitySaveValid.bind(this);
+    this.updateGrandTotalRevenue = this.updateGrandTotalRevenue.bind(this);
 
     this.updatePriceQtyTable = () => {
       console.log("update price qty in table");
@@ -143,8 +148,8 @@ export default class Demo extends React.PureComponent {
         if(rows[i].id == rowId){
           rows[i].unitPrice = temp.state.unitPrice;
           rows[i].quantityToSell = temp.state.quantity;
-          rows[i].totalRevenue = Math.round(temp.state.quantity * temp.state.unitPrice *100)/100;
-          grandTotalRev+=rows[i].totalRevenue;
+          rows[i].revenue = Math.round(temp.state.quantity * temp.state.unitPrice *100)/100;
+          grandTotalRev+=rows[i].revenue;
 
           console.log("inside");
           console.log(rows[i].unitPrice);
@@ -164,6 +169,20 @@ export default class Demo extends React.PureComponent {
   }
 
 
+  updateGrandTotalRevenue(){
+    console.log("updateGrandTotalRevenue");
+    console.log(this.state);
+    var rows = this.state.selectedRows;
+    console.log(rows);
+    var sum =0;
+    if(rows.length){
+      for(var i =0; i < rows.length;i++){
+        sum+=rows[i].revenue;
+      }
+      this.setState({grandTotalRevenue:sum});
+    }
+  }
+
   componentWillMount(){
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
@@ -179,6 +198,9 @@ export default class Demo extends React.PureComponent {
     var processedData = [...data.map((row, index)=> ({
         id:index,...row,
         numUnsold:Math.round((row.numUnit-row.numSold)*100)/100,
+        quantityToSell:'',
+        unitPrice:'',
+        revenue:'',
         })),
       ];
     this.setState({rows:processedData});
@@ -216,7 +238,6 @@ export default class Demo extends React.PureComponent {
   quantitySaveValid(){
     console.log("check if save quantity valid");
     var temp = this;
-
     var quantity = temp.state.quantity;
     var unitPrice = temp.state.unitPrice;
 
@@ -232,13 +253,15 @@ export default class Demo extends React.PureComponent {
   }
 
   checkSelectionValid(){
-    console.log("check sell Valid");
+    console.log("check selection Valid");
     var temp = this;
-    var selectedRows  = this.state.selectedRows;
+    var rows = temp.state.rows;
+    var selectedRows = rows.filter(row => temp.state.selection.indexOf(row.id) > -1);
+    console.log(selectedRows);
     if(selectedRows.length > 0 ){
-      console.log(selectedRows);
       for(var i =0; i < selectedRows.length;i++){
-        if(selectedRows[i].quantityToSell <= 0 || selectedRows[i].unitPrice <=0){
+        console.log(selectedRows);
+        if(selectedRows[i].revenue <=0){
           return false;
         }
       }
@@ -266,7 +289,7 @@ export default class Demo extends React.PureComponent {
     for(var i =0; i < this.state.selectedRows.length; i++){
       var productObject = new Object();
       productObject.productName = selectedRows[i].productName;
-      productObject.totalRevenue = selectedRows[i].totalRevenue;
+      productObject.totalRevenue = selectedRows[i].revenue;
       productObject.quantity = selectedRows[i].quantityToSell;
       products.push(productObject);
     }
