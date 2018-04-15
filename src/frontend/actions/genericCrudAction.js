@@ -166,7 +166,7 @@ async function updateById(url, propertyName, objectId, sessionId, newObject, cal
     }
 };
 
-/* 
+/*
  * delete one existing objct by id
  * url: string, the url for the delete request
  * propertyName: string, segment in front of the objectId in the complete url used to identify what 
@@ -179,7 +179,6 @@ async function deleteById(url, propertyName, objectId, sessionId, callback) {
 	// const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
     try {
 	    const completeUrl = getCompleteUrlWithObjectId(url, propertyName, objectId, sessionId);
-	
 	    const res = await axios.delete(completeUrl);
 	    const result = res.data;
 	    console.log(result);

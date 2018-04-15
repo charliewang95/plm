@@ -8,6 +8,7 @@ var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
 var Formula = mongoose.model('Formula');
 var Order = mongoose.model('Order');
+var ProductionLine = mongoose.model('ProductionLine');
 
 exports.validate = function(model, item, res, next, callback) {
     if (model == Ingredient) {
@@ -20,6 +21,14 @@ exports.validate = function(model, item, res, next, callback) {
     }
     else if (model == Vendor) {
         validateVendor(item, res, next, function(err, obj){
+            if (err) next(err);
+            else {
+                callback(err, obj);
+            }
+        });
+    }
+    else if (model == ProductionLine) {
+        validateProductionLine(item, res, next, function(err, obj){
             if (err) next(err);
             else {
                 callback(err, obj);
@@ -79,3 +88,9 @@ var validateVendor = function(item, res, next, callback) {
             callback();
     });
 };
+
+var validateProductionLine = function(item, res, next, callback) {
+    var pl = item;
+    if (!pl.isIdle) return res.status(400).send("Action denied. Production Line is in use.");
+    else callback();
+}
