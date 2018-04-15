@@ -89,11 +89,13 @@ class FormulaDetails extends React.Component{
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.updateIngredients = this.updateIngredients.bind(this);
     this.updateProductionLines = this.updateProductionLines.bind(this);
+    this.computeProductionLinesString = this.computeProductionLinesString.bind(this);
     this.computeIngredientsString = this.computeIngredientsString.bind(this);
     this.handleUnitsProvidedChange = this.handleUnitsProvidedChange.bind(this);
     this.handleNumUnitPerPackage = this.handleNumUnitPerPackage.bind(this);
     this.isValid = this.isValid.bind(this);
     this.loadFormula = this.loadFormula.bind(this);
+
     // this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
 
     }
@@ -108,15 +110,11 @@ class FormulaDetails extends React.Component{
     if(this.props.location.state.fromLogs){
       this.loadFormula();
     }
-      this.computeIngredientsString();
+      this.computeProductionLinesString();
+      this.computeProductionLinesString();
   }
 
-  handleSnackBarClose(){
-    this.setState({snackBarOpen:false});
-    this.setState({snackBarMessage: ''});
-  }
-
-async loadFormula(){
+  async loadFormula(){
     var details = [];
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     userId = JSON.parse(sessionStorage.getItem('user'))._id;
@@ -211,6 +209,8 @@ async loadFormula(){
           }
         }
     }
+    console.log("Compute production lines string");
+    console.log(string);
     this.setState({productionLinesString: string });
   }
 
@@ -269,12 +269,12 @@ async loadFormula(){
     e.preventDefault();
     console.log("submit formula ");
     var isValid = temp.isValid();
-
+          console.log("Onformsubmit in formula details is entered");
+      console.log(temp.state.productionLinesArray);
     if(isValid && temp.state.isCreateNew){
 
       console.log(" Array " + JSON.stringify(temp.state.ingredientsArray));
       //TODO: Check for adding order
-
       await formulaActions.addFormula(temp.state.name, temp.state.description,
             temp.state.unitsProvided, temp.state.ingredientsArray, temp.state.isIntermediate,
             temp.state.packageName,temp.state.temperatureZone,temp.state.nativeUnit,temp.state.numUnitPerPackage,
