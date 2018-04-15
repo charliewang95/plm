@@ -92,7 +92,7 @@ class ProductionReview extends React.Component {
       //TODO: Check this
       console.log(temp.state.formulaRows[0]._id+' '+Number(temp.state.addedQuantity));
       await formulaActions.checkoutFormula("review",temp.state.formulaRows[0]._id,
-                          Number(temp.state.addedQuantity),sessionId, function(res){
+                          Number(temp.state.addedQuantity),'dummyString',sessionId, function(res){
 
               if (res.status == 400) {
                 // if (!alert(res.data)){

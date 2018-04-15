@@ -72,7 +72,7 @@ var validateProductionLine = function(itemId, item, res, next, callback) { //che
        var newProductionLine = item;
        var newFormulas = newProductionLine.formulaNames;
        var currentFormula = newProductionLine.currentFormula;
-       if (oldProductionLine.includes(currentFormula) && !newFormulas.includes(currentFormula)){
+       if (oldProductionLine && oldProductionLine.includes(currentFormula) && !newFormulas.includes(currentFormula)){
             return res.status(400).send('Action denied. Prodcution Line is currently producing '+currentFormula+'. Cannot delete it from the formula list');
        } else {
             callback(null, true);
