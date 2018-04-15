@@ -46,6 +46,8 @@ class SelectFormulas extends Component {
 
   loadFormulasArray(){
     this.setState({formulasArray: this.props.initialArray});
+    console.log("load formulas array");
+    console.log(this.props.initialArray);
   }
 
   async loadCodeNameArray(){
@@ -161,8 +163,7 @@ class SelectFormulas extends Component {
       <FormulaItem
         formulasArray={this.state.formulasArray}
         deleteFormula={this.deleteFormula}
-        updateId={this.updateId}
-        options={this.state.options} />
+      />
       </div>
     );
   }
