@@ -79,8 +79,12 @@ async function updateProductionLine(productionLineId, sessionId, productionLine,
  * productionLineId: string, the id of the productionLine
  * sessionId: string, id of the current session
  */
-async function deleteProductionLine(productionLineId, sessionId) {
-	return await genericActions.deleteById(baseUrl, property, productionLineId, sessionId);
+async function deleteProductionLine(productionLineId, sessionId, callback) {
+
+    await genericActions.deleteById(baseUrl, property, productionLineId, sessionId, function(res){
+        callback(res);
+    });
+
 };
 
 //export functions above for use by other modules

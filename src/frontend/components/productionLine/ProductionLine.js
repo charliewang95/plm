@@ -208,8 +208,8 @@ class ProductionLine extends React.PureComponent {
           var formulaId = rows[index]._id;
 
           // TODO: Delete does not work
-         formulaActions.deleteFormula(formulaId, sessionId, function(res){
-
+         productionLineActions.deleteProductionLine(formulaId, sessionId, function(res){
+            
          });
           console.log("delete " );
           console.log(rows[index]._id);

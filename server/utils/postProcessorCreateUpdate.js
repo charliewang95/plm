@@ -186,7 +186,7 @@ var processFormulaHelperDeleteOld = function(res, next, i, newProductionLineName
     else {
         var oldProductionLineName = oldProductionLineNames[i];
         if (!newProductionLineNames.includes(oldProductionLineName)) {
-            ProductionLine.find({nameUnique: oldProductionLineName.toLowerCase()}, function(err, pl){
+            ProductionLine.findOne({nameUnique: oldProductionLineName.toLowerCase()}, function(err, pl){
                 if (err) return next(err);
                 else if (!pl){
                     return res.status(400).send('Production Line '+oldProductionLineName+' does not exist');
@@ -218,7 +218,7 @@ var processFormulaHelperAddNew = function(res, next, i, newProductionLineNames, 
     else {
         var newProductionLineName = newProductionLineNames[i];
         if (!oldProductionLineNames.includes(newProductionLineName)){
-            ProductionLine.find({nameUnique: newProductionLineName.toLowerCase()}, function(err, pl){
+            ProductionLine.findOne({nameUnique: newProductionLineName.toLowerCase()}, function(err, pl){
                 if (err) return next(err);
                 else if (!pl){
                     return res.status(400).send('Production Line '+newProductionLineName+' does not exist');
@@ -253,7 +253,7 @@ var processProductionLineHelperDeleteOld = function(res, next, i, newFormulaName
     else {
         var oldFormulaName = oldFormulaNames[i];
         if (!newFormulaNames.includes(oldFormulaName)) {
-            Formula.find({nameUnique: oldFormulaName.toLowerCase()}, function(err, formula){
+            Formula.findOne({nameUnique: oldFormulaName.toLowerCase()}, function(err, formula){
                 if (err) return next(err);
                 else if (!formula){
                     return res.status(400).send('Formula '+oldFormulaName+' does not exist');
@@ -285,7 +285,7 @@ var processProductionLineHelperAddNew = function(res, next, i, newFormulaNames, 
     else {
         var newFormulaName = newFormulaNames[i];
         if (!oldFormulaName.includes(newFormulaName)){
-            Formula.find({nameUnique: newFormulaName.toLowerCase()}, function(err, formula){
+            Formula.findOne({nameUnique: newFormulaName.toLowerCase()}, function(err, formula){
                 if (err) return next(err);
                 else if (!formula){
                     return res.status(400).send('Formula '+newFormulaName+' does not exist');
