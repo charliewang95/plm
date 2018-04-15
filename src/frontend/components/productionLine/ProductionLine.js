@@ -154,12 +154,12 @@ class ProductionLine extends React.PureComponent {
       columns: (isAdmin||isManager)?[
         { name: 'name', title: 'Name' },
         { name: 'description', title: 'Description' },
-        { name: 'formulaNames', title: 'Formulas' },
+        { name: 'formulaNamesString', title: 'Formulas' },
         { name: 'isIdle', title: 'Status' },
       ]:[
         { name: 'name', title: 'Name' },
         { name: 'description', title: 'Description' },
-        { name: 'formulaNames', title: 'Formulas' },
+        { name: 'formulaNamesString', title: 'Formulas' },
         { name: 'isIdle', title: 'Status' },
       ],
       rows:[],
@@ -171,7 +171,7 @@ class ProductionLine extends React.PureComponent {
       deletingRows: [],
       pageSize: 10,
       pageSizes: [10, 50, 100, 500],
-      columnOrder: ['name', 'description', 'formulaNames','isIdle' ],
+      columnOrder: ['name', 'description', 'formulaNamesString','isIdle' ],
       options:[],
       productionFormula:{},
     };

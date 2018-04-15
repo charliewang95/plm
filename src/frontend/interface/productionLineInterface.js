@@ -72,6 +72,11 @@ async function getProductionLineAsync(productionLineId, sessionId) {
 	return await productionLineActions.getProductionLineAsync(productionLineId, sessionId);
 };
 
+async function markComplete(productionLineId, sessionId) {
+	 const res = await axios.get('/productionLines/productionLine/'+productionLineId+'/user/'+sessionId);
+     return res;
+};
+
 /*
  * update one productionLine
  * productionLineId: string, the id of the productionLine
