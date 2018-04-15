@@ -152,9 +152,10 @@ async loadFormula(){
       nativeUnit: details.nativeUnit,
       isIntermediate: details.isIntermediate,
       numUnitPerPackage : (details.numUnitPerPackage)?(details.numUnitPerPackage):'',
-
+      productionLinesArray: (details.productionLinesArray)?(details.productionLinesArray):[],
     });
-    this.computeIngredientsString();
+      this.computeIngredientsString();
+      this.computeProductionLinesString();
     }
   }
 
@@ -277,7 +278,7 @@ async loadFormula(){
       await formulaActions.addFormula(temp.state.name, temp.state.description,
             temp.state.unitsProvided, temp.state.ingredientsArray, temp.state.isIntermediate,
             temp.state.packageName,temp.state.temperatureZone,temp.state.nativeUnit,temp.state.numUnitPerPackage,
-            sessionId, function(res){
+            temp.state.productionLinesArray, sessionId, function(res){
               //TODO: Please update the error accordingly
               if(res.status==400){
                 PubSub.publish('showAlert', res.data );
@@ -299,7 +300,7 @@ async loadFormula(){
       await formulaActions.updateFormula(temp.state.formulaId, temp.state.name,
         temp.state.description,temp.state.unitsProvided, temp.state.ingredientsArray,
         temp.state.isIntermediate,temp.state.packageName,temp.state.temperatureZone,
-        temp.state.nativeUnit,temp.state.numUnitPerPackage,sessionId, function(res){
+        temp.state.nativeUnit,temp.state.numUnitPerPackage, temp.state.productionLinesArray, sessionId, function(res){
           //TODO: Update error status
           if(res.status == 400){
             //alert(res.data);
@@ -423,7 +424,8 @@ async loadFormula(){
               style={{lineHeight:1.5}}
             />}
             {(!this.state.isDisabled) && <SelectIngredients initialArray={this.state.ingredientsArray} handleChange={this.updateIngredients}/>}
-            {this.state.isDisabled && <TextField
+            {(this.state.productionLinesString=='') && this.state.isDisabled && <p><font size="4">There are no production lines</font></p>}
+            {(this.state.productionLinesString!='') && this.state.isDisabled && <TextField
               id="selectProductionLines"
               label="Production Lines"
               value={this.state.productionLinesString}

@@ -108,7 +108,6 @@ async loadProductionLine(){
       productionLineId: this.props.location.state.productionLineId,
       description: details.description,
       formulasArray: details.formulaNames,
-      formulaNamesString: details.formulaNamesString,
       isIdle: details.isIdle,
       currentFormula: details.currentFormula,
       startDates: details.startDates,
@@ -158,9 +157,6 @@ async loadProductionLine(){
       return false;
     }else if (!temp.state.description){
       toast.error(" Please enter the description. ");
-      return false;
-    }else if (temp.state.formulasArray.length==0){
-      toast.error(" Please add formulas for the production line.");
       return false;
     }
       return true;
