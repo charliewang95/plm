@@ -38,6 +38,7 @@ import { withStyles } from 'material-ui/styles';
 //local components
 import * as userInterface from '../../../interface/userInterface';
 import * as utils from '../../../utils/utils';
+import { toast } from 'react-toastify';
 
 var sessionId = '';
 
@@ -304,7 +305,13 @@ export default class SampleTable extends React.PureComponent {
         console.log("userId: " + userId);
         //issue delete
         console.log("sessionId: " + sessionId);
-        await userInterface.deleteUser(userId, sessionId);
+        const userName = userObject.username;
+        console.log("username: " + userName);
+        await userInterface.deleteUser(userId, sessionId, (res)=>{
+          toast.success('User ' + userName + ' is deleted', {
+            position: toast.POSITION.TOP_RIGHT
+          });
+        });
         this.refreshTable();
       }
       // rows = rows.filter(row => !deletedSet.has(row.id));

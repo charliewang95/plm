@@ -288,6 +288,7 @@ var updateWithUserAccess = function(req, res, next, model, userId, itemId, usern
 };
 
 var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) {
+    console.log("deleteWithoutUserAccess()");
     model.findById(itemId, function(err, item) {
         if (err) {
             return next(err);
@@ -305,6 +306,7 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) 
                     else {
                         deleteProcessor.process(model, item, itemId, res, next);
                         logger.log(username, 'delete', temp, model);
+                        console.log(temp);
                         res.json(temp);
                     }
                 });
@@ -314,6 +316,7 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) 
 };
 
 var deleteWithUserAccess = function(req, res, next, model, userId, itemId, username) {
+    console.log("deleteWithUserAccess()");
     model.findOne({userId: userId, _id: itemId}, function(err, item) {
         if (err) {
             return next(err);
@@ -325,6 +328,7 @@ var deleteWithUserAccess = function(req, res, next, model, userId, itemId, usern
                 }
                 else {
                     logger.log(username, 'delete', item, model);
+                    console.log(item);
                     res.json(item);
                 }
             });

@@ -5,4 +5,6 @@ module.exports = function(app) {
     app.route('/productionLines/user/:userId').post(productionLines.create).get(productionLines.list);
     app.route('/productionLines/productionLine/:productionLineId/user/:userId').get(productionLines.read).put(productionLines.update).delete(productionLines.delete);
     app.route('/productionLines/productionLineName/:productionLineName/user/:userId').get(productionLines.getProductionLineByName);
+
+    app.route('/productionLines/productionLine/:productionLineId/user/:userId').put(productionLines.markComplete);
 };

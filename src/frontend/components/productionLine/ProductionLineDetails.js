@@ -196,6 +196,7 @@ async loadProductionLine(){
               }
             });
     }else if (!temp.state.isCreateNew && isValid){
+       var idleTemp temp.state.isIdle
       await productionLineActions.updateProductionLine(temp.state.productionLineId, temp.state.name,
         temp.state.description, temp.state.formulasArray, temp.state.isIdle, sessionId, function(res){
           if(res.status == 400){
