@@ -152,7 +152,7 @@ class SelectProductionLines extends Component {
             </Select>
          </FormControl>
          {this.state.selectName &&
-         <Button raised style={{marginLeft:10}} onClick={()=>{this.addFormula();}}>ADD Formula</Button>}
+         <Button raised style={{marginLeft:10}} onClick={()=>{this.addFormula();}}>ADD Production Line</Button>}
       <br/>
       <ProductionLineItem
         formulasArray={this.state.formulasArray}

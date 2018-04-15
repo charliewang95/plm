@@ -180,7 +180,6 @@ class ProductionLine extends React.PureComponent {
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
-
     this.commitChanges = ({ deleted }) => {
       let { rows } = this.state;
       this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
@@ -208,8 +207,8 @@ class ProductionLine extends React.PureComponent {
           var formulaId = rows[index]._id;
 
           // TODO: Delete does not work
-         formulaActions.deleteFormula(formulaId, sessionId, function(res){
-
+         productionLineActions.deleteProductionLine(formulaId, sessionId, function(res){
+            
          });
           console.log("delete " );
           console.log(rows[index]._id);
@@ -255,7 +254,7 @@ class ProductionLine extends React.PureComponent {
             formulaNamesString+=', ';
           }
         }
-        rawData[i].formulaNames = formulaNamesString; 
+        rawData[i].formulaNamesString = formulaNamesString; 
         rawData[i].isIdle = rawData[i].isIdle ? "Idle" : "Busy";
         rawData[i].productionLineId = rawData[i]._id;
       }
