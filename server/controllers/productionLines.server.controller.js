@@ -27,6 +27,32 @@ exports.markComplete = function(req, res, next) {
     checkoutProcessor.markComplete(req, res, next);
 }
 
+exports.getEfficiencies = function(req, res, next) {
+    var startTime = req.params.startTime;
+    var endTime = req.params.endTime;
+    var retArr = [];
+    ProductionLine.find({}, function(err, pls){
+        getEfficienciesHelper(req, res, next, 0, pls, [], function(retArr){
+            res.json(retArr);
+        })
+    });
+}
+
+var getEfficienciesHelper = function(req, res, next, i, pls, retArr, callback) {
+    if (i == pls.length) {
+        callback(retArr);
+    } else {
+        var pl = pls[i];
+        var effObj = new Object();
+        effObj.productionLineName = pl.name;
+        pl.getUtility(startTime, endTime, function(eff){
+            effObj.efficiency = eff;
+            retArr.push(effObj);
+            getEfficienciesHelper(req, res, next, i+1, pls, retArr, callback);
+        });
+    }
+}
+
 exports.getAllIdleServers = function(req, res, next) {
     ProductionLine.find({isIdle: true}, function(err, idles){
         if (err) return next(err);

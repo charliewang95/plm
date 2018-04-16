@@ -77,6 +77,11 @@ async function markComplete(productionLineId, sessionId) {
      return res;
 };
 
+async function getEfficiencies(startTime, endTime, sessionId) {
+	 const res = await axios.get('/productionLines/getEfficiencies/st/'+startTime+'/et/'+endTime+'/user/'+sessionId);
+     return res;
+};
+
 /*
  * update one productionLine
  * productionLineId: string, the id of the productionLine
@@ -103,4 +108,4 @@ async function deleteProductionLine(productionLineId, sessionId, callback) {
 };
 
 //export functions above for use by other modules
-export { addProductionLine, getAllProductionLinesAsync, getProductionLineAsync, updateProductionLine, deleteProductionLine, getAllProductionLineNamesCodesAsync, getProductionLineByNameAsync, markComplete};
+export { addProductionLine, getAllProductionLinesAsync, getProductionLineAsync, updateProductionLine, deleteProductionLine, getAllProductionLineNamesCodesAsync, getProductionLineByNameAsync, markComplete, getEfficiencies};
