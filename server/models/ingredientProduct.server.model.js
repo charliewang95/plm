@@ -9,6 +9,10 @@ var IngredientProductSchema = new Schema({
     vendorNameUnique: {
         type: String,
     },
+    lotNumber: {
+        type: String,
+        required: true
+    },
     lotNumberUnique: {
         type: String,
         required: true
@@ -25,7 +29,7 @@ var IngredientProductSchema = new Schema({
         type: Date,
         required: true
     },
-    lotNumber: {
+    lotNumberProduct: {
         type: String,
         required: true
     }
