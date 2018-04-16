@@ -524,7 +524,7 @@ export default class Demo extends React.PureComponent {
             {(isAdmin || isManager) && <IntegratedSelection />}
 
             <TableHeaderRow />
-            {(isAdmin || isManager) &&  <TableSelection/>}
+            {(isAdmin || isManager) &&  <TableSelection selectByRowClick />}
             <PagingPanel
               pageSizes={pageSizes}
             />
