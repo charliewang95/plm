@@ -133,7 +133,14 @@ const lotNumberEditor = (props) => {
   console.log("lotnumbereditor");
   console.log(props);
 
-  return<LotNumberButton totalAssigned = {totalAssigned} initialArray={deepCopy} quantity = {quantity} handlePropsChange={props.onValueChange} allowLotEditing={false}></LotNumberButton>
+  return<LotNumberButton 
+    totalAssigned = {totalAssigned} 
+    initialArray={deepCopy} 
+    quantity = {quantity} 
+    handlePropsChange={props.onValueChange} 
+    allowLotEditing={false}
+    rowData={props.row}
+  />
 };
 
 const LotNumberProvider = props => (
@@ -298,7 +305,7 @@ class ShoppingCart extends React.Component {
             }
             if(!rows[i].lotAssigned){
               tempCheckout = false;
-              this.setState({canCheckout:false});
+              // this.setState({canCheckout:false});
             }
           }//forloop bracket
           if(tempCheckout){
@@ -621,7 +628,7 @@ class ShoppingCart extends React.Component {
                   type="submit"
                   onClick = {this.handleCheckOut}
                   primary="true"
-                  disabled = {!this.state.canCheckout}> Checkout </Button>}
+                  disabled = {false}> Checkout </Button>}
       </div>
       </Paper>
     </div>

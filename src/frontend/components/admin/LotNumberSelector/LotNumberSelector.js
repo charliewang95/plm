@@ -153,7 +153,7 @@ class LotNumberSelector extends Component {
     // if(this.props.quantity==0 || this.props.quantity==''){
     //   alert("Please enter a quantity first");
     // }
-    const re = /^\d*\.?\d*$/;
+    const re = /^[1-9][0-9]*$/;
     if(!re.test(quantity)){
       toast.error("Quantity must be a positive integer", {
           position: toast.POSITION.TOP_RIGHT
