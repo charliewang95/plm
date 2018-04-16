@@ -23,7 +23,7 @@ exports.process = function(model, item, itemId, res, next) {
         processStorage(item, itemId, res, next);
     }
     else if (model == ProductionLine) {
-        processStorage(item, itemId, res, next);
+        processProductionLine(item, itemId, res, next);
     }
 //    else if (model == Order) {
 //        processOrder(item, res, next);
@@ -224,6 +224,7 @@ var processFormulaHelperAddNew = function(res, next, i, formula, newProductionLi
                     return res.status(400).send('Production Line '+newProductionLineName+' does not exist');
                 } else {
                     var formulasInProductionLine = pl.formulaNames;
+                    formulasInProductionLine =  formulasInProductionLine ? formulasInProductionLine : [];
                     formulasInProductionLine.push(formula.name);
                     pl.update({formulaNames: formulasInProductionLine}, function(err, newPl){
                         processFormulaHelperAddNew(res, next, i+1, formula, newProductionLineNames, oldProductionLineNames, callback);
@@ -284,14 +285,16 @@ var processProductionLineHelperAddNew = function(res, next, i, pl, newFormulaNam
     }
     else {
         var newFormulaName = newFormulaNames[i];
-        if (!oldFormulaName.includes(newFormulaName)){
+        if (!oldFormulaNames.includes(newFormulaName)){
             Formula.findOne({nameUnique: newFormulaName.toLowerCase()}, function(err, formula){
                 if (err) return next(err);
                 else if (!formula){
                     return res.status(400).send('Formula '+newFormulaName+' does not exist');
                 } else {
                     var productionLinesInFormula = formula.productionLines;
+                    productionLinesInFormula = productionLinesInFormula ? productionLinesInFormula : [];
                     productionLinesInFormula.push(pl.name);
+                    console.log(productionLinesInFormula);
                     formula.update({productionLines: productionLinesInFormula}, function(err, newFormula){
                         processProductionLineHelperAddNew(res, next, i+1, pl, newFormulaNames, oldFormulaNames, callback);
                     });

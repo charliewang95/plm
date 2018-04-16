@@ -56,24 +56,45 @@ var ProductionLineSchema = new Schema({
 
 ProductionLineSchema.index({ nameUnique: 1, lotNumberUnique: 1, date: 1}, { unique: true });
 
-//ProductionLineSchema.methods.getUtility = function(startDate, endDate, callback) {
-//    var startTime = startDate.getTime();
-//    var endTime = endDate.getTime();
-//    var totalIdle = 0;
-//    var totalBusy = 0;
-//
-//    if (!this.dates || this.dates.length == 0) callback(0);
-//
-//    for (var i = 0; i < this.dates.length; i++) {
-//        var tempDate = this.dates[i];
-//        var tempStartTime = tempDate.startDate.getTime();
-//        var tempEndTime = tempDate.endDate.getTime();
-//        if (tempStartTime < startTime) {
-//            if (tempEndTime < endTime)
-//        }
-//
-//
-//    }
-//}
+ProductionLineSchema.methods.getUtility = function(startTime, endTime, callback) {
+    var totalTime = endTime - startTime;
+    var totalBusy = 0;
+    var startFound = false;
+    var tempIndex;
+
+    if (!this.dates || this.dates.length == 0) callback(0);
+
+    for (var i = 0; i < this.dates.length; i++) {
+        var tempDate = this.dates[i];
+        var tempStartTime = tempDate.startDate.getTime();
+        if (tempStartTime > startTime) {
+            startFound = true;
+            tempIndex = i;
+            break;
+        }
+    }
+
+    if (startFound && i != 0 || !startFound) {
+        var tempEndTime = this.dates[i-1].endDate;
+        if (tempEndTime > startTime) {
+            totalBusy += tempEndTime - startTime;
+        }
+    }
+
+    for (var i = tempIndex; i < this.dates.length; i++) {
+        var tempDate = this.dates[i];
+        var tempStartTime = tempDate.startDate.getTime();
+        if (!tempDate.endDate) {
+            totalBusy += endTime - tempStartTime;
+        } else {
+            var tempEndTime = tempDate.endDate.getTime();
+            totalBusy += tempEndTime - tempStartTime;
+        }
+    }
+
+    var eff = Math.ceil(totalBusy/totalTime*10000)/100;
+
+    callback(eff);
+}
 
 mongoose.model('ProductionLine', ProductionLineSchema);

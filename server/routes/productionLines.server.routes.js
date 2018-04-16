@@ -7,4 +7,5 @@ module.exports = function(app) {
     app.route('/productionLines/productionLineName/:productionLineName/user/:userId').get(productionLines.getProductionLineByName);
 
     app.route('/productionLines/markComplete/productionLine/:productionLineId/user/:userId').put(productionLines.markComplete);
+    app.route('/productionLines/getEfficiencies/st/:startTime/et/:endTime/user/:userId').get(productionLines.getEfficiencies);
 };
