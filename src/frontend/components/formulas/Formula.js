@@ -181,7 +181,7 @@ class Formula extends React.PureComponent {
         { name: 'productType', title: 'Product Type ' }, // isIntermediate
       ],
       rows:[],
-      // sorting: [],
+      sorting: [],
       editingRowIds: [],
       // addedRows: [],
       rowChanges: {},

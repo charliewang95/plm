@@ -24,8 +24,10 @@ import DistributionNetwork from './components/distributorNetwork/distributorNetw
 import ProductionLine from './components/productionLine/ProductionLine.js';
 import ProductionLineDetails from './components/productionLine/ProductionLineDetails.js';
 import MainIngredientView from './components/admin/mainIngredientView';
+import MainCartView from './components/shoppingCart/MainCartView.js';
 // import ShoppingCartAndOrders from './components/shoppingCart/mainPage';
 import PendingOrderView from './components/shoppingCart/pendingOrder/PendingOrderTable'
+
 
 
 const Routes = () => (
@@ -41,7 +43,7 @@ const Routes = () => (
             <Route path="/register" component={Register} />
             <Route path="/vendors" component={Vendors} />
             <Route path="/addVendorForm" component={AddVendorForm} />
-            <Route path="/cart" component={ShoppingCart} />
+            <Route path="/cart" component={MainCartView} />
             <Route path="/pending-orders" component={PendingOrderView} />
             <Route path="/report" component={Report} />
             <Route path="/log" component={Log} />
@@ -55,6 +57,7 @@ const Routes = () => (
             <Route path="/distribution-network" component={DistributionNetwork} />
             <Route path="/production-line" component={ProductionLine} />
             <Route path='/production-line-details' component = {ProductionLineDetails} />
+
 		</Switch>
       </div>
 );

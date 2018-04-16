@@ -14,7 +14,7 @@ import { MenuItem } from 'material-ui/Menu';
 import Button from 'material-ui/Button';
 import ProductionLineItem from './ProductionLineItem.js';
 import { ToastContainer, toast } from 'react-toastify';
-
+import * as productionLinesActions from '../../interface/productionLineInterface';
 // TODO: Get sessionID and UserID
 var sessionId = "";
 var userId="";
@@ -96,8 +96,12 @@ class SelectProductionLines extends Component {
     this.props.handleChange(this.state.formulasArray);
   }
 
-  deleteFormula(index, name){
-    if (index !== -1) {
+  async deleteFormula(index, name){
+    var singleData = await productionLinesActions.getProductionLineByNameAsync(name,sessionId);
+    if(!singleData.data.isIdle){
+      toast.error('Production line is currently being used!');
+    }
+    else if (index !== -1) {
       console.log("delete");
       var searchedFormula = this.state.formulasArray.find(function(element){
         return element==name;
@@ -139,14 +143,14 @@ class SelectProductionLines extends Component {
       <div>
           <p>Production Lines:</p>
           <FormControl style={{marginLeft: 20, width:150}}>
-            <InputLabel htmlFor="formulaName">Formula</InputLabel>
+            <InputLabel htmlFor="productionLineName">Production Line</InputLabel>
             <Select
              disabled={this.state.options.length==0}
              value={this.state.selectName}
              onChange={this.handleSelectedFormula}
              inputProps={{
-              name: 'formulaName',
-              id: 'formulaName',
+              name: 'productionLineName',
+              id: 'productionLineName',
              }}>
             {this.state.options.map((formulaName, index)=>(<MenuItem key={index} value={formulaName}>{formulaName}</MenuItem>))}
             </Select>

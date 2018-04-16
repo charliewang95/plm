@@ -192,7 +192,7 @@ class SelectVendors extends Component {
         console.log(this.state.vendorsArray);
         this.props.handleChange(this.state.vendorsArray);
       }else{
-        toast.success('Price must be a positive number.', {
+        toast.error('Price must be a positive number.', {
           position: toast.POSITION.TOP_RIGHT
         });
       }
@@ -216,7 +216,7 @@ updatePriceHere(event){
          this.setState({inputPrice: event.target.value})
       }else{
         //alert("Price must be a positive number.");
-        toast.success('Price must be a positive number.', {
+        toast.error('Price must be a positive number.', {
           position: toast.POSITION.TOP_RIGHT
         });
       }
