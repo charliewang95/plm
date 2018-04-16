@@ -40,6 +40,7 @@ export default class FreshnessReport extends React.PureComponent {
       pageSize: 10,
       pageSizes: [10, 50, 100, 500],
       columnOrder: ['name', 'averageWaitTime', 'worstWaitTime'],
+      overallFreshness:'',
     };
     this.changeSorting = sorting => this.setState({ sorting });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
@@ -59,7 +60,7 @@ export default class FreshnessReport extends React.PureComponent {
      console.log('getting fresh data '+sessionId);
      rawData = await ingredientActions.getFreshAsync(sessionId);
      console.log(rawData);
-    
+
     var processedData = [];
     if (rawData.data) rawData = rawData.data; // to handle response
     if (rawData){
@@ -69,9 +70,21 @@ export default class FreshnessReport extends React.PureComponent {
          averageWaitTime: row.averageDay + "d  " + row.averageHour + "h " + row.averageMinute + "m",
          worstWaitTime: row.oldestDay + "d  " + row.oldestHour + "h " + row.oldestMinute + "m",
        })),
-     ];  
-    }   
+     ];
+    }
+
+    var totalMinutesSum = 0;
+    for(var i =0; i < processedData.length;i++){
+      totalMinutesSum+=Number(processedData[i].averageDay) * 24 * 60 + Number(processedData[i].averageHour)*60 + Number(processedData[i].averageMinute);
+    }
      this.setState({rows:processedData});
+
+     var overallDay = (totalMinutesSum/24/60);
+     var overallHour = totalMinutesSum/60%24;
+     var overallMin = totalMinutesSum % 60;
+     var overallFreshness = overallDay + "d  " + overallHour + "h " + overallMin + "m";
+
+     this.setState({overallFreshness:overallFreshness});
    }
 
   render() {
@@ -112,6 +125,7 @@ export default class FreshnessReport extends React.PureComponent {
             pageSizes={pageSizes}
           />
         </Grid>
+        <span>Overall Freshness: {this.state.overallFreshness}</span>
       </Paper>
     );
   }

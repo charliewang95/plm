@@ -29,6 +29,7 @@ import MainCartView from './components/shoppingCart/MainCartView.js';
 import PendingOrderView from './components/shoppingCart/pendingOrder/PendingOrderTable'
 
 
+
 const Routes = () => (
       <div>
 	      <Switch>
@@ -56,6 +57,7 @@ const Routes = () => (
             <Route path="/distribution-network" component={DistributionNetwork} />
             <Route path="/production-line" component={ProductionLine} />
             <Route path='/production-line-details' component = {ProductionLineDetails} />
+
 		</Switch>
       </div>
 );
