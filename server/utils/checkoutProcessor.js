@@ -257,6 +257,7 @@ CHECKOUT FORMULA PROCESSOR
 *************/
 
 exports.checkoutFormula = function(req, res, next, model, username) { //main checkout method
+    console.log("Checking out formula");
     var formulaId = req.params.formulaId;
     var quantity = req.params.quantity;
     var productionLineName = req.params.productionLineName;
@@ -285,7 +286,8 @@ exports.checkoutFormula = function(req, res, next, model, username) { //main che
                                          var date = new Date();
                                          console.log('Before update ingredient');
                                          updateIngredientHelper(req, res, next, multiplier, ingredients, formula, 0, 0, [], date, function(newSpentMoney, arrayInProductOut) {
-                                             updateProductionLineAfterCheckout(res, next, productionLine, formula, date, quantity, newSpentMoney, totalSpace, arrayInProductOut);
+                                             updateProductionLineAfterCheckout(res, next, productionLine, formula, date, quantity, 
+                                                newSpentMoney, totalSpace, arrayInProductOut, ()=>{res.json(productionLine)});
                                          });
                                       } else {
                                          return res.status(406).json(array);
@@ -300,15 +302,16 @@ exports.checkoutFormula = function(req, res, next, model, username) { //main che
     });
 };
 
-var updateProductionLineAfterCheckout = function(res, next, productionLine, formula, date, quantity, newSpentMoney, totalSpace, arrayInProductOut) {
+var updateProductionLineAfterCheckout = function(res, next, productionLine, formula, date, quantity, newSpentMoney, totalSpace, arrayInProductOut, next) {
     var dates = productionLine.dates;
     dates = (dates == null) ? [] : dates;
     var newTuple = new Object();
     newTuple.startDate = date;
     dates.push(newTuple);
     productionLine.update({isIdle: false, currentFormula: formula.name, dates: dates,
-                           quantity: quantity, newSpentMoney: newSpentMoney, totalSpace: totalSpace, arrayInProductOut:arrayInProductOut}, function(err, obj){
-
+                           quantity: quantity, newSpentMoney: newSpentMoney, totalSpace: totalSpace, 
+                           arrayInProductOut:arrayInProductOut}, function(err, obj){
+        next();
     });
 }
 

@@ -220,13 +220,16 @@ class ProductionReview extends React.Component {
     await formulaActions.checkoutFormula("checkout",temp.state.formulaRows[0]._id,
                               Number(temp.state.addedQuantity), temp.state.selectedProductionLine,
                               sessionId, function(res){
-         if (res.status == 400) {
+         if (res.status === 400) {
             PubSub.publish('showAlert', res.data);
             //alert(res.data);
          } else {
              //PubSub.publish('showMessage', ' Successfully added to production !' );
              toast.success('Successfully added to production !');
-             window.location.reload();
+             // window.location.reload();
+             const redirectUrl = temp.state.afterLink;
+             console.log("redirectUrl is " + redirectUrl);
+             window.location.replace(redirectUrl);
             // alert('Successfully added to production .');
          }
       });
@@ -374,7 +377,7 @@ class ProductionReview extends React.Component {
                     disabled = {this.state.selectedProductionLine == ''}
                     style={styles.orderIngredientsButton}
                     onClick = {(event) => this.checkOutFormulaFinal(event)}
-                    component = {Link} to = {this.state.afterLink}
+                    // component = {Link} to = {this.state.afterLink}
                     primary="true">Send to production</RaisedButton>
             </Tooltip>}
         <RaisedButton color="default"
