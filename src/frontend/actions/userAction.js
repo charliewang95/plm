@@ -69,8 +69,8 @@ async function updateUser(userId, sessionId, user, callback) {
  * userId: string, the id of the user
  * sessionId: string, id of the current session
  */
-async function deleteUser(userId, sessionId) {
-	return await genericActions.deleteById(baseUrl, property, userId, sessionId);
+async function deleteUser(userId, sessionId, callback) {
+	const returnedData = await genericActions.deleteById(baseUrl, property, userId, sessionId, callback);
 };
 
 /*

@@ -78,7 +78,7 @@ class ProductionLineDetails extends React.Component{
     }
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.updateFormulas = this.updateFormulas.bind(this);
-    this.computeFormulasString = this.computeFormulasString.bind(this);
+    this.computeFormulaNamesString = this.computeFormulaNamesString.bind(this);
     this.isValid = this.isValid.bind(this);
     this.loadProductionLine = this.loadProductionLine.bind(this);
     this.markComplete = this.markComplete.bind(this);
@@ -90,7 +90,7 @@ class ProductionLineDetails extends React.Component{
     if(this.props.location.state.fromLogs){
       this.loadProductionLine(); //if from logs, need to fetch data
     }
-      this.computeFormulasString();
+      this.computeFormulaNamesString();
   }
 
 async loadProductionLine(){
@@ -108,7 +108,6 @@ async loadProductionLine(){
       productionLineId: this.props.location.state.productionLineId,
       description: details.description,
       formulasArray: details.formulaNames,
-      formulaNamesString: details.formulaNamesString,
       isIdle: details.isIdle,
       currentFormula: details.currentFormula,
       startDates: details.startDates,
@@ -120,7 +119,7 @@ async loadProductionLine(){
       fireRedirect: false,
       pageNotFound: false,
     });
-    this.computeFormulasString();
+    this.computeFormulaNamesString();
     }
   }
 
@@ -132,10 +131,10 @@ async loadProductionLine(){
 
   updateFormulas(updatedArray){
     this.setState({'formulaNamesArray': updatedArray});
-    this.computeFormulasString();
+    this.computeFormulaNamesString();
   }
 
-  computeFormulasString(){
+  computeFormulaNamesString(){
     var formulas_string = "";
     if(this.state.formulasArray){
     for(var i =0; i < this.state.formulasArray.length; i++){
@@ -147,7 +146,7 @@ async loadProductionLine(){
           }
         }
     }
-    this.setState({formulasString: formulas_string });
+    this.setState({formulaNamesString: formulas_string });
   }
 
   isValid(){
@@ -159,9 +158,6 @@ async loadProductionLine(){
     }else if (!temp.state.description){
       toast.error(" Please enter the description. ");
       return false;
-    }else if (temp.state.formulasArray.length==0){
-      toast.error(" Please add formulas for the production line.");
-      return false;
     }
       return true;
   }
@@ -170,15 +166,17 @@ async loadProductionLine(){
     var temp = this;
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     this.setState({isIdle:true});
-    await productionLineActions.updateProductionLine(temp.state.productionLineId, temp.state.name,
-        temp.state.description, temp.state.formulasArray, true, sessionId, function(res){
+    console.log("mark as complete");
+    console.log(temp.state.productionLineId);
+    var res = await productionLineActions.markComplete(temp.state.productionLineId, sessionId);
+          console.log("asdf res");
+          console.log(res);
           if(res.status == 400){
             PubSub.publish('showAlert', res.data);
           }else{
             temp.setState({fireRedirect: true});
             toast.success('Production marked as completed');
           }
-        });
       temp.setState({isDisabled:true});
   }
 
@@ -247,7 +245,7 @@ async loadProductionLine(){
             {this.state.isDisabled && <TextField
               id="selectFormulas"
               label="Formulas"
-              value={this.state.formulasString}
+              value={this.state.formulaNamesString}
               margin="normal"
               disabled = {this.state.isDisabled}
               multiline

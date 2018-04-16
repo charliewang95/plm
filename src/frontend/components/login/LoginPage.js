@@ -65,7 +65,15 @@ class LoginPage extends React.Component{
       refrigerator:'',
       warehouse:'',
       fireRedirect: false,
-      showPassword: false
+      showPassword: false,
+      oAuthHref: "https://oauth.oit.duke.edu/oauth/authorize.php?\
+                    response_type=token&\
+                    redirect_uri=https%3A%2F%2Flocalhost&\
+                    scope=basic&\
+                    state=1129&\
+                    client_id=production-life-manager&\
+                    client_secret=6JdHfn%wwI1LhBUR@@H1BXZqPkJ+ZgKI@xKR#goNGPr!nUehM=\
+                    ",
       }
     // this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -187,7 +195,7 @@ handleMouseDownPassword(event){
         console.log(res);
         if (res.status == 400) {
             message = res.data;
-            alert(message);
+            // alert(message);
             PubSub.publish('showAlert', message);
             sessionStorage.removeItem('user');
             sessionStorage.removeItem('fromDukeOAuth');
@@ -204,7 +212,7 @@ handleMouseDownPassword(event){
 
 
   render (){
-    const { name, contact, code,fireRedirect } = this.state;
+    const { name, contact, code,fireRedirect, oAuthHref } = this.state;
     return (
             <div>
             <AppBar style={{height:60}}>
@@ -259,14 +267,7 @@ handleMouseDownPassword(event){
                   <RaisedButton raised
                   style={{marginLeft: 10}}
                   color = "primary"
-                                href = "https://oauth.oit.duke.edu/oauth/authorize.php?
-                                response_type=token&
-                                redirect_uri=https%3A%2F%2Freal-producers-test.colab.duke.edu&
-                                scope=basic&
-                                state=1129&
-                                client_id=production-life-manager&
-                                client_secret=6JdHfn%wwI1LhBUR@@H1BXZqPkJ+ZgKI@xKR#goNGPr!nUehM=
-                                "
+                  href = {this.state.oAuthHref}
                   > Duke Log In </RaisedButton>    
 
              </div>
@@ -277,13 +278,5 @@ handleMouseDownPassword(event){
     )
 	}
 };
-/*Register Button
-  <RaisedButton raised
-                            // component = {Link} to = "/storage"
-                            color="secondary"
-                            style={styles.saveButton}
-                            onClick={this.registerOnClick}
-                            > REGISTER </RaisedButton>
-*/
 
 export default LoginPage;

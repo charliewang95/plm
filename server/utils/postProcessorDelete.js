@@ -8,6 +8,8 @@ var IngredientLot = mongoose.model('IngredientLot');
 var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
+var Formula = mongoose.model('Formula');
+var ProductionLine = mongoose.model('ProductionLine');
 
 exports.process = function(model, item, itemId, res, next) {
     if (model == Ingredient) {
@@ -18,6 +20,12 @@ exports.process = function(model, item, itemId, res, next) {
     }
     else if (model == Order) {
         processOrder(item, res, next);
+    }
+    else if (model == Formula) {
+        processFormula(item, res, next);
+    }
+    else if (model == ProductionLine) {
+        processProductionLine(item, res, next);
     }
     else {
         return;
@@ -161,3 +169,40 @@ var processOrderHelper = function(i, items, res, next) {
         })
     }
 };
+
+var processFormula = function(item, res, next) {
+    var name = item.name;
+    ProductionLine.find({}, function(err, pls){
+        for (var i = 0; i < pls.length; i++) {
+            var pl = pls[i];
+            if (pl.formulaNames && pl.formulaNames.includes(name)) {
+                var newArray = [];
+                for (var j = 0; j < pl.formulaNames.length; j++) {
+                    if (pl.formulaNames[j] != name) {
+                        newArray.push(pl.formulaNames[j]);
+                    }
+                }
+                pl.update({formulaNames: newArray}, function(err, obj){});
+            }
+        }
+    })
+};
+
+var processProductionLine = function(item, res, next) {
+    var name = item.name;
+    Formula.find({}, function(err, formulas){
+        for (var i = 0; i < formulas.length; i++) {
+            var formula = formulas[i];
+            console.log(formula.name);
+            if (formula.productionLines && formula.productionLines.includes(name)) {
+                var newArray = [];
+                for (var j = 0; j < formula.productionLines.length; j++) {
+                    if (formula.productionLines[j] != name) {
+                        newArray.push(formula.productionLines[j]);
+                    }
+                }
+                formula.update({productionLines: newArray}, function(err, obj){});
+            }
+        }
+    })
+}

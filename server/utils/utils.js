@@ -288,11 +288,15 @@ var updateWithUserAccess = function(req, res, next, model, userId, itemId, usern
 };
 
 var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) {
-    model.findOne({_id: itemId}, req.body, function(err, item) {
+    console.log("deleteWithoutUserAccess()");
+    model.findById(itemId, function(err, item) {
         if (err) {
             return next(err);
         }
         else {
+            console.log(itemId);
+            console.log(item);
+            console.log(model == ProductionLine);
             var temp = item;
             validatorDelete.validate(model, item, res, next, function(){
                 item.remove(function(err) {
@@ -302,6 +306,7 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) 
                     else {
                         deleteProcessor.process(model, item, itemId, res, next);
                         logger.log(username, 'delete', temp, model);
+                        console.log(temp);
                         res.json(temp);
                     }
                 });
@@ -311,6 +316,7 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) 
 };
 
 var deleteWithUserAccess = function(req, res, next, model, userId, itemId, username) {
+    console.log("deleteWithUserAccess()");
     model.findOne({userId: userId, _id: itemId}, function(err, item) {
         if (err) {
             return next(err);
@@ -322,6 +328,7 @@ var deleteWithUserAccess = function(req, res, next, model, userId, itemId, usern
                 }
                 else {
                     logger.log(username, 'delete', item, model);
+                    console.log(item);
                     res.json(item);
                 }
             });
@@ -563,26 +570,27 @@ var processFormulaCreate = function(item, res, next){
             newIngredient.save(function(err){
                 if (err) return next(err);
                 var newProductionLineNames = item.productionLines;
-                processFormulaHelperAddNewCreate(res, next, 0, newProductionLineNames, []);
+                processFormulaHelperAddNewCreate(res, next, 0, item, newProductionLineNames, []);
             })
         }
     })
 };
 
-var processFormulaHelperAddNewCreate = function(res, next, i, newProductionLineNames, oldProductionLineNames){
+var processFormulaHelperAddNewCreate = function(res, next, i, formula, newProductionLineNames, oldProductionLineNames){
     if (i == newProductionLineNames.length) {
         return;
     }
     else {
         var newProductionLineName = newProductionLineNames[i];
         if (!oldProductionLineNames.includes(newProductionLineName)){
-            ProductionLine.find({nameUnique: newProductionLineName.toLowerCase()}, function(err, pl){
+            ProductionLine.findOne({nameUnique: newProductionLineName.toLowerCase()}, function(err, pl){
                 if (err) return next(err);
                 else if (!pl){
                     return res.status(400).send('Production Line '+newProductionLineName+' does not exist');
                 } else {
                     var formulasInProductionLine = pl.formulaNames;
-                    formulasInProductionLine.push(newProductionLineName);
+                    formulasInProductionLine = formulasInProductionLine ? formulasInProductionLine : [];
+                    formulasInProductionLine.push(formula.name);
                     pl.update({formulaNames: formulasInProductionLine}, function(err, newPl){
                         processFormulaHelperAddNewCreate(res, next, i+1, newProductionLineNames, oldProductionLineNames);
                     });
@@ -595,30 +603,33 @@ var processFormulaHelperAddNewCreate = function(res, next, i, newProductionLineN
 }
 
 var processProductionLineCreate = function(item, res, next){
-    processProductionLineHelperAddNew(res, next, 0, newFormulaNames, []);
+    processProductionLineHelperAddNew(res, next, 0, item, item.formulaNames, []);
 }
 
-var processProductionLineHelperAddNew = function(res, next, i, newFormulaNames, oldFormulaNames){
+var processProductionLineHelperAddNew = function(res, next, i, pl, newFormulaNames, oldFormulaNames){
     if (i == newFormulaNames.length) {
         return;
     }
     else {
         var newFormulaName = newFormulaNames[i];
-        if (!oldFormulaName.includes(newFormulaName)){
-            Formula.find({nameUnique: newFormulaName.toLowerCase()}, function(err, formula){
+        console.log(oldFormulaNames);
+        if (!oldFormulaNames.includes(newFormulaName)){
+            Formula.findOne({nameUnique: newFormulaName.toLowerCase()}, function(err, formula){
                 if (err) return next(err);
                 else if (!formula){
                     return res.status(400).send('Formula '+newFormulaName+' does not exist');
                 } else {
                     var productionLinesInFormula = formula.productionLines;
-                    productionLinesInFormula.push(newFormulaName);
+                    productionLinesInFormula = (productionLinesInFormula) ? productionLinesInFormula : [];
+                    productionLinesInFormula.push(pl.name);
+                    console.log(productionLinesInFormula);
                     formula.update({productionLines: productionLinesInFormula}, function(err, newFormula){
-                        processProductionLineHelperAddNew(res, next, i+1, newFormulaNames, oldFormulaNames);
+                        processProductionLineHelperAddNew(res, next, i+1, pl, newFormulaNames, oldFormulaNames);
                     });
                 }
             });
         } else {
-            processProductionLineHelperAddNew(res, next, i+1, newFormulaNames, oldFormulaNames);
+            processProductionLineHelperAddNew(res, next, i+1, pl, newFormulaNames, oldFormulaNames);
         }
     }
 }
