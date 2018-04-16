@@ -26,7 +26,7 @@ import ProductionLineDetails from './components/productionLine/ProductionLineDet
 import MainIngredientView from './components/admin/mainIngredientView';
 // import ShoppingCartAndOrders from './components/shoppingCart/mainPage';
 import PendingOrderView from './components/shoppingCart/pendingOrder/PendingOrderTable'
-import DistributorNetworkEdit from './components/distributorNetwork/editDetails.js'
+
 
 
 const Routes = () => (
@@ -56,7 +56,7 @@ const Routes = () => (
             <Route path="/distribution-network" component={DistributionNetwork} />
             <Route path="/production-line" component={ProductionLine} />
             <Route path='/production-line-details' component = {ProductionLineDetails} />
-            <Route path='/distributorNetwork-edit' component = {DistributorNetworkEdit} />
+
 		</Switch>
       </div>
 );

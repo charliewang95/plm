@@ -157,8 +157,8 @@ class Product extends React.PureComponent {
   async loadProductInfo(){
       var rawData = [];
       sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-      // rawData = await productActions.getAllProductsAsync(sessionId);
-      rawData = productData;
+      rawData = await productActions.getAllProductsAsync(sessionId);
+
       var tempDates = [];
       for (var i = 0; i<rawData.length; i++) {
         //TODO: Change this with real Date - remove new Date later
