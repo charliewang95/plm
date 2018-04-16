@@ -73,7 +73,7 @@ async function getProductionLineAsync(productionLineId, sessionId) {
 };
 
 async function markComplete(productionLineId, sessionId) {
-	 const res = await axios.get('/productionLines/productionLine/'+productionLineId+'/user/'+sessionId);
+	 const res = await axios.put('/productionLines/markComplete/productionLine/'+productionLineId+'/user/'+sessionId);
      return res;
 };
 
