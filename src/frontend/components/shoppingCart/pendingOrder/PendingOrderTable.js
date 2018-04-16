@@ -244,7 +244,7 @@ const RowDetail = ({ row }) => {
 
 const getRowId = row => row.id;
 
-class ShoppingCart extends React.Component {
+class PendingOrderTable extends React.Component {
   constructor(props) {
     super(props);
 
@@ -718,4 +718,4 @@ class ShoppingCart extends React.Component {
   }
 }
 
-export default ShoppingCart;
+export default PendingOrderTable;

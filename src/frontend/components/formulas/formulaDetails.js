@@ -95,14 +95,6 @@ class FormulaDetails extends React.Component{
     this.handleNumUnitPerPackage = this.handleNumUnitPerPackage.bind(this);
     this.isValid = this.isValid.bind(this);
     this.loadFormula = this.loadFormula.bind(this);
-
-    // this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
-
-    }
-
-  componentWillMount(){
-    // this.loadAllIngredients();
-
   }
 
   componentDidMount(){
@@ -110,7 +102,7 @@ class FormulaDetails extends React.Component{
     if(this.props.location.state.fromLogs){
       this.loadFormula();
     }
-      this.computeProductionLinesString();
+      this.computeIngredientsString();
       this.computeProductionLinesString();
   }
 
@@ -165,7 +157,7 @@ class FormulaDetails extends React.Component{
   		} else {
   			this.setState({value:option});
   		};
-  	};
+  };
 
   handleChange = name => event => {
       this.setState({

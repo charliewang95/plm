@@ -67,17 +67,17 @@ function ListItemComposition(props) {
           <ListItemIcon className={classes.icon}>
             <ShoppingCartIcon />
           </ListItemIcon>
-          <ListItemText classes={{ primary: classes.primary }} inset primary="Cart" />
+          <ListItemText classes={{ primary: classes.primary }} inset primary="Orders" />
         </MenuItem>
         }
 
-        { (isManager || isAdmin) &&
+        {/* (isManager || isAdmin) &&
         <MenuItem className={classes.menuItem} component={Link} to="/pending-orders" button>
           <ListItemIcon className={classes.icon}>
             <DateRangeIcon />
           </ListItemIcon>
           <ListItemText classes={{ primary: classes.primary }} inset primary="Pending orders" />
-        </MenuItem>
+        </MenuItem>*/
         }
 
         <MenuItem className={classes.menuItem} component={Link} to="/formula" button>
