@@ -44,6 +44,7 @@ import * as testConfig from '../../../resources/testConfig.js';
 import * as uploadInterface from '../../interface/uploadInterface';
 import PubSub from 'pubsub-js';
 import { ToastContainer, toast } from 'react-toastify';
+import Typography from 'material-ui/Typography';
 //TODO: Set the user ID
 var sessionId = "";
 var isAdmin = "";
@@ -126,15 +127,8 @@ const Cell = (props) => {
     <Link to={{pathname: '/production-line-details', state:{details: props.row} }}>{props.row.name}</Link>
     </Table.Cell>
   }else if(props.column.name=='isIdle'){
-    if(!props.row.isIdle){
-      return <Table.Cell {...props}>
-      <div>BUSY <Button raised>Mark Complete</Button></div>
-      </Table.Cell>
-    }else{
-      return <Table.Cell {...props}>
-      <div>IDLE</div>
-      </Table.Cell>
-    }
+    return (props.row.isIdle) ? <Table.Cell {...props}> <p><font color="green">IDLE</font></p></Table.Cell> :
+           <Table.Cell {...props}> <Typography color="error">BUSY</Typography> </Table.Cell> 
   }
   else return <Table.Cell {...props} />;
 };
@@ -199,10 +193,13 @@ class ProductionLine extends React.PureComponent {
       console.log("delete formula rows");
       console.log(this.state.deletingRows);
       const rows = this.state.rows.slice();
-
+      var temp = this;
       this.state.deletingRows.forEach((rowId) => {
         const index = rows.findIndex(row => row.id === rowId);
-        if (index > -1) {
+        if(!rows[index].isIdle){
+          toast.error("Production line is in use.");
+        }
+        else if (index > -1) {
           // This line removes the data from the rows
           //TODO: Delete in the back end
 
@@ -210,19 +207,33 @@ class ProductionLine extends React.PureComponent {
 
           // TODO: Delete does not work
          productionLineActions.deleteProductionLine(formulaId, sessionId, function(res){
+
+           if (res.status == 400) {
+                    //alert(res.data);
+                    PubSub.publish('showAlert', res.data);
+                   
+                } else {
+                    // alert(" Ingredient successfully deleted ! ");
+                    rows.splice(index, 1);
+                    temp.loadAllProductionLines();
+                    toast.success('Production Line successfully deleted!', {
+                      position: toast.POSITION.TOP_RIGHT
+                    });
+                    //PubSub.publish('showMessage', ' Ingredient successfully deleted !' );
+                }
             
          });
-          console.log("delete " );
-          console.log(rows[index]._id);
-          console.log(sessionId);
-          rows.splice(index, 1);
+          // console.log("delete " );
+          // console.log(rows[index]._id);
+          // console.log(sessionId);
+          // rows.splice(index, 1);
           // TODO: Add snackbar
           // alert(" Ingredient successfully deleted ! ");
           // this.setState({snackBarMessage : "Formula successfully deleted."});
           // this.setState({snackBarOpen:true});
-          toast.success('Formula successfully deleted.', {
-            position: toast.POSITION.TOP_RIGHT
-          });
+          // toast.success('Formula successfully deleted.', {
+          //   position: toast.POSITION.TOP_RIGHT
+          // });
           //PubSub.publish('showMessage', 'Formula successfully deleted.' );
         }
       });
@@ -267,6 +278,10 @@ class ProductionLine extends React.PureComponent {
         id:index,...row,
       })),];
     }
+
+        console.log("this is the raw data");
+    console.log(rawData);
+
     this.setState({rows: processedData});
   }
 

@@ -174,7 +174,6 @@ async loadProductionLine(){
           if(res.status == 400){
             PubSub.publish('showAlert', res.data);
           }else{
-            temp.setState({fireRedirect: true});
             toast.success('Production marked as completed');
           }
       temp.setState({isDisabled:true});
@@ -265,17 +264,17 @@ async loadProductionLine(){
                 disabled = {true}
                 style={styles.quantity}
             />
-           {!this.state.isIdle &&(this.state.isDisabled && (isAdmin || isManager)) && <RaisedButton raised color="default" onClick={()=>this.markComplete()}>Complete</RaisedButton>}
-           {!this.state.isIdle && <TextField
+            {!this.state.isIdle && <TextField
               id="currentFormula"
               label="Formula under production"
-              value={this.state.nativeUnit}
+              value={this.state.currentFormula}
               onChange={this.handleChange('currentFormula')}
               margin="normal"
               disabled = {this.state.isDisabled}
-              style = {styles.quantity}
+              style = {{width:190}}
               required
             />}
+           {!this.state.isIdle &&(this.state.isDisabled && (isAdmin || isManager)) && <RaisedButton raised color="default" onClick={()=>this.markComplete()}>Complete</RaisedButton>}
               <div style={styles.buttons}>
                 {(this.state.isDisabled && isAdmin) && <RaisedButton raised color = "secondary" onClick={()=>{this.setState({isDisabled:false});}} >EDIT</RaisedButton>}
                 {(!this.state.isDisabled) && 

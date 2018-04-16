@@ -25,7 +25,7 @@ import SnackBarDisplay from '../snackBar/snackBarDisplay';
 import PubSub from 'pubsub-js';
 import { ToastContainer, toast } from 'react-toastify';
 import {reviewData} from './dummyData';
-
+import ProductionLinesTable from './ProductionLinesTable.js';
 const styles = {
     buttons: {
       marginTop: 30,
@@ -73,8 +73,10 @@ class ProductionReview extends React.Component {
         snackBarOpen:false,
         intermediates:'',
         afterLink:'',
+        selectedProductionLine: '',
+        hasProductionLines: true,
     };
-    // this.cancelProduction = this.cancelProduction.bind(this);
+    this.selectProductionLine = this.selectProductionLine.bind(this);
     this.cancelProduction =() =>
       this.setState({
         formulaRows:[],
@@ -86,7 +88,10 @@ class ProductionReview extends React.Component {
       event.preventDefault();
       console.log(" get production review");
       var temp = this;
-      var afterLink = this.state.formulaRows[0].isIntermediate? '/admin-ingredients' : '/product';
+      if(this.state.formulaRows[0].productionLinesArray.length==0){
+        this.setState({hasProductionLines: false});
+      }
+      var afterLink = this.state.formulaRows[0].isIntermediate? '/admin-ingredients' : '/production-line';
       this.setState({afterLink: afterLink});
 
       //TODO: Check this
@@ -150,12 +155,9 @@ class ProductionReview extends React.Component {
                    // temp.setState({snackBarMessage : "Formula successfully sent for production review. "});
                    // temp.setState({snackBarOpen:true});
                    //PubSub.publish('showMessage', 'Formula successfully sent for production review.' );
-                   toast.success('Formula successfully sent for production review.');
+                   //toast.success('Formula successfully sent for production review.');
               }
       });
-
-      console.log(" OPEN PROD " + this.state.snackBarOpen);
-      console.log(" MSG " + this.state.snackBarMessage);
     }
 
     console.log('preview constructed');
@@ -209,12 +211,14 @@ class ProductionReview extends React.Component {
 
     event.stopPropagation();
   }
-
+  
   async checkOutFormulaFinal(event){
     var temp = this;
     console.log(temp.state.formulaRows[0]);
+    console.log("check out formula final ")
+    console.log(temp.state.selectedProductionLine);
     await formulaActions.checkoutFormula("checkout",temp.state.formulaRows[0]._id,
-                              Number(temp.state.addedQuantity),
+                              Number(temp.state.addedQuantity), temp.state.selectedProductionLine,
                               sessionId, function(res){
          if (res.status == 400) {
             PubSub.publish('showAlert', res.data);
@@ -222,13 +226,17 @@ class ProductionReview extends React.Component {
          } else {
              //PubSub.publish('showMessage', ' Successfully added to production !' );
              toast.success('Successfully added to production !');
-            // window.location.reload();
+             window.location.reload();
             // alert('Successfully added to production .');
          }
       });
 
     // event.stopPropagation();
   };
+
+  selectProductionLine(productionName){
+    this.setState({selectedProductionLine: productionName});
+  }
 
   handleFormulaQuantity(event){
     console.log("handleFormulaChange")
@@ -354,12 +362,16 @@ class ProductionReview extends React.Component {
                   component = {Link} to = "/cart"
                   primary="true"> Order Ingredients </RaisedButton>
           </Tooltip> }
-
-          {(this.state.ingredientsToOrder.length==0) &&
+          <p><font size="4">Select Production Line</font></p>
+          <ProductionLinesTable hasProductionLines={()=>{this.setState({hasProductionLines: false});}} productionLinesArray={this.state.formulaRows[0].productionLinesArray} handleChange={this.selectProductionLine}/>
+          <br/>
+          {(!this.state.hasProductionLines) && <p><font size="5">There are no available production lines.</font></p>}
+          {(this.state.ingredientsToOrder.length==0) && (this.state.hasProductionLines) &&
             <Tooltip id="tooltip-bottom" title="Send formula to production" placement="bottom">
               <RaisedButton raised
                     color="primary"
                     // className=classes.button
+                    disabled = {this.state.selectedProductionLine == ''}
                     style={styles.orderIngredientsButton}
                     onClick = {(event) => this.checkOutFormulaFinal(event)}
                     component = {Link} to = {this.state.afterLink}
@@ -370,6 +382,10 @@ class ProductionReview extends React.Component {
           component={Link} to='/formula'
           style = {{marginLeft: 10}}
           > BACK </RaisedButton>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
      </div>
    </div>
     );
