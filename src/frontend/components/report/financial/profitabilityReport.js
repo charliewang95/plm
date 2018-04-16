@@ -11,11 +11,9 @@ import {
 } from '@devexpress/dx-react-grid';
 import Styles from  'react-select/dist/react-select.css';
 import { withStyles } from 'material-ui/styles';
-import dummyData from '../orders/dummyData';
-import * as distributorNetworkActions from '../../interface/distributorNetworkInterface.js';
-
-
-import data from '../distributorNetwork/testData';
+import dummyData from '../../orders/dummyData';
+import * as distributorNetworkActions from '../../../interface/distributorNetworkInterface.js';
+import data from '../../distributorNetwork/testData';
 
 var sessionId = "";
 

@@ -19,7 +19,10 @@ import ProductionReview from './components/formulas/productionReview.js';
 import FormulaDetails from './components/formulas/formulaDetails.js';
 import PageNotFound from './components/error/PageNotFound';
 import ProductDetails from './components/product/productDetails';
-import Report from './components/report/report.js';
+//import Report from './components/report/report.js';
+import FinancialMain from './components/report/financial/FinancialMain';
+import FreshnessMain from './components/report/freshness/FreshnessMain';
+import TrackingMain from './components/report/tracking/TrackingMain';
 import DistributionNetwork from './components/distributorNetwork/distributorNetwork.js';
 import ProductionLine from './components/productionLine/ProductionLine.js';
 import ProductionLineDetails from './components/productionLine/ProductionLineDetails.js';
@@ -45,7 +48,9 @@ const Routes = () => (
             <Route path="/addVendorForm" component={AddVendorForm} />
             <Route path="/cart" component={MainCartView} />
             <Route path="/pending-orders" component={PendingOrderView} />
-            <Route path="/report" component={Report} />
+            <Route path="/report-financial" component={FinancialMain} />
+            <Route path='/report-freshness' component={FreshnessMain} />
+            <Route path='/report-tracking' component={TrackingMain} />
             <Route path="/log" component={Log} />
             <Route path="/formula" component={Formula} />
             <Route path="/pagenotfound" component={PageNotFound} />

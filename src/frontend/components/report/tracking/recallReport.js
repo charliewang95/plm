@@ -7,7 +7,7 @@ import IngredientSelection from './recallReportComponents/ingredientSelection.js
 import VendorSelection from './recallReportComponents/vendorSelection.js'
 import LotSelection from './recallReportComponents/lotSelection.js'
 import RecallTable from './recallReportComponents/recallTable.js'
-import * as IngredientInterface from '../../interface/ingredientInterface';
+import * as IngredientInterface from '../../../interface/ingredientInterface';
 import { ToastContainer, toast } from 'react-toastify';
 // import * as IngredientLotInterface from '../../interface/ingredientLotInterface';
 // globals

@@ -91,7 +91,8 @@ class ProductionReview extends React.Component {
       if(this.state.formulaRows[0].productionLinesArray.length==0){
         this.setState({hasProductionLines: false});
       }
-      var afterLink = this.state.formulaRows[0].isIntermediate? '/admin-ingredients' : '/production-line';
+      //var afterLink = this.state.formulaRows[0].isIntermediate? '/admin-ingredients' : '/production-line';
+      var afterLink = '/production-line';
       this.setState({afterLink: afterLink});
 
       //TODO: Check this
@@ -365,9 +366,13 @@ class ProductionReview extends React.Component {
                   component = {Link} to = "/cart"
                   primary="true"> Order Ingredients </RaisedButton>
           </Tooltip> }
-          <p><font size="4">Select Production Line</font></p>
-          <ProductionLinesTable hasProductionLines={()=>{this.setState({hasProductionLines: false});}} productionLinesArray={this.state.formulaRows[0].productionLinesArray} handleChange={this.selectProductionLine}/>
-          <br/>
+          {(this.state.ingredientsToOrder.length==0) && (this.state.hasProductionLines) &&
+          <div>
+            <p><font size="4">Select Production Line</font></p>
+            <ProductionLinesTable hasProductionLines={()=>{this.setState({hasProductionLines: false});}} productionLinesArray={this.state.formulaRows[0].productionLinesArray} handleChange={this.selectProductionLine}/>
+            <br/>
+          </div>
+          }
           {(!this.state.hasProductionLines) && <p><font size="5">There are no available production lines.</font></p>}
           {(this.state.ingredientsToOrder.length==0) && (this.state.hasProductionLines) &&
             <Tooltip id="tooltip-bottom" title="Send formula to production" placement="bottom">
