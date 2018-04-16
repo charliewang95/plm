@@ -104,12 +104,15 @@ class LotNumberButton extends Component {
   }
 
   saveToProps(quantity){
+    console.log("save to props");
+    
     var rowData = this.state.rowData;
+    console.log("rowData");
+    console.log(rowData);
     // var object = new Object();
     rowData.ingredientLots = this.state.lotNumberArray;
     rowData.packageNum = quantity;
-    console.log("save to props");
-    console.log(rowData);
+    
     this.props.handlePropsChange(rowData);
   }
 
