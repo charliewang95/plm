@@ -79,9 +79,9 @@ export default class FreshnessReport extends React.PureComponent {
     }
      this.setState({rows:processedData});
 
-     var overallDay = (totalMinutesSum/24/60);
-     var overallHour = totalMinutesSum/60%24;
-     var overallMin = totalMinutesSum % 60;
+     var overallDay = Math.round((totalMinutesSum/24/60)*100)/100;
+     var overallHour = Math.round((totalMinutesSum/60%24)*100)/100;
+     var overallMin = Math.round((totalMinutesSum % 60)*100)/100;
      var overallFreshness = overallDay + "d  " + overallHour + "h " + overallMin + "m";
 
      this.setState({overallFreshness:overallFreshness});

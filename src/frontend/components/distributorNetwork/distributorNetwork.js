@@ -35,11 +35,12 @@ import * as distributorNetworkActions from '../../interface/distributorNetworkIn
 import EditIcon from 'material-ui-icons/Edit';
 import IconButton from 'material-ui/IconButton';
 import { ToastContainer, toast } from 'react-toastify';
+import PubSub from 'pubsub-js';
 
-var userId;
-var sessionId;
-var isAdmin;
-var isManager;
+var userId="";
+var sessionId="";
+var isAdmin="";
+var isManager="";
 
 const EditButton = ({onExecute,row}) => (
   <IconButton
@@ -52,10 +53,6 @@ const EditButton = ({onExecute,row}) => (
 
 const Cell = (props)=>{
   return <Table.Cell {...props}/>
-};
-
-Cell.propTypes = {
-  column: PropTypes.shape({ name: PropTypes.string }).isRequired,
 };
 
 const EditCell = (props) => {
@@ -121,6 +118,8 @@ const EditColumnCell = (props) => {
 
 export default class Demo extends React.PureComponent {
   constructor(props) {
+    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
     super(props);
     this.state = {
       columns: (isAdmin || isManager ) ? [
@@ -342,6 +341,11 @@ export default class Demo extends React.PureComponent {
     isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
     userId = JSON.parse(sessionStorage.getItem('user'))._id;
 
+    console.log("distributor network will mount");
+    console.log(isAdmin);
+    console.log(isManager);
+    console.log(userId);
+
     this.loadDistributorNetworkData();
   }
 
@@ -444,14 +448,13 @@ export default class Demo extends React.PureComponent {
   }
 
   async sellProducts(){
+    var temp=this;
     console.log("sell products");
-    console.log(this.state.selectedRows);
-    var selectedRows = this.state.selectedRows;
-
-    // var temp = this;
+    console.log(temp.state.selectedRows);
+    var selectedRows = temp.state.selectedRows;
     var products = [];
-    console.log(this.state.selectedRows);
-    for(var i =0; i < this.state.selectedRows.length; i++){
+    console.log(temp.state.selectedRows);
+    for(var i =0; i < temp.state.selectedRows.length; i++){
       var productObject = new Object();
       productObject.productName = selectedRows[i].productName;
       productObject.totalRevenue = selectedRows[i].revenue;
@@ -462,20 +465,29 @@ export default class Demo extends React.PureComponent {
       console.log(products);
       await distributorNetworkActions.sellItemsAsync(products,sessionId,function(res){
         if(res.status){
-          // alert(res.data);
+          //TODO: Fix error
+          PubSub.publish('showAlert', res.data );
         }else{
-          //TODO: SnackBar
+
+          temp.setState({review:false});
+          //TODO: FIX RELOAD
+          window.location.reload();
+          temp.setState({currentRowSelected:{}});
+          temp.setState({selection:[]});
+          temp.setState({selectedRows:[]});
+
           toast.success("Products successfully sold to distributors!", {
           position: toast.POSITION.TOP_RIGHT });
+
         }
       });
 
-    this.setState({review:false});
-    //TODO: FIX RELOAD
-    window.location.reload();
-    this.setState({currentRowSelected:{}});
-    this.setState({selection:[]});
-    this.setState({selectedRows:[]});
+      // temp.setState({review:false});
+      // //TODO: FIX RELOAD
+      // window.location.reload();
+      // temp.setState({currentRowSelected:{}});
+      // temp.setState({selection:[]});
+      // temp.setState({selectedRows:[]});
 
   }
 
@@ -530,7 +542,7 @@ export default class Demo extends React.PureComponent {
             />
           </Grid>
           {(isAdmin || isManager) &&  <Dialog
-            open={(currentRowSelected) ? this.checkFirstInputQty(): false}
+            open={(currentRowSelected) ? this.checkFirstInputQty():false}
             onClose={this.cancelSelection}
             // classes={{ paper: classes.dialog }}
           >
