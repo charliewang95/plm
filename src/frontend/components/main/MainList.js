@@ -38,7 +38,15 @@ const styles = theme => ({
   },
   nested: {
     paddingLeft: theme.spacing.unit * 4,
+    '&:focus': {
+      backgroundColor: theme.palette.primary.main,
+      '& $primary, & $icon': {
+        color: theme.palette.common.white,
+      },
+    },
   },
+  primary: {},
+  icon: {},
 });
 
 const user = JSON.parse(sessionStorage.getItem('user'));
@@ -123,22 +131,22 @@ class MainList extends React.Component{
            <Collapse in={this.state.open} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 <ListItem button className={classes.nested} component={Link} to="/report-financial" button>
-                  <ListItemIcon>
+                  <ListItemIcon className={classes.icon}>
                     <AttachMoneyIcon />
                   </ListItemIcon>
-                  <ListItemText inset primary="Financial" />
+                  <ListItemText classes={{ primary: classes.primary }} inset primary="Financial" />
                 </ListItem>
                 <ListItem button className={classes.nested} component={Link} to="/report-freshness" button>
-                  <ListItemIcon>
+                  <ListItemIcon className={classes.icon}>
                     <TimerIcon />
                   </ListItemIcon>
-                  <ListItemText inset primary="Freshness" />
+                  <ListItemText classes={{ primary: classes.primary }} inset primary="Freshness" />
                 </ListItem>
                 <ListItem button className={classes.nested} component={Link} to="/report-tracking" button>
-                  <ListItemIcon>
+                  <ListItemIcon className={classes.icon}>
                     <AssessmentIcon />
                   </ListItemIcon>
-                  <ListItemText inset primary="Tracking" />
+                  <ListItemText classes={{ primary: classes.primary }} inset primary="Tracking" />
                 </ListItem>
               </List>
             </Collapse>
