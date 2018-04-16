@@ -6,5 +6,5 @@ module.exports = function(app) {
     app.route('/productionLines/productionLine/:productionLineId/user/:userId').get(productionLines.read).put(productionLines.update).delete(productionLines.delete);
     app.route('/productionLines/productionLineName/:productionLineName/user/:userId').get(productionLines.getProductionLineByName);
 
-    app.route('/productionLines/productionLine/:productionLineId/user/:userId').put(productionLines.markComplete);
+    app.route('/productionLines/markComplete/productionLine/:productionLineId/user/:userId').put(productionLines.markComplete);
 };

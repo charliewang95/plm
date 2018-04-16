@@ -24,7 +24,7 @@ exports.delete = function(req, res, next) {
 };
 
 exports.markComplete = function(req, res, next) {
-    checkoutProcessor.markComplete();
+    checkoutProcessor.markComplete(req, res, next);
 }
 
 exports.getAllIdleServers = function(req, res, next) {

@@ -301,10 +301,12 @@ exports.checkoutFormula = function(req, res, next, model, username) { //main che
 };
 
 var updateProductionLineAfterCheckout = function(res, next, productionLine, formula, date, quantity, newSpentMoney, totalSpace, arrayInProductOut) {
-    var startDates = productionLine.startDates;
-    startDates = (startDates == null) ? [] : startDates;
-    startDates.push(date);
-    productionLine.update({isIdle: false, currentFormula: formula.name, startDates: startDates,
+    var dates = productionLine.dates;
+    dates = (dates == null) ? [] : dates;
+    var newTuple = new Object();
+    newTuple.startDate = date;
+    dates.push(newTuple);
+    productionLine.update({isIdle: false, currentFormula: formula.name, dates: dates,
                            quantity: quantity, newSpentMoney: newSpentMoney, totalSpace: totalSpace, arrayInProductOut:arrayInProductOut}, function(err, obj){
 
     });
@@ -312,10 +314,12 @@ var updateProductionLineAfterCheckout = function(res, next, productionLine, form
 
 exports.markComplete = function(req, res, next){
     var date = new Date();
-    ProductionLine.findById(req.productionLineId, function(err, pl){
+    console.log("Marking complete");
+    ProductionLine.findById(req.params.productionLineId, function(err, pl){
         if (err) return next(err);
         else if (!pl) return res.status(400).send('Production line does not exist');
         else {
+            console.log("PL found");
             var quantity = pl.quantity;
             var newSpentMoney = pl.newSpentMoney;
             var totalSpace = pl.totalSpace;
@@ -323,6 +327,7 @@ exports.markComplete = function(req, res, next){
                 if (err) return next(err);
                 else if (!formula) return res.status(400).send('Formula does not exist');
                 else {
+                    console.log("Formula found");
                     var totalProvided = formula.totalProvided;
                     var totalCost = formula.totalCost;
 
@@ -330,31 +335,32 @@ exports.markComplete = function(req, res, next){
                     formula.update({totalProvided: Number(totalProvided)+Number(quantity), totalCost:totalCost+newSpentMoney}, function(err, obj) {
                       if (err) return next(err);
                       else {
+                        console.log("Formula updated successfully");
                         updateStorageAfterCheckoutIP(res, req, next, formula, totalSpace);
                         console.log(formula.isIntermediate);
 
-                        updateProductionLineAfterComplete(res, next, productionLine, date);
+                        updateProductionLineAfterComplete(res, next, pl, date, function(arrayInProductOut){
 
-                        if (!formula.isIntermediate) {
-                            //TODO: add ingredientLotUsedInProduct in the product object
-                            addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
-                                updateIngredientProduct(req, res, next, pl, formula, date, function(){
-                                    addDistributorNetwork(req, res, next, formula, pl, date, function(){
-                                        return res.send(pl);
-                                    })
-                                });
-                            });
-                        } else {
-                            //TODO: add ingredient and ingerdientLot object if intermediate
-                            addIntermediateProductIngredientLot(req, res, next, formula, quantity, totalSpace, date, function(){
+                            if (!formula.isIntermediate) {
+                                //TODO: add ingredientLotUsedInProduct in the product object
                                 addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
                                     updateIngredientProduct(req, res, next, pl, formula, date, function(){
-                                        return res.send(pl);
+                                        addDistributorNetwork(req, res, next, formula, pl, date, function(){
+                                            return res.send(pl);
+                                        })
                                     });
                                 });
-                            });
-                        }
-
+                            } else {
+                                //TODO: add ingredient and ingerdientLot object if intermediate
+                                addIntermediateProductIngredientLot(req, res, next, formula, quantity, totalSpace, date, function(){
+                                    addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
+                                        updateIngredientProduct(req, res, next, pl, formula, date, function(){
+                                            return res.send(pl);
+                                        });
+                                    });
+                                });
+                            }
+                        });
                       }
                     });
                 }
@@ -363,12 +369,15 @@ exports.markComplete = function(req, res, next){
     });
 }
 
-var updateProductionLineAfterComplete = function(res, next, productionLine, date) {
-    var endDates = productionLine.endDates;
-    endDates = (endDates == null) ? [] : endDates;
-    endDates.push(date);
-    productionLine.update({isIdle: true, endDates: endDates}, function(err, obj){
-
+var updateProductionLineAfterComplete = function(res, next, productionLine, date, callback) {
+    console.log("Updating Production Line");
+    var dates = productionLine.dates;
+    dates = (dates == null) ? [] : dates;
+    var lastDate = dates[dates.length - 1];
+    lastDate.endDate = date;
+    dates[dates.length] = lastDate;
+    productionLine.update({isIdle: true, dates: dates}, function(err, obj){
+        callback(productionLine.arrayInProductOut);
     });
 }
 
