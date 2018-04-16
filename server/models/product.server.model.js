@@ -42,13 +42,22 @@ var ProductSchema = new Schema({
         type: String,
         required: true
     },
+    numUnitLeft: {
+        type: Number,
+        required: true
+    },
+    empty: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     ingredients: [IngredientLotUsedInProductSchema]
 });
 
 ProductSchema.index({ nameUnique: 1, lotNumberUnique: 1, date: 1}, { unique: true });
 
 ProductSchema.statics.getOldestLot = function(res, productNameUnique, callback) {
-    this.find({nameUnique: productNameUnique}, {}, {sort: {date: 1}}, function(err, lot){
+    this.find({nameUnique: productNameUnique, empty: false}, {}, {sort: {date: 1}}, function(err, lot){
         if (lot.length == 0) callback(null);
         else callback(lot[0]);
     });

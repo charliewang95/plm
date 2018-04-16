@@ -244,7 +244,7 @@ export default class RecallReport extends React.PureComponent{
 		if(arrayOfLots){
 			for(var i = 0; i < arrayOfLots.length; i++){
 				const lot = arrayOfLots[i];
-				if(lot.vendorName === vendorName){
+				if(lot.vendorNameUnique === vendorName.toLowerCase()){
 					console.log("adding lot ");
 					console.log(lot);
 					filteredArray.push(lot);

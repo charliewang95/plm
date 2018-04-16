@@ -39,49 +39,69 @@ var updateNetworkHelper = function(res, next, date, i, items, callback) {
         callback();
     } else {
         var item = items[i];
-        var productionName = item.productName;
+        var productName = item.productName;
         var quantity = Number(item.quantity);
         var totalRevenue = Number(item.totalRevenue);
-        console.log("selling item "+productionName);
+        console.log("selling item "+productName);
         console.log(item);
-        DistributorNetwork.findOne({productNameUnique: productionName.toLowerCase()}, function(err, dn){
+        DistributorNetwork.findOne({productNameUnique: productName.toLowerCase()}, function(err, dn){
             if (err) return next(err);
             else {
-                console.log("quantity to sell = "+quantity);
-                console.log("quantity in total = "+dn.numUnit);
-                console.log("quantity sold = "+dn.numSold);
-                if (quantity + dn.numSold > dn.numUnit) return res.status(400).send('Action Denied. Quantity of product '+
-                    productionName+' in storage is '+(dn.numUnit - dn.numSold));
-                var newSoldUnit = dn.numSold + quantity;
-                var newTotalRevenue = dn.totalRevenue + totalRevenue;
-                console.log("newSoldUnit "+newSoldUnit+" newTotalRevenue "+newTotalRevenue);
-                dn.update({totalRevenue: newTotalRevenue, numSold:newSoldUnit}, function(err, obj){
-                    if (newSoldUnit == dn.numUnit) {
-                        dn.remove(function(err){
-                            freshness.findOne({productNameUnique: productionName.toLowerCase()}, function(err, fresh){
-                                fresh.remove(function(err){
-                                    updateNetworkHelper(res, next, date, i+1, items, callback);
+                lotPickerHelper(req, res, next, productName, quantity, function(){
+                    console.log("quantity to sell = "+quantity);
+                    console.log("quantity in total = "+dn.numUnit);
+                    console.log("quantity sold = "+dn.numSold);
+                    if (quantity + dn.numSold > dn.numUnit) return res.status(400).send('Action Denied. Quantity of product '+
+                        productName+' in storage is '+(dn.numUnit - dn.numSold));
+                    var newSoldUnit = dn.numSold + quantity;
+                    var newTotalRevenue = dn.totalRevenue + totalRevenue;
+                    console.log("newSoldUnit "+newSoldUnit+" newTotalRevenue "+newTotalRevenue);
+                    dn.update({totalRevenue: newTotalRevenue, numSold:newSoldUnit}, function(err, obj){
+                        if (newSoldUnit == dn.numUnit) {
+                            //dn.remove(function(err){
+                                ProductionFreshness.findOne({productNameUnique: productName.toLowerCase()}, function(err, fresh){
+                                    fresh.remove(function(err){
+                                        updateNetworkHelper(res, next, date, i+1, items, callback);
+                                    })
                                 })
-                            })
-                        })
-                    } else {
-                        freshness.updateProductAverageDelete(res, next, date, dn, quantity, function(){
-                            freshness.updateProductOldestDelete(res, next, date, dn, quantity, function(){
-                                updateNetworkHelper(res, next, date, i+1, items, callback);
-                            })
-                        })
-                    }
+                            //})
+                        } else {
+//                            freshness.updateProductAverageDelete(res, next, date, dn, quantity, function(){
+//                                freshness.updateProductOldestDelete(res, next, date, dn, quantity, function(){
+                                    updateNetworkHelper(res, next, date, i+1, items, callback);
+//                                })
+//                            })
+                        }
+                    });
                 });
             }
         });
     }
 };
 
+var lotPickerHelper = function(req, res, next, productName, quantity, callback) {
+    Product.getOldestLot(res, productName.toLowerCase(), function(lot){
+        if (quantity < lot.numUnitLeft) {
+            var newNumUnit = lot.numUnitLeft - quantity;
+            lot.update({numUnitLeft: newNumUnit}, function(err, obj){
+                callback();
+            });
+        } else if (quantity == lot.numUnit) {
+            lot.update({numUnitLeft: 0, empty: true}, function(err){
+                callback();
+            });
+        } else {
+            lot.update({numUnitLeft: 0, empty: true}, function(err){
+                lotPickerHelper(req, res, next, productName, quantity - lot.numUnitLeft, callback);
+            });
+        }
+    });
+};
+
 exports.getFresh = function(req, res, next) {
     console.log("get product fresh called");
     DistributorNetwork.find({}, function(err, dns){
         getFreshHelper(req, res, next, 0, dns, function(){
-            console.log('got it?');
             ProductFreshness.find({}, function(err, fresh){
                 //console.log(fresh);
                 res.json(fresh);
@@ -102,4 +122,3 @@ var getFreshHelper = function(req, res, next, i, dns, callback){
         });
     }
 }
-
