@@ -64,6 +64,7 @@ ProductionLineSchema.methods.getUtility = function(startTime, endTime, callback)
     var tempIndex;
 
     if (!this.dates || this.dates.length == 0) callback(0);
+    else {
 
     for (var i = 0; i < this.dates.length; i++) {
         var tempDate = this.dates[i];
@@ -75,9 +76,9 @@ ProductionLineSchema.methods.getUtility = function(startTime, endTime, callback)
         }
     }
 
-    if (startFound && i != 0 || !startFound) { 
+    if (startFound && i != 0 || !startFound) {
         console.log("ASDSADASDASd");
-        console.log(this.dates);
+        console.log(this);
         var tempEndTime = this.dates[i-1].endDate;
         if (tempEndTime > startTime) {
             totalBusy += tempEndTime - startTime;
@@ -98,6 +99,7 @@ ProductionLineSchema.methods.getUtility = function(startTime, endTime, callback)
     var eff = Math.ceil(totalBusy/totalTime*10000)/100;
 
     callback(eff);
+  }
 }
 
 mongoose.model('ProductionLine', ProductionLineSchema);
