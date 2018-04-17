@@ -14,7 +14,7 @@ import { MenuItem } from 'material-ui/Menu';
 import Button from 'material-ui/Button';
 import IngredientItem from './IngredientItem.js';
 import {ingredientData} from '../shoppingCart/dummyData';
-
+import { ToastContainer, toast } from 'react-toastify';
 
 // TODO: Get sessionID and UserID
 var sessionId = "";
@@ -108,7 +108,7 @@ class SelectIngredients extends Component {
 
       this.setState({options: ans});
     }catch(e){
-      alert(e);
+      toast.error(e);
     }
   }
 
@@ -199,7 +199,7 @@ class SelectIngredients extends Component {
         this.setState({ingredientsArray: this.state.ingredientsArray});
         this.props.handleChange(this.state.ingredientsArray);
       }else
-        alert("Quantity must be a positive number.");
+        toast.error("Quantity must be a positive number.");
   }
 
 
@@ -210,7 +210,7 @@ updateQuantityHere(event){
       if ( event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
          this.setState({inputQuantity: event.target.value})
       }else{
-        alert("Quantity must be a positive number.");
+        toast.error("Quantity must be a positive number.");
       }
   }
 

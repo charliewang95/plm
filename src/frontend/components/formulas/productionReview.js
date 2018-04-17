@@ -218,8 +218,14 @@ class ProductionReview extends React.Component {
     console.log(temp.state.formulaRows[0]);
     console.log("check out formula final ")
     console.log(temp.state.selectedProductionLine);
-    await formulaActions.checkoutFormula("checkout",temp.state.formulaRows[0]._id,
-                              Number(temp.state.addedQuantity), temp.state.selectedProductionLine,
+    const _id = temp.state.formulaRows[0]._id;
+    const addedQuantity = temp.state.addedQuantity;
+    const selectedProductionLine = temp.state.selectedProductionLine;
+    console.log("_id is " + _id);
+    console.log("addedQuantity is " + addedQuantity);
+    console.log("selectedProductionLine is " + selectedProductionLine);
+    await formulaActions.checkoutFormula("checkout", _id,
+                              Number(addedQuantity), selectedProductionLine,
                               sessionId, function(res){
          if (res.status === 400) {
             PubSub.publish('showAlert', res.data);

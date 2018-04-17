@@ -158,9 +158,6 @@ async loadProductionLine(){
     if(!temp.state.name){
       toast.error(" Please enter the production line name. ");
       return false;
-    }else if (!temp.state.description){
-      toast.error(" Please enter the description. ");
-      return false;
     }
       return true;
   }
@@ -189,6 +186,9 @@ async loadProductionLine(){
     console.log("submit formula ");
     var isValid = temp.isValid();
     if(isValid && temp.state.isCreateNew){
+      if(temp.state.description==''){
+        toast.warning("There is no description for: " + temp.state.name);
+      }
       await productionLineActions.addProductionLine(temp.state.name, temp.state.description, 
         temp.state.formulasArray, temp.state.isIdle, sessionId, function(res){
               //TODO: Please update the error accordingly
@@ -239,7 +239,6 @@ async loadProductionLine(){
                 onChange={this.handleChange('description')}
                 margin="normal"
                 disabled = {this.state.isDisabled}
-                required
                 multiline
               />
           </FormGroup>

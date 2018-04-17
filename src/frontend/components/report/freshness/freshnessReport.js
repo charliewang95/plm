@@ -123,7 +123,8 @@ export default class FreshnessReport extends React.PureComponent {
             pageSizes={pageSizes}
           />
         </Grid>
-        <span>Overall Freshness: {this.state.overallFreshness}</span>
+        <p><font style={{marginLeft: 20}} size="4">Overall Freshness: {this.state.overallFreshness}</font></p>
+        <br />
       </Paper>
     );
   }

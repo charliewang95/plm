@@ -14,12 +14,7 @@ import { withStyles } from 'material-ui/styles';
 import dummyData from '../../orders/dummyData';
 import * as ingredientActions from '../../../interface/ingredientInterface';
 import * as testConfig from '../../../../resources/testConfig.js';
-import { TimePicker, DatePicker, DateTimePicker } from 'material-ui-pickers';
-import KeyboardArrowLeft from 'material-ui-icons/KeyboardArrowLeft';
-import KeyboardArrowRight from 'material-ui-icons/KeyboardArrowRight';
-import DateRangeIcon from 'material-ui-icons/DateRange';
-import AccessTimeIcon from 'material-ui-icons/AccessTime';
-import KeyboardIcon from 'material-ui-icons/Keyboard';
+
 // const sessionId = testConfig.sessionId;
 var sessionId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
@@ -98,15 +93,7 @@ export default class FinancialReport extends React.PureComponent {
       pageSize,pageSizes,columnOrder} = this.state;
     return (
       <Paper>
-      <DateTimePicker
-          value={this.state.selectedDateTime}
-          onChange={this.handleDateTimeChange}
-          leftArrowIcon={<KeyboardArrowLeft/>}
-          rightArrowIcon={<KeyboardArrowRight/>}
-          dateRangeIcon={<DateRangeIcon/>}
-          timeIcon={<AccessTimeIcon/>}
-          keyboardIcon={<KeyboardIcon/>}
-        />
+      
         <Grid
           allowColumnResizing = {true}
           rows={rows}

@@ -627,6 +627,16 @@ class ShoppingCart extends React.Component {
                   disabled = {false}> Checkout </Button>}
       </div>
       </Paper>
+      <div>
+      {(isAdmin || isManager) && <Button raised color="primary"
+      align="left"
+      component={Link} to="/orders"
+      style = {{marginLeft: 380, marginBottom: 30}}
+      > Document Order for Ingredients</Button>}
+
+      {/* {currentTab===1 && <Paper> <Intermediates/> </Paper>} */}
+    </div>
+      
     </div>
 
     );

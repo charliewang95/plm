@@ -150,7 +150,8 @@ class Product extends React.PureComponent {
 
   componentDidMount() {
     var temp = this;
-    setTimeout(function(){ temp.loadProductInfo(); temp.setState({loading: false})}, 1000);
+    //setTimeout(function(){ temp.loadProductInfo(); temp.setState({loading: false})}, 1000);
+    temp.loadProductInfo();  
   }
 
   async loadProductInfo(){
@@ -207,9 +208,6 @@ class Product extends React.PureComponent {
             value={this.state.endDate}
             className='my-custom-datepicker-component'
           />
-          <br/>
-             {this.state.loading && <LinearProgress/>}
-          <br/>
         <Grid
           allowColumnResizing = {true}
           rows={rows}

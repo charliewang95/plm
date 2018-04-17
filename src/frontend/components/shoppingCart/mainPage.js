@@ -33,21 +33,37 @@ const styles = theme => ({
   },
 });
 
+//for deciding which tab to display when reloading
+const pendingOrderKey = 'goToPendingOrders';
+
+
 class ScrollableTabsButtonAuto extends React.Component {
+  constructor(props){
+    super(props);
+    const defaultTab = sessionStorage.getItem(pendingOrderKey)? 1: 0;
+    console.log('defaultTab is ' + defaultTab);
+    this.state={
+      value: defaultTab,
+    }
 
-  state = {
-    value: 0,
-  };
+    this.switchToPendingOrders = this.switchToPendingOrders.bind();
+  }
 
-  handleChange = (event, value) => {
+  handleChange(event, value){
     this.setState({ value });
   };
 
-  switchToPendingOrders = () => {
+  switchToPendingOrders(){
   	this.setState({value: 1});
   }
 
-  switchToPendingOrders = this.switchToPendingOrders.bind();
+
+  componentWillMount(){
+    console.log("componentWillMount()");
+    sessionStorage.removeItem(pendingOrderKey);
+    console.log(pendingOrderKey + " is removed from sessionStorage");
+    console.log(sessionStorage.getItem(pendingOrderKey));
+  }
 
   render() {
     const { classes } = this.props;
