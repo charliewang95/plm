@@ -5,11 +5,7 @@ import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import Tabs, { Tab } from 'material-ui/Tabs';
 import Typography from 'material-ui/Typography';
-import FinancialReport from './financialReport';
-import ProductionReport from './productionReport';
 import FreshnessReport from './freshnessReport';
-import RecallReport from './recallReport';
-import ProfitabilityReport from './profitabilityReport';
 import ProductFreshnessReport from './productFreshnessReport';
 function TabContainer(props) {
   return (
@@ -32,7 +28,7 @@ const styles = theme => ({
   },
 });
 
-class ScrollableTabsButtonAuto extends React.Component {
+class FreshnessMain extends React.Component {
   state = {
     value: 0,
   };
@@ -56,27 +52,19 @@ class ScrollableTabsButtonAuto extends React.Component {
             scrollable
             scrollButtons="auto"
           >
-            <Tab label="Spending" />
-            <Tab label="Production" />
             <Tab label="Ingredient Freshness" />
             <Tab label="Product Freshness" />
-            <Tab label="Profitability" />
-            <Tab label="Recall" />
           </Tabs>
         </AppBar>
-        {value === 0 && <FinancialReport/>}
-        {value === 1 && <ProductionReport/>}
-        {value === 2 && <FreshnessReport/>}
-        {value === 3 && <ProductFreshnessReport/>}
-        {value === 4 && <ProfitabilityReport/>}
-        {value === 5 && <RecallReport/>}
+        {value === 0 && <FreshnessReport/>}
+        {value === 1 && <ProductFreshnessReport/>}
       </Paper>
     );
   }
 }
 
-ScrollableTabsButtonAuto.propTypes = {
+FreshnessMain.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ScrollableTabsButtonAuto);
+export default withStyles(styles)(FreshnessMain);

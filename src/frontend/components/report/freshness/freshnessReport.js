@@ -11,12 +11,9 @@ import {
 } from '@devexpress/dx-react-grid';
 import Styles from  'react-select/dist/react-select.css';
 import { withStyles } from 'material-ui/styles';
-import dummyData from '../orders/dummyData';
-import * as ingredientActions from '../../interface/ingredientInterface';
-
-
-import * as testConfig from '../../../resources/testConfig.js';
-import freshnessReportData from './testData';
+import dummyData from '../../orders/dummyData';
+import * as ingredientActions from '../../../interface/ingredientInterface';
+import * as testConfig from '../../../../resources/testConfig.js';
 
 // const sessionId = testConfig.sessionId;
 var sessionId = "";

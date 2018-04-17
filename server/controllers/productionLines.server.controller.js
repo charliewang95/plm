@@ -32,13 +32,13 @@ exports.getEfficiencies = function(req, res, next) {
     var endTime = req.params.endTime;
     var retArr = [];
     ProductionLine.find({}, function(err, pls){
-        getEfficienciesHelper(req, res, next, 0, pls, [], function(retArr){
+        getEfficienciesHelper(req, res, next, 0, pls, [], startTime, endTime, function(retArr){
             res.json(retArr);
         })
     });
 }
 
-var getEfficienciesHelper = function(req, res, next, i, pls, retArr, callback) {
+var getEfficienciesHelper = function(req, res, next, i, pls, retArr, startTime, endTime, callback) {
     if (i == pls.length) {
         callback(retArr);
     } else {
@@ -48,7 +48,7 @@ var getEfficienciesHelper = function(req, res, next, i, pls, retArr, callback) {
         pl.getUtility(startTime, endTime, function(eff){
             effObj.efficiency = eff;
             retArr.push(effObj);
-            getEfficienciesHelper(req, res, next, i+1, pls, retArr, callback);
+            getEfficienciesHelper(req, res, next, i+1, pls, retArr, startTime, endTime, callback);
         });
     }
 }
@@ -66,4 +66,3 @@ exports.getProductionLineByName = function(req, res, next) {
         else return res.json(pl);
     });
 }
-

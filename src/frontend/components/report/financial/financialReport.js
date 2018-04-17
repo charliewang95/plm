@@ -11,31 +11,37 @@ import {
 } from '@devexpress/dx-react-grid';
 import Styles from  'react-select/dist/react-select.css';
 import { withStyles } from 'material-ui/styles';
-import dummyData from '../orders/dummyData';
-import * as formulaActions from '../../interface/formulaInterface';
-
-import * as testConfig from '../../../resources/testConfig.js';
-
+import dummyData from '../../orders/dummyData';
+import * as ingredientActions from '../../../interface/ingredientInterface';
+import * as testConfig from '../../../../resources/testConfig.js';
+import { TimePicker, DatePicker, DateTimePicker } from 'material-ui-pickers';
+import KeyboardArrowLeft from 'material-ui-icons/KeyboardArrowLeft';
+import KeyboardArrowRight from 'material-ui-icons/KeyboardArrowRight';
+import DateRangeIcon from 'material-ui-icons/DateRange';
+import AccessTimeIcon from 'material-ui-icons/AccessTime';
+import KeyboardIcon from 'material-ui-icons/Keyboard';
 // const sessionId = testConfig.sessionId;
 var sessionId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
-export default class ProductionReport extends React.PureComponent {
+
+export default class FinancialReport extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
       columns: [
-        { name: 'name', title: 'Formula Name' },
-        { name: 'totalProvided', title: 'Total Units Produced' },
-        { name: 'totalCost', title: 'Total Cost of Ingredients ($)' },
+        { name: 'name', title: 'Ingredient Name' },
+        { name: 'moneySpent', title: 'Total Expenditure ($) ' },
+        { name: 'moneyProd', title: 'Production Expenditure ($)' },
       ],
       rows: [],
       sorting:[],
       currentPage: 0,
       pageSize: 10,
       pageSizes: [10, 50, 100, 500],
-      columnOrder: ['name', 'totalProvided', 'totalCost'],
+      columnOrder: ['name', 'moneySpent', 'moneyProd'],
+      selectedDateTime: new Date(),
     };
     this.changeSorting = sorting => this.setState({ sorting });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
@@ -43,20 +49,25 @@ export default class ProductionReport extends React.PureComponent {
     this.changeColumnOrder = (order) => {
       this.setState({ columnOrder: order });
     };
-
+    this.handleDateTimeChange = dateTime => {
+      this.setState({ selectedDateTime: dateTime });
+    }
   }
 
   componentDidMount(){
-    this.loadAllFormulas();
+    this.loadAllIngredients();
   }
 
-  async loadAllFormulas(){
+
+
+  async loadAllIngredients(){
       var rawData = [];
 
     // try{
        if(READ_FROM_DATABASE){
          sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-         rawData = await formulaActions.getAllFormulasAsync(sessionId);
+         rawData = await ingredientActions.getAllIngredientsOnlyAsync(sessionId);
+         rawData = rawData.data;
        }else{
          rawData = dummyData;
        }
@@ -65,16 +76,18 @@ export default class ProductionReport extends React.PureComponent {
        // alert(e);
      // }
      // adds integer values as row id
+
      var processedData = [];
       if(rawData){
         processedData = [...rawData.map((row, index)=> ({
-            id: index,...row,
-            totalProvided: Math.round(row.totalProvided*1000)/1000,
-            totalCost: Math.round(row.totalCost*100)/100,
+            id: index,
+            ...row,
+            moneySpent: Math.round(row.moneySpent*100)/100,
+            moneyProd: Math.round(row.moneyProd*100)/100,
           })),
         ];
       }
-      
+
      this.setState({rows:processedData});
    }
 
@@ -85,6 +98,15 @@ export default class ProductionReport extends React.PureComponent {
       pageSize,pageSizes,columnOrder} = this.state;
     return (
       <Paper>
+      <DateTimePicker
+          value={this.state.selectedDateTime}
+          onChange={this.handleDateTimeChange}
+          leftArrowIcon={<KeyboardArrowLeft/>}
+          rightArrowIcon={<KeyboardArrowRight/>}
+          dateRangeIcon={<DateRangeIcon/>}
+          timeIcon={<AccessTimeIcon/>}
+          keyboardIcon={<KeyboardIcon/>}
+        />
         <Grid
           allowColumnResizing = {true}
           rows={rows}

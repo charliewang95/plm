@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 //ui stuff
 import Select from 'react-select';
 //local imports
-import * as IngredientInterface from '../../../interface/ingredientInterface';
+import * as IngredientInterface from '../../../../interface/ingredientInterface';
 
 //globals
 var sessionId = "";
