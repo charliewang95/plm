@@ -177,7 +177,22 @@ export default class RecallReport extends React.PureComponent{
 		//get lot information from backend
 		const arrayOfLots = await this.getLotInfo();
 		const filteredLots = this.filterLotsBasedOnVendorName(arrayOfLots, vendorName);
-		const possibleLotNumbers = filteredLots.map(lotObject => (lotObject.lotNumber))
+
+		//added by charlie
+		var tempArr = [];
+		for (var i = 0; i < filteredLots.length; i++){
+		    var flag = false;
+		    for (var j = 0; j < tempArr.length; j++){
+		        if (tempArr[j].lotNumber === filteredLots[i].lotNumber){
+		            flag = true;
+		        }
+		    }
+		    if (!flag) tempArr.push(filteredLots[i]);
+		}
+
+		//
+
+		const possibleLotNumbers = tempArr.map(lotObject => (lotObject.lotNumber))
 		const labelValuePairs = possibleLotNumbers.map(lotNumber => ({
 			value: lotNumber,
 			label: lotNumber
@@ -197,7 +212,19 @@ export default class RecallReport extends React.PureComponent{
 
 	async skipVendor(selectedIngredientObject){
 		const arrayOfLots = await this.getLotInfoFromObject(selectedIngredientObject);
-		const possibleLotNumbers = arrayOfLots.map(lotObject => (lotObject.lotNumber))
+		//added by charlie
+        var tempArr = [];
+        for (var i = 0; i < arrayOfLots.length; i++){
+            var flag = false;
+            for (var j = 0; j < tempArr.length; j++){
+                if (tempArr[j].lotNumber === arrayOfLots[i].lotNumber){
+                    flag = true;
+                }
+            }
+            if (!flag) tempArr.push(arrayOfLots[i]);
+        }
+
+		const possibleLotNumbers = tempArr.map(lotObject => (lotObject.lotNumber))
 		const labelValuePairs = possibleLotNumbers.map(lotNumber => ({
 			value: lotNumber,
 			label: lotNumber
@@ -281,7 +308,7 @@ export default class RecallReport extends React.PureComponent{
       		if (this.state.availableLotObjects[i].lotNumber === lotNumber){
       			console.log("Found an lot with lot number " + lotNumber);
       			console.log(this.state.availableLotObjects[i]);
-      			return this.state.availableLotObjects[i]._id;
+      			return this.state.availableLotObjects[i].lotId;
       		}
     	}
     	return null;
@@ -326,7 +353,7 @@ export default class RecallReport extends React.PureComponent{
 			lotsNeedToBeRecalled = lotsNeedToBeRecalled.concat(currentLot);
 
 			idOfLotsAlreadyConsidered.push(currentLotId);
-			const lotNumberofNextIngredient = currentLot.lotNumber;
+			const lotNumberofNextIngredient = currentLot.lotNumberProduct;
 			const nameOfNextIngredient = currentLot.productName;
 			const vendorName = "null";
 			console.log("Requesting recall based on the following parameters: \n" + 
