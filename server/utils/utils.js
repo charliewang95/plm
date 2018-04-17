@@ -592,12 +592,12 @@ var processFormulaHelperAddNewCreate = function(res, next, i, formula, newProduc
                     formulasInProductionLine = formulasInProductionLine ? formulasInProductionLine : [];
                     formulasInProductionLine.push(formula.name);
                     pl.update({formulaNames: formulasInProductionLine}, function(err, newPl){
-                        processFormulaHelperAddNewCreate(res, next, i+1, newProductionLineNames, oldProductionLineNames);
+                        processFormulaHelperAddNewCreate(res, next, i+1, formula, newProductionLineNames, oldProductionLineNames);
                     });
                 }
             });
         } else {
-            processFormulaHelperAddNewCreate(res, next, i+1, newProductionLineNames, oldProductionLineNames);
+            processFormulaHelperAddNewCreate(res, next, i+1, formula, newProductionLineNames, oldProductionLineNames);
         }
     }
 }

@@ -3,6 +3,8 @@ var User = mongoose.model('User');
 var Order = mongoose.model('Order');
 var Ingredient = mongoose.model('Ingredient');
 var IngredientPrice = mongoose.model('IngredientPrice');
+var IngredientFreshness = mongoose.model('IngredientFreshness');
+var ProductFreshness = mongoose.model('ProductFreshness');
 var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
 var DistributorNetwork = mongoose.model('DistributorNetwork');
@@ -109,7 +111,7 @@ var addIngredientLotsHelper = function(req, res, next, j, order, assignments, ca
                         newIngredientLot.vendorName = order.vendorName;
                         newIngredientLot.vendorNameUnique = order.vendorName.toLowerCase();
                         newIngredientLot.save(function(err){
-                            freshness.updateAverageAdd(res, next, order.ingredientName, new Date(), numPackage * ingredient.numUnitPerPackage, function(){
+                            addIngredientFreshness(res, next, order.ingredientName, function(){
                                 console.log('called here 1');
                                 addIngredientLotsHelper(req, res, next, j+1, order, assignments, callback);
                             });
@@ -125,7 +127,7 @@ var addIngredientLotsHelper = function(req, res, next, j, order, assignments, ca
                     console.log(ingredient);
                     console.log("newNumUnit: " + newNumUnit); 
                     ingredientLot.update({numUnit: newNumUnit}, function(err, obj){
-                        freshness.updateAverageAdd(res, next, order.ingredientName, new Date(), numPackage * ingredient.numUnitPerPackage, function(){
+                        addIngredientFreshness(res, next, order.ingredientName, function(){
                             console.log('called here 2');
                             addIngredientLotsHelper(req, res, next, j+1, order, assignments, callback);
                         });
@@ -136,31 +138,23 @@ var addIngredientLotsHelper = function(req, res, next, j, order, assignments, ca
     }
 }
 
+var addIngredientFreshness = function(res, next, ingredientName, callback) {
+    IngredientFreshness.findOne({ingredientNameUnique: ingredientName.toLowerCase()}, function(err, fresh){
+        if (err) return next(err);
+        else if (!fresh) {
+            var newFresh = new IngredientFreshness();
+            newFresh.ingredientName = ingredientName;
+            newFresh.ingredientNameUnique = ingredientName.toLowerCase();
+            newFresh.save(function(err){
+                callback();
+            });
+        } else {
+            callback();
+        }
+    })
+}
+
 var updateStorage = function(order) {
-//    Storage.findOne({temperatureZone: 'warehouse'}, function(err, storage){
-//        var capacity = storage.capacity;
-//        var newOccupied = storage.currentOccupiedSpace + wSpace;
-//        var newEmpty = capacity - newOccupied;
-//        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
-//
-//        });
-//    });
-//    Storage.findOne({temperatureZone: 'refrigerator'}, function(err, storage){
-//        var capacity = storage.capacity;
-//        var newOccupied = storage.currentOccupiedSpace + rSpace;
-//        var newEmpty = capacity - newOccupied;
-//        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
-//
-//        });
-//    });
-//    Storage.findOne({temperatureZone: 'freezer'}, function(err, storage){
-//        var capacity = storage.capacity;
-//        var newOccupied = storage.currentOccupiedSpace + fSpace;
-//        var newEmpty = capacity - newOccupied;
-//        storage.update({currentOccupiedSpace: newOccupied, currentEmptySpace: newEmpty}, function(err, obj){
-//
-//        });
-//    });
     var ingredientId = order.ingredientId;
     var space = order.space;
     console.log("CALLED())()()()())()()()())(");
@@ -379,7 +373,7 @@ var updateProductionLineAfterComplete = function(res, next, productionLine, date
     var lastDate = dates[dates.length - 1];
     lastDate.endDate = date;
     dates[dates.length] = lastDate;
-    productionLine.update({isIdle: true, dates: dates}, function(err, obj){
+    productionLine.update({isIdle: true, dates: dates, currentFormula: null}, function(err, obj){
         callback(productionLine.arrayInProductOut);
     });
 }
@@ -479,9 +473,15 @@ var updateIngredientHelper = function(req, res, next, multiplier, ingredients, f
                 var newMoneyProd = moneyProd+1.0*ingredientQuantity.quantity*multiplier*(moneySpent-moneyProd)/numUnit;
                 newSpentMoney += 1.0*ingredientQuantity.quantity*multiplier*(moneySpent-moneyProd)/numUnit;
 
+                if (newNumUnit <= 0) {
+                    IngredientFreshness.findOne({ingredientNameUnique: ingredient.nameUnique}, function(err, fresh){
+                        fresh.remove(function(err){});
+                    });
+                }
+
                 Ingredient.getPackageSpace(ingredient.packageName, function(retSpace){
                     var newSpace = remainingPackages * retSpace;
-
+                    var oldSpace = ingredient.space;
                     ingredient.update({numUnit: newNumUnit, space: newSpace, moneyProd: newMoneyProd}, function(err, obj){
                         if (err) return next(err);
                         else {
@@ -489,7 +489,8 @@ var updateIngredientHelper = function(req, res, next, multiplier, ingredients, f
                                 var capacity = storage.capacity;
                                 var capacityEmpty = storage.currentEmptySpace;
                                 var capacityOccupied = storage.currentOccupiedSpace;
-                                var subSpace = retSpace*Math.ceil(1.0*ingredientQuantity.quantity*multiplier/ingredient.numUnitPerPackage);
+                                //var subSpace = retSpace*Math.ceil(1.0*ingredientQuantity.quantity*multiplier/ingredient.numUnitPerPackage);
+                                var subSpace = oldSpace - newSpace;
                                 storage.update({currentOccupiedSpace: capacityOccupied-subSpace, currentEmptySpace: capacity-capacityOccupied+subSpace}, function(err, obj){
                                     if (err) return next(err);
                                     else {
@@ -530,25 +531,25 @@ var lotPickerHelper = function(req, res, next, ingredientName, quantity, arrayIn
             if (quantity < lot.numUnit) {
                 var newNumUnit = lot.numUnit - quantity;
                 lot.update({numUnit: newNumUnit}, function(err, obj){
-                    freshness.updateAverageDelete(res, next, date, ingredientName, quantity, function(){
+//                    freshness.updateAverageDelete(res, next, date, ingredientName, quantity, function(){
                         callback(arrayInProduct);
-                    });
+//                    });
                 });
             } else if (quantity == lot.numUnit) {
                 lot.remove(function(err){
-                    freshness.updateAverageDelete(res, next, date, ingredientName, quantity, function(){
-                        freshness.updateOldestDelete(res, next, date, ingredientName, quantity, function(){
+//                    freshness.updateAverageDelete(res, next, date, ingredientName, quantity, function(){
+//                        freshness.updateOldestDelete(res, next, date, ingredientName, quantity, function(){
                             callback(arrayInProduct);
-                        });
-                    });
+//                        });
+//                    });
                 });
             } else {
                 lot.remove(function(err){
-                    freshness.updateAverageDelete(res, next, date, ingredientName, quantity, function(){
-                        freshness.updateOldestDelete(res, next, date, ingredientName, quantity, function(){
+//                    freshness.updateAverageDelete(res, next, date, ingredientName, quantity, function(){
+//                        freshness.updateOldestDelete(res, next, date, ingredientName, quantity, function(){
                             lotPickerHelper(req, res, next, ingredientName, quantity - lot.numUnit, arrayInProduct, date, formula, callback);
-                        });
-                    });
+//                        });
+//                    });
                 });
             }
 //        });
@@ -570,11 +571,12 @@ var updateIngredientProductHelper = function(req, res, next, arrayInProductOut, 
         var newIngredientProduct = new IngredientProduct();
         newIngredientProduct.ingredientNameUnique = item.ingredientName.toLowerCase();
         newIngredientProduct.vendorNameUnique = (item.vendorName == null) ? '': item.vendorName.toLowerCase();
+        newIngredientProduct.lotNumber = item.lotNumber;
         newIngredientProduct.lotNumberUnique = item.lotNumber.toLowerCase();
         newIngredientProduct.lotId = item.lotId;
         newIngredientProduct.productName = formula.name;
         newIngredientProduct.date = date;
-        newIngredientProduct.lotNumber = (formula.isIntermediate) ? 'IP'+date.getTime() : 'PR'+date.getTime();
+        newIngredientProduct.lotNumberProduct = (formula.isIntermediate) ? 'IP'+date.getTime() : 'PR'+date.getTime();
         console.log(newIngredientProduct);
         newIngredientProduct.save(function(err){
             updateIngredientProductHelper(req, res, next, arrayInProductOut, formula, date, i+1, callback);
@@ -587,6 +589,8 @@ var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, d
     product.name = formula.name;
     product.nameUnique = formula.name.toLowerCase();
     product.numUnit = numUnit;
+    product.numUnitLeft = numUnit;
+    product.empty = false;
     product.date = date;
     product.lotNumber = 'PR'+date.getTime();
     product.ingredients = arrayInProductOut;
@@ -594,9 +598,29 @@ var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, d
     product.save(function(err){
         console.log('Product '+formula.name+' added');
         if (err) return next(err);
-        else callback();
+        else {
+            addProductFreshness(res, next, formula.name, function(){
+                callback();
+            });
+        }
     })
 };
+
+var addProductFreshness = function(res, next, productName, callback) {
+    ProductFreshness.findOne({productNameUnique: productName.toLowerCase()}, function(err, fresh){
+        if (err) return next(err);
+        else if (!fresh) {
+            var newFresh = new ProductFreshness();
+            newFresh.productName = productName;
+            newFresh.productNameUnique = productName.toLowerCase();
+            newFresh.save(function(err){
+                callback();
+            });
+        } else {
+            callback();
+        }
+    })
+}
 
 var addDistributorNetwork = function(req, res, next, formula, pl, date, callback){ //distribution
     DistributorNetwork.findOne({productNameUnique: formula.nameUnique}, function(err, dn){
@@ -610,17 +634,17 @@ var addDistributorNetwork = function(req, res, next, formula, pl, date, callback
             newDistributorNetworkItem.totalRevenue = 0;
             newDistributorNetworkItem.totalCost = pl.newSpentMoney;
             newDistributorNetworkItem.save(function(err){
-                freshness.updateProductAverageAdd(res, next, newDistributorNetworkItem, date, pl.quantity, function(){
+//                freshness.updateProductAverageAdd(res, next, newDistributorNetworkItem, date, pl.quantity, function(){
                     callback();
-                })
+//                })
             });
         } else {
             var numUnit = dn.numUnit;
             var totalCost = dn.totalCost;
             dn.update({numUnit: numUnit + pl.quantity, totalCost: totalCost + pl.newSpentMoney}, function(err, obj){
-                freshness.updateProductAverageAdd(res, next, dn, date, pl.quantity, function(){
+//                freshness.updateProductAverageAdd(res, next, dn, date, pl.quantity, function(){
                     callback();
-                })
+//                })
             });
         }
     })
@@ -628,71 +652,74 @@ var addDistributorNetwork = function(req, res, next, formula, pl, date, callback
 
 var addIntermediateProductIngredientLot = function(req, res, next, formula, numUnit, totalSpace, date, callback){ //lot
     Ingredient.findOne({nameUnique: formula.nameUnique}, function(err, ingredient){
-        if (err) return next(err);
-        else if (!ingredient){
-            var newIngredient = new Ingredient();
-            //TODO: update moneyspent and moneyprod, if needed
-            newIngredient.name = formula.name;
-            newIngredient.nameUnique = formula.nameUnique;
-            newIngredient.packageName = formula.packageName;
-            newIngredient.temperatureZone = formula.temperatureZone;
-            newIngredient.nativeUnit = formula.nativeUnit;
-            newIngredient.numUnitPerPackage = formula.numUnitPerPackage;
-            newIngredient.numUnit = numUnit;
-            newIngredient.space = totalSpace;
-            newIngredient.isIntermediate = true;
+        addIngredientFreshness(res, next, formula.name, function(){
+            if (err) return next(err);
+            else if (!ingredient){
+                var newIngredient = new Ingredient();
+                //TODO: update moneyspent and moneyprod, if needed
+                newIngredient.name = formula.name;
+                newIngredient.nameUnique = formula.nameUnique;
+                newIngredient.packageName = formula.packageName;
+                newIngredient.temperatureZone = formula.temperatureZone;
+                newIngredient.nativeUnit = formula.nativeUnit;
+                newIngredient.numUnitPerPackage = formula.numUnitPerPackage;
+                newIngredient.numUnit = numUnit;
+                newIngredient.space = totalSpace;
+                newIngredient.isIntermediate = true;
 
-            newIngredient.save(function(err){
-                if (err) return next(err);
-                else {
-                    Ingredient.findOne({nameUnique: newIngredient.nameUnique}, function(err, obj){
-                        var ingredientLot = new IngredientLot();
-                        ingredientLot.ingredientName = newIngredient.name;
-                        ingredientLot.ingredientNameUnique = newIngredient.nameUnique;
-                        ingredientLot.ingredientId = obj._id;
-                        ingredientLot.numUnit = numUnit;
-                        ingredientLot.nativeUnit = newIngredient.nativeUnit;
-                        ingredientLot.date = date;
-                        ingredientLot.lotNumber = 'IP'+date.getTime();
-                        ingredientLot.lotNumberUnique = ingredientLot.lotNumber.toLowerCase();
-                        //ingredientLot.vendorName = '(Intermediate Product)';
-                        ingredientLot.save(function(err){
-                            if (err) return next(err);
-                            else {
-                                freshness.updateAverageAdd(res, next, newIngredient.name, date, numUnit, function(){});
-                                callback();
-                            }
-                        });
-                    });
-                }
-            });
-        } else {
-            var newNumUnit = Number(ingredient.numUnit) + Number(numUnit);
-            var newSpace = Number(ingredient.space) + Number(totalSpace);
-//            products = ingredient.products;
-//            var productInIngredient = new Object();
-//            productInIngredient.productName = formula.name;
-//            productInIngredient.date = date;
-//            productInIngredient.lotNumber = 'IP'+date.getTime();
-//            productInIngredient.vendorName = 'N/A';
-//            products.push(productInIngredient);
-            ingredient.update({numUnit: newNumUnit, space: newSpace}, function(err, obj){
-                var ingredientLot = new IngredientLot();
-                ingredientLot.ingredientName = ingredient.name;
-                ingredientLot.ingredientNameUnique = ingredient.nameUnique;
-                ingredientLot.ingredientId = ingredient._id;
-                ingredientLot.numUnit = Number(numUnit);
-                ingredientLot.nativeUnit = ingredient.nativeUnit;
-                ingredientLot.date = date;
-                ingredientLot.lotNumber = 'IP'+date.getTime();
-                ingredientLot.lotNumberUnique = ingredientLot.lotNumber.toLowerCase();
-                ingredientLot.save(function(err){
+                newIngredient.save(function(err){
                     if (err) return next(err);
-                    else freshness.updateAverageAdd(res, next, ingredient.name, date, numUnit, function(){});
-                    callback();
+                    else {
+                        Ingredient.findOne({nameUnique: newIngredient.nameUnique}, function(err, obj){
+                            var ingredientLot = new IngredientLot();
+                            ingredientLot.ingredientName = newIngredient.name;
+                            ingredientLot.ingredientNameUnique = newIngredient.nameUnique;
+                            ingredientLot.ingredientId = obj._id;
+                            ingredientLot.numUnit = numUnit;
+                            ingredientLot.nativeUnit = newIngredient.nativeUnit;
+                            ingredientLot.date = date;
+                            ingredientLot.lotNumber = 'IP'+date.getTime();
+                            ingredientLot.lotNumberUnique = ingredientLot.lotNumber.toLowerCase();
+                            //ingredientLot.vendorName = '(Intermediate Product)';
+                            ingredientLot.save(function(err){
+                                if (err) return next(err);
+                                else {
+    //                                freshness.updateAverageAdd(res, next, newIngredient.name, date, numUnit, function(){});
+                                    callback();
+                                }
+                            });
+                        });
+                    }
                 });
-            });
-        }
+            } else {
+                var newNumUnit = Number(ingredient.numUnit) + Number(numUnit);
+                var newSpace = Number(ingredient.space) + Number(totalSpace);
+    //            products = ingredient.products;
+    //            var productInIngredient = new Object();
+    //            productInIngredient.productName = formula.name;
+    //            productInIngredient.date = date;
+    //            productInIngredient.lotNumber = 'IP'+date.getTime();
+    //            productInIngredient.vendorName = 'N/A';
+    //            products.push(productInIngredient);
+                ingredient.update({numUnit: newNumUnit, space: newSpace}, function(err, obj){
+                    var ingredientLot = new IngredientLot();
+                    ingredientLot.ingredientName = ingredient.name;
+                    ingredientLot.ingredientNameUnique = ingredient.nameUnique;
+                    ingredientLot.ingredientId = ingredient._id;
+                    ingredientLot.numUnit = Number(numUnit);
+                    ingredientLot.nativeUnit = ingredient.nativeUnit;
+                    ingredientLot.date = date;
+                    ingredientLot.lotNumber = 'IP'+date.getTime();
+                    ingredientLot.lotNumberUnique = ingredientLot.lotNumber.toLowerCase();
+                    ingredientLot.save(function(err){
+                        if (err) return next(err);
+                        else
+    //                    freshness.updateAverageAdd(res, next, ingredient.name, date, numUnit, function(){});
+                            callback();
+                    });
+                });
+            }
+        });
     });
 };
 
