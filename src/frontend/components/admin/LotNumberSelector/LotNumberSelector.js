@@ -118,7 +118,7 @@ class LotNumberSelector extends Component {
       }
       console.log('update quantity in selector');
       console.log(quantity);
-      if(!re.test(quantity)){
+      if(quantity > 0 && !re.test(quantity)){
         // alert("Quantity must be a positive integer");
         toast.error("Quantity must be a positive integer", {
           position: toast.POSITION.TOP_RIGHT
@@ -154,7 +154,7 @@ class LotNumberSelector extends Component {
     //   alert("Please enter a quantity first");
     // }
     const re = /^[1-9][0-9]*$/;
-    if(!re.test(quantity)){
+    if(quantity > 0 && !re.test(quantity)){
       toast.error("Quantity must be a positive integer", {
           position: toast.POSITION.TOP_RIGHT
       });

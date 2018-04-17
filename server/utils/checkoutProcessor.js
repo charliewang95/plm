@@ -367,7 +367,7 @@ exports.markComplete = function(req, res, next){
                                     });
                                 } else {
                                     //TODO: add ingredient and ingerdientLot object if intermediate
-                                    addIntermediateProductIngredientLot(req, res, next, formula, quantity, totalSpace, date, function(){
+                                    addIntermediateProductIngredientLot(req, res, next, formula, quantity, totalSpace, date, pl, function(){
                                         updateProduct(req, res, next, formula, quantity, arrayInProductOut, date, pl, function() {
                                             updateIngredientProduct(req, res, next, pl, formula, date, function(){
                                                 logger.log(user.username, 'mark complete', pl, ProductionLine);
@@ -623,10 +623,10 @@ var lotPickerHelper = function(req, res, next, ingredientName, quantity, arrayIn
 var updateIngredientProduct = function(req, res, next, pl, formula, date, callback) {
     console.log('FFFFFFFFF='+formula);
     var arrayInProductOut = pl.arrayInProductOut;
-    updateIngredientProductHelper(req, res, next, arrayInProductOut, formula, date, 0, callback);
+    updateIngredientProductHelper(req, res, next, arrayInProductOut, formula, date, 0, pl, callback);
 };
 
-var updateIngredientProductHelper = function(req, res, next, arrayInProductOut, formula, date, i, callback) {
+var updateIngredientProductHelper = function(req, res, next, arrayInProductOut, formula, date, i, pl, callback) {
     if (i == arrayInProductOut.length) {
         callback();
     } else {
@@ -639,10 +639,10 @@ var updateIngredientProductHelper = function(req, res, next, arrayInProductOut, 
         newIngredientProduct.lotId = item.lotId;
         newIngredientProduct.productName = formula.name;
         newIngredientProduct.date = date;
-        newIngredientProduct.lotNumberProduct = (formula.isIntermediate) ? 'IP'+date.getTime() : 'PR'+date.getTime();
+        newIngredientProduct.lotNumberProduct = pl.lotNumber;
         console.log(newIngredientProduct);
         newIngredientProduct.save(function(err){
-            updateIngredientProductHelper(req, res, next, arrayInProductOut, formula, date, i+1, callback);
+            updateIngredientProductHelper(req, res, next, arrayInProductOut, formula, date, i+1, pl, callback);
         });
     }
 }
@@ -733,7 +733,7 @@ var addDistributorNetwork = function(req, res, next, formula, pl, date, callback
     })
 };
 
-var addIntermediateProductIngredientLot = function(req, res, next, formula, numUnit, totalSpace, date, callback){ //lot
+var addIntermediateProductIngredientLot = function(req, res, next, formula, numUnit, totalSpace, date, pl, callback){ //lot
     Ingredient.findOne({nameUnique: formula.nameUnique}, function(err, ingredient){
         addIngredientFreshness(res, next, formula.name, function(){
             if (err) return next(err);
@@ -761,7 +761,7 @@ var addIntermediateProductIngredientLot = function(req, res, next, formula, numU
                             ingredientLot.numUnit = numUnit;
                             ingredientLot.nativeUnit = newIngredient.nativeUnit;
                             ingredientLot.date = date;
-                            ingredientLot.lotNumber = 'IP'+date.getTime();
+                            ingredientLot.lotNumber = pl.lotNumber;
                             ingredientLot.lotNumberUnique = ingredientLot.lotNumber.toLowerCase();
                             //ingredientLot.vendorName = '(Intermediate Product)';
                             ingredientLot.save(function(err){
@@ -792,7 +792,7 @@ var addIntermediateProductIngredientLot = function(req, res, next, formula, numU
                     ingredientLot.numUnit = Number(numUnit);
                     ingredientLot.nativeUnit = ingredient.nativeUnit;
                     ingredientLot.date = date;
-                    ingredientLot.lotNumber = 'IP'+date.getTime();
+                    ingredientLot.lotNumber = pl.lotNumber;
                     ingredientLot.lotNumberUnique = ingredientLot.lotNumber.toLowerCase();
                     ingredientLot.save(function(err){
                         if (err) return next(err);

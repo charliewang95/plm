@@ -375,12 +375,12 @@ class ProductionReview extends React.Component {
           </Tooltip> }
           {(this.state.ingredientsToOrder.length==0) &&
           <div>
-            <p><font size="4">Select Production Line</font></p>
+            <p><font size="5">Select Production Line</font></p>
             <ProductionLinesTable hasProductionLines={()=>{this.setState({hasProductionLines: false});}} productionLinesArray={this.state.formulaRows[0].productionLinesArray} handleChange={this.selectProductionLine}/>
             <br/>
           </div>
           }
-          {(!this.state.hasProductionLines) && <p><font size="5">There are no available production lines.</font></p>}
+          {(!this.state.hasProductionLines) && (this.state.ingredientsToOrder.length==0) && <p><font size="5">There are no available production lines.</font></p>}
           {(this.state.ingredientsToOrder.length==0) && (this.state.hasProductionLines) &&
             <Tooltip id="tooltip-bottom" title="Send formula to production" placement="bottom">
               <RaisedButton raised

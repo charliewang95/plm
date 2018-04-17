@@ -41,7 +41,7 @@ const styles = {
       float: 'center'
     },
     saveButton: {
-      marginLeft: 50,
+      marginLeft: 0,
     },
     packageName:{
       marginLeft: 10,
@@ -169,7 +169,9 @@ class AddIngredientForm extends React.Component{
     for(var i =0; i < array.length; i++){
           var lotObject = array[i];
           //var vendorName = this.state.idToNameMap.get(vendorObject.codeUnique);
-          string +=  lotObject.lotNumber+ ": " + lotObject.numUnit ;
+          console.log("lotObject");
+          console.log(lotObject);
+          string +=  "[" + lotObject.date.replace('T', ' ').replace('Z', '') +"]     " + lotObject.lotNumber+ ": " + lotObject.numUnit ;
           sum+=Number(lotObject.numUnit);
           if(i!= (array.length -1)){
             string+='\n';
@@ -224,6 +226,7 @@ class AddIngredientForm extends React.Component{
       var obj = new Object();
       obj.numUnit = lotArray[i].numUnit;
       obj.lotNumber = lotArray[i].lotNumber;
+      obj.date = lotArray[i].date;
       array.push(obj);
       lotIdMap[lotArray[i].lotNumber]= lotArray[i]._id;
     }
