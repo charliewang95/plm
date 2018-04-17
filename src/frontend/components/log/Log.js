@@ -30,6 +30,16 @@ import Button from 'material-ui/Button';
 import * as logActions from '../../interface/logInterface';
 import * as ingredientActions from '../../interface/ingredientInterface';
 
+import { PureComponent, Fragment } from 'react';
+import { IconButton, Icon, InputAdornment } from 'material-ui';
+import {  DateTimePicker } from 'material-ui-pickers';
+import KeyboardArrowLeft from 'material-ui-icons/KeyboardArrowLeft';
+import KeyboardArrowRight from 'material-ui-icons/KeyboardArrowRight';
+import DateRangeIcon from 'material-ui-icons/DateRange';
+import AccessTimeIcon from 'material-ui-icons/AccessTime';
+import KeyboardIcon from 'material-ui-icons/Keyboard';
+import PubSub from 'pubsub-js';
+
 //TODO: get user data
 // const sessionId = testConfig.sessionId;
 var pickerStyle = {
@@ -127,65 +137,95 @@ class Log extends React.PureComponent {
       //editingRowIds: [],
       //rowChanges: {},
     };
-
-    this.handleStartDateChange = this.handleStartDateChange.bind(this);
-    this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
     //this.changeFilters = filters => this.setState({ filters });
-   }
 
-  handleStartDateChange(date) {
-      this.setState({
-        startDate: date
-      }, function(){
-        console.log(this.state.startDate);
-        var newRows = [];
-        for (var i = 0; i<this.state.unchangedRows.length; i++) {
-            if (Number(this.state.unchangedRows[i].date.slice(0,4))>date.getFullYear() ||
-                Number(this.state.unchangedRows[i].date.slice(0,4))==date.getFullYear() && (Number(this.state.unchangedRows[i].date.slice(5,7))>date.getMonth()+1 ||
-                Number(this.state.unchangedRows[i].date.slice(5,7))==date.getMonth()+1 && Number(this.state.unchangedRows[i].date.slice(8,10))>=date.getDate())) {
-                    if (Number(this.state.unchangedRows[i].date.slice(0,4))<this.state.endDate.getFullYear() ||
-                        Number(this.state.unchangedRows[i].date.slice(0,4))==this.state.endDate.getFullYear() && (Number(this.state.unchangedRows[i].date.slice(5,7))<this.state.endDate.getMonth()+1 ||
-                        Number(this.state.unchangedRows[i].date.slice(5,7))==this.state.endDate.getMonth()+1 && Number(this.state.unchangedRows[i].date.slice(8,10))<=this.state.endDate.getDate())) {
-                        newRows.push(this.state.unchangedRows[i]);
-                    }
-            }
-        }
+    this.handleStartDateChange = (date) => {
+      console.log("handleStartDateChange");
+      console.log(date);
+      console.log(this.state.endDate);
+      var endDate = this.state.endDate;
+
+      if(this.state.endDate._d){
+        endDate = this.state.endDate._d;
+      }
+      
+      if(Date.parse(date._d) >  Date.parse(endDate)){
+        PubSub.publish('showAlert', "Start date must be earlier than end date.");
+      }else{
         this.setState({
-            rows: newRows
-        });
-      });
-
-  };
-
-  handleEndDateChange(date) {
-      this.setState({
-        endDate: date
-      }, function(){
-        console.log(this.state.endDate);
-            var newRows = [];
-            for (var i = 0; i<this.state.unchangedRows.length; i++) {
-                if (Number(this.state.unchangedRows[i].date.slice(0,4))<date.getFullYear() ||
-                    Number(this.state.unchangedRows[i].date.slice(0,4))==date.getFullYear() && (Number(this.state.unchangedRows[i].date.slice(5,7))<date.getMonth()+1 ||
-                    Number(this.state.unchangedRows[i].date.slice(5,7))==date.getMonth()+1 && Number(this.state.unchangedRows[i].date.slice(8,10))<=date.getDate())) {
-                    if (Number(this.state.unchangedRows[i].date.slice(0,4))>this.state.startDate.getFullYear() ||
-                        Number(this.state.unchangedRows[i].date.slice(0,4))==this.state.startDate.getFullYear() && (Number(this.state.unchangedRows[i].date.slice(5,7))>this.state.startDate.getMonth()+1 ||
-                        Number(this.state.unchangedRows[i].date.slice(5,7))==this.state.startDate.getMonth()+1 && Number(this.state.unchangedRows[i].date.slice(8,10))>=this.state.startDate.getDate())) {
-                        newRows.push(this.state.unchangedRows[i]);
-                    }
+          startDate: date
+        }, function(){
+          console.log(this.state.startDate);
+          var newRows = [];
+          for (var i = 0; i<this.state.unchangedRows.length; i++) {
+                var date2 = this.state.unchangedRows[i].date;
+                var year = date2.slice(0, 4);
+                var month = date2.slice(5, 7);
+                var day = date2.slice(8, 10);
+                var hours = date2.slice(11, 13);
+                var minutes = date2.slice(14, 16);
+                var seconds = date2.slice(17, 19);
+                var milliseconds = date2.slice(20, 22);
+                var tempDate = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
+                var tempTime = tempDate.getTime();
+                if(tempTime>=date && tempTime<=this.state.endDate){
+                  newRows.push(this.state.unchangedRows[i]);
                 }
-            }
-            this.setState({
-                rows: newRows
-            });
-      });
+          }
+          this.setState({
+              rows: newRows
+          });
+        });
+      }
+    }
+    
+    this.handleEndDateChange = (date) => {
+       console.log("handleEndDateChange");
+       console.log(date);
+       console.log(this.state.startDate);
+
+       var startDate = this.state.startDate;
+
+       if(this.state.startDate._d){
+         startDate = this.state.startDate._d;
+       }
+
+       if(Date.parse(date._d) < Date.parse(startDate)){
+         PubSub.publish('showAlert', "End date must be later than start date.");
+       }else{
+        this.setState({
+          endDate: date
+        }, function(){
+          console.log(this.state.startDate);
+          var newRows = [];
+          for (var i = 0; i<this.state.unchangedRows.length; i++) {
+                var date2 = this.state.unchangedRows[i].date;
+                var year = date2.slice(0, 4);
+                var month = date2.slice(5, 7);
+                var day = date2.slice(8, 10);
+                var hours = date2.slice(11, 13);
+                var minutes = date2.slice(14, 16);
+                var seconds = date2.slice(17, 19);
+                var milliseconds = date2.slice(20, 22);
+                var tempDate = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
+                var tempTime = tempDate.getTime();
+                if(tempTime<=date && tempTime>=this.state.startDate){
+                  newRows.push(this.state.unchangedRows[i]);
+                }
+          }
+          this.setState({
+              rows: newRows
+          });
+        });
+       }
+    }    
   }
 
   componentWillMount(){
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
   }
-
 
   componentDidMount() {
     this.loadLogInfo();
@@ -232,23 +272,42 @@ class Log extends React.PureComponent {
       pageSize, pageSizes, currentPage} = this.state;
 
     return (
+      <div>
+      <p><b><font size="6" color="3F51B5">Logs</font></b></p> 
       <Paper>
-      <div> Start Date: </div>
-        <DatePickerInput style={pickerStyle}
-          readOnly = {true}
-          onChange={this.handleStartDateChange}
-          value={this.state.startDate}
-          className='my-custom-datepicker-component'
-        />
-        <br/>
-        <div> End Date: </div>
-      <DatePickerInput style={pickerStyle}
-          readOnly = {true}
-          onChange={this.handleEndDateChange}
-          value={this.state.endDate}
-          className='my-custom-datepicker-component'
-        />
 
+      <Fragment>
+        <br/>
+        <span style={{marginLeft: 20}}><font size="4">Please specify a date range:</font></span> 
+        <br/>
+        <br/>
+        <div style={{marginLeft: 40}}>
+          <span><font size="4">Start Date: </font></span>
+            <DateTimePicker
+                value={startDate}
+                onChange={this.handleStartDateChange}
+                leftArrowIcon={<KeyboardArrowLeft/>}
+                rightArrowIcon={<KeyboardArrowRight/>}
+                dateRangeIcon={<DateRangeIcon/>}
+                timeIcon={<AccessTimeIcon/>}
+                keyboardIcon={<KeyboardIcon/>}
+              />
+    
+             <span style={{marginLeft: 10}}><font size="4">End Date: </font></span>
+            <DateTimePicker
+                value={endDate}
+                onChange={this.handleEndDateChange}
+                leftArrowIcon={<KeyboardArrowLeft/>}
+                rightArrowIcon={<KeyboardArrowRight/>}
+                dateRangeIcon={<DateRangeIcon/>}
+                timeIcon={<AccessTimeIcon/>}
+                keyboardIcon={<KeyboardIcon/>}
+              />
+            </div>
+          <br/>
+
+      {/* </MuiPickersUtilsProvider> */}
+      </Fragment>
         <Grid
           allowColumnResizing = {true}
           rows={rows}
@@ -271,8 +330,8 @@ class Log extends React.PureComponent {
             pageSizes={pageSizes}
           />
         </Grid>
-
       </Paper>
+      </div>
     );
   }
 }

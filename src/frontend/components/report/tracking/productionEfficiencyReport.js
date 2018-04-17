@@ -38,7 +38,7 @@ export default class ProductionEfficiencyReport extends PureComponent {
     this.state = {
       columns: [
         { name: 'productionLineName', title: 'Production Line ' },
-        { name: 'lineEfficiency', title: 'Efficiency (%)' },
+        { name: 'lineEfficiency', title: 'Utilization (%)' },
       ],
       rows: [],
       sorting:[],
@@ -46,8 +46,8 @@ export default class ProductionEfficiencyReport extends PureComponent {
       pageSize: 10,
       pageSizes: [10, 50, 100, 500],
       columnOrder: ['name', 'moneySpent', 'moneyProd'],
-      startDate:new Date(),
-      endDate: new Date(),
+      startDate:new Date(2018, 0, 1, 0, 0, 0, 0),
+      endDate: new Date(2018, 11, 31, 23, 59, 59, 0),
       overallEfficiency:'',
     };
 
@@ -153,8 +153,12 @@ export default class ProductionEfficiencyReport extends PureComponent {
     return (
       <Paper>
         <Fragment>
-        <div>
-          <span>Start Date: </span>
+        <br/>
+        <span style={{marginLeft: 20}}><font size="4">Please specify a date range:</font></span> 
+        <br/>
+        <br/>
+        <div style={{marginLeft: 40}}>
+          <span><font size="4">Start Date: </font></span>
             <DateTimePicker
                 value={startDate}
                 onChange={this.handleStartDateChange}
@@ -164,10 +168,8 @@ export default class ProductionEfficiencyReport extends PureComponent {
                 timeIcon={<AccessTimeIcon/>}
                 keyboardIcon={<KeyboardIcon/>}
               />
-            </div>
-          <br/>
-            <div>
-             <span>End Date: </span>
+    
+             <span style={{marginLeft: 10}}><font size="4">End Date: </font></span>
             <DateTimePicker
                 value={endDate}
                 onChange={this.handleEndDateChange}
@@ -179,12 +181,13 @@ export default class ProductionEfficiencyReport extends PureComponent {
               />
             </div>
           <br/>
-            <div>
+            <div style={{marginLeft: 40}}>
               <Button
                 raised
                 onClick={(event) => this.loadAllEfficiencies(event)}
-                color="primary">Get Efficiency</Button>
+                color="primary">Get Utilization</Button>
           </div>
+          <br/>
 
       {/* </MuiPickersUtilsProvider> */}
       </Fragment>
@@ -221,7 +224,9 @@ export default class ProductionEfficiencyReport extends PureComponent {
             pageSizes={pageSizes}
           />
         </Grid>
-        <span>Overall Production Efficiency (%): {overallEfficiency} </span>
+        <span style={{marginLeft: 20}}><font size="4">Overall Production Efficiency (%): {overallEfficiency}</font></span> 
+        <br/>
+        <br/>
       </Paper>
     );
   }

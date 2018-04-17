@@ -218,8 +218,12 @@ async loadProductionLine(){
       isDisabled, fireRedirect, pageNotFound} = this.state;
     return (
       <div>
+      {(this.state.isCreateNew) ? 
+          <p><b><font size="6" color="3F51B5">New Production Line</font></b></p> :
+          <p><b><font size="6" color="3F51B5">Production Line Details</font></b></p>
+        }
       <form onSubmit={this.onFormSubmit} style={styles.formControl}>
-        <p><font size="6">Basic Information</font></p>
+        <p><font size="5">Basic Information</font></p>
           <FormGroup>
             <TextField
               disabled = {this.state.isDisabled}
@@ -256,7 +260,7 @@ async loadProductionLine(){
             {(!this.state.isDisabled) && <SelectFormulas currentFormula={this.state.currentFormula} initialArray={this.state.formulasArray} handleChange={this.updateFormulas}/>}
           </FormGroup>
         <br/>
-        <p><font size="6">Production Run Information</font></p>
+        <p><font size="5">Production Run Information</font></p>
             <TextField
                 required
                 id="isIdle"

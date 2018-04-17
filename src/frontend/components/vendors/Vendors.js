@@ -285,6 +285,9 @@ class Vendors extends React.PureComponent
     } = this.state;
 
     return (
+      <div>
+      <p><b><font size="6" color="3F51B5">Vendors</font></b></p>
+
       <Paper>
         <Grid
           allowColumnResizing = {true}
@@ -377,6 +380,7 @@ class Vendors extends React.PureComponent
         </Dialog>
       }
       </Paper>
+      </div>
     );
   }
 }

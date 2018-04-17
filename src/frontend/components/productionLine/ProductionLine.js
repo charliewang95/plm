@@ -305,6 +305,7 @@ class ProductionLine extends React.PureComponent {
     } = this.state;
     return(
       <div>
+       <p><b><font size="6" color="3F51B5">Production Line</font></b></p> 
       <Paper>
         <Grid
           allowColumnResizing = {true}

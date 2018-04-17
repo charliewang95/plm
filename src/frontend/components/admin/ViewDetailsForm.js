@@ -530,8 +530,11 @@ class AddIngredientForm extends React.Component{
       // <PageBase title = 'Add Ingredients' navigation = '/Application Form'>
       <div>
       <form onSubmit={this.onFormSubmit} style={styles.formControl}>
-        <p><font size="6">Basic Information</font></p>
-        {(this.state.numUnit!=0)? <Chip label="In Stock"/> : ''}
+        {(this.state.isCreateNew) ? 
+          <p><b><font size="6" color="3F51B5">New Ingredient</font></b></p> :
+          <p><b><font size="6" color="3F51B5">Ingredient Details {(this.state.numUnit!=0)? <Chip label="In Stock"/> : ''} </font></b></p>
+        }
+        <p><font size="5">Basic Information</font></p>
         {/* {this.state.snackBarOpen && <SnackBarDisplay
               open = {this.state.snackBarOpen}
               message = {this.state.snackBarMessage}
@@ -622,7 +625,7 @@ class AddIngredientForm extends React.Component{
             </FormGroup>
             {!this.state.isCreateNew &&
               <div>
-              <p><font size="6">Inventory Information</font></p>
+              <p><font size="5">Inventory Information</font></p>
               <FormGroup>
                <TextField
                   required
@@ -665,7 +668,7 @@ class AddIngredientForm extends React.Component{
               </div>}
               {!this.state.isCreateNew &&
               <div>
-              <p><font size="6">Financial Information</font></p>
+              <p><font size="5">Financial Information</font></p>
               <FormGroup>
                 <TextField
                   disabled

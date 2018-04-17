@@ -8,6 +8,7 @@ import ExpansionPanelExample from './ExpansionPanelExample';
 import * as userInterface from '../../../interface/userInterface';
 import PubSub from 'pubsub-js';
 import { ToastContainer, toast } from 'react-toastify';
+import Typography from 'material-ui/Typography';
 // TODO: get session Id from the user
 var sessionId = "";
 // const sessionId = testConfig.sessionId;
@@ -240,6 +241,7 @@ class RegisterPage extends React.Component {
   render() {
     return (
       <div>
+        <p><b><font size="6" color="3F51B5">User Management</font></b></p>
         <ExpansionPanelExample
           //for register page
           onFormSubmit={this.processForm}
@@ -250,8 +252,6 @@ class RegisterPage extends React.Component {
           rows={this.state.userTableRows}
           refreshTable={this.refreshTableInfo}
         />
-
-        
       </div>
     );
   }
