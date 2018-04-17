@@ -71,7 +71,7 @@ class SelectProductionLines extends Component {
       this.setState({options: ans});
       }catch(e){
         alert(e);
-      } 
+      }
   }
 
   resetArray(name, action){
@@ -98,7 +98,7 @@ class SelectProductionLines extends Component {
 
   async deleteFormula(index, name){
     var singleData = await productionLinesActions.getProductionLineByNameAsync(name,sessionId);
-    if(!singleData.data.isIdle){
+    if(singleData.data.currentFormula==this.props.currentFormula){
       toast.error('Production line is currently being used!');
     }
     else if (index !== -1) {

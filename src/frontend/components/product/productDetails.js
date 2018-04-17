@@ -80,8 +80,6 @@ class ProductDetails extends React.Component {
     this.setState({time:this.state.productRows[0].date});
   }
 
-
-
   render() {
     const {productRows,rows,columns, grouping} = this.state;
     return (
