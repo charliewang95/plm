@@ -8,6 +8,7 @@ module.exports = function(app) {
     app.route('/ingredients/allIngredients/user/:userId').get(ingredients.listIngredients);
     app.route('/ingredients/allIntermediates/user/:userId').get(ingredients.listIntermediate);
     app.route('/ingredients/allLotNumbers/ingredient/:ingredientId/user/:userId').get(ingredients.listLotNumbers);
+    app.route('/ingredients/listIngredientProductLotNumbers/ingredient/:ingredientId/user/:userId').get(ingredients.listIngredientProductLotNumbers);
     app.route('/ingredients/oldestLot/ingredient/:ingredientId/user/:userId').get(ingredients.getOldestLot);
     app.route('/ingredients/recall/lot/:lotId/user/:userId').get(ingredients.getRecall);
     app.route('/ingredients/recall/lot/:lotNumber/ingredient/:ingredientName/vendor/:vendorName/user/:userId').get(ingredients.getRecallAlternate);
