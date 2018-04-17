@@ -232,6 +232,8 @@ class Log extends React.PureComponent {
       pageSize, pageSizes, currentPage} = this.state;
 
     return (
+      <div>
+      <p><b><font size="6" color="3F51B5">Logs</font></b></p> 
       <Paper>
       <div> Start Date: </div>
         <DatePickerInput style={pickerStyle}
@@ -271,8 +273,8 @@ class Log extends React.PureComponent {
             pageSizes={pageSizes}
           />
         </Grid>
-
       </Paper>
+      </div>
     );
   }
 }

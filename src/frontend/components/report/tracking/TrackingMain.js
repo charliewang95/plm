@@ -43,6 +43,8 @@ class TrackingMain extends React.Component {
     const { value } = this.state;
 
     return (
+    <div>
+      <p><b><font size="6" color="3F51B5">Tracking Reports</font></b></p> 
       <Paper>
         <AppBar position="static" color="default">
           <Tabs
@@ -60,6 +62,7 @@ class TrackingMain extends React.Component {
         {value === 0 && <RecallReport/>}
         {value === 1 && <ProductionEfficiencyReport/>}
       </Paper>
+    </div>
     );
   }
 }

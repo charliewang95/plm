@@ -42,6 +42,8 @@ class FreshnessMain extends React.Component {
     const { value } = this.state;
 
     return (
+    <div>
+      <p><b><font size="6" color="3F51B5">Freshness Reports</font></b></p> 
       <Paper>
         <AppBar position="static" color="default">
           <Tabs
@@ -59,6 +61,7 @@ class FreshnessMain extends React.Component {
         {value === 0 && <FreshnessReport/>}
         {value === 1 && <ProductFreshnessReport/>}
       </Paper>
+    </div>
     );
   }
 }

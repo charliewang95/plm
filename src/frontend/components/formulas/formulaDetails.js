@@ -348,8 +348,12 @@ class FormulaDetails extends React.Component{
     return (
       // <PageBase title = 'Add Ingredients' navigation = '/Application Form'>
       <div>
+      {(this.state.isCreateNew) ? 
+          <p><b><font size="6" color="3F51B5">New Formula</font></b></p> :
+          <p><b><font size="6" color="3F51B5">Formula Details </font></b></p>
+        }
       <form onSubmit={this.onFormSubmit} style={styles.formControl}>
-        <p><font size="6">Basic Information</font></p>
+        <p><font size="5">Basic Information</font></p>
         {/* {(this.state.numUnit!=0)? <Chip label="In Stock"/> : ''} */}
           <FormGroup>
             <TextField
@@ -434,7 +438,7 @@ class FormulaDetails extends React.Component{
 
             <br></br>
             {this.state.isIntermediate && <div>
-            <p><font size="6">Storage Information</font></p>
+            <p><font size="5">Storage Information</font></p>
               <FormControl style={styles.productType}>
               <InputLabel htmlFor="temperatureZone">Temperature</InputLabel>
                    {this.state.isIntermediate &&  <Select
