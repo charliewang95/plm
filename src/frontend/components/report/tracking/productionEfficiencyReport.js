@@ -37,8 +37,8 @@ export default class ProductionEfficiencyReport extends PureComponent {
 
     this.state = {
       columns: [
-        { name: 'productionLine', title: 'Ingredient Name' },
-        { name: 'efficiency', title: 'Efficiency' },
+        { name: 'productionLineName', title: 'Production Line ' },
+        { name: 'lineEfficiency', title: 'Efficiency (%)' },
       ],
       rows: [],
       sorting:[],
@@ -103,26 +103,37 @@ export default class ProductionEfficiencyReport extends PureComponent {
 
     var rawData = [];
      rawData = await productionLineActions.getEfficiencies(startTime,endTime,sessionId);
-
-     console.log(rawData);
      rawData = rawData.data;
-     if(rawData){
-       var processedData = [];
-        if(rawData){
-          processedData = [...rawData.map((row, index)=> ({
-              id: index,
-              ...row,
-            })),
-          ];
-        }
-     this.setState({rows:processedData});
+     console.log(rawData);
+
+     var processedData = [];
+      if(rawData.length > 0){
+        processedData = [...rawData.map((row, index)=> ({
+            id: index,
+            lineEfficiency:(row.efficiency!=null) ? (row.efficiency):0,
+            ...row,
+          })),
+        ];
+      }
+    console.log(processedData);
+    var overallEffSum =0;
+    for(var i =0; i < processedData.length;i++){
+      var eff = (processedData[i].lineEfficiency!=null) ? Number(processedData[i].lineEfficiency):0;
+      overallEffSum+=eff;
     }
-   }
+    var overallEff =0;
+    overallEff = (overallEffSum!=0) ? Math.round((overallEffSum/processedData.length)*100)/100:0;
+
+    temp.setState({rows:processedData});
+    temp.setState({overallEfficiency:overallEff});
+
+    }
+
 
   render() {
     const {classes,} = this.props;
     const { rows, columns ,sorting,currentPage,
-      pageSize,pageSizes,columnOrder,startDate,endDate} = this.state;
+      pageSize,pageSizes,columnOrder,startDate,endDate,overallEfficiency} = this.state;
     return (
       <Paper>
         <Fragment>
@@ -154,13 +165,14 @@ export default class ProductionEfficiencyReport extends PureComponent {
           <br/>
             <div>
               <Button
-                variant="raised"
+                raised
                 onClick={(event) => this.loadAllEfficiencies(event)}
                 color="primary">Get Efficiency</Button>
           </div>
 
       {/* </MuiPickersUtilsProvider> */}
       </Fragment>
+
         <Grid
           allowColumnResizing = {true}
           rows={rows}
@@ -193,6 +205,7 @@ export default class ProductionEfficiencyReport extends PureComponent {
             pageSizes={pageSizes}
           />
         </Grid>
+        <span>Overall Production Efficiency (%): {overallEfficiency} </span>
       </Paper>
     );
   }
