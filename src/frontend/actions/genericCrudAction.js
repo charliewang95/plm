@@ -166,7 +166,7 @@ async function updateById(url, propertyName, objectId, sessionId, newObject, cal
     }
 };
 
-/* 
+/*
  * delete one existing objct by id
  * url: string, the url for the delete request
  * propertyName: string, segment in front of the objectId in the complete url used to identify what 
@@ -178,19 +178,32 @@ async function deleteById(url, propertyName, objectId, sessionId, callback) {
 	// const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName, objectId]);
 	// const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
     try {
-	    const completeUrl = getCompleteUrlWithObjectId(url, propertyName, objectId, sessionId);
-	
+	    const completeUrl = getCompleteUrlWithObjectId(url, propertyName, objectId, sessionId)
+		console.log("DELETE send to " + completeUrl);
 	    const res = await axios.delete(completeUrl);
+	    console.log("res");
+        console.log(res);
 	    const result = res.data;
+	    console.log("result");
 	    console.log(result);
-	    callback(res);
+	    if(callback){
+	    	callback(res);
+	    }
+	    
 	}
 	catch(e) {
       console.log('there was an error');
       console.log(e);
       //TODO: different error message for different types of error
       if (e.response.status == 400 || e.response.status == 500)
-        callback(e.response);
+      	if(callback)
+      	{
+      		callback(e.response);
+      	} else
+      	{
+      		alert(e.response);
+      	}
+        
       else
         throw e;
 	}
@@ -207,8 +220,12 @@ async function deleteAll(url, propertyName, sessionId, callback) {
 	try {
         const urlWithoutSessionId = appendSegmentsToUrl(url, [propertyName]);
         const completeUrl = appendSessionIdToUrl(urlWithoutSessionId, sessionId);
+        console.log("DELETE send to " + completeUrl);
         const res = await axios.delete(completeUrl);
+        console.log("res");
+        console.log(res);
         const result = res.data;
+        console.log("result");
         console.log(result);
         callback(res);
     }

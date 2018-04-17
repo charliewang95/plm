@@ -29,7 +29,8 @@ import * as productActions from '../../interface/productInterface';
 
 import * as testConfig from '../../../resources/testConfig.js';
 import productData from './testData';
-
+import { CircularProgress } from 'material-ui/Progress';
+import { LinearProgress } from 'material-ui/Progress';
 
 var pickerStyle = {
   color: 'white',
@@ -74,6 +75,8 @@ class Product extends React.PureComponent {
         { name: 'numUnit', title: 'Number of Units' },
         { name: 'date', title: 'Timestamp' },
         { name: 'lotNumberUnique', title: 'Lot Number' },
+        { name: 'productionLine', title: 'Production Line' },
+        { name: 'status', title: 'Status' },
       ],
       rows:[],
       integratedFilteringColumnExtensions: [
@@ -86,6 +89,7 @@ class Product extends React.PureComponent {
       currentPage: 0,
       pageSize: 10,
       pageSizes: [100, 250, 500],
+      loading: true,
     };
 
     this.handleStartDateChange = this.handleStartDateChange.bind(this);
@@ -147,14 +151,20 @@ class Product extends React.PureComponent {
 
 
   componentDidMount() {
-    this.loadProductInfo();
+    var temp = this;
+    //setTimeout(function(){ temp.loadProductInfo(); temp.setState({loading: false})}, 1000);
+    temp.loadProductInfo();
   }
 
   async loadProductInfo(){
+    console.log("loadProductInfo");
+
       var rawData = [];
       sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
       rawData = await productActions.getAllProductsAsync(sessionId);
-      // rawData = productData;
+
+      console.log(rawData);
+      
       var tempDates = [];
       for (var i = 0; i<rawData.length; i++) {
         //TODO: Change this with real Date - remove new Date later
@@ -173,11 +183,10 @@ class Product extends React.PureComponent {
       if(rawData){
         processedData = [...rawData.map((row, index)=> ({
             id:index,...row,
+            status : (row.isIdle == false) ? 'Pending' : 'Completed',
           })),
         ];
       }
-      
-
       this.setState({dates:tempDates});
       this.setState({rows:processedData});
       this.setState({unchangedRows:processedData});
@@ -190,7 +199,7 @@ class Product extends React.PureComponent {
       pageSize, pageSizes, currentPage} = this.state;
 
     return (
-      <Paper>
+      <Paper style={{ position: 'relative' }}>
         <div> Start Date: </div>
           <DatePickerInput style={pickerStyle}
             readOnly = {true}
@@ -206,13 +215,13 @@ class Product extends React.PureComponent {
             value={this.state.endDate}
             className='my-custom-datepicker-component'
           />
-
         <Grid
           allowColumnResizing = {true}
           rows={rows}
           columns={columns}
           getRowId={getRowId}
         >
+
           <FilteringState defaultFilters={[]} />
           <IntegratedFiltering />
           <PagingState
@@ -223,9 +232,13 @@ class Product extends React.PureComponent {
           />
           <IntegratedPaging />
 
-          <Table cellComponent={Cell}/>
+          <Table cellComponent={Cell}>
+
+          </Table>
           <TableHeaderRow />
+
           <TableFilterRow />
+
           <PagingPanel
             pageSizes={pageSizes}
           />

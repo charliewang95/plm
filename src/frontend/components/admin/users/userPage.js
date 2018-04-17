@@ -6,12 +6,12 @@ import { addLocalUser, addDukeUser } from '../../../interface/userInterface.js';
 import * as testConfig from '../../../../resources/testConfig.js';
 import ExpansionPanelExample from './ExpansionPanelExample';
 import * as userInterface from '../../../interface/userInterface';
-
+import PubSub from 'pubsub-js';
+import { ToastContainer, toast } from 'react-toastify';
 // TODO: get session Id from the user
 var sessionId = "";
 // const sessionId = testConfig.sessionId;
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
-
 class RegisterPage extends React.Component {
 
   /**
@@ -51,7 +51,10 @@ class RegisterPage extends React.Component {
   }
 
   userSuccessfullyAdded() {
-    alert('User ' + this.state.user.username + ' is added successfully');
+    toast.success('User ' + this.state.user.username + ' is added successfully', {
+      position: toast.POSITION.TOP_RIGHT
+    });
+    //alert('User ' + this.state.user.username + ' is added successfully');
   }
 
 
@@ -87,9 +90,11 @@ class RegisterPage extends React.Component {
         (res)=>
         {
           if (res.status == 400) {
-            alert(res.data);
+            PubSub.publish('showAlert', res.data );
+            //alert(res.data);
           } else if (res.status == 500) {
-            alert('Username or email already exists');
+            PubSub.publish('showAlert', "Username or email already exists" );
+            //alert('Username or email already exists');
           }else{
             me.userSuccessfullyAdded();
             this.clearFields();
@@ -102,9 +107,11 @@ class RegisterPage extends React.Component {
         (res)=>
         {
           if (res.status == 400) {
-            alert(res.data);
+            PubSub.publish('showAlert', res.data );
+            //alert(res.data);
           } else if (res.status == 500) {
-            alert('Username or email already exists');
+            PubSub.publish('showAlert', "Username or email already exists" );
+            //alert('Username or email already exists');
           }else{
             me.userSuccessfullyAdded();
             this.clearFields();

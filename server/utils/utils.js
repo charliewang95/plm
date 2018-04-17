@@ -4,6 +4,7 @@ var Log = mongoose.model('Log');
 var Storage = mongoose.model('Storage');
 var Formula = mongoose.model('Formula');
 var Vendor = mongoose.model('Vendor');
+var ProductionLine = mongoose.model('ProductionLine');
 var Ingredient = mongoose.model('Ingredient');
 var modifierCreateUpdate = require('./modifierCreateUpdate');
 //var modifierDelete = require('./modifierDelete');
@@ -21,18 +22,18 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             res.status(401);
             res.send('User does not exist');
         }
-//        else if (!user.loggedIn) {
-//            res.status(403);
-//            res.send('User is not logged in');
-//        }
-//        else if (AdminRequired && !user.isAdmin) {
-//            res.status(403);
-//            res.send('Admin access required');
-//        }
-//        else if (ManagerRequired && !user.isManager) {
-//            res.status(403);
-//            res.send('Manager access required');
-//        }
+        else if (!user.loggedIn) {
+            res.status(403);
+            res.send('User is not logged in');
+        }
+        else if (AdminRequired && !user.isAdmin) {
+            res.status(403);
+            res.send('Admin access required');
+        }
+        else if (ManagerRequired && !user.isManager) {
+            res.status(403);
+            res.send('Manager access required');
+        }
         else {
             if (action == 'create') create(req, res, next, model, user.username);
             else if (action == 'list') list(req, res, next, model, user.username);
@@ -110,6 +111,7 @@ var create = function(req, res, next, model, username) {
             console.log("creating, modified");
             console.log("creating, validating");
             modifiedItem = new model(obj);
+            console.log("modified item is");
             console.log(modifiedItem);
             validator.validate(model, modifiedItem, '', res, next, function(err, valid){
                 if (err) {
@@ -126,7 +128,10 @@ var create = function(req, res, next, model, username) {
                             console.log("creating, saved");
                             logger.log(username, 'create', modifiedItem, model);
                             if (model == Formula) {
-                                  postProcessor.process(model, modifiedItem, '', res, next);
+                                processFormulaCreate(modifiedItem, res, next, username);
+                            }
+                            if (model == ProductionLine) {
+                                processProductionLineCreate(modifiedItem, res, next, username);
                             }
                             res.json(modifiedItem);
                         }
@@ -179,28 +184,41 @@ var update = function(req, res, next, model, itemId, username) {
                 else if (valid) {
                     console.log("updating, validated");
                     console.log("updating, updating");
-                        Ingredient.findById(itemId, function(err, ingredient){
-                        if (ingredient)
-                            var temp = ingredient;
-                        console.log(temp);
-                           model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
-                               if (err) {
-                                   return next(err);
-                               }
-                               else if (obj2){
-                                   console.log("updating, updated");
-                                   logger.log(username, 'update', obj2, model);
-                                   if (model == Storage || model == Vendor) {
-                                       postProcessor.process(model, obj, itemId, res, next);
-                                   } else if (model == Ingredient) {
-                                       postProcessor.process(model, temp, itemId, res, next);
+                    var temp;
+                    Ingredient.findById(itemId, function(err, ingredient){
+                        if (ingredient) {
+                            temp = ingredient;
+                        }
+                        ProductionLine.findById(itemId, function(err, productionLine){
+                            if (productionLine) {
+                                temp = productionLine;
+                            }
+                            Formula.findById(itemId, function(err, formula){
+                                if (formula) {
+                                    temp = formula;
+                                }
+                                console.log(temp);
+                                model.findByIdAndUpdate(itemId, obj, function(err, obj2) {
+                                   if (err) {
+                                       return next(err);
                                    }
-                                   res.json(obj2);
-                               } else {
-                                   res.status(400);
-                                   res.send("Object doesn't exist");
-                               }
-                           });
+                                   else if (obj2){
+                                       console.log("updating, updated");
+                                       logger.log(username, 'update', obj2, model);
+                                       if (model == Storage || model == Vendor) {
+                                           postProcessor.process(model, obj, itemId, res, next);
+                                       } else if (model == Ingredient || model == ProductionLine || model == Formula) {
+                                           postProcessor.process(model, temp, itemId, res, next);
+                                       }
+                                       res.json(obj2);
+                                   } else {
+                                       res.status(400);
+                                       res.send("Object doesn't exist");
+                                   }
+                                });
+
+                            });
+                        });
                     });
                 }
             });
@@ -269,11 +287,15 @@ var updateWithUserAccess = function(req, res, next, model, userId, itemId, usern
 };
 
 var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) {
-    model.findOne({_id: itemId}, req.body, function(err, item) {
+    console.log("deleteWithoutUserAccess()");
+    model.findById(itemId, function(err, item) {
         if (err) {
             return next(err);
         }
         else {
+            console.log(itemId);
+            console.log(item);
+            console.log(model == ProductionLine);
             var temp = item;
             validatorDelete.validate(model, item, res, next, function(){
                 item.remove(function(err) {
@@ -283,6 +305,7 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) 
                     else {
                         deleteProcessor.process(model, item, itemId, res, next);
                         logger.log(username, 'delete', temp, model);
+                        console.log(temp);
                         res.json(temp);
                     }
                 });
@@ -292,6 +315,7 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) 
 };
 
 var deleteWithUserAccess = function(req, res, next, model, userId, itemId, username) {
+    console.log("deleteWithUserAccess()");
     model.findOne({userId: userId, _id: itemId}, function(err, item) {
         if (err) {
             return next(err);
@@ -303,6 +327,7 @@ var deleteWithUserAccess = function(req, res, next, model, userId, itemId, usern
                 }
                 else {
                     logger.log(username, 'delete', item, model);
+                    console.log(item);
                     res.json(item);
                 }
             });
@@ -524,3 +549,98 @@ var updateIngredientHelper = function(req, res, next, multiplier, ingredients, n
         });
     }
 };
+
+
+var processFormulaCreate = function(item, res, next, username){
+    var formulaName = item.name;
+    Ingredient.findOne({nameUnique: formulaName.toLowerCase()}, function(err, ingredient){
+        if (err) return next(err);
+        else if (!ingredient && item.isIntermediate) {
+            var newIngredient = new Ingredient();
+            newIngredient.name = formulaName;
+            newIngredient.nameUnique = formulaName.toLowerCase();
+            newIngredient.packageName = item.packageName;
+            newIngredient.temperatureZone = item.temperatureZone;
+            newIngredient.nativeUnit = item.nativeUnit;
+            newIngredient.numUnitPerPackage = item.numUnitPerPackage;
+            newIngredient.isIntermediate = true;
+            console.log("&&&&&&&&&&&&&&&&");
+            console.log(newIngredient);
+            newIngredient.save(function(err){
+                if (err) return next(err);
+                else {
+                    var newProductionLineNames = item.productionLines;
+                    //logger.log(username, 'create', item, Formula);
+                    processFormulaHelperAddNewCreate(res, next, 0, item, newProductionLineNames, []);
+                }
+            })
+        } else {
+            var newProductionLineNames = item.productionLines;
+            //logger.log(username, 'create', item, Formula);
+            processFormulaHelperAddNewCreate(res, next, 0, item, newProductionLineNames, []);
+        }
+    })
+};
+
+var processFormulaHelperAddNewCreate = function(res, next, i, formula, newProductionLineNames, oldProductionLineNames){
+    if (i == newProductionLineNames.length) {
+        return;
+    }
+    else {
+        var newProductionLineName = newProductionLineNames[i];
+        if (!oldProductionLineNames.includes(newProductionLineName)){
+            ProductionLine.findOne({nameUnique: newProductionLineName.toLowerCase()}, function(err, pl){
+                if (err) return next(err);
+                else if (!pl){
+                    return res.status(400).send('Production Line '+newProductionLineName+' does not exist');
+                } else {
+                    var formulasInProductionLine = pl.formulaNames;
+                    formulasInProductionLine = formulasInProductionLine ? formulasInProductionLine : [];
+                    if (!formulasInProductionLine.includes(formula.name)){
+                        formulasInProductionLine.push(formula.name);
+                    }
+
+                    pl.update({formulaNames: formulasInProductionLine}, function(err, newPl){
+                        processFormulaHelperAddNewCreate(res, next, i+1, formula, newProductionLineNames, oldProductionLineNames);
+                    });
+                }
+            });
+        } else {
+            processFormulaHelperAddNewCreate(res, next, i+1, formula, newProductionLineNames, oldProductionLineNames);
+        }
+    }
+}
+
+var processProductionLineCreate = function(item, res, next, username){
+    processProductionLineHelperAddNewCreate(res, next, 0, item, item.formulaNames, []);
+    //logger.log(username, 'create', item, ProductionLine);
+}
+
+var processProductionLineHelperAddNewCreate = function(res, next, i, pl, newFormulaNames, oldFormulaNames){
+    if (i == newFormulaNames.length) {
+        return;
+    }
+    else {
+        var newFormulaName = newFormulaNames[i];
+        console.log(oldFormulaNames);
+        if (!oldFormulaNames.includes(newFormulaName)){
+            Formula.findOne({nameUnique: newFormulaName.toLowerCase()}, function(err, formula){
+                if (err) return next(err);
+                else if (!formula){
+                    return res.status(400).send('Formula '+newFormulaName+' does not exist');
+                } else {
+                    var productionLinesInFormula = formula.productionLines;
+                    productionLinesInFormula = (productionLinesInFormula) ? productionLinesInFormula : [];
+                    productionLinesInFormula.push(pl.name);
+                    console.log(productionLinesInFormula);
+                    formula.update({productionLines: productionLinesInFormula}, function(err, newFormula){
+                        processProductionLineHelperAddNewCreate(res, next, i+1, pl, newFormulaNames, oldFormulaNames);
+                    });
+                }
+            });
+        } else {
+            processProductionLineHelperAddNewCreate(res, next, i+1, pl, newFormulaNames, oldFormulaNames);
+        }
+    }
+}
+

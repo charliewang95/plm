@@ -22,9 +22,10 @@ import RaisedButton from 'material-ui/Button';
 import * as orderActions from '../../interface/orderInterface';
 import * as productActions from '../../interface/productInterface';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
-
+import PubSub from 'pubsub-js';
+import { ToastContainer, toast } from 'react-toastify';
 import {reviewData} from './dummyData';
-
+import ProductionLinesTable from './ProductionLinesTable.js';
 const styles = {
     buttons: {
       marginTop: 30,
@@ -64,7 +65,7 @@ class ProductionReview extends React.Component {
           {name: "delta" , title:'Additional Required Amount'},
         ],
         rows:[],
-        
+
         addedQuantity:(props.location.state) ? (props.location.state.selectedFormula.unitsProvided) : '',
         // needToOrderIngredients:false,
         ingredientsToOrder:[],
@@ -72,8 +73,10 @@ class ProductionReview extends React.Component {
         snackBarOpen:false,
         intermediates:'',
         afterLink:'',
+        selectedProductionLine: '',
+        hasProductionLines: true,
     };
-    // this.cancelProduction = this.cancelProduction.bind(this);
+    this.selectProductionLine = this.selectProductionLine.bind(this);
     this.cancelProduction =() =>
       this.setState({
         formulaRows:[],
@@ -85,20 +88,28 @@ class ProductionReview extends React.Component {
       event.preventDefault();
       console.log(" get production review");
       var temp = this;
-      var afterLink = this.state.formulaRows[0].isIntermediate? '/admin-ingredients' : '/product';
+      if(this.state.formulaRows[0].productionLinesArray.length==0){
+        this.setState({hasProductionLines: false});
+      }
+      //var afterLink = this.state.formulaRows[0].isIntermediate? '/admin-ingredients' : '/production-line';
+      var afterLink = '/production-line';
       this.setState({afterLink: afterLink});
 
       //TODO: Check this
       console.log(temp.state.formulaRows[0]._id+' '+Number(temp.state.addedQuantity));
       await formulaActions.checkoutFormula("review",temp.state.formulaRows[0]._id,
-                          Number(temp.state.addedQuantity),sessionId, function(res){
+                          Number(temp.state.addedQuantity),'dummyString',sessionId, function(res){
 
               if (res.status == 400) {
-                if (!alert(res.data)){
+                // if (!alert(res.data)){
+                //     return;
+                // }
+                if (!PubSub.publish('showAlert',res.data)){
                     return;
                 }
               } else if (res.status == 500){
-                alert(res.data)
+                PubSub.publish('showAlert', res.data);
+                //alert(res.data)
               }
               else {
                  review = res.data;
@@ -109,6 +120,7 @@ class ProductionReview extends React.Component {
                      id:index,...row,
                      currentUnit:Math.round(row.currentUnit*100)/100,
                      delta:Math.round(row.delta*100)/100,
+                     totalAmountNeeded:Math.round(row.totalAmountNeeded*100)/100,
                      })),
                    ];
                    // console.log(" Formula " + JSON.stringify(review));
@@ -141,13 +153,12 @@ class ProductionReview extends React.Component {
                    temp.setState({ingredientsToOrder:data});
                    temp.setState({open:false});
 
-                   temp.setState({snackBarMessage : "Formula successfully sent for production review. "});
-                   temp.setState({snackBarOpen:true});
+                   // temp.setState({snackBarMessage : "Formula successfully sent for production review. "});
+                   // temp.setState({snackBarOpen:true});
+                   //PubSub.publish('showMessage', 'Formula successfully sent for production review.' );
+                   //toast.success('Formula successfully sent for production review.');
               }
       });
-
-      console.log(" OPEN PROD " + this.state.snackBarOpen);
-      console.log(" MSG " + this.state.snackBarMessage);
     }
 
     console.log('preview constructed');
@@ -186,11 +197,14 @@ class ProductionReview extends React.Component {
         //TODO: Please update this
         console.log(res.status);
         if(res.status == 400){
-          alert(res.data);
+          PubSub.publish('showAlert', res.data);
+          //alert(res.data);
         }else{
           // success = true;
-          temp.setState({snackBarMessage : "Ingredients Successfully added to cart. "});
-          temp.setState({snackBarOpen:true});
+          // temp.setState({snackBarMessage : "Ingredients Successfully added to cart. "});
+          // temp.setState({snackBarOpen:true});
+          toast.success('Ingredients successfully added to cart !');
+          //PubSub.publish('showMessage', ' Ingredients successfully added to cart !' );
         }
       });
     }
@@ -198,30 +212,57 @@ class ProductionReview extends React.Component {
 
     event.stopPropagation();
   }
-
+  
   async checkOutFormulaFinal(event){
     var temp = this;
     console.log(temp.state.formulaRows[0]);
-    await formulaActions.checkoutFormula("checkout",temp.state.formulaRows[0]._id,
-                              Number(temp.state.addedQuantity),
+    console.log("check out formula final ")
+    console.log(temp.state.selectedProductionLine);
+    const _id = temp.state.formulaRows[0]._id;
+    const addedQuantity = temp.state.addedQuantity;
+    const selectedProductionLine = temp.state.selectedProductionLine;
+    console.log("_id is " + _id);
+    console.log("addedQuantity is " + addedQuantity);
+    console.log("selectedProductionLine is " + selectedProductionLine);
+    await formulaActions.checkoutFormula("checkout", _id,
+                              Number(addedQuantity), selectedProductionLine,
                               sessionId, function(res){
-         if (res.status == 400) {
-            alert(res.data);
+         if (res.status === 400) {
+            PubSub.publish('showAlert', res.data);
+            //alert(res.data);
          } else {
+             //PubSub.publish('showMessage', ' Successfully added to production !' );
+             toast.success('Successfully added to production !');
+             // window.location.reload();
+             const redirectUrl = temp.state.afterLink;
+             console.log("redirectUrl is " + redirectUrl);
+             window.location.replace(redirectUrl);
             // alert('Successfully added to production .');
          }
       });
-      window.location.reload();
+
     // event.stopPropagation();
   };
 
+  selectProductionLine(productionName){
+    this.setState({selectedProductionLine: productionName});
+  }
+
   handleFormulaQuantity(event){
-  const re = /^\d*\.?\d*$/;
-      if (event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
-         this.setState({addedQuantity: event.target.value})
-      }else{
-        alert(" Quantity must be a positive number.");
-      }
+    console.log("handleFormulaChange")
+    console.log(this.state.formulaRows);
+    console.log(this.state.formulaRows[0].isIntermediate);
+    var re = /^\d*[1-9]\d*$/;
+    if(this.state.formulaRows[0].isIntermediate){
+      console.log("isIntermediate");
+      re = /^\d{0,10}(\.\d{0,2})?$/;
+    }
+    if (event.target.value == '' || (event.target.value>0 && re.test(event.target.value))) {
+       this.setState({addedQuantity: event.target.value})
+    }else{
+
+      toast.error(" Quantity must be a positive number.");
+    }
   }
 
   componentWillMount(){
@@ -261,11 +302,11 @@ class ProductionReview extends React.Component {
 
       <Divider/>
 
-      {this.state.snackBarOpen && <SnackBarDisplay
+      {/* {this.state.snackBarOpen && <SnackBarDisplay
             open = {this.state.snackBarOpen}
             message = {this.state.snackBarMessage}
             handleSnackBarClose = {this.handleSnackBarClose}
-          /> }
+          /> } */}
 
           <Dialog
             open={this.state.open}
@@ -328,18 +369,27 @@ class ProductionReview extends React.Component {
                   disabled ={this.state.intermediates.length!=0}
                   style={styles.orderIngredientsButton}
                   onClick = {(event) => this.addToShoppingCart(event)}
-                  component = {Link} to = "/cart"
+                  component = {Link} to = {{pathname: '/cart', state:{fromPR: true} }}
+                  //component = {<Link to = {{pathname: '/cart', state:{fromPR: true} }}/>}
                   primary="true"> Order Ingredients </RaisedButton>
           </Tooltip> }
-
-          {(this.state.ingredientsToOrder.length==0) &&
+          {(this.state.ingredientsToOrder.length==0) && (this.state.hasProductionLines) &&
+          <div>
+            <p><font size="4">Select Production Line</font></p>
+            <ProductionLinesTable hasProductionLines={()=>{this.setState({hasProductionLines: false});}} productionLinesArray={this.state.formulaRows[0].productionLinesArray} handleChange={this.selectProductionLine}/>
+            <br/>
+          </div>
+          }
+          {(!this.state.hasProductionLines) && <p><font size="5">There are no available production lines.</font></p>}
+          {(this.state.ingredientsToOrder.length==0) && (this.state.hasProductionLines) &&
             <Tooltip id="tooltip-bottom" title="Send formula to production" placement="bottom">
               <RaisedButton raised
                     color="primary"
                     // className=classes.button
+                    disabled = {this.state.selectedProductionLine == ''}
                     style={styles.orderIngredientsButton}
                     onClick = {(event) => this.checkOutFormulaFinal(event)}
-                    component = {Link} to = {this.state.afterLink}
+                    // component = {Link} to = {this.state.afterLink}
                     primary="true">Send to production</RaisedButton>
             </Tooltip>}
         <RaisedButton color="default"
@@ -347,6 +397,10 @@ class ProductionReview extends React.Component {
           component={Link} to='/formula'
           style = {{marginLeft: 10}}
           > BACK </RaisedButton>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
      </div>
    </div>
     );

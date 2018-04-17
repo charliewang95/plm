@@ -5,6 +5,7 @@
 //and calls actions to send the actual requests
 import * as dummyOrder from '../dummyDatas/order.js'
 import * as orderActions from '../actions/orderAction'
+import axios from 'axios'
 
 /**
 takes in various properties of order,
@@ -24,6 +25,7 @@ function packIntoJson(userId, ingredientId, ingredientName, vendorName, _package
 	orderJson.packageNum = _package;
 	orderJson.ingredientLots = ingredientLots;
 	orderJson.price = price;
+//	orderJson.isPending = isPending;
 	console.log("JSON");
 	console.log(orderJson);
 	return orderJson;
@@ -89,5 +91,32 @@ async function checkoutOrder(sessionId, callback) {
     });
 };
 
+async function getPendingsOnlyAsync(sessionId) {
+	const res = await axios.get('/orders/pendingsOnly/user/'+sessionId);
+    return res;
+};
+
+async function getRawOnlyAsync(sessionId) {
+	const res = await axios.get('/orders/rawOnly/user/'+sessionId);
+	console.log(res);
+    return res;
+};
+
+async function checkoutOneOrderAsync(orderId, userId, ingredientId, ingredientName, vendorName, _package, price, ingredientLots, sessionId, callback) {
+    var order = packIntoJson(userId, ingredientId, ingredientName, vendorName, _package, price, ingredientLots);
+    order._id = orderId;
+    try{
+        const res = await axios.post('/orders/checkoutOneOrder/user/'+sessionId, order);
+        console.log(res);
+        callback(null);
+        return res.data;
+    } catch(e) {
+        if (e.response.status == 400 || e.response.status == 500)
+            callback(e.response);
+        else
+            throw e;
+    }
+};
+
 //export functions above for use by other modules
-export { addOrder, getAllOrdersAsync, getOrderAsync, updateOrder, deleteOrder, checkoutOrder};
+export { addOrder, getAllOrdersAsync, getOrderAsync, updateOrder, deleteOrder, checkoutOrder, getPendingsOnlyAsync, getRawOnlyAsync, checkoutOneOrderAsync};

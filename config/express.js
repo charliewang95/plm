@@ -45,6 +45,8 @@ module.exports = function() {
 	require('../server/routes/formulas.server.routes.js')(app);
 	require('../server/routes/products.server.routes.js')(app);
 	require('../server/routes/ingredientLots.server.routes.js')(app);
+	require('../server/routes/productionLines.server.routes.js')(app);
+	require('../server/routes/distributorNetworks.server.routes.js')(app);
 	app.use(express.static('./public'));
 
 	return app;

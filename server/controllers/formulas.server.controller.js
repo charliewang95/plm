@@ -34,6 +34,17 @@ exports.checkout = function(req, res, next) {
     utils.doWithAccess(req, res, next, Formula, 'checkoutFormula', req.params.userId, req.params.formulaId, false, true); //
 };
 
+exports.listNames = function(req, res, next) {
+    Formula.aggregate([
+        { "$project": {
+            "_id": 0,
+            "formulaName": "$name"
+        }}
+    ], function(err, formulas){
+        res.json(formulas);
+    })
+}
+
 exports.bulkImportFormulas = function(req, res, next, contents, callback) {
     bulkImport.bulkImportFormulas(req, res, next, contents, function() {
         //res.send(contents);
@@ -47,3 +58,10 @@ exports.bulkImportIntermediate = function(req, res, next, contents, callback) {
         callback();
     });
 };
+
+exports.getFormulaByName = function(req, res, next) {
+    Formula.findOne({nameUnique: req.params.formulaName.toLowerCase()}, function(err, formula){
+        if (err) return next(err);
+        else return res.json(formula);
+    });
+}
