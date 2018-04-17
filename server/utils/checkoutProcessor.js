@@ -30,14 +30,14 @@ CHECKOUT ORDER PROCESSOR
 *************/
 
 exports.checkoutOrders = function(req, res, next, model, userId, username) {
-    model.find({userId: userId}, function(err, items) {
+    model.find({userId: userId, isPending: false}, function(err, items) {
         if (err) {
             return next(err);
         }
         else {
             validateOrders(items, res, next, function(wSpace, rSpace, fSpace){
                 console.log("Orders validated. Added to pending");
-                checkoutOrdersHelper(res, next, 0, items, function(){
+                checkoutOrdersHelper(res, next, 0, items, username, function(){
                     res.send(items);
                 });
             });
@@ -45,15 +45,15 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
     });
 };
 
-var checkoutOrdersHelper = function(res, next, i, items, callback) {
+var checkoutOrdersHelper = function(res, next, i, items, username, callback) {
     if (i == items.length) {
         callback();
     } else {
         var order = items[i];
         var date = new Date();
         order.update({isPending: true, tag: date.getTime().toString()}, function(err, obj){
-            logger.log(username, 'checkout', order, model);
-            checkoutOrdersHelper(res, next, i+1, items, callback);
+            logger.log(username, 'checkout', order, Order);
+            checkoutOrdersHelper(res, next, i+1, items, username, callback);
         });
     }
 }
@@ -295,7 +295,7 @@ exports.checkoutFormula = function(req, res, next, model, username) { //main che
                                          updateIngredientHelper(req, res, next, multiplier, ingredients, formula, 0, 0, [], date, function(newSpentMoney, arrayInProductOut) {
                                              updateProductionLineAfterCheckout(res, next, productionLine, formula, date, quantity, 
                                                 newSpentMoney, totalSpace, arrayInProductOut, 
-                                                ()=>{res.json(productionLine); console.log("Finished checkout process")});
+                                                ()=>{logger.log(username, 'send to prod', formula, Formula); res.json(productionLine); console.log("Finished checkout process")});
                                          });
                                       } else {
                                          return res.status(406).json(missingIngredientsArray);
@@ -351,26 +351,29 @@ exports.markComplete = function(req, res, next){
                         console.log(formula.isIntermediate);
 
                         updateProductionLineAfterComplete(res, next, pl, date, function(arrayInProductOut){
-
-                            if (!formula.isIntermediate) {
-                                //TODO: add ingredientLotUsedInProduct in the product object
-                                addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
-                                    updateIngredientProduct(req, res, next, pl, formula, date, function(){
-                                        addDistributorNetwork(req, res, next, formula, pl, date, function(){
-                                            return res.send(pl);
-                                        })
-                                    });
-                                });
-                            } else {
-                                //TODO: add ingredient and ingerdientLot object if intermediate
-                                addIntermediateProductIngredientLot(req, res, next, formula, quantity, totalSpace, date, function(){
+                            User.findById(req.params.userId, function(err, user){
+                                if (!formula.isIntermediate) {
+                                    //TODO: add ingredientLotUsedInProduct in the product object
                                     addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
                                         updateIngredientProduct(req, res, next, pl, formula, date, function(){
-                                            return res.send(pl);
+                                            addDistributorNetwork(req, res, next, formula, pl, date, function(){
+                                                logger.log(user.username, 'mark complete', pl, ProductionLine);
+                                                return res.send(pl);
+                                            })
                                         });
                                     });
-                                });
-                            }
+                                } else {
+                                    //TODO: add ingredient and ingerdientLot object if intermediate
+                                    addIntermediateProductIngredientLot(req, res, next, formula, quantity, totalSpace, date, function(){
+                                        addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
+                                            updateIngredientProduct(req, res, next, pl, formula, date, function(){
+                                                logger.log(user.username, 'mark complete', pl, ProductionLine);
+                                                return res.send(pl);
+                                            });
+                                        });
+                                    });
+                                }
+                            });
                         });
                       }
                     });
