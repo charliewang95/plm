@@ -225,7 +225,7 @@ var processFormulaHelperAddNew = function(res, next, i, formula, newProductionLi
                 } else {
                     var formulasInProductionLine = pl.formulaNames;
                     formulasInProductionLine = formulasInProductionLine ? formulasInProductionLine : [];
-                    if (formulasInProductionLine.includes(formula.name)){
+                    if (!formulasInProductionLine.includes(formula.name)){
                         formulasInProductionLine.push(formula.name);
                     }
                     pl.update({formulaNames: formulasInProductionLine}, function(err, newPl){
@@ -254,10 +254,6 @@ var processProductionLineHelperDeleteOld = function(res, next, i, pl, newFormula
         processProductionLineHelperAddNew(res, next, 0, pl, newFormulaNames, oldFormulaNames, callback)
     }
     else {
-        console.log("newFormulaNames");
-        console.log(newFormulaNames);
-        console.log("oldFormulaNames");
-        console.log(oldFormulaNames);
         var oldFormulaName = oldFormulaNames[i];
         if (!newFormulaNames.includes(oldFormulaName)) {
             Formula.findOne({nameUnique: oldFormulaName.toLowerCase()}, function(err, formula){
