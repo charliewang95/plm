@@ -38,6 +38,7 @@ export default class FreshnessReport extends React.PureComponent {
       pageSizes: [10, 50, 100, 500],
       columnOrder: ['name', 'averageWaitTime', 'worstWaitTime'],
       overallFreshness:'',
+      totalWorstCase: '',
     };
     this.changeSorting = sorting => this.setState({ sorting });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
@@ -71,8 +72,22 @@ export default class FreshnessReport extends React.PureComponent {
     }
 
     var totalMinutesSum = 0;
+    var worstCase = 0;
+   
+
     for(var i =0; i < processedData.length;i++){
+      var tempWorst = 0;
       totalMinutesSum+=Number(processedData[i].averageDay) * 24 * 60 + Number(processedData[i].averageHour)*60 + Number(processedData[i].averageMinute);
+      tempWorst+=Number(processedData[i].oldestDay) * 24 * 60 + Number(processedData[i].oldestHour)*60 + Number(processedData[i].oldestMinute);
+      if(tempWorst>worstCase){
+        worstCase=Number(processedData[i].oldestDay) + "d  "  + Number(processedData[i].oldestHour)+"h " + Number(processedData[i].oldestMinute) + "m";
+      }
+    }
+
+    if(worstCase==0){
+      this.setState({totalWorstCase:''});
+    }else{
+      this.setState({totalWorstCase:worstCase});
     }
     totalMinutesSum = Math.round(totalMinutesSum / processedData.length);
      this.setState({rows:processedData});
@@ -81,7 +96,9 @@ export default class FreshnessReport extends React.PureComponent {
      var overallHour = Math.floor(totalMinutesSum/60%24);
      var overallMin = Math.floor(totalMinutesSum % 60);
      var overallFreshness = overallDay + "d  " + overallHour + "h " + overallMin + "m";
-
+     if(isNaN(overallDay)||isNaN(overallHour)||isNaN(overallMin)){
+      overallFreshness = '';
+     }
      this.setState({overallFreshness:overallFreshness});
    }
 
@@ -124,6 +141,7 @@ export default class FreshnessReport extends React.PureComponent {
           />
         </Grid>
         <p><font style={{marginLeft: 20}} size="4">Overall Freshness: {this.state.overallFreshness}</font></p>
+        <p><font style={{marginLeft: 20}} size="4">Overall Worst-case: {this.state.totalWorstCase}</font></p>
         <br />
       </Paper>
     );
