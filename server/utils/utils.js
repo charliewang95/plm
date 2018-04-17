@@ -22,18 +22,18 @@ exports.doWithAccess = function(req, res, next, model, action, userId, itemId, A
             res.status(401);
             res.send('User does not exist');
         }
-//        else if (!user.loggedIn) {
-//            res.status(403);
-//            res.send('User is not logged in');
-//        }
-//        else if (AdminRequired && !user.isAdmin) {
-//            res.status(403);
-//            res.send('Admin access required');
-//        }
-//        else if (ManagerRequired && !user.isManager) {
-//            res.status(403);
-//            res.send('Manager access required');
-//        }
+        else if (!user.loggedIn) {
+            res.status(403);
+            res.send('User is not logged in');
+        }
+        else if (AdminRequired && !user.isAdmin) {
+            res.status(403);
+            res.send('Admin access required');
+        }
+        else if (ManagerRequired && !user.isManager) {
+            res.status(403);
+            res.send('Manager access required');
+        }
         else {
             if (action == 'create') create(req, res, next, model, user.username);
             else if (action == 'list') list(req, res, next, model, user.username);
