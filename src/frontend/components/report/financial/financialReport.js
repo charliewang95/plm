@@ -58,7 +58,7 @@ export default class FinancialReport extends React.PureComponent {
     this.loadAllIngredients();
   }
 
- 
+
 
   async loadAllIngredients(){
       var rawData = [];
@@ -103,7 +103,7 @@ export default class FinancialReport extends React.PureComponent {
           onChange={this.handleDateTimeChange}
           leftArrowIcon={<KeyboardArrowLeft/>}
           rightArrowIcon={<KeyboardArrowRight/>}
-          dateRangeIcon={<DateRangeIcon/>} 
+          dateRangeIcon={<DateRangeIcon/>}
           timeIcon={<AccessTimeIcon/>}
           keyboardIcon={<KeyboardIcon/>}
         />

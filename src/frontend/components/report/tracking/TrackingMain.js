@@ -6,6 +6,7 @@ import AppBar from 'material-ui/AppBar';
 import Tabs, { Tab } from 'material-ui/Tabs';
 import Typography from 'material-ui/Typography';
 import RecallReport from './recallReport';
+import ProductionEfficiencyReport from './productionEfficiencyReport.js';
 
 function TabContainer(props) {
   return (
@@ -53,9 +54,11 @@ class TrackingMain extends React.Component {
             scrollButtons="auto"
           >
             <Tab label="Recall" />
+            <Tab label="Production Efficiency" />
           </Tabs>
         </AppBar>
         {value === 0 && <RecallReport/>}
+        {value === 1 && <ProductionEfficiencyReport/>}
       </Paper>
     );
   }

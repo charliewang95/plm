@@ -74,7 +74,9 @@ ProductionLineSchema.methods.getUtility = function(startTime, endTime, callback)
         }
     }
 
-    if (startFound && i != 0 || !startFound) {
+    if (startFound && i != 0 || !startFound) { 
+        console.log("ASDSADASDASd");
+        console.log(this.dates);
         var tempEndTime = this.dates[i-1].endDate;
         if (tempEndTime > startTime) {
             totalBusy += tempEndTime - startTime;
