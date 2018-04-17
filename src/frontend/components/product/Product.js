@@ -7,6 +7,8 @@ import {Link} from 'react-router-dom';
 import {
   FilteringState,
   IntegratedFiltering,
+  IntegratedSorting,
+  SortingState,
   EditingState,
 } from '@devexpress/dx-react-grid';
 import {
@@ -88,6 +90,7 @@ class Product extends React.PureComponent {
         { name: 'status', title: 'Status' },
       ],
       rows:[],
+      sorting: [{ columnName: 'date', direction: 'desc' }],
       integratedFilteringColumnExtensions: [
         { columnName: 'date', predicate: datePredicate },
       ],
@@ -100,6 +103,7 @@ class Product extends React.PureComponent {
       pageSizes: [100, 250, 500],
       loading: true,
     };
+    this.changeSorting = sorting => this.setState({ sorting });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
 
@@ -236,7 +240,7 @@ class Product extends React.PureComponent {
     // const {classes} = this.props;
     const { rows,columns ,editingRowIds,rowChanges,integratedFilteringColumnExtensions,
        dates, startDate, endDate, filters, unchangedRows,
-      pageSize, pageSizes, currentPage} = this.state;
+      pageSize, pageSizes, currentPage, sorting} = this.state;
 
     return (
       <div>
@@ -284,18 +288,24 @@ class Product extends React.PureComponent {
 
           <FilteringState defaultFilters={[]} />
           <IntegratedFiltering />
+           <SortingState
+            sorting={sorting}
+            onSortingChange={this.changeSorting}
+          />
           <PagingState
             currentPage={currentPage}
             onCurrentPageChange={this.changeCurrentPage}
             pageSize={pageSize}
             onPageSizeChange={this.changePageSize}
           />
+
+          <IntegratedSorting />
           <IntegratedPaging />
 
           <Table cellComponent={Cell}>
 
           </Table>
-          <TableHeaderRow />
+          <TableHeaderRow showSortingControls/>
 
           <TableFilterRow />
 
