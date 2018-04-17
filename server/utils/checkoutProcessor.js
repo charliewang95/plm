@@ -623,10 +623,10 @@ var lotPickerHelper = function(req, res, next, ingredientName, quantity, arrayIn
 var updateIngredientProduct = function(req, res, next, pl, formula, date, callback) {
     console.log('FFFFFFFFF='+formula);
     var arrayInProductOut = pl.arrayInProductOut;
-    updateIngredientProductHelper(req, res, next, arrayInProductOut, formula, date, 0, callback);
+    updateIngredientProductHelper(req, res, next, arrayInProductOut, formula, date, 0, pl, callback);
 };
 
-var updateIngredientProductHelper = function(req, res, next, arrayInProductOut, formula, date, i, callback) {
+var updateIngredientProductHelper = function(req, res, next, arrayInProductOut, formula, date, i, pl, callback) {
     if (i == arrayInProductOut.length) {
         callback();
     } else {
@@ -639,10 +639,10 @@ var updateIngredientProductHelper = function(req, res, next, arrayInProductOut, 
         newIngredientProduct.lotId = item.lotId;
         newIngredientProduct.productName = formula.name;
         newIngredientProduct.date = date;
-        newIngredientProduct.lotNumberProduct = (formula.isIntermediate) ? 'IP'+date.getTime() : 'PR'+date.getTime();
+        newIngredientProduct.lotNumberProduct = pl.lotNumber;
         console.log(newIngredientProduct);
         newIngredientProduct.save(function(err){
-            updateIngredientProductHelper(req, res, next, arrayInProductOut, formula, date, i+1, callback);
+            updateIngredientProductHelper(req, res, next, arrayInProductOut, formula, date, i+1, pl, callback);
         });
     }
 }
