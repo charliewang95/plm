@@ -46,8 +46,8 @@ export default class ProductionEfficiencyReport extends PureComponent {
       pageSize: 10,
       pageSizes: [10, 50, 100, 500],
       columnOrder: ['name', 'moneySpent', 'moneyProd'],
-      startDate:new Date(),
-      endDate: new Date(),
+      startDate:new Date(2018, 0, 1, 0, 0, 0, 0),
+      endDate: new Date(2018, 11, 31, 23, 59, 59, 0),
       overallEfficiency:'',
     };
 
