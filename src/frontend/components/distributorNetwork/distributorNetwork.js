@@ -191,7 +191,7 @@ export default class Demo extends React.PureComponent {
       var temp = this;
       var selectedRows = temp.state.selectedRows;
       var currentRowSelected = temp.state.currentRowSelected;
-      let {rows} = temp.state;
+
       // var leftRows = rows.filter(row => row.id != currentRowSelected.id);
 
       // temp.setState({selectedRows:leftRows});
@@ -202,7 +202,7 @@ export default class Demo extends React.PureComponent {
       temp.updateGrandTotalRevenue();
     }
 
-    this.loadDistributorNetworkData = this.loadDistributorNetworkData.bind(this);
+    // this.loadDistributorNetworkData = this.loadDistributorNetworkData.bind(this);
     this.updateUnitPrice = this.updateUnitPrice.bind(this);
     this.updateQuantity = this.updateQuantity.bind(this);
     this.checkSelectionValid = this.checkSelectionValid.bind(this);
@@ -352,16 +352,41 @@ export default class Demo extends React.PureComponent {
   async loadDistributorNetworkData(){
     var data = await distributorNetworkActions.getAllDistributorNetworksAsync(sessionId);
     console.log("load distribution network data");
-    var processedData = [...data.map((row, index)=> ({
-        id:index,...row,
-        numUnsold:Math.round((row.numUnit-row.numSold)*100)/100,
-        totalRevenue:Math.round(row.totalRevenue*100)/100,
-        quantityToSell:'',
-        unitPrice:'',
-        revenue:'',
-        isSelected:false,
-        })),
-      ];
+    console.log(data);
+
+    var processedData=[];
+
+    for(var i =0; i < data.length;i++){
+      var row = data[i];
+      var numUnsold = Math.round((row.numUnit-row.numSold)*100)/100;
+      if(numUnsold>0){
+        var object = new Object();
+        object.id = i;
+        object.numUnit = row.numUnit;
+        object.productName = row.productName;
+        object.productNameUnique = row.productNameUnique;
+        object.totalCost = row.totalCost;
+        object.totalRevenue = row.totalRevenue;
+        object.numUnsold = numUnsold;
+        object.totalRevenue = Math.round(row.totalRevenue*100)/100;
+        object.quantityToSell= '';
+        object.unitPrice= '';
+        object.revenue= '';
+        object.isSelected= false;
+        
+        processedData.push(object);
+      }
+    }
+    // var processedData = [...data.map((row, index)=> ({
+    //     id:index,...row,
+    //     numUnsold:Math.round((row.numUnit-row.numSold)*100)/100,
+    //     totalRevenue:Math.round(row.totalRevenue*100)/100,
+    //     quantityToSell:'',
+    //     unitPrice:'',
+    //     revenue:'',
+    //     isSelected:false,
+    //     })),
+    //   ];
     this.setState({rows:processedData});
   }
 
@@ -425,12 +450,12 @@ export default class Demo extends React.PureComponent {
     console.log("check selection Valid");
     var temp = this;
     var rows = temp.state.rows;
+    console.log("selection valid");
     var selectedRows = rows.filter(row => temp.state.selection.indexOf(row.id) > -1);
     console.log(selectedRows);
     if(selectedRows.length > 0 ){
       for(var i =0; i < selectedRows.length;i++){
-        console.log(selectedRows);
-        if(selectedRows[i].quantity <=0){
+        if(Number(selectedRows[i].quantityToSell) <=0){
           return false;
         }
       }
