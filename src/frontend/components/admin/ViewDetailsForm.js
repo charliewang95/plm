@@ -416,6 +416,8 @@ class AddIngredientForm extends React.Component{
                 temp.state.nativeUnit, temp.state.numUnitPerPackage, numUnit, temp.state.space, temp.state.isIntermediate, sessionId, function(res){
                   if (res.status == 400) {
                       //alert(res.data);
+                      var computeSpace = Math.ceil(oldQuantity/temp.state.numUnitPerPackage) * temp.packageSpace(temp.state.packageName);
+                      temp.setState({space: computeSpace});
                       temp.setState({numUnit: oldQuantity});
                       temp.setState({lotNumberArray: oldLotNumberArray});
                       temp.setState({lotNumberString: oldLotNumberString});
@@ -642,7 +644,7 @@ class AddIngredientForm extends React.Component{
 
                 {(this.state.isDisabled) && (this.state.numUnit!=0)&& <TextField
                   id="lotNumbers"
-                  label={"Lot Number : Quantity (" + this.state.nativeUnit + ")"}
+                  label={"[Order Time] Lot Number: Quantity (" + this.state.nativeUnit + ")"}
                   multiline
                   value={this.state.lotNumberString}
                   margin="normal"

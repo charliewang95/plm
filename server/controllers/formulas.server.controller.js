@@ -22,7 +22,7 @@ exports.read = function(req, res, next) {
 };
 
 exports.update = function(req, res, next) {
-	utils.doWithAccess(req, res, next, Formula, 'update', req.params.userId, req.params.formulaId, true, true);
+	utils.doWithAccess(req, res, next, Formula, 'update', req.params.userId, req.params.formulaId, false, true);
 };
 
 exports.delete = function(req, res, next) {

@@ -50,6 +50,7 @@ const styles = {
 var sessionId = "";
 var userId = "";
 var isAdmin = "";
+var isManager = "";
 
 class FormulaDetails extends React.Component{
   constructor(props) {
@@ -83,6 +84,7 @@ class FormulaDetails extends React.Component{
       snackBarMessage:'',
       fireRedirect: false,
       pageNotFound: false,
+      canUpdatePL: false,
     }
 
     this.handleOnChange = this.handleOnChange.bind(this);
@@ -99,6 +101,7 @@ class FormulaDetails extends React.Component{
 
   componentDidMount(){
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+    isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
     if(this.props.location.state.fromLogs){
       this.loadFormula();
     }
@@ -310,6 +313,7 @@ class FormulaDetails extends React.Component{
           }
         });
     temp.setState({isDisabled:true});
+    temp.setState({canUpdatePL: false});
     }
     // updating this
     // temp.setState({isCreateNew:false})
@@ -422,8 +426,9 @@ class FormulaDetails extends React.Component{
               style={{lineHeight:1.5}}
             />}
             {(!this.state.isDisabled) && <SelectIngredients initialArray={this.state.ingredientsArray} handleChange={this.updateIngredients}/>}
-            {(this.state.productionLinesString=='') && this.state.isDisabled && <p><font size="4">There are no production lines</font></p>}
-            {(this.state.productionLinesString!='') && this.state.isDisabled && <TextField
+            {(this.state.productionLinesString=='') && this.state.isDisabled && (isManager && !this.state.canUpdatePL) && <p><font size="4">There are no production lines</font></p>}
+            {(this.state.productionLinesString!='') && this.state.isDisabled && (isManager && !this.state.canUpdatePL) &&
+            <TextField
               id="selectProductionLines"
               label="Production Lines"
               value={this.state.productionLinesString}
@@ -433,7 +438,8 @@ class FormulaDetails extends React.Component{
               required
               style={{lineHeight:1.5}}
             />}
-            {(!this.state.isDisabled) && <SelectProductionLines currentFormula={this.state.name} initialArray={this.state.productionLinesArray} handleChange={this.updateProductionLines}/>}
+            {(!this.state.isDisabled || (isManager && this.state.canUpdatePL))
+              && <SelectProductionLines currentFormula={this.state.name} initialArray={this.state.productionLinesArray} handleChange={this.updateProductionLines}/>}
             </FormGroup>
 
             <br></br>
@@ -502,13 +508,13 @@ class FormulaDetails extends React.Component{
           </div>}
               <div style={styles.buttons}>
                 {(this.state.isDisabled && isAdmin) && <RaisedButton raised color = "secondary" onClick={()=>{this.setState({isDisabled:false});}} >EDIT</RaisedButton>}
-                {(!this.state.isDisabled) && <RaisedButton raised
+                {(!this.state.canUpdatePL && !isAdmin && isManager) && <RaisedButton raised color = "secondary" onClick={()=>{this.setState({canUpdatePL:true});}} >EDIT</RaisedButton>}
+                {( (!this.state.isDisabled) || (this.state.canUpdatePL) ) && <RaisedButton raised
                           color="primary"
                           // className=classes.button
                           type="Submit"
                           primary="true"
                           > {(this.state.isCreateNew)? 'ADD' : 'SAVE'} </RaisedButton>}
-
                 {this.props.location.state.fromLogs?
                   <RaisedButton raised color="default" component={Link} to='/log'
                   style = {{marginLeft: 10}}> BACK </RaisedButton>:
