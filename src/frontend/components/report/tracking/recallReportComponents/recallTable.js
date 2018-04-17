@@ -78,7 +78,7 @@ export default class SampleTable extends React.PureComponent {
       			{ 
       				name: 'timeProduced', 
       				title: 'Time Produced',
-      				getCellValue: row => (row.date ? row.date : undefined),
+      				getCellValue: row => (row.date ? row.date.toString().replace('T', ' ').replace('Z', ' ') : undefined),
       				dataType: 'string,' 
       			},
       		],

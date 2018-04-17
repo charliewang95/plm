@@ -678,10 +678,12 @@ var updateProduct = function(req, res, next, formula, numUnit, arrayInProductOut
         product.update({date: date, isIdle: true}, function(err, obj){
             console.log('Product '+formula.name+' added');
             if (err) return next(err);
-            else {
+            else if (!formula.isIntermediate) {
                 addProductFreshness(res, next, formula.name, function(){
                     callback();
                 });
+            } else {
+                callback();
             }
         })
     })
