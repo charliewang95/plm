@@ -38,7 +38,7 @@ export default class ProductionEfficiencyReport extends PureComponent {
     this.state = {
       columns: [
         { name: 'productionLineName', title: 'Production Line ' },
-        { name: 'lineEfficiency', title: 'Efficiency (%)' },
+        { name: 'lineEfficiency', title: 'Utilization (%)' },
       ],
       rows: [],
       sorting:[],
@@ -183,7 +183,7 @@ export default class ProductionEfficiencyReport extends PureComponent {
               <Button
                 raised
                 onClick={(event) => this.loadAllEfficiencies(event)}
-                color="primary">Get Efficiency</Button>
+                color="primary">Get Utilization</Button>
           </div>
 
       {/* </MuiPickersUtilsProvider> */}
@@ -221,7 +221,7 @@ export default class ProductionEfficiencyReport extends PureComponent {
             pageSizes={pageSizes}
           />
         </Grid>
-        <span>Overall Production Efficiency (%): {overallEfficiency} </span>
+        <span>Overall Production Utilization (%): {overallEfficiency} </span>
       </Paper>
     );
   }
