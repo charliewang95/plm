@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import {
   FilteringState,
   IntegratedFiltering,
-} from '@devexpress/dx-react-grid';
-import {
   SortingState, EditingState, PagingState,
   IntegratedPaging, IntegratedSorting,
 } from '@devexpress/dx-react-grid';
@@ -135,6 +133,19 @@ AddToProdButton.propTypes = {
   onExecute: PropTypes.func,
 };
 
+const FilterCell = (props) => {
+  console.log("I am filter cell");
+  console.log(props);
+  if(props.column.name){
+    return <TableFilterRow.Cell {...props} />
+  }else{
+    return <Table.Cell {...props}/>
+  }
+}
+FilterCell.propTypes = {
+  column: PropTypes.shape({ name: PropTypes.string }).isRequired,
+};
+
 const Cell = (props) => {
 //  console.log(" CELL props value: ");
 //  console.log(props);
@@ -195,7 +206,7 @@ class Formula extends React.PureComponent {
       snackBarOpen:false,
       snackBarMessage:'',
     };
-
+    this.changeSorting = sorting => this.setState({ sorting });
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
@@ -376,7 +387,7 @@ class Formula extends React.PureComponent {
       rows,
       columns,
       // tableColumnExtensions,
-      // sorting,
+      sorting,
       editingRowIds,
       // addedRows,
       rowChanges,
@@ -397,6 +408,12 @@ class Formula extends React.PureComponent {
           columns={columns}
           getRowId={getRowId}>
 
+          <FilteringState/>
+          <IntegratedFiltering />
+          <SortingState
+            sorting={sorting}
+            onSortingChange={this.changeSorting}
+          />
           <PagingState
             currentPage={currentPage}
             onCurrentPageChange={this.changeCurrentPage}
@@ -404,7 +421,7 @@ class Formula extends React.PureComponent {
             onPageSizeChange={this.changePageSize}
           />
 
-          {/* <IntegratedSorting /> */}
+          <IntegratedSorting />
           <IntegratedPaging />
 
           {isAdmin && <EditingState
@@ -430,10 +447,12 @@ class Formula extends React.PureComponent {
             order={columnOrder}
             onOrderChange={this.changeColumnOrder}
           />
-          <TableHeaderRow />
+          <TableHeaderRow showSortingControls />
+          <TableFilterRow cellComponent={FilterCell}/>
           {isAdmin && <TableEditRow
             cellComponent={Cell}
           /> }
+
 
           {isAdmin && <TableEditColumn
             width={120}

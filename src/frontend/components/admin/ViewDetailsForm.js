@@ -41,7 +41,7 @@ const styles = {
       float: 'center'
     },
     saveButton: {
-      marginLeft: 50,
+      marginLeft: 0,
     },
     packageName:{
       marginLeft: 10,

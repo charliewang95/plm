@@ -74,6 +74,13 @@ const styles = theme => ({
   },
 });
 
+const FilterCell = (props) => {
+    return <TableFilterRow.Cell {...props} />
+}
+FilterCell.propTypes = {
+  column: PropTypes.shape({ name: PropTypes.string }).isRequired,
+};
+
 const AddButton = ({ onExecute }) => (
   <div style={{ textAlign: 'center' }}>
     <Button
@@ -159,7 +166,7 @@ class ProductionLine extends React.PureComponent {
         { name: 'isIdle', title: 'Status' },
       ],
       rows:[],
-      // sorting: [],
+      sorting: [],
       editingRowIds: [],
       // addedRows: [],
       rowChanges: {},
@@ -171,7 +178,7 @@ class ProductionLine extends React.PureComponent {
       options:[],
       productionFormula:{},
     };
-
+    this.changeSorting = sorting => this.setState({ sorting });
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeRowChanges = (rowChanges) => this.setState({ rowChanges });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
@@ -292,7 +299,7 @@ class ProductionLine extends React.PureComponent {
       rows,
       columns,
       // tableColumnExtensions,
-      // sorting,
+      sorting,
       editingRowIds,
       // addedRows,
       rowChanges,
@@ -312,7 +319,12 @@ class ProductionLine extends React.PureComponent {
           rows={rows}
           columns={columns}
           getRowId={getRowId}>
-
+          <FilteringState/>
+          <IntegratedFiltering />
+          <SortingState
+            sorting={sorting}
+            onSortingChange={this.changeSorting}
+          />
           <PagingState
             currentPage={currentPage}
             onCurrentPageChange={this.changeCurrentPage}
@@ -320,7 +332,7 @@ class ProductionLine extends React.PureComponent {
             onPageSizeChange={this.changePageSize}
           />
 
-          {/* <IntegratedSorting /> */}
+          <IntegratedSorting />
           <IntegratedPaging />
 
           {isAdmin && <EditingState
@@ -346,7 +358,8 @@ class ProductionLine extends React.PureComponent {
             order={columnOrder}
             onOrderChange={this.changeColumnOrder}
           />
-          <TableHeaderRow />
+          <TableHeaderRow showSortingControls />
+           <TableFilterRow cellComponent={FilterCell}/>
           {isAdmin && <TableEditRow
             cellComponent={Cell}
           /> }

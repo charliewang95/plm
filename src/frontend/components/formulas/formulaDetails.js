@@ -505,7 +505,6 @@ class FormulaDetails extends React.Component{
                 {(!this.state.isDisabled) && <RaisedButton raised
                           color="primary"
                           // className=classes.button
-                          style={styles.saveButton}
                           type="Submit"
                           primary="true"
                           > {(this.state.isCreateNew)? 'ADD' : 'SAVE'} </RaisedButton>}

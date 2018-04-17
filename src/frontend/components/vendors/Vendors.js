@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  FilteringState,
+  IntegratedFiltering,
   SortingState, EditingState, PagingState,
   IntegratedPaging, IntegratedSorting,
 } from '@devexpress/dx-react-grid';
 import {
   Grid,
-  Table, TableHeaderRow, TableEditRow, TableEditColumn,
+  Table, TableFilterRow, TableHeaderRow, TableEditRow, TableEditColumn,
   PagingPanel, DragDropProvider, TableColumnReordering,
 } from '@devexpress/dx-react-grid-material-ui';
 import Paper from 'material-ui/Paper';
@@ -42,6 +44,12 @@ const styles = theme => ({
     width: '100%',
   },
 });
+const FilterCell = (props) => {
+  return <TableFilterRow.Cell {...props} />
+}
+FilterCell.propTypes = {
+  column: PropTypes.shape({ name: PropTypes.string }).isRequired,
+};
 
 const AddButton = ({ onExecute }) => (
   <div style={{ textAlign: 'center' }}>
@@ -295,6 +303,8 @@ class Vendors extends React.PureComponent
           columns={columns}
           getRowId={getRowId}
         >
+        <FilteringState/>
+          <IntegratedFiltering />
           <SortingState
             sorting={sorting}
             onSortingChange={this.changeSorting}
@@ -320,7 +330,6 @@ class Vendors extends React.PureComponent
           /> }
 
           <DragDropProvider />
-
           <Table
             columnExtensions={tableColumnExtensions}
             cellComponent={Cell}
@@ -332,6 +341,7 @@ class Vendors extends React.PureComponent
           />
 
           <TableHeaderRow showSortingControls />
+          <TableFilterRow cellComponent={FilterCell}/>
           {isAdmin && <TableEditRow
             cellComponent={EditCell}
           /> }

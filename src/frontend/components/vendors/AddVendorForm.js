@@ -21,7 +21,7 @@ const styles = {
     float: 'center'
   },
   saveButton: {
-    marginLeft: 5
+    marginLeft: 10
   }
 };
 
@@ -127,14 +127,15 @@ class AddVendorForm extends React.Component{
                     margin="normal"
                 />
               <div style={styles.buttons}>
-                  <RaisedButton raised color = "secondary"
-                    component = {Link} to = "/vendors">Back To Vendors' List</RaisedButton>
                   <RaisedButton raised
                             color="primary"
                             // component = {Link} to = "/vendors" //commented out because it overrides onSubmit
-                            style={styles.saveButton}
+                            
                             type="Submit"
                             primary="true"> Add </RaisedButton>
+                  <RaisedButton raised color = "default"
+                  style={styles.saveButton}
+                    component = {Link} to = "/vendors">Back To Vendors' List</RaisedButton>
              </div>
            </form>
            {fireRedirect && (
