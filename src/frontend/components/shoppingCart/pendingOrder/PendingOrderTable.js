@@ -469,11 +469,13 @@ class PendingOrderTable extends React.Component {
               // TODO: Add SnackBar
               // temp.setState({snackBarMessage : "Order successfully deleted."});
               // temp.setState({snackBarOpen:true});
+              console.log("deleted twice");
+              temp.setState({ rows, deletingRows: [] });
               toast.success('Order successfully deleted.' );
+              temp.loadPendingOrders();
             });
         }
-      console.log("deleted twice");
-      temp.setState({ rows, deletingRows: [] });
+      
     };
 
     // handle check out orders
