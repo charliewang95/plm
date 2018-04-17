@@ -21,15 +21,12 @@ import {
 } from '@devexpress/dx-react-grid-material-ui';
 import RaisedButton from 'material-ui/Button';
 
-
-
 const styles = {
     buttons: {
       marginTop: 30,
       float: 'center'
     },
   };
-
 
 var userId;
 var sessionId;
