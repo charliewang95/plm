@@ -55,17 +55,19 @@ var isManager;
 
 class MainList extends React.Component{
 
-  state = { open: true };
-
-  handleClick = () => {
-    this.setState({ open: !this.state.open });
-  };
-
-  componentDidMount(){
+  constructor(props){
+    super(props);
+    this.state = {
+      open: true,
+    };
     user = JSON.parse(sessionStorage.getItem('user'));
     isAdmin = (user == null) ? false : user["isAdmin"];
     isManager = (user == null) ? false : user["isManager"];
   }
+
+  handleClick = () => {
+    this.setState({ open: !this.state.open });
+  };
 
   render(){
     const { classes } = this.props;
