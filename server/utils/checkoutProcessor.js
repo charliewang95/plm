@@ -367,7 +367,7 @@ exports.markComplete = function(req, res, next){
                                     });
                                 } else {
                                     //TODO: add ingredient and ingerdientLot object if intermediate
-                                    addIntermediateProductIngredientLot(req, res, next, formula, quantity, totalSpace, date, function(){
+                                    addIntermediateProductIngredientLot(req, res, next, formula, quantity, totalSpace, date, pl, function(){
                                         updateProduct(req, res, next, formula, quantity, arrayInProductOut, date, pl, function() {
                                             updateIngredientProduct(req, res, next, pl, formula, date, function(){
                                                 logger.log(user.username, 'mark complete', pl, ProductionLine);
@@ -733,7 +733,7 @@ var addDistributorNetwork = function(req, res, next, formula, pl, date, callback
     })
 };
 
-var addIntermediateProductIngredientLot = function(req, res, next, formula, numUnit, totalSpace, date, callback){ //lot
+var addIntermediateProductIngredientLot = function(req, res, next, formula, numUnit, totalSpace, date, pl, callback){ //lot
     Ingredient.findOne({nameUnique: formula.nameUnique}, function(err, ingredient){
         addIngredientFreshness(res, next, formula.name, function(){
             if (err) return next(err);
@@ -761,7 +761,7 @@ var addIntermediateProductIngredientLot = function(req, res, next, formula, numU
                             ingredientLot.numUnit = numUnit;
                             ingredientLot.nativeUnit = newIngredient.nativeUnit;
                             ingredientLot.date = date;
-                            ingredientLot.lotNumber = 'IP'+date.getTime();
+                            ingredientLot.lotNumber = pl.lotNumber;
                             ingredientLot.lotNumberUnique = ingredientLot.lotNumber.toLowerCase();
                             //ingredientLot.vendorName = '(Intermediate Product)';
                             ingredientLot.save(function(err){
@@ -792,7 +792,7 @@ var addIntermediateProductIngredientLot = function(req, res, next, formula, numU
                     ingredientLot.numUnit = Number(numUnit);
                     ingredientLot.nativeUnit = ingredient.nativeUnit;
                     ingredientLot.date = date;
-                    ingredientLot.lotNumber = 'IP'+date.getTime();
+                    ingredientLot.lotNumber = pl.lotNumber;
                     ingredientLot.lotNumberUnique = ingredientLot.lotNumber.toLowerCase();
                     ingredientLot.save(function(err){
                         if (err) return next(err);
