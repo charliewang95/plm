@@ -37,6 +37,8 @@ export default class FinancialReport extends React.PureComponent {
       pageSizes: [10, 50, 100, 500],
       columnOrder: ['name', 'moneySpent', 'moneyProd'],
       selectedDateTime: new Date(),
+      totalExpense: 0,
+      totalProductionExpense: 0,
     };
     this.changeSorting = sorting => this.setState({ sorting });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
@@ -83,6 +85,15 @@ export default class FinancialReport extends React.PureComponent {
         ];
       }
 
+      var tempExpense = 0;
+      var tempProductionExpense = 0;
+
+      for(var i=0; i<processedData.length; i++){
+        tempExpense+=processedData[i].moneySpent;
+        tempProductionExpense+=processedData[i].moneyProd;
+      }
+      this.setState({totalExpense:tempExpense});
+      this.setState({totalProductionExpense:tempProductionExpense});
      this.setState({rows:processedData});
    }
 
@@ -126,6 +137,9 @@ export default class FinancialReport extends React.PureComponent {
             pageSizes={pageSizes}
           />
         </Grid>
+        <p><font style={{marginLeft: 20}} size="4">Overall Ingredient Expenditure: {this.state.totalExpense}</font></p>
+        <p><font style={{marginLeft: 20}} size="4">Overall Production Expenditure: {this.state.totalProductionExpense}</font></p>
+        <br/>
       </Paper>
     );
   }
