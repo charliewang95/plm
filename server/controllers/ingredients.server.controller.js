@@ -45,20 +45,12 @@ exports.getOldestLot = function(req, res, next) {
 
 exports.listLotNumbers = function(req, res, next) {
     console.log("Listing Lot Numbers");
-    IngredientLot.find({ingredientId: req.params.ingredientId}, function(err, items){
-//        var numberArray = [];
-//        var numberUniqueArray = [];
-//        for (var i = 0; i < items.length; i++) {
-//            var lotNumber = items[i].lotNumber;
-//            var lotNumberUnique = items[i].lotNumberUnique;
-//            if (!numberUniqueArray.includes(lotNumberUnique)){
-//                numberArray.push(lotNumber);
-//                numberUniqueArray.push(lotNumberUnique);
-//            }
-//        }
-//        res.send(numberArray); 
-        res.json(items);
-    });
+    Ingredient.findById(req.params.ingredientId, function(err, ingredient){
+        IngredientProduct.find({ingredientNameUnique: ingredient.nameUnique}, function(err, items){
+            res.json(items);
+        });
+    })
+
 };
 
 exports.getRecall = function(req, res, next) {

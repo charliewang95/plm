@@ -76,6 +76,9 @@ class ProductionLineDetails extends React.Component{
       isValid: false,
       pageNotFound: false,
     }
+    console.log("this is details");
+    console.log(details);
+    console.log(details.currentFormula);
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.updateFormulas = this.updateFormulas.bind(this);
     this.computeFormulaNamesString = this.computeFormulaNamesString.bind(this);
@@ -270,7 +273,7 @@ async loadProductionLine(){
               value={this.state.currentFormula}
               onChange={this.handleChange('currentFormula')}
               margin="normal"
-              disabled = {this.state.isDisabled}
+              disabled = {true}
               style = {{width:190}}
               required
             />}
