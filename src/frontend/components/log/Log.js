@@ -8,6 +8,8 @@ import {Link} from 'react-router-dom';
 import {
   FilteringState,
   IntegratedFiltering,
+  IntegratedSorting,
+  SortingState,
   EditingState,
 } from '@devexpress/dx-react-grid';
 import {
@@ -126,6 +128,7 @@ class Log extends React.PureComponent {
         { columnName: 'date', predicate: datePredicate },
       ],
       rows:[],
+      sorting: [{ columnName: 'date', direction: 'desc' }],
       unchangedRows: [],
       dates: [],
       startDate: new Date(2018, 0, 1, 0, 0, 0, 0),
@@ -137,6 +140,7 @@ class Log extends React.PureComponent {
       //editingRowIds: [],
       //rowChanges: {},
     };
+    this.changeSorting = sorting => this.setState({ sorting });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
     this.changePageSize = pageSize => this.setState({ pageSize });
     //this.changeFilters = filters => this.setState({ filters });
@@ -269,7 +273,7 @@ class Log extends React.PureComponent {
   render() {
     // const {classes} = this.props;
     const { integratedFilteringColumnExtensions, rows,columns, dates, startDate, endDate, filters, unchangedRows, 
-      pageSize, pageSizes, currentPage} = this.state;
+      pageSize, pageSizes, currentPage, sorting} = this.state;
 
     return (
       <div>
@@ -317,15 +321,20 @@ class Log extends React.PureComponent {
         >
           <FilteringState defaultFilters={[]} />
           <IntegratedFiltering />
+          <SortingState
+            sorting={sorting}
+            onSortingChange={this.changeSorting}
+          />
           <PagingState
             currentPage={currentPage}
             onCurrentPageChange={this.changeCurrentPage}
             pageSize={pageSize}
             onPageSizeChange={this.changePageSize}
           />
+          <IntegratedSorting />
           <IntegratedPaging />
           <Table cellComponent={Cell}/>
-          <TableHeaderRow />
+          <TableHeaderRow showSortingControls/>
           <TableFilterRow />
           <PagingPanel
             pageSizes={pageSizes}

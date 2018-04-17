@@ -572,7 +572,7 @@ export default class Demo extends React.PureComponent {
             onClose={this.cancelSelection}
             // classes={{ paper: classes.dialog }}
           >
-            <DialogTitle>Edit Quantity and unit Price </DialogTitle>
+            <DialogTitle>Enter Quantity and Unit Price </DialogTitle>
             <DialogContent>
               {/* <DialogContentText>
                 Are you sure to remove this product from the sale?
@@ -648,7 +648,7 @@ export default class Demo extends React.PureComponent {
                 </Grid>
               </Paper>
               <Divider/>
-              <span>Total revenue: $ {Math.round(grandTotalRevenue*100)/100}</span>
+              <p><font size="4" style={{marginTop:30}}>Total revenue: $ {Math.round(grandTotalRevenue*100)/100}</font></p>
             </DialogContent>
             <DialogActions>
               <Button onClick={this.cancelSale} color="primary">Cancel</Button>

@@ -64,7 +64,7 @@ export default class FreshnessReport extends React.PureComponent {
         averagePerUnitPrice:(Number(row.totalRevenue) > 0 )? (Math.round((Number(row.totalRevenue)/Number(row.numSold))*100)/100):0,
         totalProfit:((Number(row.totalRevenue) - Number(row.totalCost))!=0)? (Math.round((row.totalRevenue - row.totalCost)*100)/100):0,
         perUnitProfit: (Number(row.totalRevenue - row.totalCost) != 0 )? (Math.round((Number(row.totalRevenue - row.totalCost)/Number(row.numSold))*100)/100):0,
-        profitMargin:(Number(row.totalRevenue)>0) ? (Math.round((Number(row.totalRevenue)/Number(row.totalCost))*100)/100):0,
+        profitMargin:(Number(row.totalRevenue)>0) ? (Math.round((Number(row.totalRevenue)/Number(row.totalCost))*10000)/100):0,
         })),
       ];
 
