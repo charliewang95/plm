@@ -62,7 +62,9 @@ var ProductSchema = new Schema({
 ProductSchema.index({ nameUnique: 1, lotNumberUnique: 1, date: 1}, { unique: true });
 
 ProductSchema.statics.getOldestLot = function(res, productNameUnique, callback) {
+    console.log(productNameUnique);
     this.find({nameUnique: productNameUnique, empty: false}, {}, {sort: {date: 1}}, function(err, lot){
+        console.log(lot);
         if (lot.length == 0) callback(null);
         else callback(lot[0]);
     });
