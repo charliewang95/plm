@@ -36,20 +36,27 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
         }
         else {
             validateOrders(items, res, next, function(wSpace, rSpace, fSpace){
-                logger.log(username, 'checkout', items[0], model);
                 console.log("Orders validated. Added to pending");
-                for (var i = 0; i < items.length; i++) {
-                    var order = items[i];
-                    var date = new Date();
-                    order.update({isPending: true, tag: date.getTime().toString()}, function(err, obj){
-
-                    })
-                    res.end();
-                }
+                checkoutOrdersHelper(res, next, 0, items, function(){
+                    res.send(items);
+                });
             });
         }
     });
 };
+
+var checkoutOrdersHelper = function(res, next, i, items, callback) {
+    if (i == items.length) {
+        callback();
+    } else {
+        var order = items[i];
+        var date = new Date();
+        order.update({isPending: true, tag: date.getTime().toString()}, function(err, obj){
+            logger.log(username, 'checkout', order, model);
+            checkoutOrdersHelper(res, next, i+1, items, callback);
+        });
+    }
+}
 
 exports.orderArrived = function(req, res, next, order, model) {
     console.log("orderArrived()");
