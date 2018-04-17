@@ -38,6 +38,7 @@ class MainCartView extends React.Component {
     console.log('defaultTab is ' + defaultTab);
     this.state = {
       value: defaultTab,
+      fromPR: (props.location.state) ? props.location.state.fromPR : false,
     };
 
     sessionStorage.removeItem(pendingOrderKey);
@@ -49,6 +50,8 @@ class MainCartView extends React.Component {
       console.log(value);
       this.setState({ value });
     };
+    console.log("this is from pr");
+    console.log(this.state.fromPR);
   }
 
   handleChange = (event, value) => {
@@ -59,7 +62,6 @@ class MainCartView extends React.Component {
   render() {
     const { classes } = this.props;
     const { value } = this.state;
-
     return (
       <div className={classes.root}>
         <AppBar position="static" color="default">
@@ -75,7 +77,7 @@ class MainCartView extends React.Component {
             <Tab label="Pending Orders" />
           </Tabs>
         </AppBar>
-        {value === 0 && <ShoppingCart changeToPending={this.changeToPending}/>}
+        {value === 0 && <ShoppingCart fromPR={this.state.fromPR} changeToPending={this.changeToPending}/>}
         {value === 1 && <PendingOrderTable/>}
       </div>
     );
