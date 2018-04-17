@@ -153,8 +153,12 @@ export default class ProductionEfficiencyReport extends PureComponent {
     return (
       <Paper>
         <Fragment>
-        <div>
-          <span>Start Date: </span>
+        <br/>
+        <span style={{marginLeft: 20}}><font size="4">Please specify a date range:</font></span> 
+        <br/>
+        <br/>
+        <div style={{marginLeft: 40}}>
+          <span><font size="4">Start Date: </font></span>
             <DateTimePicker
                 value={startDate}
                 onChange={this.handleStartDateChange}
@@ -164,10 +168,8 @@ export default class ProductionEfficiencyReport extends PureComponent {
                 timeIcon={<AccessTimeIcon/>}
                 keyboardIcon={<KeyboardIcon/>}
               />
-            </div>
-          <br/>
-            <div>
-             <span>End Date: </span>
+    
+             <span style={{marginLeft: 10}}><font size="4">End Date: </font></span>
             <DateTimePicker
                 value={endDate}
                 onChange={this.handleEndDateChange}
@@ -179,12 +181,13 @@ export default class ProductionEfficiencyReport extends PureComponent {
               />
             </div>
           <br/>
-            <div>
+            <div style={{marginLeft: 40}}>
               <Button
                 raised
                 onClick={(event) => this.loadAllEfficiencies(event)}
                 color="primary">Get Efficiency</Button>
           </div>
+          <br/>
 
       {/* </MuiPickersUtilsProvider> */}
       </Fragment>
@@ -221,7 +224,9 @@ export default class ProductionEfficiencyReport extends PureComponent {
             pageSizes={pageSizes}
           />
         </Grid>
-        <span>Overall Production Efficiency (%): {overallEfficiency} </span>
+        <span style={{marginLeft: 20}}><font size="4">Overall Production Efficiency (%): {overallEfficiency}</font></span> 
+        <br/>
+        <br/>
       </Paper>
     );
   }

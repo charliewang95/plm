@@ -192,6 +192,8 @@ class Product extends React.PureComponent {
       pageSize, pageSizes, currentPage} = this.state;
 
     return (
+      <div>
+      <p><b><font size="6" color="3F51B5">Production History</font></b></p> 
       <Paper style={{ position: 'relative' }}>
         <div> Start Date: </div>
           <DatePickerInput style={pickerStyle}
@@ -237,6 +239,7 @@ class Product extends React.PureComponent {
           />
         </Grid>
       </Paper>
+      </div>
     );
   }
 }

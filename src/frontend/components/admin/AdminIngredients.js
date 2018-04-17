@@ -604,7 +604,6 @@ class AdminIngredients extends React.PureComponent {
 
     return (
       <div>
-
       <Paper>
         <Grid
           allowColumnResizing = {true}

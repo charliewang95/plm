@@ -72,6 +72,8 @@ class MainCartView extends React.Component {
     const { classes } = this.props;
     const { value } = this.state;
     return (
+    <div>
+      <p><b><font size="6" color="3F51B5">Orders</font></b></p>
       <div className={classes.root}>
         <AppBar position="static" color="default">
           <Tabs
@@ -89,6 +91,7 @@ class MainCartView extends React.Component {
         {value === 0 && <ShoppingCart fromPR={this.state.fromPR} changeToPending={this.changeToPending}/>}
         {value === 1 && <PendingOrderTable/>}
       </div>
+    </div>
     );
   }
 }

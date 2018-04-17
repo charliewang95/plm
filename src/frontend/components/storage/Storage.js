@@ -187,6 +187,8 @@ class Storage extends React.PureComponent {
     const { rows,columns ,editingRowIds,rowChanges,} = this.state;
 
     return (
+    <div>
+      <p><b><font size="6" color="3F51B5">Storage</font></b></p> 
       <Paper>
         <Grid
           allowColumnResizing = {true}
@@ -219,6 +221,7 @@ class Storage extends React.PureComponent {
 
         </Grid>
       </Paper>
+    </div>
     );
   }
 }

@@ -98,8 +98,7 @@ class AddVendorForm extends React.Component{
     const { name, contact, code, fireRedirect } = this.state;
     return (
             <div>
-              <label> Add a Vendor </label>
-
+             <p><b><font size="6" color="3F51B5">New Vendor</font></b></p>
             <form onSubmit={this.onFormSubmit}>
                 <TextField
                     required
