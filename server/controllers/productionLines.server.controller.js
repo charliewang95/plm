@@ -16,7 +16,7 @@ exports.read = function(req, res, next) {
 };
 
 exports.update = function(req, res, next) {
-    utils.doWithAccess(req, res, next, ProductionLine, 'update', req.params.userId, req.params.productionLineId, true, true);
+    utils.doWithAccess(req, res, next, ProductionLine, 'update', req.params.userId, req.params.productionLineId, false, true);
 };
 
 exports.delete = function(req, res, next) {

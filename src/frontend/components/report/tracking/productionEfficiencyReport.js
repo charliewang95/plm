@@ -178,6 +178,7 @@ export default class ProductionEfficiencyReport extends PureComponent {
                 dateRangeIcon={<DateRangeIcon/>}
                 timeIcon={<AccessTimeIcon/>}
                 keyboardIcon={<KeyboardIcon/>}
+                style={{width:190}}
               />
             </div>
           <br/>
