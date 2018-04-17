@@ -80,14 +80,15 @@ var updateNetworkHelper = function(res, next, date, i, items, callback) {
     }
 };
 
-var lotPickerHelper = function(res, next, productName, quantity, callback) {
+var lotPickerHelper = function(res, next, productName, quantity, callback) {  
+    console.log(productName);
     Product.getOldestLot(res, productName.toLowerCase(), function(lot){
         if (quantity < lot.numUnitLeft) {
             var newNumUnit = lot.numUnitLeft - quantity;
             lot.update({numUnitLeft: newNumUnit}, function(err, obj){
                 callback();
             });
-        } else if (quantity == lot.numUnit) {
+        } else if (quantity == lot.numUnitLeft) {
             lot.update({numUnitLeft: 0, empty: true}, function(err){
                 callback();
             });

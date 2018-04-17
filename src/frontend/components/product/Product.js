@@ -43,6 +43,14 @@ import DateRangeIcon from 'material-ui-icons/DateRange';
 import AccessTimeIcon from 'material-ui-icons/AccessTime';
 import KeyboardIcon from 'material-ui-icons/Keyboard';
 import PubSub from 'pubsub-js';
+
+import Input from 'material-ui/Input';
+import Select from 'material-ui/Select';
+import { MenuItem } from 'material-ui/Menu';
+
+import { TableCell } from 'material-ui/Table'; //for customize filter row
+import { withStyles } from 'material-ui/styles';
+
 var pickerStyle = {
   color: 'white',
   width: '160px'
@@ -53,7 +61,41 @@ const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 var isAdmin =  "";
 // JSON.parse(sessionStorage.getItem('user')).isAdmin;
+const styles = theme => ({
+  cell: {
+    width: '100%',
+    paddingLeft: theme.spacing.unit,
+    paddingRight: theme.spacing.unit,
+  },
+  input: {
+    width: '100%',
+  },
+});
 
+const StatusFilterCellBase = ({ filter, onFilter, classes }) => (
+  <TableCell className={classes.cell} >
+    <Select
+      input={<Input />}
+      value={filter ?  (filter.value!='' ? filter.value : 'No Filter') : 'No Filter'}
+      onChange={e => onFilter(e.target.value ? { value: e.target.value} : null)/*onValueChange(event.target.value.toLowerCase())*/}
+      style={{ width: '100%', marginTop: '4px' }}
+    >
+      <MenuItem value={''}>No Filter</MenuItem>
+      <MenuItem value={'Pending'}>Pending</MenuItem>
+      <MenuItem value={'Completed'}>Completed</MenuItem>
+    </Select>
+  </TableCell>
+);
+
+const StatusFilterCell = withStyles(styles, { name: 'StatusFilterCell' })(StatusFilterCellBase);
+
+const FilterCell = (props) => {
+  // console.log("props.column.name: " + props.column.name);
+  if (props.column.name === 'status') {
+    return <StatusFilterCell {...props} />;
+  }
+  return <TableFilterRow.Cell {...props} />;
+};
 
 const Cell = (props)=>{
   if(props.column.name=='name'){
@@ -307,7 +349,7 @@ class Product extends React.PureComponent {
           </Table>
           <TableHeaderRow showSortingControls/>
 
-          <TableFilterRow />
+          <TableFilterRow cellComponent={FilterCell}/> 
 
           <PagingPanel
             pageSizes={pageSizes}
