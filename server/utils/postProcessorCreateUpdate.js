@@ -7,6 +7,7 @@ var Vendor = mongoose.model('Vendor');
 var VendorPrice = mongoose.model('VendorPrice');
 var Storage = mongoose.model('Storage');
 var Formula = mongoose.model('Formula');
+var ProductionLine = mongoose.model('ProductionLine');
 
 exports.process = function(model, item, itemId, res, next) {
     if (model == Vendor) {
@@ -21,6 +22,9 @@ exports.process = function(model, item, itemId, res, next) {
     else if (model == Storage) {
         processStorage(item, itemId, res, next);
     }
+    else if (model == ProductionLine) {
+        processProductionLine(item, itemId, res, next);
+    }
 //    else if (model == Order) {
 //        processOrder(item, res, next);
 //    }
@@ -29,6 +33,7 @@ exports.process = function(model, item, itemId, res, next) {
 
 
 var processIngredient = function(item, itemId, res, next) {
+    console.log(item);
     var oldItem = item;
     var oldTemperatureZone = item.temperatureZone;
     var oldSpace = oldItem.space;
@@ -165,23 +170,142 @@ var processVendor = function(item, itemId, res, next) {
 }
 
 var processFormula = function(item, itemId, res, next){
-    var formulaName = item.name;
-    Ingredient.findOne({nameUnique: formulaName.toLowerCase()}, function(err, ingredient){
-        if (err) return next(err);
-        else if (!ingredient && item.isIntermediate) {
-            var newIngredient = new Ingredient();
-            newIngredient.name = formulaName;
-            newIngredient.nameUnique = formulaName.toLowerCase();
-            newIngredient.packageName = item.packageName;
-            newIngredient.temperatureZone = item.temperatureZone;
-            newIngredient.nativeUnit = item.nativeUnit;
-            newIngredient.numUnitPerPackage = item.numUnitPerPackage;
-            newIngredient.isIntermediate = true;
-            console.log("&&&&&&&&&&&&&&&&");
-            console.log(newIngredient);
-            newIngredient.save(function(err){
+    var oldProductionLineNames = item.productionLines;
+    Formula.findById(itemId, function(err, formula){
+        var newProductionLineNames = formula.productionLines;
+        processFormulaHelperDeleteOld(res, next, 0, item, newProductionLineNames, oldProductionLineNames, function(){
+
+        });
+    });
+}
+
+var processFormulaHelperDeleteOld = function(res, next, i, formula, newProductionLineNames, oldProductionLineNames, callback){
+    if (i == oldProductionLineNames.length) {
+        processFormulaHelperAddNew(res, next, 0, formula, newProductionLineNames, oldProductionLineNames, callback)
+    }
+    else {
+        var oldProductionLineName = oldProductionLineNames[i];
+        if (!newProductionLineNames.includes(oldProductionLineName)) {
+            ProductionLine.findOne({nameUnique: oldProductionLineName.toLowerCase()}, function(err, pl){
                 if (err) return next(err);
-            })
+                else if (!pl){
+                    return res.status(400).send('Production Line '+oldProductionLineName+' does not exist');
+                }
+                else {
+                    var formulasInProductionLine = pl.formulaNames;
+                    var newArray = [];
+                    for (var j = 0; j < formulasInProductionLine.length; j++) {
+                        if (formulasInProductionLine[j] != formula.name) {
+                            newArray.push(formulasInProductionLine[j]);
+                        }
+                    }
+                    pl.update({formulaNames: newArray}, function(err, newPl){
+                        processFormulaHelperDeleteOld(res, next, i+1, formula, newProductionLineNames, oldProductionLineNames, callback);
+                    });
+                }
+            });
         }
-    })
+        else {
+            processFormulaHelperDeleteOld(res, next, i+1, formula, newProductionLineNames, oldProductionLineNames, callback);
+        }
+    }
+}
+
+var processFormulaHelperAddNew = function(res, next, i, formula, newProductionLineNames, oldProductionLineNames, callback){
+    if (i == newProductionLineNames.length) {
+        callback();
+    }
+    else {
+        var newProductionLineName = newProductionLineNames[i];
+        if (!oldProductionLineNames.includes(newProductionLineName)){
+            ProductionLine.findOne({nameUnique: newProductionLineName.toLowerCase()}, function(err, pl){
+                if (err) return next(err);
+                else if (!pl){
+                    return res.status(400).send('Production Line '+newProductionLineName+' does not exist');
+                } else {
+                    var formulasInProductionLine = pl.formulaNames;
+                    formulasInProductionLine = formulasInProductionLine ? formulasInProductionLine : [];
+                    if (!formulasInProductionLine.includes(formula.name)){
+                        formulasInProductionLine.push(formula.name);
+                    }
+                    pl.update({formulaNames: formulasInProductionLine}, function(err, newPl){
+                        processFormulaHelperAddNew(res, next, i+1, formula, newProductionLineNames, oldProductionLineNames, callback);
+                    });
+                }
+            });
+        } else {
+            processFormulaHelperAddNew(res, next, i+1, formula, newProductionLineNames, oldProductionLineNames, callback);
+        }
+    }
+}
+
+var processProductionLine = function(item, itemId, res, next){
+    var oldFormulaNames = item.formulaNames;
+    ProductionLine.findById(itemId, function(err, newProductionLine){
+        var newFormulaNames = newProductionLine.formulaNames;
+        processProductionLineHelperDeleteOld(res, next, 0, item, newFormulaNames, oldFormulaNames, function(){
+
+        });
+    });
+}
+
+var processProductionLineHelperDeleteOld = function(res, next, i, pl, newFormulaNames, oldFormulaNames, callback){
+    if (i == oldFormulaNames.length) {
+        processProductionLineHelperAddNew(res, next, 0, pl, newFormulaNames, oldFormulaNames, callback)
+    }
+    else {
+        var oldFormulaName = oldFormulaNames[i];
+        if (!newFormulaNames.includes(oldFormulaName)) {
+            Formula.findOne({nameUnique: oldFormulaName.toLowerCase()}, function(err, formula){
+                if (err) return next(err);
+                else if (!formula){
+                    return res.status(400).send('Formula '+oldFormulaName+' does not exist');
+                }
+                else {
+                    var productionLinesInFormula = formula.productionLines;
+                    var newArray = [];
+                    for (var j = 0; j < productionLinesInFormula.length; j++) {
+                        if (productionLinesInFormula[j] !== pl.name) {
+                            newArray.push(productionLinesInFormula[j]);
+                        }
+                    }
+                    formula.update({productionLines: newArray}, function(err, newFormula){
+                        processProductionLineHelperDeleteOld(res, next, i+1, pl, newFormulaNames, oldFormulaNames, callback);
+                    });
+                }
+            });
+        }
+        else {
+            processProductionLineHelperDeleteOld(res, next, i+1, pl, newFormulaNames, oldFormulaNames, callback);
+        }
+    }
+}
+
+var processProductionLineHelperAddNew = function(res, next, i, pl, newFormulaNames, oldFormulaNames, callback){
+    if (i == newFormulaNames.length) {
+        callback();
+    }
+    else {
+        var newFormulaName = newFormulaNames[i];
+        if (!oldFormulaNames.includes(newFormulaName)){
+            Formula.findOne({nameUnique: newFormulaName.toLowerCase()}, function(err, formula){
+                if (err) return next(err);
+                else if (!formula){
+                    return res.status(400).send('Formula '+newFormulaName+' does not exist');
+                } else {
+                    var productionLinesInFormula = formula.productionLines;
+                    productionLinesInFormula = productionLinesInFormula ? productionLinesInFormula : [];
+                    if (!productionLinesInFormula.includes(pl.name)){
+                        productionLinesInFormula.push(pl.name);
+                    }
+                    //console.log(productionLinesInFormula);
+                    formula.update({productionLines: productionLinesInFormula}, function(err, newFormula){
+                        processProductionLineHelperAddNew(res, next, i+1, pl, newFormulaNames, oldFormulaNames, callback);
+                    });
+                }
+            });
+        } else {
+            processProductionLineHelperAddNew(res, next, i+1, pl, newFormulaNames, oldFormulaNames, callback);
+        }
+    }
 }

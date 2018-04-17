@@ -12,8 +12,6 @@ import {
   EditingState,PagingState,IntegratedPaging,DataTypeProvider,RowDetailState
 } from '@devexpress/dx-react-grid';
 
-import * as testConfig from '../../../resources/testConfig.js';
-
 import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import Styles from  'react-select/dist/react-select.css';
@@ -29,7 +27,9 @@ import Dialog, {
   DialogContentText,
   DialogTitle,
 } from 'material-ui/Dialog';
-
+import PubSub from 'pubsub-js';
+import { ToastContainer, toast } from 'react-toastify';
+//local imports
 import VendorCell from './vendorCell';
 
 import * as orderActions from '../../interface/orderInterface.js';
@@ -39,6 +39,8 @@ import {cartData, ingredientData} from './dummyData';
 import LotNumberButton from '../admin/LotNumberSelector/LotNumberButton.js';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
 import ViewLotButton from '../admin/LotNumberSelector/ViewLotButton.js';
+import { LinearProgress } from 'material-ui/Progress';
+
 // TODO: Get the user ID
 const READ_FROM_DATABASE = true;
 var isAdmin= "";
@@ -107,11 +109,15 @@ const LotNumberFormatter = (props) =>{
   const totalAssigned = props.row.totalAssigned;
   const deepCopy = props.row.lotNumberArray.ingredientLots;
 
+  return <p>{quantity}</p>;
+  /*
+  //no longer assign lot number here
   if(!props.row.lotAssigned){
     return <p>{quantity} / <font color="red">Actions Needed</font></p>
   }else{
     return <p>{quantity} / <font color="green">Completed</font> <ViewLotButton totalAssigned = {totalAssigned} initialArray={deepCopy} quantity = {quantity}></ViewLotButton></p>
   }
+  */
 };
 
 const lotNumberEditor = (props) => {
@@ -126,7 +132,15 @@ const lotNumberEditor = (props) => {
   const totalAssigned = props.row.totalAssigned;
   console.log("lotnumbereditor");
   console.log(props);
-  return<LotNumberButton totalAssigned = {totalAssigned} initialArray={deepCopy} quantity = {quantity} handlePropsChange={props.onValueChange}></LotNumberButton>
+
+  return<LotNumberButton 
+    totalAssigned = {totalAssigned} 
+    initialArray={deepCopy} 
+    quantity = {quantity} 
+    handlePropsChange={props.onValueChange} 
+    allowLotEditing={false}
+    rowData={props.row}
+  />
 };
 
 const LotNumberProvider = props => (
@@ -160,7 +174,7 @@ class ShoppingCart extends React.Component {
        // { name: 'packageNum', title: 'null },
         { name: 'vendors', title: 'Vendor / Price ($)' },
         // { key: 'lotNumberArray', title: 'Lot Numbers'}
-        { name: 'lotNumberArray',title: 'No. of Packages / Lot Numbers Status'}
+        { name: 'lotNumberArray',title: 'No. of Packages'}
         // getCellValue: row => (props.row.totalAssigned!=props.row.packageNum) ? <TableCell><p><font color="red">Actions Needed</font></p></TableCell> :
         //    <TableCell><p><font color="green">Completed</font></p></TableCell>
 
@@ -180,15 +194,14 @@ class ShoppingCart extends React.Component {
         { name: 'ingredientName', title: 'Ingredient Name' },
         { name: 'vendorName', title: 'Vendor / Price ($)' },
         { name: 'quantity',title: 'No. of Packages'},
-        { name: 'lotNumberString',title: 'No. of Packages / Lot Number'}
+        // { name: 'lotNumberString',title: 'No. of Packages / Lot Number'}
       ],
       deleteRows:[],
       expandedRowIds: [],
-      snackBarOpen:false,
-      snackBarMessage:'',
-
+      loading: this.props.fromPR,
 
     };
+    this.switchToPendingOrders = this.props.switchToPendingOrders;
     this.changeCurrentPage = currentPage => {
       this.setState({ currentPage });
     };
@@ -197,16 +210,19 @@ class ShoppingCart extends React.Component {
     this.changeRowChanges = (rowChanges) => {console.log("row changes"); console.log(rowChanges); this.setState({ rowChanges })};
     this.changeExpandedDetails = expandedRowIds => this.setState({ expandedRowIds });
 
-    this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
-
     this.commitChanges =  ({ changed, deleted }) => {
+      console.log("entered commitChanges")
       var temp = this;
       var tempCheckout = true;
       let { rows } = temp.state;
-
+      console.log("changed:");
+      console.log(changed);
+      console.log("deleted");
+      console.log(deleted);
       if(changed){
         console.log("asdfsadf changed");
         console.log(changed);
+        var warning = false;
           for(var i = 0; i < rows.length;i++){
             if(changed[rows[i].id]){
               if(changed[rows[i].id].packageNum){
@@ -216,8 +232,8 @@ class ShoppingCart extends React.Component {
                 var vendor = rows[i].selectedVendorName ? rows[i].selectedVendorName : rows[i].vendorOptions[0].vendorName;
                 var price = rows[i].selectedVendorPrice ? rows[i].selectedVendorPrice : rows[i].vendorOptions[0].price;
                 var ingredientLots = rows[i].ingredientLots;
-                if (!re.test(enteredQuantity)) {
-                  alert(" Number of packages must be a positive integer");
+                if (!re.test(enteredQuantity) || changed[rows[i].id].packageNum=='') {
+                  toast.error(" Number of packages must be a positive integer");
                 }else{
                   // TODO: Update back end
                   rows[i].packageNum = changed[rows[i].id].packageNum;
@@ -263,10 +279,11 @@ class ShoppingCart extends React.Component {
                 rows[i].lotNumberArray.packageNum = packageNum;
                 rows[i].lotNumberArray.ingredientLots = ingredientLots;
                 console.log(ingredientLots);
-                  if(ingredientLots.length>0){
-
-                           var sum = 0;
-                    console.log("this is the ingredientLots 222");
+                  if(packageNum==''){
+                    warning = true;
+                  }
+                  else if(ingredientLots.length>0){
+                    var sum = 0;
                     for(var j=0; j<ingredientLots.length;j++){
                       sum+=parseInt(ingredientLots[j].package);
                     }
@@ -288,21 +305,34 @@ class ShoppingCart extends React.Component {
             }
             if(!rows[i].lotAssigned){
               tempCheckout = false;
-              this.setState({canCheckout:false});
+              // this.setState({canCheckout:false});
             }
           }//forloop bracket
           if(tempCheckout){
             this.setState({canCheckout: true});
           }
-          this.setState({snackBarMessage : "Order successfully edited."});
-          this.setState({snackBarOpen:true});
+          // this.setState({snackBarMessage : "Order successfully edited."});
+          // this.setState({snackBarOpen:true});
+          if(!warning){
+            toast.success('Order successfully edited.' );
+          }else{
+            toast.error('Quantity cannot be empty.');
+          }
         }//changed bracket
         // Delete
         // TODO: Add SnackBar
         //TODO: Add SnackBar
 
         // Delete
+        console.log("rows:");
+        console.log(rows);
+        console.log("rows[deleted]")
         if(deleted && rows[deleted]){
+          console.log("delete has been issued");
+          console.log("deleted:");
+          console.log(deleted);
+          console.log("rows[deleted]");
+          console.log(rows[deleted]);
           var displayDeletingRows = new Array();
           var obj = new Object();
           obj.ingredientName = rows[deleted].ingredientName;
@@ -361,12 +391,15 @@ class ShoppingCart extends React.Component {
             // }else{
               rows.splice(index, 1);
               // TODO: Add SnackBar
-              temp.setState({snackBarMessage : "Order successfully deleted."});
-              temp.setState({snackBarOpen:true});
+              // temp.setState({snackBarMessage : "Order successfully deleted."});
+              // temp.setState({snackBarOpen:true});
+              console.log("deleted twice");
+              temp.setState({ rows, deletingRows: [] });
+              temp.loadCartData();
+              toast.success('Order successfully deleted.' );
             });
         }
-      console.log("deleted twice");
-      temp.setState({ rows, deletingRows: [] });
+      
     };
 
     // handle check out orders
@@ -375,23 +408,24 @@ class ShoppingCart extends React.Component {
       console.log("checkout" );
       console.log(" ORDERED DATA " + this.state.rows);
        var temp = this;
-      await orderActions.checkoutOrder(sessionId, function(res){
-        if (res.status == 400) {
-            if (!alert(res.data)) {
-            }
-        } else {
-          temp.setState({snackBarMessage : "Checkout successful!"});
-          temp.setState({snackBarOpen:true});
-            // alert('Checkout successful!');
-            temp.setState({rows:[]});
-        }
-      });
+       await orderActions.checkoutOrder(sessionId, function(res){
+        console.log("Entered next for checkout");
+         if (res.status == 400) {
+           PubSub.publish('showAlert', res.data );
+             // if (!alert(res.data)) {
+             // }
+         } else {
+           // temp.setState({snackBarMessage : "Checkout successful!"});
+           // temp.setState({snackBarOpen:true});
+           //PubSub.publish('showAlert', 'Checkout Successful.' );
+           toast.success('Checkout successful!');
+           temp.setState({rows:[]});
+           // temp.switchToPendingOrders();
+           //window.location.replace('/pending-orders');
+           temp.props.changeToPending(1);
+         }
+       });
     };
-  }
-
-  handleSnackBarClose(){
-    this.setState({snackBarOpen:false});
-    this.setState({snackBarMessage: ''});
   }
 
   componentDidMount(){
@@ -399,37 +433,43 @@ class ShoppingCart extends React.Component {
     userId =  JSON.parse(sessionStorage.getItem('user'))._id;
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
     isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
-    this.loadCartData();
+    var temp = this;
+    if(this.props.fromPR){
+      setTimeout(function(){ temp.loadCartData(); temp.setState({loading: false})}, 1000);
+    }else{
+      temp.loadCartData();
+    }
   }
 
-  componentWillMount(){
-  sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-      userId =  JSON.parse(sessionStorage.getItem('user'))._id;
-      isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
-      isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
-    this.loadCartData();
-    // TODO: Change later ?
-  }
+  // componentWillMount(){
+  //   sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+  //   userId =  JSON.parse(sessionStorage.getItem('user'))._id;
+  //   isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+  //   isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
+  //   this.loadCartData();
+  //   // TODO: Change later ?
+  // }
 
   // Initialize data in the table
   async loadCartData(){
     var startingIndex = 0;
     var rawData = [];
     if(READ_FROM_DATABASE){
-      rawData = await orderActions.getAllOrdersAsync(sessionId);
-      console.log("rawData " + JSON.stringify(rawData));
-
+      rawData = await orderActions.getRawOnlyAsync(sessionId);
+      rawData = rawData.data;
+      console.log(rawData);
     } else {
       rawData = cartData;
     }
     var processedData=[];
-
     for(var i =0; i < rawData.length; i++){
       var singleData = new Object ();
       singleData.ingredientName = rawData[i].ingredientName;
       singleData.packageNum = rawData[i].packageNum;
       singleData.ingredientId = rawData[i].ingredientId;
       singleData._id = rawData[i]._id;
+      console.log("shopping cart rawData");
+      console.log(rawData[i]);
       var singleIngredientData = {};
 
       // TODO: Get vendors from ingredients interface
@@ -439,7 +479,7 @@ class ShoppingCart extends React.Component {
         singleIngredientData.vendors.sort(function(a, b) {return a.price - b.price });
 
         console.log(" ingredient DATA " + JSON.stringify(singleIngredientData));
-        
+
           /* Parse vendors Options */
           var parsedVendorOptions = [...singleIngredientData.vendors.map((row,index)=> ({
               value: (row.vendorId), label: (row.vendorName + " / Price: $ " + row.price),
@@ -468,17 +508,20 @@ class ShoppingCart extends React.Component {
           }
           singleData.totalAssigned = sum;
           singleData.lotAssigned = (rawData[i].packageNum-sum)==0;
+          /* do not prevent checkout even if lots are assigned
+          assign lot number when ingredient arrives
           if(!singleData.lotAssigned){
             this.setState({canCheckout:false});
           }
+          */
           console.log("this is the single data");
           console.log(singleData);
           processedData.push(singleData);
       }catch(e){
         console.log('An error passed to the front end!')
-        alert(e);
+        PubSub.publish('showAlert', e);
+        //alert(e);
       }
-
 
       // Sort the vendors
 
@@ -502,6 +545,8 @@ class ShoppingCart extends React.Component {
       <div>
       <Paper>
       <Divider/>
+      <br/>
+        {this.state.loading && <LinearProgress/>}
         <Grid
           allowColumnResizing = {true}
           rows={rows}
@@ -543,11 +588,11 @@ class ShoppingCart extends React.Component {
             pageSizes={pageSizes}
           />
 
-          {this.state.snackBarOpen && <SnackBarDisplay
+          {/* {this.state.snackBarOpen && <SnackBarDisplay
                 open = {this.state.snackBarOpen}
                 message = {this.state.snackBarMessage}
                 handleSnackBarClose = {this.handleSnackBarClose}
-              /> }
+              /> } */}
 
         </Grid>
           <Dialog
@@ -593,9 +638,19 @@ class ShoppingCart extends React.Component {
                   type="submit"
                   onClick = {this.handleCheckOut}
                   primary="true"
-                  disabled = {!this.state.canCheckout}> Checkout </Button>}
+                  disabled = {false}> Checkout </Button>}
       </div>
       </Paper>
+      <div>
+      {(isAdmin || isManager) && <Button raised color="primary"
+      align="left"
+      component={Link} to="/orders"
+      style = {{marginLeft: 380, marginBottom: 30}}
+      > Document Order for Ingredients</Button>}
+
+      {/* {currentTab===1 && <Paper> <Intermediates/> </Paper>} */}
+    </div>
+      
     </div>
 
     );

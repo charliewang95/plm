@@ -21,15 +21,12 @@ import {
 } from '@devexpress/dx-react-grid-material-ui';
 import RaisedButton from 'material-ui/Button';
 
-
-
 const styles = {
     buttons: {
       marginTop: 30,
       float: 'center'
     },
   };
-
 
 var userId;
 var sessionId;
@@ -82,8 +79,6 @@ class ProductDetails extends React.Component {
     this.setState({productName:this.state.productRows[0].name});
     this.setState({time:this.state.productRows[0].date});
   }
-
-
 
   render() {
     const {productRows,rows,columns, grouping} = this.state;

@@ -41,11 +41,11 @@ import {Link} from 'react-router-dom';
 import * as ingredientActions from '../../interface/ingredientInterface';
 import * as formulaActions from '../../interface/formulaInterface';
 import * as testConfig from '../../../resources/testConfig.js';
-import MyPdfViewer from '../admin/PdfViewer';
 import * as uploadInterface from '../../interface/uploadInterface';
 import formulaData from './dummyData';
+import PubSub from 'pubsub-js';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
-
+import { ToastContainer, toast } from 'react-toastify';
 //TODO: Set the user ID
 var sessionId = "";
 var isAdmin = "";
@@ -181,7 +181,7 @@ class Formula extends React.PureComponent {
         { name: 'productType', title: 'Product Type ' }, // isIntermediate
       ],
       rows:[],
-      // sorting: [],
+      sorting: [],
       editingRowIds: [],
       // addedRows: [],
       rowChanges: {},
@@ -242,8 +242,12 @@ class Formula extends React.PureComponent {
           rows.splice(index, 1);
           // TODO: Add snackbar
           // alert(" Ingredient successfully deleted ! ");
-          this.setState({snackBarMessage : "Formula successfully deleted."});
-          this.setState({snackBarOpen:true});
+          // this.setState({snackBarMessage : "Formula successfully deleted."});
+          // this.setState({snackBarOpen:true});
+          toast.success('Formula successfully deleted.', {
+            position: toast.POSITION.TOP_RIGHT
+          });
+          //PubSub.publish('showMessage', 'Formula successfully deleted.' );
         }
       });
       this.setState({ rows, deletingRows: [] });
@@ -271,7 +275,8 @@ class Formula extends React.PureComponent {
     userId = JSON.parse(sessionStorage.getItem('user'))._id;
 
     //TODO: Get from backend
-    var rawData = await formulaActions.getAllFormulasAsync(sessionId);
+    var data = await formulaActions.getAllFormulasAsync(sessionId);
+    var rawData = (data) ? data : []
 
     for(var i =0; i < rawData.length;i++){
         var ingredientsArray  = rawData[i].ingredients;
@@ -289,6 +294,7 @@ class Formula extends React.PureComponent {
         rawData[i].ingredientsArray = rawData[i].ingredients;
         rawData[i].ingredients = ingredientsString;
         rawData[i].formulaId = rawData[i]._id;
+        rawData[i].productionLinesArray = rawData[i].productionLines;
       }
       var processedData = [];
       if(rawData){
@@ -325,8 +331,13 @@ class Formula extends React.PureComponent {
                         window.location.reload();
                 } else if (res.status == 200) {
                     console.log(res);
-                    if(!alert(res.data))
+                    if(!alert(res.data)){
+                        //PubSub.publish('showMessage', 'File successfully uploaded.' );
+                        toast.success('File successfully uploaded', {
+                          position: toast.POSITION.TOP_RIGHT
+                        });
                         window.location.reload();
+                      }
                 }
            });
          }
@@ -342,6 +353,7 @@ class Formula extends React.PureComponent {
           let form = new FormData();
           form.append('file', file);
           console.log(form);
+          
            await uploadInterface.uploadIntermediate(form, sessionId, function(res){
                 if (res.status == 400) {
                     if (!alert(res.data))
@@ -404,11 +416,11 @@ class Formula extends React.PureComponent {
             onCommitChanges={this.commitChanges}
           />}
           <DragDropProvider />
-          {this.state.snackBarOpen && <SnackBarDisplay
+          {/* {this.state.snackBarOpen && <SnackBarDisplay
                 open = {this.state.snackBarOpen}
                 message = {this.state.snackBarMessage}
                 handleSnackBarClose = {this.handleSnackBarClose}
-              /> }
+              /> } */}
           <Table
             // columnExtensions={tableColumnExtensions}
             cellComponent={Cell}

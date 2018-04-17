@@ -9,7 +9,8 @@ import * as vendorActions from '../../interface/vendorInterface.js';
 
 import { Redirect } from 'react-router'
 import * as testConfig from '../../../resources/testConfig.js'
-
+import PubSub from 'pubsub-js';
+import { ToastContainer, toast } from 'react-toastify';
 // TODO: get session Id from the user
 var sessionId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
@@ -45,7 +46,8 @@ class AddVendorForm extends React.Component{
   }
 
   vendorSuccessfullyAdded() {
-    alert('Vendor ' + this.state.name + ' is added successfully');
+    // alert('Vendor ' + this.state.name + ' is added successfully');
+    toast.success('Vendor Successfully added!' );
     this.clearFields();
   }
 
@@ -80,9 +82,10 @@ class AddVendorForm extends React.Component{
 
     this.state.name,this.state.contact,this.state.code,sessionId, function(res){
       if (res.status == 400) {
-        alert(res.data);
+        PubSub.publish('showAlert', res.data);
+        //alert(res.data);
       } else if (res.status == 500) {
-        alert('Vendor name or code already exists');
+        toast.error('Vendor name or code already exists');
       }else{
         me.vendorSuccessfullyAdded();
         // me.redirectToVendorsFrom();

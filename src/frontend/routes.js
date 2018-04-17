@@ -1,10 +1,8 @@
-import React from 'react';
+      import React from 'react';
 import { Switch, Route } from 'react-router-dom'
 //import App from './App';
 import DashBoard from './components/dashboard/DashBoard';
 // import AdminIngredients from './components/admin/AdminIngredients';
-// import UserIngredients from './components/ingredients/UserIngredients';
-import Inventory from './components/inventory/Inventory';
 import Orders from './components/orders/Orders';
 import Storage from './components/storage/Storage';
 import Vendors from './components/vendors/Vendors';
@@ -21,9 +19,18 @@ import ProductionReview from './components/formulas/productionReview.js';
 import FormulaDetails from './components/formulas/formulaDetails.js';
 import PageNotFound from './components/error/PageNotFound';
 import ProductDetails from './components/product/productDetails';
-import Report from './components/report/report.js';
-
+//import Report from './components/report/report.js';
+import FinancialMain from './components/report/financial/FinancialMain';
+import FreshnessMain from './components/report/freshness/FreshnessMain';
+import TrackingMain from './components/report/tracking/TrackingMain';
+import DistributionNetwork from './components/distributorNetwork/distributorNetwork.js';
+import ProductionLine from './components/productionLine/ProductionLine.js';
+import ProductionLineDetails from './components/productionLine/ProductionLineDetails.js';
 import MainIngredientView from './components/admin/mainIngredientView';
+import MainCartView from './components/shoppingCart/MainCartView.js';
+// import ShoppingCartAndOrders from './components/shoppingCart/mainPage';
+import PendingOrderView from './components/shoppingCart/pendingOrder/PendingOrderTable'
+
 
 
 const Routes = () => (
@@ -32,17 +39,18 @@ const Routes = () => (
             <Route exact path="/" component={MainIngredientView} />
             <Route path="/dashboard" component={DashBoard} />
             <Route path="/admin-ingredients" component={MainIngredientView} />
-            {/* <Route path="/user-ingredients" component={UserIngredients} /> */}
             <Route path="/ingredient-details" component={ViewDetailsForm} />
-            <Route path="/inventory" component={Inventory} />
             <Route path="/orders" component={Orders} />
             <Route path="/storage" component={Storage} />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
             <Route path="/vendors" component={Vendors} />
             <Route path="/addVendorForm" component={AddVendorForm} />
-            <Route path="/cart" component={ShoppingCart} />
-            <Route path="/report" component={Report} />
+            <Route path="/cart" component={MainCartView} />
+            <Route path="/pending-orders" component={PendingOrderView} />
+            <Route path="/report-financial" component={FinancialMain} />
+            <Route path='/report-freshness' component={FreshnessMain} />
+            <Route path='/report-tracking' component={TrackingMain} />
             <Route path="/log" component={Log} />
             <Route path="/formula" component={Formula} />
             <Route path="/pagenotfound" component={PageNotFound} />
@@ -51,7 +59,11 @@ const Routes = () => (
             <Route path="/admin-users" component={AdminUserPage} />
             <Route path="/product" component={Product} />
             <Route path="/product-details" component={ProductDetails} />
-		  </Switch>
+            <Route path="/distribution-network" component={DistributionNetwork} />
+            <Route path="/production-line" component={ProductionLine} />
+            <Route path='/production-line-details' component = {ProductionLineDetails} />
+
+		</Switch>
       </div>
 );
 

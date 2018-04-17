@@ -10,7 +10,7 @@ import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 //local imports
 import RegisterForm from './RegisterForm.jsx';
-import GridExample from './GridExample';
+import UserTable from './UserTable';
 
 const styles = theme => ({
   root: {
@@ -32,7 +32,7 @@ function SimpleExpansionPanel(props) {
           <Typography className={classes.heading}>View All Users (Except Local Admin)</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          <GridExample 
+          <UserTable 
           	rows={props.rows}
           	refreshTable={props.refreshTable}
           />

@@ -10,7 +10,7 @@ import Dialog, {
 } from 'material-ui/Dialog';
 import Paper from 'material-ui/Paper';
 import { TableCell } from 'material-ui/Table';
-
+import { ToastContainer, toast } from 'react-toastify';
 
 class LotNumberButton extends Component {
 
@@ -22,6 +22,8 @@ class LotNumberButton extends Component {
       open: false,
       currentQuantity: this.props.quantity,
       initialArray: (this.props.initialArray)?this.props.initialArray:[],
+      allowLotEditing: this.props.allowLotEditing,
+      rowData: this.props.rowData,
     };
     this.updateArray = this.updateArray.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -68,10 +70,17 @@ class LotNumberButton extends Component {
     event.preventDefault();
     console.log("change quantity");
     console.log(event.target.value);
-      this.setState({
+    const re =/^[1-9][0-9]*$/;
+    if (event.target.value == '' || re.test(event.target.value)) {
+        this.setState({
         currentQuantity: event.target.value,
       });
     this.saveToProps(event.target.value);
+    }else{
+      toast.error("No. of packages must be a number.", {
+        position: toast.POSITION.TOP_RIGHT
+      });
+    }
   }
 
   handleCancel(e){
@@ -79,10 +88,11 @@ class LotNumberButton extends Component {
     this.setState({open:false});
     console.log(this.state.initialArray);
     console.log("hit Cancel");
-    this.setState({lotNumberArray:this.props.initialArray});
-    this.setState({totalAssigned:this.props.totalAssigned});
-    alert("You have unsaved changes, are you sure?");
-    window.location.reload();
+    this.setState({lotNumberArray:[]});
+    this.setState({totalAssigned:0});
+    const pendingOrderKey = 'goToPendingOrders';
+    sessionStorage.setItem(pendingOrderKey,true)
+    //window.location.reload();
     //current workaround...
     //e.stopPropagation();
   }
@@ -96,12 +106,16 @@ class LotNumberButton extends Component {
   }
 
   saveToProps(quantity){
-    var object = new Object();
-    object.ingredientLots = this.state.lotNumberArray;
-    object.packageNum = quantity;
     console.log("save to props");
-    console.log(object);
-    this.props.handlePropsChange(object);
+    
+    var rowData = this.state.rowData;
+    console.log("rowData");
+    console.log(rowData);
+    // var object = new Object();
+    rowData.ingredientLots = this.state.lotNumberArray;
+    rowData.packageNum = quantity;
+    
+    this.props.handlePropsChange(rowData);
   }
 
   handleClickOpen(e){
@@ -126,26 +140,37 @@ class LotNumberButton extends Component {
   render() {
     return (
       <div>
+
+      { this.state.allowLotEditing !== true &&
+      <div>
         <TextField
           label="Quantity"
           value={this.state.currentQuantity}
           onChange={this.handleQuantityChange}
           style={{width:90}}
         />
-        <Button style={{marginLeft: 10}} raised onClick={(e)=>this.handleClickOpen(e)}>Edit Lot Numbers</Button>
-        <Dialog open={this.state.open} onClose={()=>{console.log("closed");}} >
-            <DialogTitle>Edit Lot Number</DialogTitle>
-            <DialogContent>
-             <DialogContentText>
-                i.e. If you want to assign lot number A123 to 4 packages, enter 4 for number of packages and A123 for lot number.
-              </DialogContentText>
-              <LotNumberSelector initialArray={this.state.lotNumberArray} quantity={this.state.currentQuantity} updateArray={this.updateArray} totalAssigned={this.state.totalAssigned}/>
-            </DialogContent>
-            <DialogActions>
-              {/*<Button onClick={(e)=>this.handleCancel(e)} color="primary">Cancel</Button>*/}
-              <Button disabled={!this.checkForEmpty() || (this.state.currentQuantity!=this.state.totalAssigned)} onClick={(e)=>this.handleSave(e)} color="secondary">Close</Button>
-            </DialogActions>
-          </Dialog>
+      </div> 
+      }
+
+      { this.state.allowLotEditing &&
+          <div>
+            <Button style={{marginLeft: 0}} raised onClick={(e)=>this.handleClickOpen(e)}>Mark Arrived</Button>
+            <Dialog open={this.state.open} onClose={()=>{console.log("clicked");}} >
+              <DialogTitle>Assign Lot Number</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  i.e. If you want to assign lot number A123 to 4 packages, enter 4 for number of packages and A123 for lot number.
+                </DialogContentText>
+                <LotNumberSelector initialArray={this.state.lotNumberArray} quantity={this.state.currentQuantity} updateArray={this.updateArray} totalAssigned={this.state.totalAssigned} fromDetails={false}/>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={(e)=>this.handleCancel(e)} color="primary">Cancel</Button>
+                <Button disabled={!this.checkForEmpty() || (this.state.currentQuantity!=this.state.totalAssigned)} onClick={(e)=>this.handleSave(e)} color="secondary">Save</Button>
+              </DialogActions>
+            </Dialog>
+          </div>
+        }
+
         </div>
     );
   }

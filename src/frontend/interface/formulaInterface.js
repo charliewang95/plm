@@ -4,6 +4,7 @@
 //creates the corresponding json object if necessary
 //and calls actions to send the actual requests
 import * as formulaActions from '../actions/formulaAction'
+import axios from 'axios'
 
 /**
 takes in various properties of formula,
@@ -13,7 +14,7 @@ packageType: string 'Sack', 'Pail', 'Drum', 'Supersack', 'Truckload', 'Railcar',
 temperatureZone: string 'freezer', 'refrigerator', 'warehouse', 'Freezer', 'Refrigerator', 'Warehouse'
 vendors: array of objects following the VendorPriceSchema
 **/
-function packIntoJson(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage){
+function packIntoJson(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage, productionLines){
 	var formulaJson = new Object();
 	formulaJson.name = name;
 	formulaJson.description = description;
@@ -24,6 +25,7 @@ function packIntoJson(name, description, unitsProvided, ingredients, isIntermedi
 	formulaJson.nativeUnit = nativeUnit;
 	formulaJson.packageName = packageName;
 	formulaJson.temperatureZone = temperatureZone;
+	formulaJson.productionLines = productionLines;
 	//console.log(ingredients);
 	return formulaJson;
 }
@@ -32,9 +34,9 @@ function packIntoJson(name, description, unitsProvided, ingredients, isIntermedi
  * for arguments see packIntoJson
  * sessionId: string, id of the current session
  */
-async function addFormula(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage, sessionId, callback) {
+async function addFormula(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage, productionLines, sessionId, callback) {
 	console.log("add formulas");
-	var newFormula = packIntoJson(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage);
+	var newFormula = packIntoJson(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage, productionLines);
 	//return await formulaActions.addFormula(newFormula, sessionId);
 	formulaActions.addFormula(newFormula, sessionId, function(res){
 	    callback(res);
@@ -84,8 +86,8 @@ async function getFormulaAsync(formulaId, sessionId) {
  * other arguments: see packIntoJson()
  * sessionId: string, id of the current session
  */
-async function updateFormula(formulaId, name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage, sessionId, callback) {
-	var updatedFormula = packIntoJson(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage);
+async function updateFormula(formulaId, name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage, productionLines, sessionId, callback) {
+	var updatedFormula = packIntoJson(name, description, unitsProvided, ingredients, isIntermediate, packageName, temperatureZone, nativeUnit, numUnitPerPackage, productionLines);
 	//return await formulaActions.updateFormula(formulaId, sessionId, updatedFormula);
 	formulaActions.updateFormula(formulaId, sessionId, updatedFormula, function(res){
 	    callback(res);
@@ -103,12 +105,21 @@ async function deleteFormula(formulaId, sessionId, callback) {
 	});
 };
 
-async function checkoutFormula(action, formulaId, quantity, sessionId, callback) {
-     await formulaActions.checkoutFormula(action, formulaId, quantity, sessionId, function(res){
+async function checkoutFormula(action, formulaId, quantity, productionLineName, sessionId, callback) {
+     await formulaActions.checkoutFormula(action, formulaId, quantity, productionLineName, sessionId, function(res){
         callback(res);
      });
 };
 
+async function getAllFormulaNamesAsync(sessionId) {
+   const res = await axios.get('/formulas/formulaNames/user/'+sessionId);
+   return res;
+}
+
+async function getFormulaByNameAsync(formulaName, sessionId) {
+   const res = await axios.get('/formulas/formulaName/'+formulaName+'/user/'+sessionId);
+   return res;
+}
 
 //export functions above for use by other modules
-export { addFormula, getAllFormulasAsync, getFormulaAsync, updateFormula, deleteFormula, checkoutFormula};
+export { addFormula, getAllFormulasAsync, getFormulaAsync, updateFormula, deleteFormula, checkoutFormula, getAllFormulaNamesAsync, getFormulaByNameAsync};

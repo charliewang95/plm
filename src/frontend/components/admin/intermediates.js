@@ -43,8 +43,10 @@ import * as uploadInterface from '../../interface/uploadInterface';
 import * as inventoryInterface from '../../interface/inventoryInterface';
   // TODO: get the sessionId
 import * as testConfig from '../../../resources/testConfig.js';
-
+import PubSub from 'pubsub-js';
+import { ToastContainer, toast } from 'react-toastify';
 import {Link} from 'react-router-dom';
+
 
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 var isAdmin = "";
@@ -171,7 +173,7 @@ class Intermediates extends React.PureComponent {
     };
 
     this.cancelDelete = () => this.setState({ deletingRows: [] });
-
+    var tempThis = this;
     this.deleteRows = () => {
       const rows = this.state.rows.slice();
       this.state.deletingRows.forEach((rowId) => {
@@ -185,11 +187,16 @@ class Intermediates extends React.PureComponent {
           console.log(rows[index].ingredientId);
           ingredientInterface.deleteIngredient(rows[index].ingredientId, sessionId, function(res){
                 if (res.status == 400) {
-                    alert(res.data);
+                    //alert(res.data);
+                    PubSub.publish('showAlert', res.data);
                 } else {
-                    alert(" Ingredient successfully deleted ! ");
                     rows.splice(index, 1);
-                    window.location.reload();
+                    tempThis.loadAllIngredients();
+                    toast.success('Ingredient successfully deleted!', {
+                      position: toast.POSITION.TOP_RIGHT
+                    });
+                    //PubSub.publish('showMessage', ' Ingredient Successfully deleted!' );
+                    // alert(" Ingredient successfully deleted ! ");
                 }
           });
         }
@@ -220,7 +227,7 @@ class Intermediates extends React.PureComponent {
   async loadAllIngredients(){
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     var rawData = await ingredientInterface.getAllIntermediatesOnlyAsync(sessionId);
-    rawData = rawData.data;
+    rawData = (rawData)? rawData.data:[],
     console.log("getallIntermediates");
     console.log(rawData);
     if(rawData.length==0){

@@ -16,6 +16,8 @@ import SelectIngredients from './SelectIngredients';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
 import { Redirect } from 'react-router';
 import PubSub from 'pubsub-js';
+import { ToastContainer, toast } from 'react-toastify';
+import SelectProductionLines from './SelectProductionLines.js';
 
 const styles = {
     buttons: {
@@ -57,6 +59,8 @@ class FormulaDetails extends React.Component{
     console.log(details);
     const isCreateNew = props.location.state.isCreateNew;
     this.state = {
+      productionLinesString:"",
+      productionLinesArray: (details.productionLinesArray)?(details.productionLinesArray):[],
       ingredientsString:"",
       ingredientsArray: (details.ingredientsArray)?(details.ingredientsArray):[],
   		value:undefined,
@@ -79,23 +83,18 @@ class FormulaDetails extends React.Component{
       snackBarMessage:'',
       fireRedirect: false,
       pageNotFound: false,
-      }
+    }
 
     this.handleOnChange = this.handleOnChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.updateIngredients = this.updateIngredients.bind(this);
+    this.updateProductionLines = this.updateProductionLines.bind(this);
+    this.computeProductionLinesString = this.computeProductionLinesString.bind(this);
     this.computeIngredientsString = this.computeIngredientsString.bind(this);
     this.handleUnitsProvidedChange = this.handleUnitsProvidedChange.bind(this);
     this.handleNumUnitPerPackage = this.handleNumUnitPerPackage.bind(this);
     this.isValid = this.isValid.bind(this);
     this.loadFormula = this.loadFormula.bind(this);
-    // this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
-
-    }
-
-  componentWillMount(){
-    // this.loadAllIngredients();
-
   }
 
   componentDidMount(){
@@ -104,14 +103,10 @@ class FormulaDetails extends React.Component{
       this.loadFormula();
     }
       this.computeIngredientsString();
+      this.computeProductionLinesString();
   }
 
-  handleSnackBarClose(){
-    this.setState({snackBarOpen:false});
-    this.setState({snackBarMessage: ''});
-  }
-
-async loadFormula(){
+  async loadFormula(){
     var details = [];
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     userId = JSON.parse(sessionStorage.getItem('user'))._id;
@@ -134,6 +129,8 @@ async loadFormula(){
         ingredientObject.nativeUnit = nativeUnit;
         formatIngredientsArray.push(ingredientObject);
       }
+    console.log("loadFormula is called");
+    console.log(details.productionLinesArray);
 
     this.setState({
       ingredientsArray: formatIngredientsArray,
@@ -147,9 +144,10 @@ async loadFormula(){
       nativeUnit: details.nativeUnit,
       isIntermediate: details.isIntermediate,
       numUnitPerPackage : (details.numUnitPerPackage)?(details.numUnitPerPackage):'',
-
+      productionLinesArray: (details.productionLines)?(details.productionLines):[],
     });
-    this.computeIngredientsString();
+      this.computeIngredientsString();
+      this.computeProductionLinesString();
     }
   }
 
@@ -161,7 +159,7 @@ async loadFormula(){
   		} else {
   			this.setState({value:option});
   		};
-  	};
+  };
 
   handleChange = name => event => {
       this.setState({
@@ -172,6 +170,11 @@ async loadFormula(){
   updateIngredients(updatedArray){
     this.setState({'ingredientsArray': updatedArray});
     this.computeIngredientsString();
+  }
+
+  updateProductionLines(updatedArray){
+    this.setState({productionLinesArray: updatedArray});
+    this.computeProductionLinesString();
   }
 
   computeIngredientsString(){
@@ -189,35 +192,51 @@ async loadFormula(){
     this.setState({ingredientsString: ingredients_string });
   }
 
+  computeProductionLinesString(){
+    var string = "";
+    if(this.state.productionLinesArray){
+    for(var i =0; i < this.state.productionLinesArray.length; i++){
+          var name = this.state.productionLinesArray[i];
+          string += name;
+          if(i!= (this.state.productionLinesArray.length - 1)){
+            string+='\n';
+          }
+        }
+    }
+    console.log("Compute production lines string");
+    console.log(string);
+    this.setState({productionLinesString: string });
+  }
 
   isValid(){
+    console.log("is valid is called");
     var temp = this;
     const re =/^[1-9]\d*$/;
     if(!temp.state.name){
-      alert(" Please enter the formula name. ");
+      toast.error(" Please enter the formula name. ");
       return false;
     }else if (!temp.state.description){
-      alert(" Please enter the description. ");
+      toast.error(" Please enter the description. ");
       return false;
     }else if (!re.test(temp.state.unitsProvided)) {
-      alert(" Units of product of formula must be a positive integer. ");
+      toast.error(" Units of product of formula must be a positive integer. ");
       return false;
     }else if (temp.state.ingredientsArray.length==0){
-      alert(" Please add ingredients needed for the formula.");
+      toast.error(" Please add ingredients needed for the formula.");
       return false;
       // Add checks for intermediateProductFields
     }else if ((temp.state.isIntermediate)){
       if (!temp.state.temperatureZone){
-        alert(" please select a temperature zone ");
+        toast.error("Please select a temperature zone ");
         return false;
       }else if (!this.state.numUnitPerPackage){
-        alert("Please enter the number of units per package!");
+        toast.error("Please enter the number of units per package!");
         return false;
       }else if((!(/^[A-z]+$/).test(temp.state.nativeUnit))) {
-          alert(" Native unit must be a string!");
+          toast.error("Native unit must be a string!");
           return false;
         }else if(!temp.state.packageName){
-          alert("Please select a package ");
+          toast.error("Please select a package ");
           return false;
         }
     // }else if (temp.state.ingredientsArray.length==0){
@@ -226,8 +245,9 @@ async loadFormula(){
     }else if (temp.state.ingredientsArray.length){
       // loop through and make sure all ingredients have quantities updated
       for(var i =0; i < this.state.ingredientsArray.length;i++){
-        if(!temp.state.ingredientsArray[i].quantity){
-          alert(" Please add a positive integer quantity for ingredient " + temp.state.ingredientsArray[i].ingredientName);
+        if(!temp.state.ingredientsArray[i].quantity || temp.state.ingredientsArray[i].quantity==0){
+          toast.error(" Please add a positive integer quantity for ingredient " + temp.state.ingredientsArray[i].ingredientName);
+          //alert(" Please add a positive integer quantity for ingredient " + temp.state.ingredientsArray[i].ingredientName);
           return false;
         }
       }
@@ -240,46 +260,52 @@ async loadFormula(){
   async onFormSubmit(e) {
     var temp = this;
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    var temp = this;
     e.preventDefault();
     console.log("submit formula ");
-    if(temp.isValid() && temp.state.isCreateNew){
+    var isValid = temp.isValid();
+          console.log("Onformsubmit in formula details is entered");
+      console.log(temp.state.productionLinesArray);
+    if(isValid && temp.state.isCreateNew){
 
       console.log(" Array " + JSON.stringify(temp.state.ingredientsArray));
       //TODO: Check for adding order
-
       await formulaActions.addFormula(temp.state.name, temp.state.description,
             temp.state.unitsProvided, temp.state.ingredientsArray, temp.state.isIntermediate,
             temp.state.packageName,temp.state.temperatureZone,temp.state.nativeUnit,temp.state.numUnitPerPackage,
-            sessionId, function(res){
+            temp.state.productionLinesArray, sessionId, function(res){
               //TODO: Please update the error accordingly
               if(res.status==400){
-                alert(res.data);
+                PubSub.publish('showAlert', res.data );
+                //alert(res.data);
               }else{
                 // TODO: Snackbar
-                temp.setState({snackBarMessage : "Formula successfully added"});
-                temp.setState({snackBarOpen:true});
+                // temp.setState({snackBarMessage : "Formula successfully added"});
+                // temp.setState({snackBarOpen:true});
                 temp.setState({fireRedirect: true});
+                toast.success('Formula successfully added.');
+                //PubSub.publish('showMessage', 'Formula successfully added.' );
                 // alert(" Formula successfully added! ");
               }
             });
-    }else if (!temp.state.isCreateNew && temp.isValid()){
+    }else if (!temp.state.isCreateNew && isValid){
       console.log("update formula ");
       console.log(temp.state);
 
       await formulaActions.updateFormula(temp.state.formulaId, temp.state.name,
         temp.state.description,temp.state.unitsProvided, temp.state.ingredientsArray,
         temp.state.isIntermediate,temp.state.packageName,temp.state.temperatureZone,
-        temp.state.nativeUnit,temp.state.numUnitPerPackage,sessionId, function(res){
+        temp.state.nativeUnit,temp.state.numUnitPerPackage, temp.state.productionLinesArray, sessionId, function(res){
           //TODO: Update error status
           if(res.status == 400){
-            alert(res.data);
+            //alert(res.data);
+            PubSub.publish('showAlert', res.data);
           }else{
             //TODO: SnackBar
-            temp.setState({snackBarMessage : "Formula successfully updated."});
-            temp.setState({snackBarOpen:true});
+            // temp.setState({snackBarMessage : "Formula successfully updated."});
+            // temp.setState({snackBarOpen:true});
             temp.setState({fireRedirect: true});
-            PubSub.publish('showMessage', 'Formula successfully updated.' );
+            //PubSub.publish('showMessage', 'Formula successfully updated.' );
+            toast.success('Formula successfully updated.');
             // alert(" Formula successfully updated. ");
           }
         });
@@ -299,7 +325,8 @@ async loadFormula(){
       if ( event.target.value == '' || (event.target.value>=0 && re.test(event.target.value))) {
          this.setState({unitsProvided: event.target.value})
       }else{
-        alert("The units of product must be a positive integer. ");
+        toast.error("The units of product must be a positive number. ");
+        //alert("The units of product must be a positive integer. ");
       }
   }
 
@@ -309,7 +336,8 @@ async loadFormula(){
       if ( event.target.value == '' || (event.target.value>=0 && re.test(event.target.value))) {
          this.setState({numUnitPerPackage: event.target.value})
       }else{
-        alert("The units of product must be a positive number. ");
+        toast.error("The units of product must be a positive number. ");
+        //alert("The units of product must be a positive number. ");
       }
   }
 
@@ -390,6 +418,18 @@ async loadFormula(){
               style={{lineHeight:1.5}}
             />}
             {(!this.state.isDisabled) && <SelectIngredients initialArray={this.state.ingredientsArray} handleChange={this.updateIngredients}/>}
+            {(this.state.productionLinesString=='') && this.state.isDisabled && <p><font size="4">There are no production lines</font></p>}
+            {(this.state.productionLinesString!='') && this.state.isDisabled && <TextField
+              id="selectProductionLines"
+              label="Production Lines"
+              value={this.state.productionLinesString}
+              margin="normal"
+              disabled = {this.state.isDisabled}
+              multiline
+              required
+              style={{lineHeight:1.5}}
+            />}
+            {(!this.state.isDisabled) && <SelectProductionLines currentFormula={this.state.name} initialArray={this.state.productionLinesArray} handleChange={this.updateProductionLines}/>}
             </FormGroup>
 
             <br></br>

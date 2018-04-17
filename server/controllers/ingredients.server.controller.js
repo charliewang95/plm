@@ -32,6 +32,7 @@ exports.delete = function(req, res, next) {
 };
 
 exports.getOldestLot = function(req, res, next) {
+    console.log("Getting oldest lot");
     IngredientLot.find({ingredientId: req.params.ingredientId}, {},
                {sort: {date: 1} },function(err, lots){
         if (err) return next(err);
@@ -43,20 +44,23 @@ exports.getOldestLot = function(req, res, next) {
 };
 
 exports.listLotNumbers = function(req, res, next) {
-    IngredientLot.find({ingredientId: req.params.ingredientId}, function(err, items){
-//        var numberArray = [];
-//        var numberUniqueArray = [];
-//        for (var i = 0; i < items.length; i++) {
-//            var lotNumber = items[i].lotNumber;
-//            var lotNumberUnique = items[i].lotNumberUnique;
-//            if (!numberUniqueArray.includes(lotNumberUnique)){
-//                numberArray.push(lotNumber);
-//                numberUniqueArray.push(lotNumberUnique);
-//            }
-//        }
-//        res.send(numberArray); 
-        res.json(items);
-    });
+    console.log("Listing Lot Numbers");
+    Ingredient.findById(req.params.ingredientId, function(err, ingredient){
+        IngredientLot.find({ingredientNameUnique: ingredient.nameUnique}, function(err, items){
+            res.json(items);
+        });
+    })
+
+};
+
+exports.listIngredientProductLotNumbers = function(req, res, next) {
+    console.log("Listing Lot Numbers");
+    Ingredient.findById(req.params.ingredientId, function(err, ingredient){
+        IngredientProduct.find({ingredientNameUnique: ingredient.nameUnique}, function(err, items){
+            res.json(items);
+        });
+    })
+
 };
 
 exports.getRecall = function(req, res, next) {
@@ -68,10 +72,17 @@ exports.getRecall = function(req, res, next) {
 };
 
 exports.getRecallAlternate = function(req, res, next) {
-    var vendorNameUnique = req.params.vendorName!="null" ? req.params.vendorName.toLowerCase() : "";
-    IngredientProduct.find({ingredientNameUnique: req.params.ingredientName.toLowerCase(), lotNumberUnique: req.params.lotNumber.toLowerCase(),
+    const ingredientNameUnique =  req.params.ingredientName.toLowerCase();
+    const lotNumberUnique = req.params.lotNumber.toLowerCase();
+    const vendorNameUnique = req.params.vendorName!="null" ? req.params.vendorName.toLowerCase() : "";
+    console.log("Received request to process alternative recall with the following parameters:\n" +
+        "ingredientNameUnique: " + ingredientNameUnique + "\n" +
+        "lotNumberUnique: " + lotNumberUnique + "\n" + 
+        "vendorNameUnique: " + vendorNameUnique);
+    IngredientProduct.find({ingredientNameUnique: ingredientNameUnique, lotNumberUnique: lotNumberUnique,
                             vendorNameUnique: vendorNameUnique}, function(err, ingredients){
-        console.log(req.params.ingredientName.toLowerCase()+' '+req.params.lotNumber.toLowerCase()+' '+req.params.vendorName.toLowerCase());
+        // console.log(req.params.ingredientName.toLowerCase()+' '+req.params.lotNumber.toLowerCase()+' '+req.params.vendorName.toLowerCase());
+        console.log("Found the following in IngredientProduct:");
         console.log(ingredients);
         if (err) return next(err);
         else res.json(ingredients);

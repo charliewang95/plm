@@ -19,15 +19,15 @@ import Dialog, {
 import Button from 'material-ui/Button';
 import { withStyles } from 'material-ui/styles';
 import Styles from  'react-select/dist/react-select.css';
-
-
+import PubSub from 'pubsub-js';
 import dummyData from './dummyData.js';
 import * as vendorActions from '../../interface/vendorInterface.js';
 import * as buttons from './Buttons.js';
 
 import * as testConfig from '../../../resources/testConfig.js';
 import cookie from 'react-cookies';
-
+import { ToastContainer, toast } from 'react-toastify';
+import {Link} from 'react-router-dom';
 // TODO: get session Id from the user
 //var sessionId = (sessionStorage.getItem('user') == null) ? null: JSON.parse(sessionStorage.getItem('user'))._id;
 var sessionId = '';
@@ -43,7 +43,23 @@ const styles = theme => ({
   },
 });
 
+const AddButton = ({ onExecute }) => (
+  <div style={{ textAlign: 'center' }}>
+    <Button
+      color="primary"
+      title="Create New Vendor"
+      component={Link} to={{pathname: '/addVendorForm'}}
+    >
+      New
+    </Button>
+  </div>
+);
+AddButton.propTypes = {
+  onExecute: PropTypes.func.isRequired,
+};
+
 const commandComponents = {
+  add: AddButton,
   edit:    buttons.EditButton,
   delete:  buttons.DeleteButton ,
   commit:  buttons.CommitButton,
@@ -95,7 +111,6 @@ class Vendors extends React.PureComponent
         { name: 'contact', title: 'Contact' },
         { name: 'code', title: 'Code' },
       ],
-
       rows:[],
       sorting: [],
       editingRowIds: [],
@@ -104,7 +119,7 @@ class Vendors extends React.PureComponent
       deletingRows: [],
       pageSize: 10,
       pageSizes: [5,10,0],
-      columnOrder: ['name', 'contact', 'code'],
+      columnOrder: ['name', 'contact', 'code']
     };
     var temp = this;
     this.changeSorting = sorting => this.setState({ sorting });
@@ -124,7 +139,7 @@ class Vendors extends React.PureComponent
         var vendorContact = "";
         var vendorCode = "";
         var vendorId="";
-        var oldRows = rows;
+        let oldRows = JSON.parse(JSON.stringify(rows));
         for(var i =0; i < rows.length; i++)
         {
           // Accessing the changes made to the rows and displaying them
@@ -163,16 +178,20 @@ class Vendors extends React.PureComponent
               if(!alert(res.data)){
                 window.location.reload();
               }
-              }else if (res.status == 500) {
-                if(!alert("Vendor name or code already exists")){
-                  window.location.reload();
+            }else if (res.status == 500) {
                   temp.setState({rows:oldRows});
-                }
+                  console.log("old rows");
+                  console.log(temp.state.rows);
+                  PubSub.publish('showAlert', 'Vendor name or code already exists.');
+            }else{
+              toast.success('Vendor successfully edited!' );
             }
           });
         }
       };
       // Delete pop up
+      // let deepCopy = JSON.parse(JSON.stringify(rows));
+      // this.setState({ oldRows: deepCopy});
       this.setState({ rows, deletingRows: deleted || this.state.deletingRows });
     };
 
@@ -191,6 +210,8 @@ class Vendors extends React.PureComponent
                   if(!alert(res.data)){
                     window.location.reload();
                   }
+              }else{
+                toast.success('Vendor successfully deleted!' );
               }
           });
           // removes data from the table
@@ -232,7 +253,7 @@ class Vendors extends React.PureComponent
       rawData = dummyData;
     }
     console.log("rawData " + JSON.stringify(rawData));
-    
+
     var processedData = [];
     if(rawData){
       processedData = [...rawData.map((row, index)=> ({
@@ -308,14 +329,13 @@ class Vendors extends React.PureComponent
           />
 
           <TableHeaderRow showSortingControls />
-
           {isAdmin && <TableEditRow
             cellComponent={EditCell}
           /> }
           {isAdmin &&
           <TableEditColumn
             width={120}
-            // showAddCommand={!addedRows.length}
+            showAddCommand
             showEditCommand
             showDeleteCommand
             commandComponent={Command}
@@ -326,7 +346,6 @@ class Vendors extends React.PureComponent
 
         </Grid>
 
-        {isAdmin && <buttons.AddVendorButton /> }
         {isAdmin &&
         <Dialog
           open={!!deletingRows.length}
