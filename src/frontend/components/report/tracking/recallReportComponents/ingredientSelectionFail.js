@@ -17,7 +17,7 @@ import Chip from 'material-ui/Chip';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 //local imports
-import * as IngredientInterface from './../../interface/ingredientInterface';
+import * as IngredientInterface from '../../interface/ingredientInterface';
 
 //globals
 var sessionId = "";
