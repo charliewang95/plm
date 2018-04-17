@@ -38,8 +38,8 @@ import * as ingredientActions from '../../interface/ingredientInterface.js';
 import {cartData, ingredientData} from './dummyData';
 import LotNumberButton from '../admin/LotNumberSelector/LotNumberButton.js';
 import SnackBarDisplay from '../snackBar/snackBarDisplay';
-
 import ViewLotButton from '../admin/LotNumberSelector/ViewLotButton.js';
+import { LinearProgress } from 'material-ui/Progress';
 
 // TODO: Get the user ID
 const READ_FROM_DATABASE = true;
@@ -198,9 +198,7 @@ class ShoppingCart extends React.Component {
       ],
       deleteRows:[],
       expandedRowIds: [],
-      snackBarOpen:false,
-      snackBarMessage:'',
-
+      loading: this.props.fromPR,
 
     };
     this.switchToPendingOrders = this.props.switchToPendingOrders;
@@ -211,8 +209,6 @@ class ShoppingCart extends React.Component {
     this.changeEditingRowIds = editingRowIds => this.setState({ editingRowIds });
     this.changeRowChanges = (rowChanges) => {console.log("row changes"); console.log(rowChanges); this.setState({ rowChanges })};
     this.changeExpandedDetails = expandedRowIds => this.setState({ expandedRowIds });
-
-    this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
 
     this.commitChanges =  ({ changed, deleted }) => {
       var temp = this;
@@ -418,27 +414,27 @@ class ShoppingCart extends React.Component {
     };
   }
 
-  handleSnackBarClose(){
-    this.setState({snackBarOpen:false});
-    this.setState({snackBarMessage: ''});
-  }
-
   componentDidMount(){
     sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
     userId =  JSON.parse(sessionStorage.getItem('user'))._id;
     isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
     isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
-    this.loadCartData();
+    var temp = this;
+    if(this.props.fromPR){
+      setTimeout(function(){ temp.loadCartData(); temp.setState({loading: false})}, 1000);
+    }else{
+      temp.loadCartData();
+    }
   }
 
-  componentWillMount(){
-    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-    userId =  JSON.parse(sessionStorage.getItem('user'))._id;
-    isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
-    isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
-    this.loadCartData();
-    // TODO: Change later ?
-  }
+  // componentWillMount(){
+  //   sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+  //   userId =  JSON.parse(sessionStorage.getItem('user'))._id;
+  //   isAdmin = JSON.parse(sessionStorage.getItem('user')).isAdmin;
+  //   isManager = JSON.parse(sessionStorage.getItem('user')).isManager;
+  //   this.loadCartData();
+  //   // TODO: Change later ?
+  // }
 
   // Initialize data in the table
   async loadCartData(){
@@ -452,8 +448,6 @@ class ShoppingCart extends React.Component {
       rawData = cartData;
     }
     var processedData=[];
-
-
     for(var i =0; i < rawData.length; i++){
       var singleData = new Object ();
       singleData.ingredientName = rawData[i].ingredientName;
@@ -537,6 +531,8 @@ class ShoppingCart extends React.Component {
       <div>
       <Paper>
       <Divider/>
+      <br/>
+        {this.state.loading && <LinearProgress/>}
         <Grid
           allowColumnResizing = {true}
           rows={rows}
