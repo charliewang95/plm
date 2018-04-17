@@ -125,7 +125,7 @@ class MainList extends React.Component{
             <ListItemIcon className={classes.icon}>
               <HistoryIcon />
             </ListItemIcon>
-            <ListItemText classes={{ primary: classes.primary }} inset primary="Production List" />
+            <ListItemText classes={{ primary: classes.primary }} inset primary="Productions" />
           </MenuItem>
 
           <MenuItem className={classes.menuItem} component={Link} to="/distribution-network" button>
