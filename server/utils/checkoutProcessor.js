@@ -293,9 +293,11 @@ exports.checkoutFormula = function(req, res, next, model, username) { //main che
                                          var date = new Date();
                                          console.log('About to update ingredient quantity');
                                          updateIngredientHelper(req, res, next, multiplier, ingredients, formula, 0, 0, [], date, function(newSpentMoney, arrayInProductOut) {
-                                             updateProductionLineAfterCheckout(res, next, productionLine, formula, date, quantity, 
-                                                newSpentMoney, totalSpace, arrayInProductOut, 
-                                                ()=>{logger.log(username, 'send to prod', formula, Formula); res.json(productionLine); console.log("Finished checkout process")});
+                                             addProduct(req, res, next, formula, quantity, arrayInProductOut, date, productionLine, function(lotNumber) {
+                                                 updateProductionLineAfterCheckout(res, next, productionLine, formula, date, quantity,
+                                                    newSpentMoney, totalSpace, arrayInProductOut, lotNumber,
+                                                    ()=>{logger.log(username, 'send to prod', formula, Formula); res.json(productionLine); console.log("Finished checkout process")});
+                                             });
                                          });
                                       } else {
                                          return res.status(406).json(missingIngredientsArray);
@@ -310,7 +312,7 @@ exports.checkoutFormula = function(req, res, next, model, username) { //main che
     });
 };
 
-var updateProductionLineAfterCheckout = function(res, next, productionLine, formula, date, quantity, newSpentMoney, totalSpace, arrayInProductOut, next) {
+var updateProductionLineAfterCheckout = function(res, next, productionLine, formula, date, quantity, newSpentMoney, totalSpace, arrayInProductOut, lotNumber, next) {
     var dates = productionLine.dates;
     dates = (dates == null) ? [] : dates;
     var newTuple = new Object();
@@ -318,7 +320,8 @@ var updateProductionLineAfterCheckout = function(res, next, productionLine, form
     dates.push(newTuple);
     productionLine.update({isIdle: false, currentFormula: formula.name, dates: dates,
                            quantity: quantity, newSpentMoney: newSpentMoney, totalSpace: totalSpace, 
-                           arrayInProductOut:arrayInProductOut}, function(err, obj){
+                           arrayInProductOut:arrayInProductOut,
+                           lotNumber: lotNumber}, function(err, obj){
         next();
     });
 }
@@ -354,7 +357,7 @@ exports.markComplete = function(req, res, next){
                             User.findById(req.params.userId, function(err, user){
                                 if (!formula.isIntermediate) {
                                     //TODO: add ingredientLotUsedInProduct in the product object
-                                    addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
+                                    updateProduct(req, res, next, formula, quantity, arrayInProductOut, date, pl, function() {
                                         updateIngredientProduct(req, res, next, pl, formula, date, function(){
                                             addDistributorNetwork(req, res, next, formula, pl, date, function(){
                                                 logger.log(user.username, 'mark complete', pl, ProductionLine);
@@ -365,7 +368,7 @@ exports.markComplete = function(req, res, next){
                                 } else {
                                     //TODO: add ingredient and ingerdientLot object if intermediate
                                     addIntermediateProductIngredientLot(req, res, next, formula, quantity, totalSpace, date, function(){
-                                        addProduct(req, res, next, formula, quantity, arrayInProductOut, date, function() {
+                                        updateProduct(req, res, next, formula, quantity, arrayInProductOut, date, pl, function() {
                                             updateIngredientProduct(req, res, next, pl, formula, date, function(){
                                                 logger.log(user.username, 'mark complete', pl, ProductionLine);
                                                 return res.send(pl);
@@ -644,12 +647,16 @@ var updateIngredientProductHelper = function(req, res, next, arrayInProductOut, 
     }
 }
 
-var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, date, callback){ //history
+var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, date, pl, callback){ //history
     var product = new Product();
     product.name = formula.name;
     product.nameUnique = formula.name.toLowerCase();
     product.numUnit = numUnit;
     product.numUnitLeft = numUnit;
+
+    product.isIdle = false;
+    product.productionLine = pl.name;
+
     product.empty = false;
     product.date = date;
     product.lotNumber = formula.isIntermediate? 'IP'+date.getTime() : 'PR'+date.getTime();
@@ -659,10 +666,24 @@ var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, d
         console.log('Product '+formula.name+' added');
         if (err) return next(err);
         else {
-            addProductFreshness(res, next, formula.name, function(){
-                callback();
-            });
+//            addProductFreshness(res, next, formula.name, function(){
+                callback(product.lotNumber);
+//            });
         }
+    })
+};
+
+var updateProduct = function(req, res, next, formula, numUnit, arrayInProductOut, date, pl, callback){ //history
+    Product.findOne({lotNumber: pl.lotNumber}, function(err, product){
+        product.update({date: date, isIdle: true}, function(err, obj){
+            console.log('Product '+formula.name+' added');
+            if (err) return next(err);
+            else {
+                addProductFreshness(res, next, formula.name, function(){
+                    callback();
+                });
+            }
+        })
     })
 };
 
