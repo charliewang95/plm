@@ -62,7 +62,14 @@ export default class ProductionEfficiencyReport extends PureComponent {
    this.handleStartDateChange = (date) => {
      console.log("handleStartDateChange");
      console.log(date);
-     if(Date.parse(date._d) >  Date.parse(date._i)){
+     console.log(this.state.endDate);
+     var endDate = this.state.endDate;
+
+     if(this.state.endDate._d){
+       endDate = this.state.endDate._d;
+     }
+
+     if(Date.parse(date._d) >  Date.parse(endDate)){
        PubSub.publish('showAlert', "Start date must be earlier than end date.");
      }else{
      this.setState({ startDate:date });
@@ -72,7 +79,15 @@ export default class ProductionEfficiencyReport extends PureComponent {
    this.handleEndDateChange = (date) => {
      console.log("handleEndDateChange");
      console.log(date);
-     if(Date.parse(date._d) < Date.parse(date._i)){
+     console.log(this.state.startDate);
+
+     var startDate = this.state.startDate;
+
+     if(this.state.startDate._d){
+       startDate = this.state.startDate._d;
+     }
+
+     if(Date.parse(date._d) < Date.parse(startDate)){
        PubSub.publish('showAlert', "End date must be later than start date.");
      }else{
        this.setState({endDate:date });
@@ -98,7 +113,7 @@ export default class ProductionEfficiencyReport extends PureComponent {
     if(temp.state.startDate._d){
       endTime = Date.parse(temp.state.startDate._i);
     }
-    
+
     console.log(startTime);
     console.log(endTime);
 
