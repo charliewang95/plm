@@ -36,6 +36,7 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
         }
         else {
             validateOrders(items, res, next, function(wSpace, rSpace, fSpace){
+                logger.log(username, 'checkout', items[0], model);
                 console.log("Orders validated. Added to pending");
                 for (var i = 0; i < items.length; i++) {
                     var order = items[i];
@@ -45,7 +46,6 @@ exports.checkoutOrders = function(req, res, next, model, userId, username) {
                     })
                     res.end();
                 }
-                logger.log(username, 'checkout', items[0], model);
             });
         }
     });
@@ -592,7 +592,7 @@ var addProduct = function(req, res, next, formula, numUnit, arrayInProductOut, d
     product.numUnitLeft = numUnit;
     product.empty = false;
     product.date = date;
-    product.lotNumber = 'PR'+date.getTime();
+    product.lotNumber = formula.isIntermediate? 'IP'+date.getTime() : 'PR'+date.getTime();
     product.ingredients = arrayInProductOut;
     product.lotNumberUnique = product.lotNumber.toLowerCase();
     product.save(function(err){
