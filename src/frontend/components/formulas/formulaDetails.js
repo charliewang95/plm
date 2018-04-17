@@ -429,7 +429,7 @@ class FormulaDetails extends React.Component{
               required
               style={{lineHeight:1.5}}
             />}
-            {(!this.state.isDisabled) && <SelectProductionLines initialArray={this.state.productionLinesArray} handleChange={this.updateProductionLines}/>}
+            {(!this.state.isDisabled) && <SelectProductionLines currentFormula={this.state.name} initialArray={this.state.productionLinesArray} handleChange={this.updateProductionLines}/>}
             </FormGroup>
 
             <br></br>

@@ -30,7 +30,7 @@ export default class FreshnessReport extends React.PureComponent {
       { name: 'totalCost', title: 'Ingredient Cost ($)' },
       { name: 'totalProfit', title: 'Total Profit ($)' },
       { name: 'perUnitProfit', title: 'Per Unit Profit ($)' },
-      { name: 'profitMargin', title: 'Profit Margin' },
+      { name: 'profitMargin', title: 'Profit Margin (%)' },
     ],
       rows: [],
       sorting:[],
