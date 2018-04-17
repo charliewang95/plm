@@ -1,6 +1,7 @@
 var User = require('mongoose').model('User');
 var DistributorNetwork = require('mongoose').model('DistributorNetwork');
 var ProductFreshness = require('mongoose').model('ProductFreshness');
+var Product = require('mongoose').model('Product');
 var utils = require('../utils/utils');
 var freshness = require('../utils/freshness');
 
@@ -47,7 +48,7 @@ var updateNetworkHelper = function(res, next, date, i, items, callback) {
         DistributorNetwork.findOne({productNameUnique: productName.toLowerCase()}, function(err, dn){
             if (err) return next(err);
             else {
-                lotPickerHelper(req, res, next, productName, quantity, function(){
+                lotPickerHelper(res, next, productName, quantity, function(){
                     console.log("quantity to sell = "+quantity);
                     console.log("quantity in total = "+dn.numUnit);
                     console.log("quantity sold = "+dn.numSold);
@@ -59,7 +60,7 @@ var updateNetworkHelper = function(res, next, date, i, items, callback) {
                     dn.update({totalRevenue: newTotalRevenue, numSold:newSoldUnit}, function(err, obj){
                         if (newSoldUnit == dn.numUnit) {
                             //dn.remove(function(err){
-                                ProductionFreshness.findOne({productNameUnique: productName.toLowerCase()}, function(err, fresh){
+                                ProductFreshness.findOne({productNameUnique: productName.toLowerCase()}, function(err, fresh){
                                     fresh.remove(function(err){
                                         updateNetworkHelper(res, next, date, i+1, items, callback);
                                     })
@@ -79,7 +80,7 @@ var updateNetworkHelper = function(res, next, date, i, items, callback) {
     }
 };
 
-var lotPickerHelper = function(req, res, next, productName, quantity, callback) {
+var lotPickerHelper = function(res, next, productName, quantity, callback) {
     Product.getOldestLot(res, productName.toLowerCase(), function(lot){
         if (quantity < lot.numUnitLeft) {
             var newNumUnit = lot.numUnitLeft - quantity;
@@ -92,7 +93,7 @@ var lotPickerHelper = function(req, res, next, productName, quantity, callback) 
             });
         } else {
             lot.update({numUnitLeft: 0, empty: true}, function(err){
-                lotPickerHelper(req, res, next, productName, quantity - lot.numUnitLeft, callback);
+                lotPickerHelper(res, next, productName, quantity - lot.numUnitLeft, callback);
             });
         }
     });
