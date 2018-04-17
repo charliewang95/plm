@@ -363,7 +363,8 @@ class ProductionReview extends React.Component {
                   disabled ={this.state.intermediates.length!=0}
                   style={styles.orderIngredientsButton}
                   onClick = {(event) => this.addToShoppingCart(event)}
-                  component = {Link} to = "/cart"
+                  component = {Link} to = {{pathname: '/cart', state:{fromPR: true} }}
+                  //component = {<Link to = {{pathname: '/cart', state:{fromPR: true} }}/>}
                   primary="true"> Order Ingredients </RaisedButton>
           </Tooltip> }
           {(this.state.ingredientsToOrder.length==0) && (this.state.hasProductionLines) &&

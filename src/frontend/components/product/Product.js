@@ -151,7 +151,6 @@ class Product extends React.PureComponent {
   componentDidMount() {
     var temp = this;
     setTimeout(function(){ temp.loadProductInfo(); temp.setState({loading: false})}, 1000);
-
   }
 
   async loadProductInfo(){
