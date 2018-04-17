@@ -26,11 +26,7 @@ import Input from 'material-ui/Input';
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
 import { TableCell } from 'material-ui/Table';
-
-
 import { withStyles } from 'material-ui/styles';
-
-
 import Styles from  'react-select/dist/react-select.css';
 import ReactSelect from 'react-select';
 import * as ingredientInterface from '../../interface/ingredientInterface';
@@ -39,11 +35,9 @@ import * as uploadInterface from '../../interface/uploadInterface';
 import * as inventoryInterface from '../../interface/inventoryInterface';
   // TODO: get the sessionId
 import * as testConfig from '../../../resources/testConfig.js';
-
 import {Link} from 'react-router-dom';
 import Chip from 'material-ui/Chip';
 import PubSub from 'pubsub-js';
-
 
 //local imports
 import SelectVendors from './SelectVendors';
@@ -52,7 +46,6 @@ import { ToastContainer, toast } from 'react-toastify';
 // import Snackbar from 'material-ui/Snackbar';
 
 import testData from './testIngredients';
-
 import AddButton from './adminIngredientComponents/buttons/AddNewIngredientButton'
 import DeleteButton from './adminIngredientComponents/buttons/DeleteIngredientButton'
 
