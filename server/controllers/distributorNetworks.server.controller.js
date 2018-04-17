@@ -60,7 +60,7 @@ var updateNetworkHelper = function(res, next, date, i, items, callback) {
                     dn.update({totalRevenue: newTotalRevenue, numSold:newSoldUnit}, function(err, obj){
                         if (newSoldUnit == dn.numUnit) {
                             //dn.remove(function(err){
-                                ProductionFreshness.findOne({productNameUnique: productName.toLowerCase()}, function(err, fresh){
+                                ProductFreshness.findOne({productNameUnique: productName.toLowerCase()}, function(err, fresh){
                                     fresh.remove(function(err){
                                         updateNetworkHelper(res, next, date, i+1, items, callback);
                                     })

@@ -195,7 +195,7 @@ var processFormulaHelperDeleteOld = function(res, next, i, formula, newProductio
                     var formulasInProductionLine = pl.formulaNames;
                     var newArray = [];
                     for (var j = 0; j < formulasInProductionLine.length; j++) {
-                        if (formulasInProductionLine[j] != oldProductionLineName) {
+                        if (formulasInProductionLine[j] != formula.name) {
                             newArray.push(formulasInProductionLine[j]);
                         }
                     }
@@ -224,8 +224,10 @@ var processFormulaHelperAddNew = function(res, next, i, formula, newProductionLi
                     return res.status(400).send('Production Line '+newProductionLineName+' does not exist');
                 } else {
                     var formulasInProductionLine = pl.formulaNames;
-                    formulasInProductionLine =  formulasInProductionLine ? formulasInProductionLine : [];
-                    formulasInProductionLine.push(formula.name);
+                    formulasInProductionLine = formulasInProductionLine ? formulasInProductionLine : [];
+                    if (formulasInProductionLine.includes(formula.name)){
+                        formulasInProductionLine.push(formula.name);
+                    }
                     pl.update({formulaNames: formulasInProductionLine}, function(err, newPl){
                         processFormulaHelperAddNew(res, next, i+1, formula, newProductionLineNames, oldProductionLineNames, callback);
                     });
@@ -252,6 +254,10 @@ var processProductionLineHelperDeleteOld = function(res, next, i, pl, newFormula
         processProductionLineHelperAddNew(res, next, 0, pl, newFormulaNames, oldFormulaNames, callback)
     }
     else {
+        console.log("newFormulaNames");
+        console.log(newFormulaNames);
+        console.log("oldFormulaNames");
+        console.log(oldFormulaNames);
         var oldFormulaName = oldFormulaNames[i];
         if (!newFormulaNames.includes(oldFormulaName)) {
             Formula.findOne({nameUnique: oldFormulaName.toLowerCase()}, function(err, formula){
@@ -263,7 +269,7 @@ var processProductionLineHelperDeleteOld = function(res, next, i, pl, newFormula
                     var productionLinesInFormula = formula.productionLines;
                     var newArray = [];
                     for (var j = 0; j < productionLinesInFormula.length; j++) {
-                        if (productionLinesInFormula[j] != oldFormulaName) {
+                        if (productionLinesInFormula[j] !== pl.name) {
                             newArray.push(productionLinesInFormula[j]);
                         }
                     }
@@ -293,8 +299,10 @@ var processProductionLineHelperAddNew = function(res, next, i, pl, newFormulaNam
                 } else {
                     var productionLinesInFormula = formula.productionLines;
                     productionLinesInFormula = productionLinesInFormula ? productionLinesInFormula : [];
-                    productionLinesInFormula.push(pl.name);
-                    console.log(productionLinesInFormula);
+                    if (!productionLinesInFormula.includes(pl.name)){
+                        productionLinesInFormula.push(pl.name);
+                    }
+                    //console.log(productionLinesInFormula);
                     formula.update({productionLines: productionLinesInFormula}, function(err, newFormula){
                         processProductionLineHelperAddNew(res, next, i+1, pl, newFormulaNames, oldFormulaNames, callback);
                     });
