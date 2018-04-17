@@ -115,11 +115,8 @@ class SignUpForm extends React.Component{
       
       
       <div style={styles.buttons}>
-        <RaisedButton raised color = "secondary"
-          component = {Link} to = "/">Back To Dashboard</RaisedButton>
          <RaisedButton raised
           color="primary"
-          style={styles.saveButton}
           type="Submit"
           primary="true"> Add </RaisedButton>
       </div>

@@ -286,7 +286,6 @@ async loadProductionLine(){
                 {(!this.state.isDisabled) && 
                   <RaisedButton raised
                       color="primary"
-                      style={styles.saveButton}
                       type="Submit"
                       primary="true"
                   > {(this.state.isCreateNew)? 'ADD' : 'SAVE'} </RaisedButton>}

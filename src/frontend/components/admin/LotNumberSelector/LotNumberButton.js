@@ -154,7 +154,7 @@ class LotNumberButton extends Component {
 
       { this.state.allowLotEditing &&
           <div>
-            <Button style={{marginLeft: 0}} raised onClick={(e)=>this.handleClickOpen(e)}>Mark Arrived</Button>
+            <Button color="secondary" style={{marginLeft: 0}} raised onClick={(e)=>this.handleClickOpen(e)}>Mark Arrived</Button>
             <Dialog open={this.state.open} onClose={()=>{console.log("clicked");}} >
               <DialogTitle>Assign Lot Number</DialogTitle>
               <DialogContent>

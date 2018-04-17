@@ -11,7 +11,6 @@ import * as orderActions from '../../interface/orderInterface';
 import * as vendorActions from '../../interface/vendorInterface';
 import { Redirect } from 'react-router';
 import Divider from 'material-ui/Divider';
-
 import dummyData from './dummyData.js';
 import testVendorData from '../vendors/dummyData.js';
 import SimpleTable from './packageTable.js';
@@ -323,7 +322,7 @@ class Orders extends React.PureComponent{
       fireRedirect ,ingredient_options,vendor_options} = this.state;
     return (
         <div>
-         <p><font size="6">Document an Order</font></p> 
+        <p><b><font size="6" color="3F51B5">Document an Order</font></b></p> 
             <form style={{width:400}} onSubmit={this.onFormSubmit} >
               <div style = {styles.buttons}>
                  <p><font size="3">Ingredient Name:</font></p>
@@ -374,9 +373,9 @@ class Orders extends React.PureComponent{
               <br></br>
               <br></br>
               <Divider></Divider>
-              <p><font size="6">Total Quantity: {this.state.totalQuantity} {this.state.nativeUnit}</font></p>
-              <p><font size="6">Total Floor Space: {this.state.totalFloorSpace} sqft</font></p>
-              <p><font size="6">Total Cost: From $ {this.state.total.toFixed(2)}</font></p>
+              <p><font size="5">Total Quantity: {this.state.totalQuantity} {this.state.nativeUnit}</font></p>
+              <p><font size="5">Total Floor Space: {this.state.totalFloorSpace} sqft</font></p>
+              <p><font size="5">Total Cost: From $ {this.state.total.toFixed(2)}</font></p>
               <br></br>
               <div style={styles.buttons}>
                   <RaisedButton raised
