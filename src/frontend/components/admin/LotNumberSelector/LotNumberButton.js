@@ -88,9 +88,11 @@ class LotNumberButton extends Component {
     this.setState({open:false});
     console.log(this.state.initialArray);
     console.log("hit Cancel");
-    this.setState({lotNumberArray:this.props.initialArray});
-    this.setState({totalAssigned:this.props.totalAssigned});
-    window.location.reload();
+    this.setState({lotNumberArray:[]});
+    this.setState({totalAssigned:0});
+    const pendingOrderKey = 'goToPendingOrders';
+    sessionStorage.setItem(pendingOrderKey,true)
+    //window.location.reload();
     //current workaround...
     //e.stopPropagation();
   }
@@ -152,8 +154,8 @@ class LotNumberButton extends Component {
 
       { this.state.allowLotEditing &&
           <div>
-            <Button style={{marginLeft: 0}} raised onClick={(e)=>this.handleClickOpen(e)}>Arrvied</Button>
-            <Dialog open={this.state.open} onClose={()=>{console.log("closed");}} >
+            <Button style={{marginLeft: 0}} raised onClick={(e)=>this.handleClickOpen(e)}>Mark Arrived</Button>
+            <Dialog open={this.state.open} onClose={()=>{console.log("clicked");}} >
               <DialogTitle>Assign Lot Number</DialogTitle>
               <DialogContent>
                 <DialogContentText>
@@ -162,8 +164,8 @@ class LotNumberButton extends Component {
                 <LotNumberSelector initialArray={this.state.lotNumberArray} quantity={this.state.currentQuantity} updateArray={this.updateArray} totalAssigned={this.state.totalAssigned} fromDetails={false}/>
               </DialogContent>
               <DialogActions>
-                {/*<Button onClick={(e)=>this.handleCancel(e)} color="primary">Cancel</Button>*/}
-                <Button disabled={!this.checkForEmpty() || (this.state.currentQuantity!=this.state.totalAssigned)} onClick={(e)=>this.handleSave(e)} color="secondary">Close</Button>
+                <Button onClick={(e)=>this.handleCancel(e)} color="primary">Cancel</Button>
+                <Button disabled={!this.checkForEmpty() || (this.state.currentQuantity!=this.state.totalAssigned)} onClick={(e)=>this.handleSave(e)} color="secondary">Save</Button>
               </DialogActions>
             </Dialog>
           </div>

@@ -6,6 +6,7 @@ import Tabs, { Tab } from 'material-ui/Tabs';
 import Typography from 'material-ui/Typography';
 import ShoppingCart from './shoppingCart.js';
 import PendingOrderTable from './pendingOrder/PendingOrderTable.js';
+import { ToastContainer, toast } from 'react-toastify';
 
 function TabContainer(props) {
   return (
@@ -35,6 +36,14 @@ class MainCartView extends React.Component {
   constructor(props) {
     super(props);
     const defaultTab = sessionStorage.getItem(pendingOrderKey)? 1: 0;
+
+    const arrivedPending = sessionStorage.getItem('arrivedPendingKey');
+    if(arrivedPending){
+      toast.success("Successfully marked order as arrived!");
+      //sessionStorage.setItem("arrivedPendingKey",false);
+      sessionStorage.removeItem("arrivedPendingKey");
+    }
+
     console.log('defaultTab is ' + defaultTab);
     this.state = {
       value: defaultTab,

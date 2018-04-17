@@ -27,7 +27,7 @@ import * as buttons from './Buttons.js';
 import * as testConfig from '../../../resources/testConfig.js';
 import cookie from 'react-cookies';
 import { ToastContainer, toast } from 'react-toastify';
-
+import {Link} from 'react-router-dom';
 // TODO: get session Id from the user
 //var sessionId = (sessionStorage.getItem('user') == null) ? null: JSON.parse(sessionStorage.getItem('user'))._id;
 var sessionId = '';
@@ -43,7 +43,23 @@ const styles = theme => ({
   },
 });
 
+const AddButton = ({ onExecute }) => (
+  <div style={{ textAlign: 'center' }}>
+    <Button
+      color="primary"
+      title="Create New Vendor"
+      component={Link} to={{pathname: '/addVendorForm'}}
+    >
+      New
+    </Button>
+  </div>
+);
+AddButton.propTypes = {
+  onExecute: PropTypes.func.isRequired,
+};
+
 const commandComponents = {
+  add: AddButton,
   edit:    buttons.EditButton,
   delete:  buttons.DeleteButton ,
   commit:  buttons.CommitButton,
@@ -313,14 +329,13 @@ class Vendors extends React.PureComponent
           />
 
           <TableHeaderRow showSortingControls />
-
           {isAdmin && <TableEditRow
             cellComponent={EditCell}
           /> }
           {isAdmin &&
           <TableEditColumn
             width={120}
-            // showAddCommand={!addedRows.length}
+            showAddCommand
             showEditCommand
             showDeleteCommand
             commandComponent={Command}
@@ -331,7 +346,6 @@ class Vendors extends React.PureComponent
 
         </Grid>
 
-        {isAdmin && <buttons.AddVendorButton /> }
         {isAdmin &&
         <Dialog
           open={!!deletingRows.length}
