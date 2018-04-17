@@ -64,41 +64,46 @@ ProductionLineSchema.methods.getUtility = function(startTime, endTime, callback)
 
     if (!this.dates || this.dates.length == 0) callback(0);
     else {
-
-    for (var i = 0; i < this.dates.length; i++) {
-        var tempDate = this.dates[i];
-        var tempStartTime = tempDate.startDate.getTime();
-        if (tempStartTime > startTime) {
-            startFound = true;
-            tempIndex = i;
-            break;
+        for (var i = 0; i < this.dates.length; i++) {
+            var tempDate = this.dates[i];
+            var tempStartTime = tempDate.startDate.getTime();
+            if (tempStartTime > startTime) {
+                startFound = true;
+                tempIndex = i;
+                break;
+            }
         }
-    }
+        console.log("startTime: "+startTime);
+        console.log("endTime: "+endTime);
+        console.log("startFound: "+startFound);
+        console.log("totalTime: "+totalTime);
 
-    if (startFound && i != 0 || !startFound) {
-        console.log("ASDSADASDASd");
-        console.log(this);
-        var tempEndTime = this.dates[i-1].endDate;
-        if (tempEndTime > startTime) {
-            totalBusy += tempEndTime - startTime;
+        if (startFound && i != 0 || !startFound) {
+            console.log("ASDSADASDASd");
+            console.log(this);
+            var tempEndTime = this.dates[i-1].endDate;
+            if (tempEndTime > startTime) {
+                totalBusy += tempEndTime - startTime;
+            }
         }
-    }
 
-    for (var i = tempIndex; i < this.dates.length; i++) {
-        var tempDate = this.dates[i];
-        var tempStartTime = tempDate.startDate.getTime();
-        if (!tempDate.endDate) {
-            totalBusy += endTime - tempStartTime;
-        } else {
-            var tempEndTime = tempDate.endDate.getTime();
-            totalBusy += tempEndTime - tempStartTime;
+        console.log("totalBusy: "+totalBusy);
+
+        for (var i = tempIndex; i < this.dates.length; i++) {
+            var tempDate = this.dates[i];
+            var tempStartTime = tempDate.startDate.getTime();
+            if (!tempDate.endDate) {
+                totalBusy += endTime - tempStartTime;
+            } else {
+                var tempEndTime = tempDate.endDate.getTime();
+                totalBusy += tempEndTime - tempStartTime;
+                console.log("totalBusy: "+totalBusy);
+            }
         }
+
+        var eff = Math.ceil(totalBusy/totalTime*10000)/100;
+        callback(eff);
     }
-
-    var eff = Math.ceil(totalBusy/totalTime*10000)/100;
-
-    callback(eff);
-  }
 }
 
 mongoose.model('ProductionLine', ProductionLineSchema);

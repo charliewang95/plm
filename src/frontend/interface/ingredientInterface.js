@@ -114,6 +114,11 @@ async function getAllLotNumbersAsync(ingredientId, sessionId) {
     return res;
 }
 
+async function getAllPRLotNumbersAsync(ingredientId, sessionId) {
+    const res = await axios.get('/ingredients/listIngredientProductLotNumbers/ingredient/'+ingredientId+'/user/'+sessionId);
+    return res;
+}
+
 async function getRecallAsync(lotId, sessionId) {
     const res = await axios.get('/ingredients/recall/lot/'+lotId+'/user/'+sessionId);
     return res;
@@ -165,5 +170,5 @@ async function deleteIngredient(ingredientId, sessionId, callback) {
 //export functions above for use by other modules
 
 export { addIngredient, getAllIngredientsAsync, getIngredientAsync, updateIngredient, deleteIngredient, getAllIngredientNamesAsync,
-getAllIngredientsOnlyAsync, getAllIntermediatesOnlyAsync, getAllLotNumbersAsync, getRecallAsync, getFreshAsync, editLotAsync,getRecallAlternateAsync};
+getAllIngredientsOnlyAsync, getAllIntermediatesOnlyAsync, getAllLotNumbersAsync, getRecallAsync, getFreshAsync, editLotAsync,getRecallAlternateAsync, getAllPRLotNumbersAsync};
 

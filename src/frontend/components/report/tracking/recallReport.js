@@ -244,7 +244,7 @@ export default class RecallReport extends React.PureComponent{
 	async getLotInfo(){
 		console.log(this.state.selectedIngredientObject);
 		const ingredientId = this.state.selectedIngredientObject._id;
-		const response = await IngredientInterface.getAllLotNumbersAsync(ingredientId, sessionId);
+		const response = await IngredientInterface.getAllPRLotNumbersAsync(ingredientId, sessionId);
 		console.log('response');
 		console.log(response);
 		const arrayOfLots = response.data;
@@ -256,7 +256,7 @@ export default class RecallReport extends React.PureComponent{
 	async getLotInfoFromObject(selectedIngredientObject){
 		console.log(selectedIngredientObject);
 		const ingredientId = selectedIngredientObject._id;
-		const response = await IngredientInterface.getAllLotNumbersAsync(ingredientId, sessionId);
+		const response = await IngredientInterface.getAllPRLotNumbersAsync(ingredientId, sessionId);
 		console.log('response');
 		console.log(response);
 		const arrayOfLots = response.data;

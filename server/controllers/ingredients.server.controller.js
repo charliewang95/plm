@@ -46,6 +46,16 @@ exports.getOldestLot = function(req, res, next) {
 exports.listLotNumbers = function(req, res, next) {
     console.log("Listing Lot Numbers");
     Ingredient.findById(req.params.ingredientId, function(err, ingredient){
+        IngredientLot.find({ingredientNameUnique: ingredient.nameUnique}, function(err, items){
+            res.json(items);
+        });
+    })
+
+};
+
+exports.listIngredientProductLotNumbers = function(req, res, next) {
+    console.log("Listing Lot Numbers");
+    Ingredient.findById(req.params.ingredientId, function(err, ingredient){
         IngredientProduct.find({ingredientNameUnique: ingredient.nameUnique}, function(err, items){
             res.json(items);
         });
