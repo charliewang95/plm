@@ -240,7 +240,7 @@ class Product extends React.PureComponent {
 
     return (
       <div>
-      <p><b><font size="6" color="3F51B5">Production History</font></b></p> 
+      <p><b><font size="6" color="3F51B5">Production List</font></b></p> 
       <Paper style={{ position: 'relative' }}>
         <Fragment>
         <br/>
@@ -268,6 +268,7 @@ class Product extends React.PureComponent {
                 dateRangeIcon={<DateRangeIcon/>}
                 timeIcon={<AccessTimeIcon/>}
                 keyboardIcon={<KeyboardIcon/>}
+                style={{width:190}}
               />
             </div>
           <br/>
