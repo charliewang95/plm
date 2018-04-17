@@ -82,7 +82,6 @@ var list = function(req, res, next, model, username) {
 			return next(err);
 		}
 		else {
-		    console.log(items);
 			res.json(items);
 		}
 	});
@@ -129,10 +128,10 @@ var create = function(req, res, next, model, username) {
                             console.log("creating, saved");
                             logger.log(username, 'create', modifiedItem, model);
                             if (model == Formula) {
-                                processFormulaCreate(modifiedItem, res, next);
+                                processFormulaCreate(modifiedItem, res, next, username);
                             }
                             if (model == ProductionLine) {
-                                processProductionLineCreate(modifiedItem, res, next);
+                                processProductionLineCreate(modifiedItem, res, next, username);
                             }
                             res.json(modifiedItem);
                         }
@@ -552,7 +551,7 @@ var updateIngredientHelper = function(req, res, next, multiplier, ingredients, n
 };
 
 
-var processFormulaCreate = function(item, res, next){
+var processFormulaCreate = function(item, res, next, username){
     var formulaName = item.name;
     Ingredient.findOne({nameUnique: formulaName.toLowerCase()}, function(err, ingredient){
         if (err) return next(err);
@@ -571,11 +570,13 @@ var processFormulaCreate = function(item, res, next){
                 if (err) return next(err);
                 else {
                     var newProductionLineNames = item.productionLines;
+                    //logger.log(username, 'create', item, Formula);
                     processFormulaHelperAddNewCreate(res, next, 0, item, newProductionLineNames, []);
                 }
             })
         } else {
             var newProductionLineNames = item.productionLines;
+            //logger.log(username, 'create', item, Formula);
             processFormulaHelperAddNewCreate(res, next, 0, item, newProductionLineNames, []);
         }
     })
@@ -610,8 +611,9 @@ var processFormulaHelperAddNewCreate = function(res, next, i, formula, newProduc
     }
 }
 
-var processProductionLineCreate = function(item, res, next){
+var processProductionLineCreate = function(item, res, next, username){
     processProductionLineHelperAddNewCreate(res, next, 0, item, item.formulaNames, []);
+    //logger.log(username, 'create', item, ProductionLine);
 }
 
 var processProductionLineHelperAddNewCreate = function(res, next, i, pl, newFormulaNames, oldFormulaNames){

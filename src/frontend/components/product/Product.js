@@ -75,6 +75,8 @@ class Product extends React.PureComponent {
         { name: 'numUnit', title: 'Number of Units' },
         { name: 'date', title: 'Timestamp' },
         { name: 'lotNumberUnique', title: 'Lot Number' },
+        { name: 'productionLine', title: 'Production Line' },
+        { name: 'status', title: 'Status' },
       ],
       rows:[],
       integratedFilteringColumnExtensions: [
@@ -151,14 +153,18 @@ class Product extends React.PureComponent {
   componentDidMount() {
     var temp = this;
     //setTimeout(function(){ temp.loadProductInfo(); temp.setState({loading: false})}, 1000);
-    temp.loadProductInfo();  
+    temp.loadProductInfo();
   }
 
   async loadProductInfo(){
+    console.log("loadProductInfo");
+
       var rawData = [];
       sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
       rawData = await productActions.getAllProductsAsync(sessionId);
 
+      console.log(rawData);
+      
       var tempDates = [];
       for (var i = 0; i<rawData.length; i++) {
         //TODO: Change this with real Date - remove new Date later
@@ -177,6 +183,7 @@ class Product extends React.PureComponent {
       if(rawData){
         processedData = [...rawData.map((row, index)=> ({
             id:index,...row,
+            status : (row.isIdle == false) ? 'Pending' : 'Completed',
           })),
         ];
       }

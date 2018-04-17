@@ -71,9 +71,9 @@ export default class SampleTable extends React.PureComponent {
       				getCellValue: row => (row.productName ? row.productName : undefined), 
       			},
       			{ 
-      				name: 'lotNumber', 
+      				name: 'lotNumberProduct',
       				title: 'Lot Number',
-      				getCellValue: row => (row.lotNumber ? row.lotNumber : undefined), 
+      				getCellValue: row => (row.lotNumberProduct ? row.lotNumberProduct : undefined),
       			},
       			{ 
       				name: 'timeProduced', 

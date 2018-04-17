@@ -51,6 +51,11 @@ var ProductSchema = new Schema({
         required: true,
         default: false
     },
+    isIdle: {
+        type: Boolean,
+        default: false
+    },
+    productionLine: String,
     ingredients: [IngredientLotUsedInProductSchema]
 });
 

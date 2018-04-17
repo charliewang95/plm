@@ -253,7 +253,7 @@ exports.getProductLatestInfo = function(res, next, productName, callback) {
     ProductFreshness.findOne({productNameUnique: productName.toLowerCase()}, function(err, fresh){
         if (err) return next(err);
         else if (fresh){
-            Product.find({nameUnique: productName.toLowerCase(), empty: false}, function(err, lots){
+            Product.find({nameUnique: productName.toLowerCase(), empty: false, isIdle: true}, function(err, lots){
                  if (err) return next(err);
                  else if (!lots) callback();
                  else {
