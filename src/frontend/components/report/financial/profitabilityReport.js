@@ -38,6 +38,9 @@ export default class FreshnessReport extends React.PureComponent {
       pageSize: 10,
       pageSizes: [10, 50, 100, 500],
       columnOrder: ['name', 'averageWaitTime', 'worstWaitTime'],
+      totalRevenue:0,
+      totalCost: 0,
+      totalProfit: 0,
     };
     this.changeSorting = sorting => this.setState({ sorting });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
@@ -68,6 +71,19 @@ export default class FreshnessReport extends React.PureComponent {
         })),
       ];
 
+      var tempCost = 0;
+      var tempRevenue = 0;
+      var tempProfit = 0;
+
+      for(var i=0; i<processedData.length; i++){
+        tempCost+=processedData[i].totalCost;
+        tempRevenue+=processedData[i].totalRevenue;
+        tempProfit+=processedData[i].totalProfit;
+      }
+
+      this.setState({totalCost:tempCost});
+      this.setState({totalRevenue:tempRevenue});
+      this.setState({totalProfit:tempProfit});
     this.setState({rows:processedData});
   }
 
@@ -109,6 +125,10 @@ export default class FreshnessReport extends React.PureComponent {
             pageSizes={pageSizes}
           />
         </Grid>
+        <p><font style={{marginLeft: 20}} size="4">Overall Cost: {this.state.totalCost}</font></p>
+        <p><font style={{marginLeft: 20}} size="4">Overall Revenue: {this.state.totalRevenue}</font></p>
+        <p><font style={{marginLeft: 20}} size="4">Overall Profit: {this.state.totalProfit}</font></p>
+        <br/>
       </Paper>
     );
   }
