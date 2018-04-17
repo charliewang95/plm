@@ -11,35 +11,30 @@ import {
 } from '@devexpress/dx-react-grid';
 import Styles from  'react-select/dist/react-select.css';
 import { withStyles } from 'material-ui/styles';
-import dummyData from '../orders/dummyData';
-import * as DistributorNetworkActions from '../../interface/distributorNetworkInterface';
-
-
-import * as testConfig from '../../../resources/testConfig.js';
-import freshnessReportData from './testData';
+import dummyData from '../../orders/dummyData';
+import * as formulaActions from '../../../interface/formulaInterface';
+import * as testConfig from '../../../../resources/testConfig.js';
 
 // const sessionId = testConfig.sessionId;
 var sessionId = "";
-// var userId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
-
-export default class FreshnessReport extends React.PureComponent {
+export default class ProductionReport extends React.PureComponent {
   constructor(props) {
     super(props);
+
     this.state = {
       columns: [
-        // ingredientName also includes intermediate name
-        { name: 'productName', title: 'Product Name' },
-        { name: 'averageWaitTime', title: 'Average Wait Time' },
-        { name: 'worstWaitTime', title: 'Worst-case Wait Time' },
+        { name: 'name', title: 'Formula Name' },
+        { name: 'totalProvided', title: 'Total Units Produced' },
+        { name: 'totalCost', title: 'Total Cost of Ingredients ($)' },
       ],
       rows: [],
       sorting:[],
       currentPage: 0,
       pageSize: 10,
       pageSizes: [10, 50, 100, 500],
-      columnOrder: ['productName', 'averageWaitTime', 'worstWaitTime'],
+      columnOrder: ['name', 'totalProvided', 'totalCost'],
     };
     this.changeSorting = sorting => this.setState({ sorting });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
@@ -47,32 +42,41 @@ export default class FreshnessReport extends React.PureComponent {
     this.changeColumnOrder = (order) => {
       this.setState({ columnOrder: order });
     };
+
   }
 
   componentDidMount(){
-    this.loadAllIngredients();
+    this.loadAllFormulas();
   }
 
-  async loadAllIngredients(){
-    var rawData = [];
-    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-     console.log('getting fresh data '+sessionId);
-     rawData = await DistributorNetworkActions.getFreshAsync(sessionId);
-     console.log(rawData);
+  async loadAllFormulas(){
+      var rawData = [];
 
-    var processedData = [];
-    if (rawData.data) rawData = rawData.data; // to handle response
-    if (rawData){
-      processedData = [...rawData.map((row, index)=> ({
-         id: index,
-         ...row,
-         averageWaitTime: row.averageDay + "d  " + row.averageHour + "h " + row.averageMinute + "m",
-         worstWaitTime: row.oldestDay + "d  " + row.oldestHour + "h " + row.oldestMinute + "m",
-       })),
-     ];
-    }
+    // try{
+       if(READ_FROM_DATABASE){
+         sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+         rawData = await formulaActions.getAllFormulasAsync(sessionId);
+       }else{
+         rawData = dummyData;
+       }
+     // }catch(e){
+       // console.log("Error passed to front end");
+       // alert(e);
+     // }
+     // adds integer values as row id
+     var processedData = [];
+      if(rawData){
+        processedData = [...rawData.map((row, index)=> ({
+            id: index,...row,
+            totalProvided: Math.round(row.totalProvided*1000)/1000,
+            totalCost: Math.round(row.totalCost*100)/100,
+          })),
+        ];
+      }
+      
      this.setState({rows:processedData});
    }
+
 
   render() {
     const {classes,} = this.props;

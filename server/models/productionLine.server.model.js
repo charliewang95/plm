@@ -44,7 +44,8 @@ var ProductionLineSchema = new Schema({
         required: true
     },
     currentFormula: {
-        type: String
+        type: String,
+        default: ''
     },
     dates: [DateTupleSchema],
     quantity: Number,

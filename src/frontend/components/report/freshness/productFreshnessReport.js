@@ -11,33 +11,33 @@ import {
 } from '@devexpress/dx-react-grid';
 import Styles from  'react-select/dist/react-select.css';
 import { withStyles } from 'material-ui/styles';
-import dummyData from '../orders/dummyData';
-import * as ingredientActions from '../../interface/ingredientInterface';
+import dummyData from '../../orders/dummyData';
+import * as DistributorNetworkActions from '../../../interface/distributorNetworkInterface';
+import * as testConfig from '../../../../resources/testConfig.js';
 
-
-import * as testConfig from '../../../resources/testConfig.js';
 
 // const sessionId = testConfig.sessionId;
 var sessionId = "";
+// var userId = "";
 const READ_FROM_DATABASE = testConfig.READ_FROM_DATABASE;
 
 
-export default class FinancialReport extends React.PureComponent {
+export default class FreshnessReport extends React.PureComponent {
   constructor(props) {
     super(props);
-
     this.state = {
       columns: [
-        { name: 'name', title: 'Ingredient Name' },
-        { name: 'moneySpent', title: 'Total Expenditure ($) ' },
-        { name: 'moneyProd', title: 'Production Expenditure ($)' },
+        // ingredientName also includes intermediate name
+        { name: 'productName', title: 'Product Name' },
+        { name: 'averageWaitTime', title: 'Average Wait Time' },
+        { name: 'worstWaitTime', title: 'Worst-case Wait Time' },
       ],
       rows: [],
       sorting:[],
       currentPage: 0,
       pageSize: 10,
       pageSizes: [10, 50, 100, 500],
-      columnOrder: ['name', 'moneySpent', 'moneyProd'],
+      columnOrder: ['productName', 'averageWaitTime', 'worstWaitTime'],
     };
     this.changeSorting = sorting => this.setState({ sorting });
     this.changeCurrentPage = currentPage => this.setState({ currentPage });
@@ -45,7 +45,6 @@ export default class FinancialReport extends React.PureComponent {
     this.changeColumnOrder = (order) => {
       this.setState({ columnOrder: order });
     };
-
   }
 
   componentDidMount(){
@@ -53,36 +52,25 @@ export default class FinancialReport extends React.PureComponent {
   }
 
   async loadAllIngredients(){
-      var rawData = [];
+    var rawData = [];
+    sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
+     console.log('getting fresh data '+sessionId);
+     rawData = await DistributorNetworkActions.getFreshAsync(sessionId);
+     console.log(rawData);
 
-    // try{
-       if(READ_FROM_DATABASE){
-         sessionId = JSON.parse(sessionStorage.getItem('user'))._id;
-         rawData = await ingredientActions.getAllIngredientsOnlyAsync(sessionId);
-         rawData = rawData.data;
-       }else{
-         rawData = dummyData;
-       }
-     // }catch(e){
-       // console.log("Error passed to front end");
-       // alert(e);
-     // }
-     // adds integer values as row id
-
-     var processedData = [];
-      if(rawData){
-        processedData = [...rawData.map((row, index)=> ({
-            id: index,
-            ...row,
-            moneySpent: Math.round(row.moneySpent*100)/100,
-            moneyProd: Math.round(row.moneyProd*100)/100,
-          })),
-        ];
-      }
-
+    var processedData = [];
+    if (rawData.data) rawData = rawData.data; // to handle response
+    if (rawData){
+      processedData = [...rawData.map((row, index)=> ({
+         id: index,
+         ...row,
+         averageWaitTime: row.averageDay + "d  " + row.averageHour + "h " + row.averageMinute + "m",
+         worstWaitTime: row.oldestDay + "d  " + row.oldestHour + "h " + row.oldestMinute + "m",
+       })),
+     ];
+    }
      this.setState({rows:processedData});
    }
-
 
   render() {
     const {classes,} = this.props;
