@@ -699,6 +699,11 @@ class AdminIngredients extends React.PureComponent {
       }
       </Paper>
     {/* <Paper styles = {{color : "#42f4d9"}} > */}
+    {(isAdmin || isManager) && <Button raised color="primary"
+      align="left"
+      component={Link} to="/orders"
+      style = {{marginBottom: 10, marginTop: 30}}
+      > Document Order for Ingredients</Button>}
       {isAdmin && <p><font size="5">Ingredient Bulk Import</font></p>}
       {isAdmin && <input type="file"
         name="myFile"
@@ -710,12 +715,6 @@ class AdminIngredients extends React.PureComponent {
       </div>
     }
         <br/>
-
-      {(isAdmin || isManager) && <Button raised color="primary"
-      align="left"
-      component={Link} to="/orders"
-      style = {{marginLeft: 380, marginBottom: 30}}
-      > Document Order for Ingredients</Button>}
 
       {/* {currentTab===1 && <Paper> <Intermediates/> </Paper>} */}
     </div>

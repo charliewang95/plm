@@ -658,7 +658,7 @@ export default class Demo extends React.PureComponent {
           {(isAdmin || isManager)&& <Button raised
                 color="primary"
                 disabled = {!this.checkSelectionValid()}
-                style = {{marginLeft: 550, marginBottom: 30}}
+                style = {{marginLeft: 20, marginBottom: 30}}
                 onClick = {(event) => { this.setState({review:true}), this.updateGrandTotalRevenue()}}
                 primary="true">Sell</Button>}
         </Paper>

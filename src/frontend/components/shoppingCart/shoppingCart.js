@@ -545,7 +545,6 @@ class ShoppingCart extends React.Component {
       <div>
       <Paper>
       <Divider/>
-      <br/>
         {this.state.loading && <LinearProgress/>}
         <Grid
           allowColumnResizing = {true}
@@ -634,7 +633,7 @@ class ShoppingCart extends React.Component {
         {this.state.rows.length!=0 && <Button raised
                   color="primary"
                   component = {Link} to = "/cart" //commented out because it overrides onSubmit
-                  style={{marginLeft: 500, marginBottom: 30, float: 'center'}}
+                  style={{marginLeft: 20, marginBottom: 30}}
                   type="submit"
                   onClick = {this.handleCheckOut}
                   primary="true"
@@ -645,7 +644,7 @@ class ShoppingCart extends React.Component {
       {(isAdmin || isManager) && <Button raised color="primary"
       align="left"
       component={Link} to="/orders"
-      style = {{marginLeft: 380, marginBottom: 30}}
+      style = {{marginBottom: 10, marginTop: 30}}
       > Document Order for Ingredients</Button>}
 
       {/* {currentTab===1 && <Paper> <Intermediates/> </Paper>} */}
