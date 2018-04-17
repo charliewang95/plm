@@ -306,7 +306,7 @@ var deleteWithoutUserAccess = function(req, res, next, model, itemId, username) 
                         deleteProcessor.process(model, item, itemId, res, next);
                         logger.log(username, 'delete', temp, model);
                         console.log(temp);
-                        res.json(temp);
+                        res.json(temp); 
                     }
                 });
             });
