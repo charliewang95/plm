@@ -75,6 +75,8 @@ class Product extends React.PureComponent {
         { name: 'numUnit', title: 'Number of Units' },
         { name: 'date', title: 'Timestamp' },
         { name: 'lotNumberUnique', title: 'Lot Number' },
+        { name: 'productionLine', title: 'Production Line' },
+        { name: 'status', title: 'Status' },
       ],
       rows:[],
       integratedFilteringColumnExtensions: [
@@ -181,6 +183,7 @@ class Product extends React.PureComponent {
       if(rawData){
         processedData = [...rawData.map((row, index)=> ({
             id:index,...row,
+            status : (row.isIdle == false) ? 'Pending' : 'Completed',
           })),
         ];
       }
