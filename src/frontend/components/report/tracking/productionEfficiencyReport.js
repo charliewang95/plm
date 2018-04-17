@@ -107,11 +107,11 @@ export default class ProductionEfficiencyReport extends PureComponent {
     var startTime = Date.parse(temp.state.startDate);
     var endTime = Date.parse(temp.state.endDate);
 
-    if(temp.state.startDate._i){
+    if(temp.state.startDate._d){
       startTime = Date.parse(temp.state.startDate._d);
     }
-    if(temp.state.startDate._d){
-      endTime = Date.parse(temp.state.startDate._i);
+    if(temp.state.endDate._d){
+      endTime = Date.parse(temp.state.endDate._d);
     }
 
     console.log(startTime);
