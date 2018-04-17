@@ -75,6 +75,7 @@ class ProductionLineDetails extends React.Component{
       isCreateNew: (isCreateNew),
       isValid: false,
       pageNotFound: false,
+      canUpdatePL: false,
     }
     console.log("this is details");
     console.log(details);
@@ -177,6 +178,7 @@ async loadProductionLine(){
             toast.success('Production marked as completed');
           }
       temp.setState({isDisabled:true});
+      temp.setState({canUpdatePL: false});
   }
 
   async onFormSubmit(e) {
@@ -210,6 +212,7 @@ async loadProductionLine(){
           }
         });
       temp.setState({isDisabled:true});
+      temp.setState({canUpdatePL: false});
     }
   }
 
@@ -247,7 +250,9 @@ async loadProductionLine(){
               />
           </FormGroup>
           <FormGroup>
-            {this.state.isDisabled && <TextField
+            {(this.state.formulaNamesString=='') && this.state.isDisabled && (isManager && !this.state.canUpdatePL) && <p><font size="4">There are no formulas</font></p>}
+            {(this.state.formulaNamesString!='') && this.state.isDisabled && (isManager && !this.state.canUpdatePL) &&
+            <TextField
               id="selectFormulas"
               label="Formulas"
               value={this.state.formulaNamesString}
@@ -257,7 +262,8 @@ async loadProductionLine(){
               required
               style={{lineHeight:1.5}}
             />}
-            {(!this.state.isDisabled) && <SelectFormulas currentFormula={this.state.currentFormula} initialArray={this.state.formulasArray} handleChange={this.updateFormulas}/>}
+            {(!this.state.isDisabled || (isManager && this.state.canUpdatePL))
+              && <SelectFormulas currentFormula={this.state.currentFormula} initialArray={this.state.formulasArray} handleChange={this.updateFormulas}/>}
           </FormGroup>
         <br/>
         <p><font size="5">Production Run Information</font></p>
@@ -283,7 +289,8 @@ async loadProductionLine(){
            {!this.state.isIdle &&(this.state.isDisabled && (isAdmin || isManager)) && <RaisedButton raised color="default" onClick={()=>this.markComplete()}>Complete</RaisedButton>}
               <div style={styles.buttons}>
                 {(this.state.isDisabled && isAdmin) && <RaisedButton raised color = "secondary" onClick={()=>{this.setState({isDisabled:false});}} >EDIT</RaisedButton>}
-                {(!this.state.isDisabled) && 
+                {(!this.state.canUpdatePL && !isAdmin && isManager) && <RaisedButton raised color = "secondary" onClick={()=>{this.setState({canUpdatePL:true});}} >EDIT</RaisedButton>}
+                {( (!this.state.isDisabled) || (this.state.canUpdatePL) )&& 
                   <RaisedButton raised
                       color="primary"
                       type="Submit"

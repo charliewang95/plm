@@ -302,6 +302,7 @@ class Log extends React.PureComponent {
                 dateRangeIcon={<DateRangeIcon/>}
                 timeIcon={<AccessTimeIcon/>}
                 keyboardIcon={<KeyboardIcon/>}
+                style={{width:190}}
               />
             </div>
           <br/>

@@ -135,7 +135,7 @@ const Cell = (props) => {
     </Table.Cell>
   }else if(props.column.name=='isIdle'){
     return (props.row.isIdle) ? <Table.Cell {...props}> <p><font color="green">IDLE</font></p></Table.Cell> :
-           <Table.Cell {...props}> <Typography color="error">BUSY</Typography> </Table.Cell> 
+           <Table.Cell {...props}> <Typography color="error">BUSY: {props.row.currentFormula}</Typography> </Table.Cell> 
   }
   else return <Table.Cell {...props} />;
 };
