@@ -653,8 +653,8 @@ class PendingOrderTable extends React.Component {
 
           <TableEditColumn
             width={120}
-            showEditCommand
-            showDeleteCommand
+            // showEditCommand
+            // showDeleteCommand
             commandComponent={Command}
           />
 

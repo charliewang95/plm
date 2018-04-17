@@ -288,7 +288,7 @@ class ProductionReview extends React.Component {
     const {formulaRows,rows,columns,formulaColumns,intermediates} = this.state;
     return (
       <div>
-      <p><font size="6">Production Review</font></p>
+      <p><b><font size="6" color="3F51B5">Production Review</font></b></p>
       <Paper>
         <Grid
           allowColumnResizing = {true}
@@ -373,7 +373,7 @@ class ProductionReview extends React.Component {
                   //component = {<Link to = {{pathname: '/cart', state:{fromPR: true} }}/>}
                   primary="true"> Order Ingredients </RaisedButton>
           </Tooltip> }
-          {(this.state.ingredientsToOrder.length==0) && (this.state.hasProductionLines) &&
+          {(this.state.ingredientsToOrder.length==0) &&
           <div>
             <p><font size="4">Select Production Line</font></p>
             <ProductionLinesTable hasProductionLines={()=>{this.setState({hasProductionLines: false});}} productionLinesArray={this.state.formulaRows[0].productionLinesArray} handleChange={this.selectProductionLine}/>

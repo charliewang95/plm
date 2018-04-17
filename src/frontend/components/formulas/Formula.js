@@ -389,6 +389,7 @@ class Formula extends React.PureComponent {
     } = this.state;
     return(
       <div>
+      <p><b><font size="6" color="3F51B5">Formula</font></b></p>
       <Paper>
         <Grid
           allowColumnResizing = {true}

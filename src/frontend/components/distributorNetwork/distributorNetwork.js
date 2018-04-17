@@ -524,6 +524,7 @@ export default class Demo extends React.PureComponent {
     return (
       <div>
         {/* <span>Total revenue: {grandTotalRevenue}</span> */}
+        <p><b><font size="6" color="3F51B5">Distribution Network</font></b></p> 
         <Paper>
           <Grid
             rows={rows}

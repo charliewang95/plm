@@ -84,7 +84,9 @@ class ProductDetails extends React.Component {
     const {productRows,rows,columns, grouping} = this.state;
     return (
       <div>
-      <p><font size="4">Product Details for {this.state.productName} made in {this.state.time}</font></p>
+      <p><b><font size="6" color="3F51B5">Product Details</font></b></p> 
+      <p><font size="4">Name: {this.state.productName} </font></p>
+      <p><font size="4">Time Made: {this.state.time}</font></p>
       <Paper>
         <Grid
           rows={this.state.rows}
