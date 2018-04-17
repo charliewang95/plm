@@ -129,6 +129,8 @@ class FormulaDetails extends React.Component{
         ingredientObject.nativeUnit = nativeUnit;
         formatIngredientsArray.push(ingredientObject);
       }
+    console.log("loadFormula is called");
+    console.log(details.productionLinesArray);
 
     this.setState({
       ingredientsArray: formatIngredientsArray,
@@ -142,7 +144,7 @@ class FormulaDetails extends React.Component{
       nativeUnit: details.nativeUnit,
       isIntermediate: details.isIntermediate,
       numUnitPerPackage : (details.numUnitPerPackage)?(details.numUnitPerPackage):'',
-      productionLinesArray: (details.productionLinesArray)?(details.productionLinesArray):[],
+      productionLinesArray: (details.productionLines)?(details.productionLines):[],
     });
       this.computeIngredientsString();
       this.computeProductionLinesString();

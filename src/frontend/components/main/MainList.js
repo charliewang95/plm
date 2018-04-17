@@ -49,10 +49,9 @@ const styles = theme => ({
   icon: {},
 });
 
-const user = JSON.parse(sessionStorage.getItem('user'));
-console.log(typeof user);
-const isAdmin = (user == null) ? false : user["isAdmin"];
-const isManager = (user == null) ? false : user["isManager"];
+var user;
+var isAdmin;
+var isManager;
 
 class MainList extends React.Component{
 
@@ -61,6 +60,12 @@ class MainList extends React.Component{
   handleClick = () => {
     this.setState({ open: !this.state.open });
   };
+
+  componentDidMount(){
+    user = JSON.parse(sessionStorage.getItem('user'));
+    isAdmin = (user == null) ? false : user["isAdmin"];
+    isManager = (user == null) ? false : user["isManager"];
+  }
 
   render(){
     const { classes } = this.props;
@@ -107,11 +112,25 @@ class MainList extends React.Component{
             <ListItemText classes={{ primary: classes.primary }} inset primary="Formula" />
           </MenuItem>
 
+          <MenuItem className={classes.menuItem} component={Link} to="/production-line" button>
+            <ListItemIcon className={classes.icon}>
+              <BusinessIcon/>
+            </ListItemIcon>
+            <ListItemText classes={{ primary: classes.primary }} inset primary="Production Line" />
+          </MenuItem>
+
           <MenuItem className={classes.menuItem} component={Link} to="/product" button>
             <ListItemIcon className={classes.icon}>
               <HistoryIcon />
             </ListItemIcon>
             <ListItemText classes={{ primary: classes.primary }} inset primary="Production History" />
+          </MenuItem>
+
+          <MenuItem className={classes.menuItem} component={Link} to="/distribution-network" button>
+            <ListItemIcon className={classes.icon}>
+              <DistributionIcon/>
+            </ListItemIcon>
+            <ListItemText classes={{ primary: classes.primary }} inset primary="Distribution Network" />
           </MenuItem>
 
           <MenuItem className={classes.menuItem} component={Link} to="/storage" button>
@@ -150,20 +169,6 @@ class MainList extends React.Component{
                 </ListItem>
               </List>
             </Collapse>
-
-          <MenuItem className={classes.menuItem} component={Link} to="/production-line" button>
-            <ListItemIcon className={classes.icon}>
-              <BusinessIcon/>
-            </ListItemIcon>
-            <ListItemText classes={{ primary: classes.primary }} inset primary="Production Line" />
-          </MenuItem>
-
-          <MenuItem className={classes.menuItem} component={Link} to="/distribution-network" button>
-            <ListItemIcon className={classes.icon}>
-              <DistributionIcon/>
-            </ListItemIcon>
-            <ListItemText classes={{ primary: classes.primary }} inset primary="Distribution Network" />
-          </MenuItem>
 
           {(isManager || isAdmin) &&
           <MenuItem className={classes.menuItem} component={Link} to="/log" button>
