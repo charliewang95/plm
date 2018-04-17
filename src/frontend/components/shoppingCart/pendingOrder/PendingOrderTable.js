@@ -184,7 +184,9 @@ const FinishLotAssignment = async (updatedRowData) => {
               // temp.setState({snackBarOpen:true});
               const msg = res ? res :  'Lot number successfully assigned'
               toast.success(msg);
-              
+              const pendingOrderKey = 'goToPendingOrders';
+              sessionStorage.setItem(pendingOrderKey,true)
+              console.log("goToPendingOrders is set to " + sessionStorage.getItem(pendingOrderKey));
               //refresh table
               window.location.reload();
             });

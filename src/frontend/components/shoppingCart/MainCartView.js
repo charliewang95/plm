@@ -28,13 +28,22 @@ const styles = theme => ({
   },
 });
 
+const pendingOrderKey = 'goToPendingOrders';
+
 class MainCartView extends React.Component {
 
   constructor(props) {
     super(props);
+    const defaultTab = sessionStorage.getItem(pendingOrderKey)? 1: 0;
+    console.log('defaultTab is ' + defaultTab);
     this.state = {
-      value: 0,
+      value: defaultTab,
     };
+
+    sessionStorage.removeItem(pendingOrderKey);
+    console.log(pendingOrderKey + " is removed from sessionStorage");
+    console.log(sessionStorage.getItem(pendingOrderKey));
+
     this.changeToPending = value => {
       console.log("current value");
       console.log(value);
